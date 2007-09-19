@@ -1,0 +1,44 @@
+#!/bin/sh
+
+FIRST_HDD=`storagescan | grep 'Disk$' | head -n1 | cut -f1`
+DEV_HDD=/dev/$FIRST_HDD
+
+if smartctl -i $DEV_HDD | grep 'Device does not support SMART'; then
+	test_skipped_file
+	return
+fi
+
+if smartctl -i $DEV_HDD | egrep 'SMART support is: (Available|Disabled)' | wc -l | xargs expr 2 = > /dev/null; then
+	smartctl -s on $DEV_HDD >/dev/null
+fi
+
+smartctl -a $DEV_HDD >~/hdd.log
+if grep -q 'SMART overall-health self-assessment test result: PASSED' ~/hdd.log; then
+	success 'Initial HDD test'
+else
+	test_failed_file 'Initial HDD SMART test'
+fi
+
+publish ~/hdd.log
+
+smartctl -t long $DEV_HDD
+
+echo 'Starting HDD test in background'
+
+T=`smartctl -a $DEV_HDD | grep 'Self-test execution status:' | grep 'Self-test routine in progress...'`
+
+while [ -n "$T" ]; do
+#	echo "T=<$T>"
+	echo 'HDD test still executing... Sleeping 1 minute...'
+	sleep 60
+	T=`smartctl -a $DEV_HDD | grep 'Self-test execution status:' | grep 'Self-test routine in progress...'`
+done
+
+smartctl -a $DEV_HDD >~/hdd.log
+publish ~/hdd.log
+
+if [ -z "`fgrep -A 2 'without error or no self-test has ever' ~/hdd.log`" ]; then
+	test_failed_file 'Long HDD SMART test'
+else
+	test_ok_file
+fi

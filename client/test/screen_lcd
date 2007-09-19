@@ -1,0 +1,14 @@
+#!/bin/sh
+
+alert y $ALERT_ATTENTION "Press any key to begin MATRIX test"
+
+cp $LIB_DIR/x-matrix ~/.Xclients
+startx $STARTX_PLAIN
+
+publish ~/matrix.log
+
+if grep -q PASSED ~/matrix.log; then
+	test_ok_file
+else
+	test_failed_file
+fi

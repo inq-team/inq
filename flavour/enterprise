@@ -1,0 +1,5 @@
+# Setup file to build client/server flavour of Inquisitor
+
+COMMUNICATION=ssh
+SELF_ID=mac
+INIT=1

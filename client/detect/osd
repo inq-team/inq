@@ -1,0 +1,61 @@
+#!/bin/sh
+
+strip_vendor()
+{
+	if echo $OSD_MODEL | grep -q "^$1"; then
+		OSD_VENDOR=$2
+		OSD_MODEL=`echo $OSD_MODEL | sed "s/^$1//;"`
+	fi
+}
+
+detect_vendor()
+{
+	if echo $OSD_MODEL | grep -q "^$1"; then
+		OSD_VENDOR=$2
+	fi
+}
+
+OSD_MODEL=`dmesg | grep 'hd.: .*CD/DVD-ROM drive' | sed 's/^hd.: //g;s/, ATAPI CD\/DVD-ROM drive//g;s,ODD-DVD SD-R6372,DVD+/-RW SD-R6372,g;s/QSI DVDRW/QSI/g;s/^  *//;s/  *$//;'`
+OSD_DEVICE=`dmesg | grep 'hd.: .*CD/DVD-ROM drive' | sed 's/^\(hd.\):.*$/\1/;'`
+OSD_SERIAL=`hdparm -I "/dev/$OSD_DEVICE" | grep -a '^	Serial Number:' | sed 's/^	Serial Number://g;s/^  *//;s/  *$//;'`
+
+if [ -n "$OSD_MODEL" ]; then
+
+	echo "OSD	$OSD_MODEL" >>~/SERIALS
+	publish ~/SERIALS
+	
+	if [ "$OSD_MODEL" == "ATAPI CD-ROM 52XMax" ]; then
+		OSD_VENDOR=MSI
+		OSD_MODEL=MSI-8152
+	fi
+
+	OSD_MODEL=`echo $OSD_MODEL | sed 's,CD-RW/DVD-ROM,,g;s/CD-ROM//g;s/DVD-ROM//g;s,DVD+/-RW,,g;s,DVD/CDRW,,g;s,DVD-RAM,,g;s,DVD-RW,,g;s/Slimtype COMBO //g;s/Slimtype DVDRW //g;s,CDW/DVD,,g;s,CD-RW,,g;s,CD/DVDW ,,g;s,RW/DVD,,g;s,DVD_RW,,g;s/^  *//;s/  *$//;'`
+
+#	echo "OSD_MODEL before vendoring: [$OSD_MODEL]"
+
+	strip_vendor 'ASUS ' ASUS
+	strip_vendor 'HL-DT-ST ' LG
+	strip_vendor 'MATSHITA' Panasonic
+	strip_vendor 'QSI ' QSI
+	strip_vendor 'SAMSUNG CD ' SAMSUNG
+	strip_vendor 'SAMSUNG ' SAMSUNG
+	strip_vendor 'TOSHIBA ' Toshiba
+	strip_vendor 'SONY ' SONY
+	strip_vendor 'PIONEER ' Pioneer
+	strip_vendor '_NEC ' NEC
+	strip_vendor 'TSST ' TSST
+	strip_vendor 'TSSTcorp ' TSST
+	strip_vendor 'TSSTcorp' TSST
+	strip_vendor 'PHILIPS ' Philips
+	
+	detect_vendor 'CD-224' Teac
+	detect_vendor 'DW-224' Teac
+	detect_vendor 'UJDA' Panasonic
+	detect_vendor 'LSC-' LITE-ON
+	detect_vendor 'SDW-431S' LITE-ON
+
+	OSD_MODEL=`echo $OSD_MODEL | sed 's/^  *//;s/  *$//;'`
+
+	echo "OSD	$OSD_VENDOR	$OSD_MODEL	$OSD_SERIAL" >>~/DEVICES
+	publish ~/DEVICES
+fi

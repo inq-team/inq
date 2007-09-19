@@ -1,0 +1,38 @@
+#!/bin/sh
+
+ask_ac_off()
+{
+	if ! ac_state; then
+		alert n $ALERT_ATTENTION 'Plug AC adapter OFF!' &
+		while ! ac_state; do sleep 1; done
+		kill $!
+		clear
+		chvt 4
+		sleep 1
+		chvt 1
+	fi
+}
+
+wait_discharge()
+{
+	ask_ac_off
+	start_burn
+
+	while true; do
+		echo "Battery charge: $BATTERY ($BATTERY_STATE)"
+		get_battery
+		sleep $BATTERYDISCHARGE_STEP
+	done
+}
+
+# Remember initial state
+I=0
+retrieve /battery.log
+retrieve /battery-chart.log
+get_battery
+echo "Initial charge:      $BATTERY" >>~/battery.log
+publish ~/battery.log
+
+# Wait for full discharge
+wait_discharge
+test_ok_file

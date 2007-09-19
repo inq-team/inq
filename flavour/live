@@ -1,0 +1,5 @@
+# Setup file to build Live CD/DVD flavour
+
+COMMUNICATION=local
+SELF_ID=manual
+#INIT=1

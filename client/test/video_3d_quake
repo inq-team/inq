@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# Intel 8xx
+
+if lspci -n | grep -q 'Class 0300: 8086:3582'; then
+	cat $LIB_DIR/x-video3d-quake >~/.Xclients
+	chmod +x ~/.Xclients
+	export VIDEO3DQUAKE_TIME
+	startx $STARTX_ARGS
+	test_ok_file
+else
+	test_skipped_file
+fi

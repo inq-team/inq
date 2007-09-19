@@ -1,0 +1,2 @@
+$in_chroot subst 's,^\(1.*mingetty.*\)$,#\1,' $ROOT/etc/inittab
+$in_chroot echo inq:2345:once:/usr/bin/inquisitor >> $ROOT/etc/inittab

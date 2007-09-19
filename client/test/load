@@ -1,0 +1,15 @@
+#!/bin/sh
+
+build_filesystem
+
+cp $LIB_DIR/rpmmacros ~/.rpmmacros || test_failed_file 'install rpm macros'
+rm -Rf ~/build/tmp
+mkdir -p ~/build/tmp || test_failed_file 'mkdir temporary directory'
+
+I=0
+while [ $I -lt $LOAD_TIMES ]; do
+	rpmbuild --rebuild $LIB_DIR/sed-4.0.9-alt1.src.rpm || test_failed_file 'rpmbuild'
+	I=$[$I+1]
+done
+
+test_ok_file

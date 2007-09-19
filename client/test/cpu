@@ -1,0 +1,146 @@
+#!/bin/sh -ef
+# NAME=CPU
+# DESCRIPTION=CPU burn-in testing
+# DESTROYS_HDD=N
+# VAR=CPU_NO_SCALE:bool:Enable CPU scaling tests
+# VAR=CPU_WAIT_USERSPACE:int:Time to wait for settling up the CPU after switching to userspace governor, s
+# VAR=CPU_WAIT_MAX_FREQ:int:Time to burn on maximum frequency, s
+# VAR=CPU_WAIT_MIN_FREQ:int:Time to burn on minimum frequency, s
+# VAR=CPU_WAIT_FREQ_STEP:int:Time to burn on every frequency step, s
+# VAR=CPU_RANDOM_TIMES:int:Number of random CPU scaling switches to perform
+# VAR=CPU_WAIT_RANDOM:int:Time to burn on every random switch, s
+
+CPU_FAMILY_NUM=`grep 'cpu family' ~/cpu.log | cut -c14-`
+CPU_MODEL_ID=`grep 'model		:' ~/cpu.log | cut -c10-`
+CPU_VENDOR_ID=`grep 'vendor_id' ~/cpu.log | cut -c13-`
+
+test_scaling()
+{
+	echo Scalable CPU testing...
+	pushd /sys/devices/system/cpu/cpu0/cpufreq >/dev/null || test_failed_file 'cpufreq not supported'
+
+	echo -n 'Setting userspace governor'
+	modprobe cpufreq_userspace || test_failed_file 'Module: cpufreq_userspace'
+	echo userspace >scaling_governor
+	sleep $CPU_WAIT_USERSPACE
+	if [ `cat scaling_governor` == 'userspace' ]; then
+		echo_success
+	else
+		echo_failure
+		test_failed_file 'Setting userspace governor'
+	fi
+
+	FREQ_QTY=`wc -w < scaling_available_frequencies`
+	[ $FREQ_QTY -lt 2 ] && test_failed_file 'Number of freq points < 2'
+
+	echo -n "Scaling max freq ($CPU_WAIT_MAX_FREQ sec)"
+	cat scaling_max_freq >scaling_setspeed
+	sleep $CPU_WAIT_MAX_FREQ
+	if [ `cat scaling_setspeed` == `cat scaling_max_freq` ]; then
+		echo_success
+	else
+		echo_failure
+		test_failed_file 'Scaling max freq'
+	fi
+
+	echo -n "Scaling min freq ($CPU_WAIT_MIN_FREQ sec)"
+	cat scaling_min_freq >scaling_setspeed
+	sleep $CPU_WAIT_MIN_FREQ
+	if [ `cat scaling_setspeed` == `cat scaling_min_freq` ]; then
+		echo_success
+	else
+		echo_failure
+		test_failed_file 'Scaling min freq'
+	fi
+
+	echo -n "Scaling max freq ($CPU_WAIT_MAX_FREQ sec)"
+	cat scaling_max_freq >scaling_setspeed
+	sleep $CPU_WAIT_MAX_FREQ
+	if [ `cat scaling_setspeed` == `cat scaling_max_freq` ]; then
+		echo_success
+	else
+		echo_failure
+		test_failed_file 'Scaling max freq'
+	fi
+
+	echo 'CPU scaling frequencies:' >>~/cpu.log
+		
+	MIN_FREQ=`cat scaling_min_freq`
+	FREQ=$MIN_FREQ
+	FREQ_STEP=0
+	MAX_FREQ=`cat scaling_max_freq`
+	while [ $FREQ -lt $MAX_FREQ ]; do
+		echo -n "Setting frequency $FREQ"
+		echo $FREQ >>~/cpu.log			
+		FREQ=$[$FREQ+1]
+		echo $FREQ >scaling_setspeed
+		sleep $CPU_WAIT_FREQ_STEP
+		FREQ_NEW=`cat scaling_setspeed`
+		FREQ_STEP=$[$FREQ_NEW-$FREQ]
+		FREQ=$FREQ_NEW
+		echo_success
+	done
+	echo $FREQ >>~/cpu.log
+
+	echo 'Random points scaling:'
+	echo 'Random points scaling:' >>~/cpu.log
+	
+	MIN_FREQ=$[$MIN_FREQ-$FREQ_STEP]
+	RAND_RANGE=$[$MAX_FREQ-$MIN_FREQ]
+	I=0
+	while [ $I -lt $CPU_RANDOM_TIMES ]; do
+		FREQ=`ruby -e "puts rand($RAND_RANGE)+$MIN_FREQ"`
+		echo $FREQ >scaling_setspeed
+		sleep $CPU_WAIT_RANDOM
+		FREQ_NEW=`cat scaling_setspeed`
+		success "Set $FREQ = got $FREQ_NEW"
+		echo "$FREQ = $FREQ_NEW" >>~/cpu.log
+		I=$[$I+1]
+	done
+
+	echo 'Random points scaling:'
+	echo 'Random points scaling:' >>~/cpu.log
+	
+	MIN_FREQ=$[$MIN_FREQ-$FREQ_STEP]
+	RAND_RANGE=$[$MAX_FREQ-$MIN_FREQ]
+	I=0
+	while [ $I -lt $CPU_RANDOM_TIMES ]; do
+		FREQ=`ruby -e "puts rand($RAND_RANGE)+$MIN_FREQ"`
+		echo $FREQ >scaling_setspeed
+		sleep $CPU_WAIT_RANDOM
+		FREQ_NEW=`cat scaling_setspeed`
+		success "Set $FREQ = got $FREQ_NEW"
+		echo "$FREQ = $FREQ_NEW" >>~/cpu.log
+		I=$[$I+1]
+	done
+
+	echo performance >scaling_governor
+	popd >/dev/null
+}
+
+test_burn()
+{
+	echo -n "Generic non-scalable CPU testing ("
+	echo -n $[$CPU_WAIT_MAX_FREQ + $CPU_WAIT_MIN_FREQ]
+	echo -n " sec)"
+	sleep $CPU_WAIT_MAX_FREQ
+	sleep $CPU_WAIT_MIN_FREQ
+	echo_success
+}
+
+start_burn
+
+if [ -n "$CPU_NO_SCALE" ]; then
+	echo Forced non-scalable testing...
+	test_burn
+else
+	if cpuscan -v | grep -q 'cpufreq         : yes'; then
+		test_scaling
+	else
+		test_burn
+	fi
+fi
+
+stop_burn
+publish ~/cpu.log
+test_ok_file

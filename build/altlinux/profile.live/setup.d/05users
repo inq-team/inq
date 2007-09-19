@@ -1,0 +1,4 @@
+/usr/sbin/usermod -d /home root
+/bin/cp -fr $ROOT/root/* $ROOT/root/.[a-z]* $ROOT/home/
+/usr/sbin/groupadd -r -f messagebus >/dev/null 2>&1 ||:
+/usr/sbin/useradd -r -n -g messagebus -d /var/run/dbus -s /dev/null messagebus >/dev/null 2>&1 ||:

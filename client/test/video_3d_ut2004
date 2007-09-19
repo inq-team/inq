@@ -1,0 +1,31 @@
+#!/bin/sh
+
+# Check if memory < 400 megs, then skip UT2004
+REALMEM=`cat /proc/meminfo | grep MemTotal: | awk '{print $2}'`
+SKIP3D=1
+
+lspci -n | grep -q 'Class 0300: 1002' && SKIP3D=0
+lspci -n | grep -q 'Class 0300: 10de' && SKIP3D=0
+[ "$REALMEM" -le 400000 ] && SKIP3D=1
+
+if [ "$SKIP3D" == 0 ]; then
+	rm -Rf ~/.ut2004demo
+	mkdir -p ~/.ut2004demo/Benchmark
+	ln -s /dev/null ~/.ut2004demo/Benchmark/CSVs
+	cat $LIB_DIR/x-video3d >~/.Xclients
+	chmod +x ~/.Xclients
+	I=0
+	[ -z "$VIDEO3D_TIMES" ] && VIDEO3D_TIMES=1
+	while [ $I -lt $VIDEO3D_TIMES ]; do
+		export VIDEO3D_MAP1_TIME VIDEO3D_MAP2_TIME VIDEO3D_MAP3_TIME VIDEO3D_MAP4_TIME VIDEO3D_MAP5_TIME
+		startx $STARTX_ARGS
+		cat ~/.ut2004demo/Benchmark/Results/* ~/.ut2004demo/Benchmark/*.log >>~/video3d.log
+		I=$[$I+1]
+	done
+	grep 'Panel ID string:' /var/log/Xorg.0.log | sed 's/^.*string: /LCD	/;' >>~/SERIALS
+	publish ~/SERIALS
+	publish ~/video3d.log
+	test_ok_file
+else
+	test_skipped_file
+fi

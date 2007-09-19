@@ -1,0 +1,14 @@
+#!/bin/sh
+
+grep -ve '-1 -1' ~/battery-chart.log | cat -n >~/battery-chart2.log
+
+gnuplot $LIB_DIR/battery.chart
+gs -g1600x1200 -r250 -sDEVICE=png256 -sOutputFile=$HOME/battery.png -dNOPAUSE -dQUIET -dSAFER $HOME/battery.eps -dINTERPOLATE -c quit
+cp $LIB_DIR/x-battery ~/.Xclients
+startx $STARTX_PLAIN || test_failed_file 'Unable to run X to display charts'
+
+if grep -q PASSED ~/battery-ok.log; then
+	test_ok_file
+else
+	test_failed_file
+fi

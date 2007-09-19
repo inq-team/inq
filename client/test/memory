@@ -1,0 +1,7 @@
+#!/bin/sh
+pushd $HOME
+memtest all 1 -l || (publish memtest.log; popd; test_failed_file)
+
+publish memtest.log
+popd
+test_ok_file

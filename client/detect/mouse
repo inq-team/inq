@@ -1,0 +1,4 @@
+#!/bin/sh
+
+mousescan >~/mousescan.log
+publish ~/mousescan.log

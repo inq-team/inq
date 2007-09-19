@@ -1,0 +1,68 @@
+include Makefile.config
+.SILENT: default
+
+#===============================================================================
+# Major targets
+#===============================================================================
+
+default:
+	echo 'Use "make all" if you really want to rebuild everything from scratch'
+
+client:
+	$(MAKE) -C client
+
+server:
+	$(MAKE) -C server
+
+ifeq ($(FLAVOUR), enterprise)
+all: build-package build-root rsync build-server rsync-server
+else
+ifeq ($(FLAVOUR), live)
+all: build-package build-root build-boot build-live
+else
+all:
+	echo 'Edit Makefile.config to set up FLAVOUR to one of the valid values'
+endif
+endif
+
+#===============================================================================
+# Misc targets
+#===============================================================================
+
+clean:
+	rm -Rf $(WORKDIR) $(REPO)
+	CONFIG=$(CONFIG) $(MAKE) -C client clean
+
+#===============================================================================
+# Client image deployment
+#===============================================================================
+
+rsync:
+	ssh $(DEPLOY_HOST) "mkdir -p $(DEPLOY_PATH); sudo chown -R greycat:inquisitor $(DEPLOY_PATH)"
+	rsync -rlptv --delete-after --exclude=usr/lib/inquisitor/images --exclude=etc/inquisitor/users $(WORKDIR)/$(ROOTDIR)/* $(DEPLOY_HOST):$(DEPLOY_PATH)
+	ssh $(DEPLOY_HOST) "sudo chown -R root:root $(DEPLOY_PATH); sudo rm -f $(DEPLOY_PATH)/dev/console $(DEPLOY_PATH)/dev/null; sudo mknod $(DEPLOY_PATH)/dev/console c 5 1; sudo mknod $(DEPLOY_PATH)/dev/null c 1 3"
+
+rsync-list:
+	rsync -rlptvn --delete-after --exclude=usr/lib/inquisitor/images --exclude=etc/inquisitor/users $(WORKDIR)/$(ROOTDIR)/* $(DEPLOY_HOST):$(DEPLOY_PATH)
+
+#rsync-images:
+#	ssh $(DEPLOY_HOST) mkdir -p $(DEPLOY_PATH)/usr/lib/inquisitor/images
+#	rsync -rlptv --delete image-huge/images/* $(DEPLOY_HOST):$(DEPLOY_PATH)/usr/lib/inquisitor/images
+
+#rsync-repository:
+#	ssh $(DEPLOY_HOST) "mkdir -p $(DEPLOY_PATH)$(COMPACT_PATH); sudo chown -R greycat.inquisitor $(DEPLOY_PATH)$(COMPACT_PATH)"
+#	rsync -vrpl --exclude=files/SRPMS /raid/Sisyphus-branch-3.0 $(DEPLOY_HOST):$(DEPLOY_PATH)$(COMPACT_PATH)
+
+#===============================================================================
+# Server deployment
+#===============================================================================
+
+rsync-server:
+	rsync -rlptv --delete server $(DEPLOY_HOST):
+	rsync -rlptv --delete configs $(DEPLOY_HOST):
+	ssh $(DEPLOY_HOST) "cd server; CONFIG=$(CONFIG) sudo make install"
+
+#===============================================================================
+
+# Include client platform-dependent build instructions
+include build/$(CLIENT_BASE)/Makefile

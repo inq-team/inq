@@ -1,0 +1,10 @@
+#!/bin/sh
+
+echo -n >~/memtest.log
+cp $LIB_DIR/x-videomem ~/.Xclients
+dd if=/dev/fb0 of=/dev/null bs=1024 2>&1 | grep in | cut -d+ -f1 >~/video-mem-size
+startx $STARTX_ARGS || test_failed_file
+mv ~/memtest.log ~/videomem.log
+publish ~/videomem.log
+
+test_ok_file

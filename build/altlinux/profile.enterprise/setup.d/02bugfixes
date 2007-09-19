@@ -1,0 +1,11 @@
+#!/bin/sh
+pushd $ROOT
+for I in `find -type l`; do
+	if readlink $I | grep -q "^$PWD"; then
+		TARGET=`readlink $I | sed "s,$PWD,,"`
+		rm -f $I
+		ln -sf $TARGET $I
+		echo $TARGET
+	fi
+done
+popd

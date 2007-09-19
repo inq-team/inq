@@ -1,0 +1,17 @@
+#!/bin/sh
+
+SKIP3D=1
+
+lspci -n | grep -q 'Class 0300: 1002' && SKIP3D=0
+lspci -n | grep -q 'Class 0300: 10de' && SKIP3D=0
+lspci -n | grep -q 'Class 0300: 8086' && SKIP3D=0
+
+if [ "$SKIP3D" == 0 ]; then
+	xinit /usr/bin/csdemo /usr/share/crystalspace/demodata.zip -mode=1024x768 -video=opengl >~/video3d-crystalspace.log $STARTX_ARGS &
+	sleep $VIDEO3DCRYSTALSPACE_TIME
+	killall csdemo
+	publish ~/video3d-crystalspace.log
+	test_ok_file
+else
+	test_skipped_file
+fi

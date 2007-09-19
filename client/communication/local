@@ -1,0 +1,34 @@
+#!/bin/sh
+# Set up null communications (only local storage of files)
+init_communication()
+{
+}
+
+# Store file into publish directory for latter packaging
+publish()
+{
+	mkdir -p /home/publish
+	if [ -f $1 ]; then
+		cat $1 > /home/publish/`basename $1`
+	fi
+}
+
+finalize()
+{
+	dialog --clear --yesno "Insert USB Flash" 5 40
+	if [ $? = 0 ]; then
+		sleep 15
+		echo -n "Mount USB Flash:"
+		mount /media/usbdisk >/dev/null 2>&1 && echo_success || echo_failure
+		echo
+		if mount | grep -q "/media/usbdisk"; then
+			pushd ~/
+				tar -cjf /media/usbdisk/`cat ~/old-full-serial | tr "/" "."`-`cat ~/publish/PROFILE`.tar.bz2 publish
+			popd
+			echo -n "Unmount USB Flash:"
+			umount /media/usbdisk >/dev/null 2>&1 && echo_success || echo_failure
+			echo
+		fi
+	fi
+
+}

@@ -1,0 +1,98 @@
+#!/bin/sh
+# Output formatting functions.
+# $Id: outformat,v 1.1 2004/08/23 11:59:00 greycat Exp $
+#
+# Copyright (C) 2002 Ivan Zakharyaschev <imz@altlinux.ru>.
+# Copyright (C) 2002 Dmitry V. Levin <ldv@altlinux.org>.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+# Set a sane TERM required for tput
+[ -n "$TERM" ] || TERM=dumb
+export TERM
+
+# Offset from right margin of the screen to start status labels at.
+: {RES_OFFSET:=8}
+[ -n "$RES_OFFSET" ] && [ "$RES_OFFSET" -gt 0 ] 2>/dev/null || RES_OFFSET=8
+
+# The cmd names and color codes used as arguments for tput(1)
+# were taken from terminfo(5).
+
+# Terminal sequence to move to that position.
+MOVE_TO_COL()
+{
+	[ -n "$COLUMNS" ] || COLUMNS=80
+	# "tput hpa N" moves to col N; on dumb terms does nothing.
+	local pos=$((COLUMNS - RES_OFFSET))
+	[ $pos -le 0 ] ||
+		tput -- hpa $((COLUMNS - RES_OFFSET)) # Horizontal Position Absolute.
+}
+
+# Enumerate colors
+: ${BLACK:=0} ${RED:=1} ${GREEN:=2} ${YELLOW:=3} ${BLUE:=4} ${MAGENTA:=5} ${CYAN:=6} ${WHITE:=7}
+
+# Set 'success' color (currently: green)
+SETCOLOR_SUCCESS()
+{
+	{
+		echo bold
+		echo setaf $GREEN
+	} |tput -S
+}
+
+# Set 'failure' color (currently: red)
+SETCOLOR_FAILURE()
+{
+	{
+		echo bold
+		echo setaf $RED
+	} |tput -S
+}
+
+# Set 'warning' color (currently: yellow)
+SETCOLOR_WARNING()
+{
+	{
+		echo bold
+		echo setaf $YELLOW
+	} |tput -S
+}
+
+# Set 'info' color (currently: cyan)
+SETCOLOR_INFO()
+{
+	{
+		echo bold
+		echo setaf $CYAN
+	} |tput -S
+}
+
+# Set 'banner' color (currently: blue on yellow)
+SETCOLOR_BANNER()
+{
+	{
+		echo setaf $BLUE
+		echo setab $YELLOW
+	} |tput -S
+}
+
+# Terminal sequence to reset to the default color.
+SETCOLOR_NORMAL()
+{ 
+	{
+		echo op; # set Original color Pair.
+		echo sgr0; # turn off all special graphics mode (bold in our case).
+	} |tput -S
+}

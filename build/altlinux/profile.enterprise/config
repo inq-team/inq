@@ -1,0 +1,12 @@
+PUBLISHER="GreyCat"
+ORIGIN="ALT Linux Sisyphus based"
+SUITE="x86_64 test"
+CODENAME="Aconite"
+VERSION="3.1.xxx"
+THEME=Compact
+KERNEL=kernel-image-wks26-smp
+LANGS="ru_RU"
+ARCH=x86_64
+
+OUT=altlinux
+IDENT=live

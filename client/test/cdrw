@@ -1,0 +1,97 @@
+#!/bin/sh
+
+echo 'Detecting OSD...'
+
+CDRW_DEV=/dev/cdrom
+
+cdrecord dev=$CDRW_DEV -checkdrive >~/osd.log 2>/dev/null
+
+publish ~/osd.log
+
+if grep -q 'mmc CD-ROM' ~/osd.log; then
+	echo 'mmc CD-ROM detected. Read test only will be performed.'
+	CDRW_REC=0
+elif grep -q 'Generic CD-ROM' ~/osd.log; then
+	echo 'Generic CD-ROM detected. Read test only will be performed.'
+	CDRW_REC=0
+elif grep -q 'Generic.*DVD-ROM' ~/osd.log; then
+	echo 'Generic DVD-ROM detected. Read test only will be performed.'
+	CDRW_REC=0
+elif egrep -q '(mmc_cdr|mmc_cd_dvd)' ~/osd.log; then
+	echo 'CD-Recorder detected. Read/write tests.'
+	CDRW_REC=1
+else
+	echo 'No suitable OSD detected. Skipping all tests.'
+	CDRW_REC=-1
+fi
+
+if [ "$CDRW_REC" != "-1" ]; then
+	ISO_FILE=Compact-2.3.iso
+	BLOCKS=357610
+
+	build_filesystem
+	echo 'Copying ISO from NFS to local filesystem...'
+	dd if=$LIB_DIR/$ISO_FILE of=$HOME/build/$ISO_FILE bs=2048 count=$BLOCKS
+
+	modprobe ide-cd
+	if cdrecord dev=$CDRW_DEV -atip | grep -q 'Is erasable'; then
+		echo 'CD-RW already inserted, not ejecting'
+	else
+		eject
+	fi
+
+	FINISHED=0
+
+	while [ "$FINISHED" == "0" ]; do
+
+		if [ "$CDRW_REC" == "1" ]; then
+
+			alert y $ALERT_ATTENTION 'Insert CD-RW or blank CD-R and press any key to begin CD-RW test'
+			refresh_console
+			SPEED=10
+			MEDIAMAXSPEED=`cdrecord dev=$CDRW_DEV -atip | sed -ne '/speed high/ s/^.*speed high: \(.*\)$/\1/ p' | head -n 1`
+
+			echo "Detected max medium speed: $MEDIAMAXSPEED"
+
+			if [ -n "$MEDIAMAXSPEED" ]; then
+				SPEED=$MEDIAMAXSPEED
+			fi
+
+			if cdrecord dev=$CDRW_DEV -atip | grep -q 'Is erasable'; then
+				echo 'CD-RW detected... Blanking...'
+				cdrecord -v -tao dev=$CDRW_DEV speed=$SPEED blank=fast || test_failed_file 'Failed to blank CD-RW'
+#				cdrecord -v dev=$CDRW_DEV blank=fast || test_failed_file 'Failed to blank CD-RW'
+			else
+				echo 'CD-R detected... Skipping blanking...'
+			fi
+
+			cdrecord -v -tao dev=$CDRW_DEV driveropts=burnfree speed=$SPEED ~/build/$ISO_FILE | tee ~/cdrecord.log || test_failed_file 'Failed to write image'
+#			cdrecord -v dev=$CDRW_DEV ~/build/$ISO_FILE | tee /cdrecord.log || test_failed_file 'Failed to write image'
+			publish ~/cdrecord.log
+		else
+			alert y $ALERT_ATTENTION 'Insert pre-recorded ALT Linux Compact CD and press any key'
+			refresh_console
+		fi
+
+		echo 'Reading CD image...'
+		readcd -v dev=$CDRW_DEV f=$HOME/build/$ISO_FILE.read sectors=0-$BLOCKS meshpoints=1024 >~/readcd.log || test_failed_file 'Unable to read CD'
+		if [ ! -s $HOME/build/$ISO_FILE.read ]; then
+			echo 'Normal readcd read failed... Trying dd read...'
+			dd if=$CDRW_DEV of=$HOME/build/$ISO_FILE.read bs=2048 count=$BLOCKS
+		fi
+		publish ~/readcd.log
+
+		eject
+
+		echo 'Comparing CD image with reference image...'
+		if diff ~/build/$ISO_FILE ~/build/$ISO_FILE.read >/dev/null; then
+			test_ok_file
+			FINISHED=1
+		else
+			alert y $ALERT_ATTENTION 'Comparison failed: retry with another media'
+			refresh_console
+		fi
+	done
+else
+	test_failed_file 'No suitable OSD detected'
+fi

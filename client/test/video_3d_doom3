@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# Check if memory < 400 megs, then skip UT2004
+REALMEM=`cat /proc/meminfo | grep MemTotal: | awk '{print $2}'`
+SKIP3D=1
+
+lspci -n | grep -q 'Class 0300: 1002' && SKIP3D=0
+lspci -n | grep -q 'Class 0300: 10de' && SKIP3D=0
+lspci -n | grep -q 'Class 0300: 1002:5955' && SKIP3D=1
+[ "$REALMEM" -le 400000 ] && SKIP3D=1
+
+if [ "$SKIP3D" == 0 ]; then
+	mkdir -p ~/.doom3/base
+	echo PSBCTASC33WBPH7L >~/.doom3/base/doomkey
+	cat $LIB_DIR/x-video3d-doom3 >~/.Xclients
+	chmod +x ~/.Xclients
+	I=0
+	[ -z "$VIDEO3DDOOM3_TIMES" ] && VIDEO3D_TIMES=1
+	while [ $I -lt $VIDEO3DDOOM3_TIMES ]; do
+		startx $STARTX_ARGS
+		I=$[$I+1]
+	done
+	mv ~/.doom3/base/qconsole.log ~/video3ddoom3.log
+	publish ~/video3ddoom3.log
+	test_ok_file
+else
+	test_skipped_file
+fi

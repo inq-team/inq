@@ -1,0 +1,18 @@
+#!/bin/sh
+
+cat /proc/cpuinfo >~/cpu.log
+publish ~/cpu.log
+
+cpuscan -v >~/cpuscan.log
+publish ~/cpuscan.log
+
+CPU_SERIAL=`grep -A 5 'Processor Information' ~/dmi.log | grep 'ID:' | grep -v '00 00 00 00 00 00 00 00' | sed 's/.*ID: //'`
+echo "CPU ID	$CPU_SERIAL" >>~/SERIALS
+publish ~/SERIALS
+
+CPU_VENDOR_ID=`grep 'vendor_id' ~/cpu.log | cut -c13-`
+CPU_VENDOR=`echo $CPU_VENDOR_ID | sed 's/Genuine//g;s/Authentic//g;'`
+CPU_MODEL=`sed -ne '/model name	:/ s/^.*:\(.*\)$/\1/p;' ~/cpu.log | sed 's/(R)//g;s/(tm)//g;s/processor//ig;s/CPU//g;s/Intel//g;s/AMD//g;s/Genuine/Celeron M/;s/  */ /g;s/^ *//g;'`
+
+echo "CPU	$CPU_VENDOR	$CPU_MODEL	$CPU_SERIAL" >>~/DEVICES
+publish ~/DEVICES

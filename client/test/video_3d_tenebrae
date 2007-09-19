@@ -1,0 +1,19 @@
+#!/bin/sh
+
+SKIP3D=1
+
+lspci -n | grep -q 'Class 0300: 1002' && SKIP3D=0
+lspci -n | grep -q 'Class 0300: 10de' && SKIP3D=0
+lspci -n | grep -q 'Class 0300: 1002:5955' && SKIP3D=1
+
+if [ "$SKIP3D" == 0 ]; then
+	cat $LIB_DIR/x-video3d-tenebrae >~/.Xclients
+	chmod +x ~/.Xclients
+	export VIDEO3DTENEBRAE_TIME
+	startx $STARTX_ARGS
+	grep 'Panel ID string:' /var/log/Xorg.0.log | sed 's/^.*string: /LCD	/;' >>~/SERIALS
+	publish ~/SERIALS
+	test_ok_file
+else
+	test_skipped_file
+fi

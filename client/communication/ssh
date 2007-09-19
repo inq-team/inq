@@ -1,0 +1,133 @@
+#!/bin/sh
+# Set up communication functions to use ssh protocol
+
+init_communication()
+{
+	mkdir -p ~/.ssh || fatal_failure 'Create ~/.ssh'
+	echo -n "$SERVER " >~/.ssh/known_hosts || fatal_failure 'Register ssh known host'
+	cat $LIB_DIR/ssh_host_rsa_key.pub >>~/.ssh/known_hosts || fatal_failure 'Register ssh known host'
+	cp $LIB_DIR/id_dsa_tester ~/.ssh/id_dsa || fatal_failure 'Install ssh key (mv)'
+	chown 0:0 ~/.ssh/id_dsa || fatal_failure 'Install ssh key (chown)'
+	chmod 600 ~/.ssh/id_dsa || fatal_failure 'Install ssh key (chmod)'
+}
+
+# Publish some file into log directory on server
+publish()
+{
+	scp -q $1 $TESTER:$LOG_DIR/$TESTER_PATH/
+}
+
+# Retrieve all Inquisitor info previously published file as local copy in /
+retrieve_all()
+{
+	scp -qr $TESTER:$LOG_DIR/$TESTER_PATH/* ~/
+}
+
+# Retrieve previously published file as local copy in /
+retrieve()
+{
+	scp -q $TESTER:$LOG_DIR/$TESTER_PATH/$1 ~/
+}
+
+test_set_status()
+{
+#ifndef INIT
+	if [ -x /sbin/splash ]; then
+		splash -s -u 0 $LIB_DIR/splash.cfg
+	fi
+#endif
+	fbtruetype -x 600 -y 0 -t ffffff -s 24 "$1"
+}
+
+test_running()
+{
+	lockfile ~/RESULTS.lock
+	sed "s/^$1	.*$/$1	RUNNING/;" <~/RESULTS >~/RESULTS.new
+	mv -f ~/RESULTS.new ~/RESULTS
+	rm -f ~/RESULTS.lock
+	publish ~/RESULTS
+
+	echo -n "$2: start - " >>~/TIME
+	date >>~/TIME
+	publish ~/TIME
+
+	echo "-1 -1 $1" >>~/temp-chart.log
+	publish ~/temp-chart.log
+
+	test_set_status $1
+#ifdef WATCHDOG
+	ssh $TESTER watchdog-command.rb --test "$IP_ADDRESS" $2
+#endif
+	echo -n "Testing: $1"
+	echo_running
+	echo
+}
+
+test_ok()
+{
+	lockfile ~/RESULTS.lock
+	sed "s/^$1	.*$/$1	OK/;" <~/RESULTS >~/RESULTS.new
+	mv -f ~/RESULTS.new ~/RESULTS
+	rm -f ~/RESULTS.lock
+
+	echo -n "$2: ok - " >>~/TIME
+	date >>~/TIME
+	publish ~/TIME
+
+	publish ~/RESULTS
+	echo -n Testing: $1
+	echo_success
+	echo
+}
+
+# test_failed(test_name, reason)
+test_failed()
+{
+	lockfile ~/RESULTS.lock
+	sed "s/^$1	.*$/$1	FAILED	$3/;" <~/RESULTS >~/RESULTS.new
+	mv -f ~/RESULTS.new ~/RESULTS
+	rm -f ~/RESULTS.lock
+
+	echo -n "$2: failed - " >>~/TIME
+	date >>~/TIME
+	publish ~/TIME
+	
+	publish ~/RESULTS
+
+#ifdef NET_PUBLISH
+	ssh $TESTER mkdir -p log-failed/$TESTER_PATH
+	ssh $TESTER "date >log-failed/$TESTER_PATH/date.end"
+	ssh $TESTER mv log-running/$TESTER_PATH/* log-failed/$TESTER_PATH
+	ssh $TESTER rmdir log-running/$TESTER_PATH
+#endif
+
+	echo $3
+	echo_failure
+	echo
+
+	echo -n Testing: $1
+	echo_failure
+	echo
+
+#ifdef WATCHDOG
+	ssh $TESTER watchdog-command.rb --test "$IP_ADDRESS" '\"FAIL\"'
+#endif
+
+	alert y $ALERT_FAILURE "FAILURE: $TESTER_PATH ($2 / $3)"
+	bash
+}
+
+finalize()
+{
+	ssh $TESTER mkdir -p log-ok/$TESTER_PATH
+	ssh $TESTER mv $LOG_DIR/$TESTER_PATH/* log-ok/$TESTER_PATH
+	ssh $TESTER "date >log-ok/$TESTER_PATH/date.end"
+	ssh $TESTER rmdir $LOG_DIR/$TESTER_PATH
+	ssh $TESTER watchdog-command.rb --test "$IP_ADDRESS" '\"DONE\"'
+	success 'Finalized testing'
+
+	if grep -q '^label$' ~/ACTIONS; then
+		ssh $TESTER "/usr/local/bin/label-print log-ok/$TESTER_PATH $TESTER_PATH | /usr/local/bin/transfer-to-printer.rb"
+		success 'Label printed'
+	fi
+}

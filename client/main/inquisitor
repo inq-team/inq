@@ -1,0 +1,250 @@
+#!/bin/sh -ef
+
+. /etc/inquisitor/global
+[ -r $SHARE_DIR/init ] && . $SHARE_DIR/init
+. $SHARE_DIR/functions
+
+. $SHARE_DIR/self-id
+
+#if [ -x /sbin/splash ]; then
+#ifndef INIT
+	#splash -s -u 0 $LIB_DIR/splash.cfg
+#else
+	#echo "verbose" > /proc/splash
+	#splash -s -n /etc/bootsplash/themes/current/config/bootsplash-1024x768.cfg
+#endif
+#fi
+
+date > ~/TIME
+
+# ===========================================================================
+# Decode DMI data
+# ===========================================================================
+
+dmidecode >~/dmi.log
+. $LIB_DIR/detect_dmi
+
+# ===========================================================================
+# Detect video
+# ===========================================================================
+
+. $LIB_DIR/detect_video
+
+#ifdef BASH_DEBUG
+# ===========================================================================
+# Analyze kernel command line options
+# ===========================================================================
+
+# Bash for debugging
+if grep -q BASH /proc/cmdline; then
+	bash
+fi
+#endif
+
+#ifdef FLASH_BIOS
+# ===========================================================================
+# Check if we need to reflash BIOS before serials
+# ===========================================================================
+
+. $LIB_DIR/flash_bios_pre
+#endif
+
+#ifdef FLASH_DMI
+# ===========================================================================
+# Check if we need to do tests or prepare to reflash serials
+# ===========================================================================
+
+. $LIB_DIR/flash_dmi
+#endif
+
+#ifdef FLASH_DMI_DESKTOP
+# ===========================================================================
+# Check if we need to do tests or prepare to reflash serials
+# ===========================================================================
+
+. $LIB_DIR/flash_dmi_desktop
+#endif
+
+#ifdef VALIDATE_DMI
+# ===========================================================================
+# Check if we have valid notebook
+# ===========================================================================
+
+FILTERED_SERIAL=`echo $SERIAL | grep ^N.......$`
+
+[ "$FILTERED_SERIAL" == "" ] && fatal_failure 'Invalid notebook!'
+#endif
+
+#ifdef FLASH_BIOS
+# ===========================================================================
+# Check if we need to reflash BIOS
+# ===========================================================================
+
+. $LIB_DIR/flash_bios
+#endif
+
+#ifdef WATCHDOG
+# ===========================================================================
+# Set up watchdog
+# ===========================================================================
+
+watchdog &
+IP_ADDRESS=`/sbin/ifconfig eth0 | grep 'inet addr:' | sed 's/^.*:\(.*\)  Bcast.*$/\1/;'`
+ssh $TESTER watchdog-command.rb --add "$MANUFACTURER" "$PRODUCT_NAME" "$SERIAL" "$IP_ADDRESS"
+success "Watchdog of $IP_ADDRESS started"
+#endif
+
+#ifdef NET_PUBLISH
+# ===========================================================================
+# Prepare machine log directory, set as running
+# ===========================================================================
+
+ORIG_DIR=`ssh $TESTER find-log-entry "$MANUFACTURER" "$PRODUCT_NAME" "$SERIAL"`
+LOG_DIR=log-unknown
+
+ssh $TESTER mkdir -p $LOG_DIR/$TESTER_PATH
+
+if [ -n "$ORIG_DIR" ] && [ "$ORIG_DIR" != "$LOG_DIR" ]; then
+	if [ "$ORIG_DIR" != "$LOG_DIR" ]; then
+		ssh $TESTER "mv $ORIG_DIR/$TESTER_PATH/* $LOG_DIR/$TESTER_PATH"
+		ssh $TESTER "rmdir $ORIG_DIR/$TESTER_PATH"
+	fi
+
+	retrieve_all
+
+	# Re-read DMI second time to replace older dmi.log that we've got from archives
+	dmidecode >~/dmi.log
+fi
+
+ssh $TESTER "date >$LOG_DIR/$TESTER_PATH/date.start"
+#endif
+
+publish ~/dmi.log
+
+success 'Decoding DMI data'
+
+# ===========================================================================
+# Operator's interactive interface
+# ===========================================================================
+#ifdef AUTH
+if [ ! -r ~/PROFILE ] || grep -q reask /proc/cmdline; then
+	interface.rb $TESTER_PATH
+fi
+#else
+interface.rb --noauth $TESTER_PATH
+#endif
+
+# ===========================================================================
+# Run all info gathering
+# ===========================================================================
+
+# Rotate DEVICES and get number last test session in LASTTEST
+calc_rotate ~/DEVICES
+publish ~/DEVICES.$LASTTEST
+mv ~/TIME ~/TIME.$LASTTEST
+publish ~/TIME.$LASTTEST
+
+cd $INFOS_DIR
+for INFO in *; do
+	echo -n "Gather info: $INFO"
+	. $INFO
+	echo_success
+done
+
+# ===========================================================================
+# Run all tests
+# ===========================================================================
+
+cd $TESTS_DIR
+for TEST in *; do
+	TESTNAME=`echo $TEST`
+	echo "$TESTNAME	NONE" >>~/RESULTS
+done
+success 'Initializing test results'
+
+# Restart full tests
+if grep -q '^restart_all$' ~/ACTIONS; then
+	grep -v '^restart_all$' ~/ACTIONS >~/ACTIONS2
+	rm -f ~/TIME ~/TIME2 ~/TIME.old ~/SERIALS.prev ~/testscript ~/temp-chart.log ~/ACTIONS
+	mv ~/ACTIONS2 ~/ACTIONS
+	success "Restarting all tests due to request"
+fi
+
+# Do the tests
+if grep -q '^test$' ~/ACTIONS; then
+#ifdef NET_PUBLISH
+	# Move unknown to running
+	ssh $TESTER mkdir -p log-running/$TESTER_PATH
+	ssh $TESTER mv $LOG_DIR/$TESTER_PATH/* log-running/$TESTER_PATH
+	ssh $TESTER rmdir $LOG_DIR/$TESTER_PATH
+#endif
+	LOG_DIR=log-running
+	cp $ETC_DIR/components.xml ~/
+
+	# Check if have external thermometer
+	if grep -q 'USB Thermometer' /proc/bus/usb/devices; then
+		echo -n 'USB Thermometer initializing'
+		thermo-init
+		echo_success
+	fi
+
+	# Set up HDD temperature charting
+	export TESTER_PATH
+	$LIB_DIR/temp-grapher &
+	echo $!>~/temp-grapher.pid
+	success 'Temperature watchdog started'
+
+	# Plan tests
+	PROFILE=`cat ~/PROFILE`
+	echo -n "Planning tests with profile $PROFILE (last test #$LASTTEST)"
+	planner.rb $ETC_DIR/tests/$PROFILE.xml >~/testscript || test_failed_file 'Failed to make a test plan'
+	echo_success
+
+	# Run generated testscript
+	success "Generated test script... Running..."
+	publish ~/PROFILE
+	publish ~/PRINT
+	publish ~/ACCOUNT
+	publish ~/TESTER
+	publish ~/ACTIONS
+	publish ~/testscript
+	. ~/testscript
+
+	# Summarize
+	. $LIB_DIR/summarize ~/
+	publish ~/SUMMARY
+
+	# Stop temperature graphing
+	kill `cat ~/temp-grapher.pid`
+
+	finalize
+fi
+
+#ifdef NET_PUBLISH
+# ===========================================================================
+# Upload system image / create image on server
+# ===========================================================================
+
+if grep -q '^upload$' ~/ACTIONS; then
+#ifdef IMAGE_BY_DEVICES
+	PRODUCT_NAME=`grep '^Motherboard' ~/DEVICES | cut -f3`.`grep '^Video' ~/DEVICES | sed 's/^.*\[//g;s/\].*$//g;s/ //g;'`
+#endif
+	if grep -vq ' mkimage' /proc/cmdline; then
+		ssh $TESTER watchdog-command.rb --test "$IP_ADDRESS" UploadImage
+		if [ "$PRODUCT_NAME" == 'Mission_X710S' -o "$PRODUCT_NAME" == 'Mission_X700' ]; then
+			. $LIB_DIR/upload_compact
+		else
+			. $LIB_DIR/upload_image
+		fi
+	else
+		. $LIB_DIR/make_image
+		alert n $ALERT_PASSED 'Make image complete; detach notebook from the network!'
+	fi
+fi
+
+ssh $TESTER watchdog-command.rb --test "$IP_ADDRESS" '\"DONE\"'
+ssh $TESTER watchdog-command.rb --delete "$IP_ADDRESS"
+#endif
+
+alert y $ALERT_PASSED 'Testing complete; press any key to shutdown.'
+poweroff

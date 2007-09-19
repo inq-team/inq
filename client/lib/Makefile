@@ -1,0 +1,13 @@
+#SUBDIRS=alert hide-mouse memtest pci-patch wait-serial watchdog inquisitor thermometer
+SUBDIRS=memtest watchdog
+
+include ../../Makefile.config
+
+all:
+	for I in $(SUBDIRS); do $(MAKE) -C $$I all; done
+
+install:
+	for I in $(SUBDIRS); do $(MAKE) -C $$I install; done
+
+clean:
+	for I in $(SUBDIRS); do $(MAKE) -C $$I clean; done

@@ -1,0 +1,62 @@
+#!/bin/sh
+
+ask_ac_on()
+{
+	if ac_state; then
+		alert n $ALERT_ATTENTION 'Plug AC adapter ON!' &
+		while ac_state; do sleep 1; done
+		kill $!
+		clear
+		chvt 4
+		sleep 1
+		chvt 1
+	fi
+}
+
+wait_charge()
+{
+	stop_burn
+	load_scaling
+	set_scaling_min
+	ask_ac_on
+
+	echo Waiting $BATTERYCHARGE_PREWAIT secs to start...
+	sleep $BATTERYCHARGE_PREWAIT
+
+	while true; do
+		echo "Battery charge: $BATTERY ($BATTERY_STATE)" # (freq: `cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed`)"
+		BATTERY_PREV=$BATTERY
+		sleep $BATTERYCHARGE_STEP
+		get_battery
+#		if [ $BATTERY_PREV -ge $BATTERY ]; then
+#			break
+#		fi
+		if [ "$BATTERY_STATE" == "charged" -a "$BATTERY" == "0" ]; then
+			echo 'New battery: not started charging yet'
+			continue
+		fi
+		if [ "$BATTERY_STATE" != "charging" ]; then
+			break
+		fi
+	done
+	
+	set_scaling_automatic
+}
+
+# Remember initial state
+I=0
+retrieve /battery.log
+retrieve /battery-chart.log
+mark_battery
+get_battery
+BATTERY_ORIGINAL=$BATTERY
+echo "Initial charge:      $BATTERY" >>~/battery.log
+publish ~/battery.log
+
+# Wait for full charge
+wait_charge
+get_battery
+echo "After full charge:   $BATTERY_FULL" >>~/battery.log
+mark_battery
+publish ~/battery.log
+test_ok_file

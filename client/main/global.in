@@ -1,0 +1,11 @@
+SERVER=`/sbin/ifconfig eth0 | grep 'inet addr' | sed 's/^.*inet addr:10\.0\.\(.\).*/10.0.\1.2/g;'`
+
+NTP_SERVER=$SERVER
+TESTER_USER=tester
+TESTER=$TESTER_USER@$SERVER
+
+ETC_DIR=@@ETC_DIR@@
+LIB_DIR=@@LIB_DIR@@
+SHARE_DIR=@@SHARE_DIR@@
+
+export HOME=/home

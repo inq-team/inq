@@ -1,0 +1,5 @@
+ln -sf inquisitor/remounttab /etc/
+ln -sf inquisitor/overlaytab /etc/
+ln -sf inquisitor/pci.ids /usr/share/
+subst 's|mount\ -n\ -tmini_fo\ -o\ dir=\$mntpt\,dir2=\/mnt\/root/\$mntpt\ \$mntpt\ \$mntpt|mount -n -t unionfs -o dirs=/mnt/root/$mntpt=rw:$mntpt=ro null $mntpt|g' /etc/init.d/functions
+echo "XROOTWARN=no" > $ROOT/etc/sysconfig/xinitrc
