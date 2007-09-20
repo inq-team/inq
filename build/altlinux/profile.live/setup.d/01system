@@ -1,0 +1,89 @@
+setup_live()
+{
+    echo "Setting up live cd"
+     
+    /bin/sh -e <<__EOF__
+cd /
+unset DURING_INSTALL
+[ ! -x /usr/bin/update-menus ] || /usr/bin/update-menus --nofork -v
+[ ! -f /etc/firsttime.d/menu ] || rm -f /etc/firsttime.d/menu
+if [ -d /etc/firsttime.d ];then
+    for i in /etc/firsttime.d/*; do \$i; done ||:
+fi
+if [ -x /sbin/depmod ]; then
+    for i in /lib/modules/*; do
+        /sbin/depmod -a -F /boot/System.map-\$(basename \$i) \$(basename \$i)
+    done
+fi
+__EOF__
+
+cat << __EOF__ >> /etc/remounttab
+/mnt
+/media  size=50k
+__EOF__
+
+cat << __EOF__ >> /etc/overlaytab
+/etc
+/dev
+/var
+/lib
+/bin
+/sbin
+/home
+/root
+__EOF__
+
+cat << __EOF__ >> /etc/sysconfig/network
+NETWORKING=yes
+FORWARD_IPV4=false
+HOSTNAME=$SUITE
+DOMAINNAME=localhost
+__EOF__
+
+cat << __EOF__ >> /etc/HOSTNAME
+$SUITE.localhost
+__EOF__
+
+cat <<__EOF__>> /etc/init.d/functions
+# Remount root fs parts via tmpfs
+remount_root_readwrite()
+{
+    REMOUNTTAB=/etc/remounttab
+    LIVETAB=/etc/overlaytab
+    if [ -s \$REMOUNTTAB ]; then
+        grep -ve '^\(#\|\$\)' \$REMOUNTTAB |while read mntpt dev opt; do
+            if [ -d \$mntpt ]; then
+		[ -n "\$dev" ] || dev=/dev/shm
+                echo -n "Remounting \$mntpt read/write:"
+		(cd \$mntpt && tar cp --same-owner --same-permissions . 2> /dev/null) |\
+		(mount -n -ttmpfs \${opt:+-o \$opt} \$dev \$mntpt && tar xp -C \$mntpt/ 2>/dev/null) && echo_success || echo_failure
+		echo
+            fi
+        done
+
+        if [ -s \$LIVETAB ]; then
+	    grep -ve '^\(#\|\$\)' \$LIVETAB |while read mntpt dev fs opt; do
+    		if [ -d \$mntpt ]; then
+		   mkdir -p /mnt/root/\$mntpt
+		   [ ! -f "\$dev" ] || mount -n \${fs:+-t \$fs} \${opt:+-o \$opt} \$dev /mnt/root/\$mntpt
+    		   echo -n "Remounting \$mntpt to overlay:"
+		   mount -n -tunionfs -o dirs=/mnt/root/\$mntpt=rw:\$mntpt=ro /mnt/root/\$mntpt \$mntpt && echo_success || echo_failure
+		   echo
+        	fi
+    	    done
+	fi
+    else
+	action "Remounting root filesystem in read/write mode:" mount -n -o remount,rw /
+    fi
+}
+__EOF__
+
+subst "s|action \"Remounting root filesystem in read/write mode:\" mount -n -o remount,rw /|remount_root_readwrite|" /etc/rc.d/rc.sysinit
+}
+
+setup_live
+echo "/dev/root / auto  defaults,ro 0 0" >>/etc/fstab
+echo "tmpfs /tmp tmpfs defaults 0 0" >>/etc/fstab
+
+# stage1 need this
+mkdir -p /image
