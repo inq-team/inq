@@ -6,11 +6,12 @@ all:
 install:
 	mkdir -p $(DESTDIR)$(BIN_DIR) $(DESTDIR)$(ETC_DIR) $(DESTDIR)$(SHARE_DIR)
 	install -m755 inquisitor $(DESTDIR)$(BIN_DIR)
-	install -m644 functions outformat $(DESTDIR)$(SHARE_DIR)
+	install -m644 functions outformat lshw.xslt $(DESTDIR)$(SHARE_DIR)
 ifdef $(INIT)
 	install -m644 init $(DESTDIR)$(SHARE_DIR)
 endif
 	install -m644 global $(DESTDIR)$(ETC_DIR)
+	install -m755 run-detects $(DESTDIR)$(BIN_DIR)
 
 clean:
 	rm -f global
