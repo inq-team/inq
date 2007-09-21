@@ -15,27 +15,35 @@ class ComputersController < ApplicationController
 	def latest
 		@computer = Computer.find(params[:id])
 		@testing = @computer.testings[-1]
-		render :action => 'testing'
+		@components = @testing.components
+		respond_to { |format|
+			format.html { render :action => 'testing' }
+			format.xml  { render :xml => @components.to_xml }
+		}
 	end
 
 	def testing
 		@computer = Computer.find(params[:id])
 		@testing = Testing.find(params[:testing_id])
+		respond_to { |format|
+			format.html { render :action => 'testing' }
+			format.xml  { render :xml => @testing.to_xml }
+		}
 	end
 
-  def new
-    @computer = Computer.new
-  end
+	def new
+		@computer = Computer.new
+	end
 
-  def create
-    @computer = Computer.new(params[:computer])
-    if @computer.save
-      flash[:notice] = 'Computer was successfully created.'
-      redirect_to :action => 'list'
-    else
-      render :action => 'new'
-    end
-  end
+	def create
+		@computer = Computer.new(params[:computer])
+		if @computer.save
+			flash[:notice] = 'Computer was successfully created.'
+			redirect_to :action => 'list'
+		else
+			render :action => 'new'
+		end
+	end
 
   def edit
     @computer = Computer.find(params[:id])
