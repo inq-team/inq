@@ -1,0 +1,183 @@
+a {
+	color: black;
+	text-decoration: none;
+}
+
+body {
+	background: white;
+	font-size: 0.5cm;
+	margin: 0px;
+	font-family: sans-serif; font-size: 85%;
+}
+
+pre {
+	font-size: 0.5cm;
+}
+
+.title {
+	float: right;
+	background: #4d89c0;
+	color: #ffffff;
+	padding: 0.1em 1em 0.3em 1em;
+	font-weight: bold;
+	-moz-border-radius-topleft: 20px;
+	vertical-align: bottom;
+}
+
+.menu {
+	float: right;
+	background: #4d89c0;
+	color: #ffffff;
+	padding: 0.1em 1em 0.3em 1em;
+	font-weight: bold;
+	-moz-border-radius-bottomleft: 20px;
+}
+
+.menu a, .title a {
+	color: #ffffff;
+}
+
+.menu a:hover, .title a:hover {
+	color: #ffe400;
+	text-decoration: underline;
+}
+
+div.notebook-OK, div.notebook-HANG, div.notebook-FAIL, div.notebook-ATTN, div.notebook-DONE {
+	float: left;
+	width: 3.5cm;
+	border: 1px solid black;
+	font-size: 80%;
+	font-family: sans-serif;
+	margin-right: 2px;
+}
+
+div.notebook-OK:hover, div.notebook-HANG:hover, div.notebook-FAIL:hover, div.notebook-ATTN:hover, div.notebook-DONE:hover {
+	background: rgb(192, 192, 255);
+}
+
+div.notebook-HANG, div.notebook-FAIL {
+	background: rgb(255, 128, 128);
+}
+
+div.notebook-ATTN {
+	background: rgb(255, 255, 128);
+}
+
+div.notebook-DONE {
+	background: rgb(128, 255, 128);
+}
+
+div.serial, div.model, div.test, div.status {
+	border: none;
+	text-align: center;
+}
+
+div.serial a, div.model a, div.test a, div.status a, div.account a {
+	display: block;
+	width: 3.5cm;
+}
+
+table.photo-icon {
+	float: right;
+}
+
+td.photo-icon {
+	width: 180px;
+	height: 180px;
+	border: 5px solid #DFDFDF;
+	text-align: center;
+	vertical-align: middle;
+	-moz-border-radius: 20px;
+}
+
+td.command-panel {
+	background: #DFDFDF;
+	padding: 10px;
+	-moz-border-radius: 20px;
+}
+
+td.command-panel a {
+	display: block;
+	width: 100%;
+	text-align: center;
+	-moz-border-radius: 20px;
+}
+
+td.command-panel a:hover {
+	background: rgb(192, 192, 255);
+}
+
+td.caption {
+	font-weight: bold;
+	padding-right: 1em;
+}
+
+td.HANG, td.FAIL {
+	background: rgb(255, 128, 128);
+}
+
+td.ATTN {
+	background: rgb(255, 255, 128);
+}
+
+td.DONE {
+	background: rgb(128, 255, 128);
+}
+
+h1 {
+	font-size: 125%;
+	margin: 0.2em 0em;
+	-moz-border-radius: 20px;
+	background: #DFDFDF;
+	padding: 0.2em 1em;
+}
+
+tr.testinfo {
+	font-size: 80%;
+}
+
+td.testinfo {
+	padding-right: 1em;
+}
+
+.notebook-group {
+	vertical-align: top;
+//	border: 5px solid #DFDFDF;
+//	padding: 5px;
+//	-moz-border-radius: 20px;
+}
+
+.warning {
+	text-align: center;
+	font-size: 300%;
+	background: rgb(255, 255, 128);
+	padding: 1em;
+	-moz-border-radius: 1em;
+}
+
+tr.monthly td {
+	background: rgb(220, 220, 255);
+}
+
+tr.weekend td {
+	background: rgb(255, 220, 220);
+}
+
+tr.weekday td {
+	background: rgb(220, 220, 255);
+}
+
+table.boxed {
+	border-collapse: collapse;
+}
+
+th {
+	background: #F0F0F0;
+}
+
+table.boxed td, table.boxed th {
+	border: 1px solid #606060;
+	border-collapse: collapse;
+	padding: 0em 0.5em;
+}
+

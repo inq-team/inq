@@ -1,0 +1,9 @@
+<h1>Editing component</h1>
+
+<% form_tag :action => 'update', :id => @component do %>
+  <%= render :partial => 'form' %>
+  <%= submit_tag 'Edit' %>
+<% end %>
+
+<%= link_to 'Show', :action => 'show', :id => @component %> |
+<%= link_to 'Back', :action => 'list' %>

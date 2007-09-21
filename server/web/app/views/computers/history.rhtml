@@ -1,0 +1,40 @@
+<table id="computer_organizational">
+<tr><th>Serial:</th><td><%=h @computer.serial_no %></td></tr>
+<tr><th>Model:</th><td><%=h @computer.model.name %></td></tr>
+<tr><th>Customer:</th><td><%=h @computer.customer.name %></td></tr>
+<tr><th>Doc no:</th><td><%=h @computer.doc_no %></td></tr>
+<tr><th>Shelf:</th><td><%=h @computer.shelf %></td></tr>
+</table>
+
+<table class="boxed">
+<tr>
+<th>ID</th>
+<th>Start</th>
+<th>End</th>
+<th>Length</th>
+<th>
+
+<% @computer.testings.each { |t| %>
+
+Testing <%=h t.test_start %> - <%=h t.test_end %> (length: <%=h (t.test_end - t.test_start) %>), using profile "<%=h t.profile_id %>"
+
+<table class="boxed">
+<tr>
+<th>Device</th>
+<th>Vendor</th>
+<th>Model</th>
+<th>Qty</th>
+<% t.components.each { |c| %>
+<tr>
+<td><%=h c.model.group.name %></td>
+<td><%=h c.model.vendor %></td>
+<td><%=h c.model.name %></td>
+<td><%=h c.hw_qty %></td>
+</tr>
+<% } %>
+</table>
+
+<% } %>
+
+<%= link_to 'Edit', :action => 'edit', :id => @computer %> |
+<%= link_to 'Back', :action => 'list' %>

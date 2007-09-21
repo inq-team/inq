@@ -1,0 +1,17 @@
+<h1>Editing order</h1>
+
+<%= error_messages_for :order %>
+
+<% form_for(:order, :url => order_path(@order), :html => { :method => :put }) do |f| %>
+  <p>
+    <b>Doc no</b><br />
+    <%= f.text_field :doc_no %>
+  </p>
+
+  <p>
+    <%= submit_tag "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', order_path(@order) %> |
+<%= link_to 'Back', orders_path %>

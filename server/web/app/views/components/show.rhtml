@@ -1,0 +1,8 @@
+<% for column in Component.content_columns %>
+<p>
+  <b><%= column.human_name %>:</b> <%=h @component.send(column.name) %>
+</p>
+<% end %>
+
+<%= link_to 'Edit', :action => 'edit', :id => @component %> |
+<%= link_to 'Back', :action => 'list' %>
