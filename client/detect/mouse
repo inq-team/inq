@@ -1,4 +1,5 @@
 #!/bin/sh
 
-mousescan >~/mousescan.log
-publish ~/mousescan.log
+MOUSE_MODEL=`mousescan | cut -f3 | sed 's/^"//;s/"$//'`
+
+add-component Mouse '' "$MOUSE_MODEL" ''

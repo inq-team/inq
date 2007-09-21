@@ -1,105 +1,11 @@
 #!/bin/sh
 
-if (lspci -n | grep -q 'Class 0c05: 1039:0016'); then
-	modprobe i2c-sis96x
-	I2C=1
-fi
-
-if (lspci -n | grep -q 'Class 0c05: 8086:24c3'); then
-	modprobe i2c-i801
-	I2C=1
-fi
-
-if (lspci -n | grep -q 'Class 0c05: 8086:266a'); then
-	modprobe i2c-i801
-	I2C=1
-fi
-
-# A8Wide VIA VT8235 ISA Bridge
-if (lspci -n | grep -q 'Class 0601: 1106:3177'); then
-	modprobe i2c-viapro
-	I2C=1
-fi
-
-# VIA VT8237 ISA Bridge
-if (lspci -n | grep -q 'Class 0601: 1106:3227'); then
-	modprobe i2c-viapro
-	I2C=1
-fi
-
-if [ "$I2C" == "1" ]; then
-	modprobe eeprom
-
-	rm -f ~/dimm-spd.log
-
-	for DEV in /sys/bus/i2c/devices/*; do
-		echo "Analyzing $DEV"
-		if [ -f $DEV/eeprom ]; then
-			if decode-dimm.rb $DEV/eeprom | grep -q 'Fundamental Memory type	DDR'; then
-				decode-dimm.rb $DEV/eeprom >~/dimm-spd1.log
-				cat ~/dimm-spd1.log >>~/dimm-spd.log
-				echo >>~/dimm-spd.log
-			else
-				echo "Skipping $DEV as non-DDR"
-			fi
-		fi
-	done
-
-	if [ -r ~/dimm-spd.log ]; then
-		MEM_SERIAL=`grep -a "Manufacturer's Part Number" ~/dimm-spd.log | sed "s/Manufacturer's Part Number	//g;" | ruby -e 'puts $stdin.readlines.collect { |x| x.chomp! }.join(", ")'`
-		echo "Memory PN	$MEM_SERIAL" >>~/SERIALS
-
-		publish ~/SERIALS
-		publish ~/dimm-spd.log
-
-		MEM_DDR=`sed -ne '/^Frequency Specification/ s/^Frequency Specification	\(.*\)$/\1/p;' <~/dimm-spd.log | head -n1`
-		MEM_SIZE=`sed -ne '/^Total Memory Size (MB)/ s/^Total Memory Size (MB)	\(.*\)$/\1/p;' <~/dimm-spd.log | ruby -e 'puts $stdin.readlines.collect { |x| x.chomp! }.join("+")'`
-		MEM_MANUFACTURER=`grep -a "Manufacturer's Name" ~/dimm-spd.log | cut -f2 | ruby -e 'puts $stdin.readlines.collect { |x| x.chomp! }.join("+")'`
-	fi
-fi
-
-# Calculate memory size only from DMI otherwise
-DMI_MEM_SIZE=`grep -A 10 'Memory Device$' ~/dmi.log | egrep -B 10 'Type: (SDRAM|DDR|DRAM)' | egrep 'Size: [0-9]' | sed 's/ //g;s/\t//g;s/Size://g;s/MB//g;'`
-if [ -z "$DMI_MEM_SIZE" ]; then
-	DMI_MEM_SIZE=`grep -A 13 'Memory Device$' ~/dmi.log | egrep -B 13 'Speed:.*MHz' | egrep 'Size: [0-9]' | sed 's/ //g;s/\t//g;s/Size://g;s/MB//g;'`
-fi
-
-# Workaround for Gigabyte 7VT600-P-RZ buggy DMI
-if [ -z "$DMI_MEM_SIZE" ]; then
-	DMI_MEM_SIZE=`grep -A 6 'Memory Device$' ~/dmi.log | egrep 'Size: [0-9]' | sed 's/ //g;s/\t//g;s/Size://g;s/MB//g;'`
-fi
-
-# UGLY HACK for Expert 910
-if [ "$PRODUCT_NAME" == "Expert_910" ]; then
-	DMI_MEM_SIZE=`cat /proc/meminfo | grep MemTotal: | awk '{printf("%.f", $2/1000 + 32);}' | sed 's/126/128/;s/516/512/;s/353/384/;s/938/1024/;'`
-fi
-
-DMI_MEM_SIZE=`echo $DMI_MEM_SIZE | sed 's/^224/256/'`
-echo "DMI_MEM_SIZE=$DMI_MEM_SIZE"
-DMI_MEM_SIZE="`echo $DMI_MEM_SIZE | ruby -e 'puts $stdin.read.gsub(/\n/, "+").gsub(/ /, "+").gsub(/\+$/, "")'` MB"
-
-echo "$DMI_MEM_SIZE" | grep -q '+' && DMI_MULTI=1
-echo "$MEM_SIZE" | grep -q '+' && SPD_MULTI=1
-
-echo "DMI_MEM_SIZE=$DMI_MEM_SIZE"
-echo "SPD_MEM_SIZE=$MEM_SIZE"
-
-echo "DMI_MULTI=$DMI_MULTI"
-echo "SPD_MULTI=$SPD_MULTI"
-
-if [ "$DMI_MULTI" == 1 -a "$SPD_MULTI" != 1 ]; then
-	MEM_SIZE=$DMI_MEM_SIZE
-	echo "Incomplete SPD, trusting DMI"
-fi
-
-if [ -z "$MEM_SIZE" ]; then
-	MEM_SIZE=$DMI_MEM_SIZE
-	echo "No SPD encountered, trusting DMI"
-fi
-
-if echo $MEM_MANUFACTURER | grep -q +; then
-	ruby -e 'mfg = ARGV[0].split(/[+]/); size = ARGV[1].gsub(/ MB/, "").split(/[+]/); ddr = ARGV[2]; serial = ARGV[3].split(/, /); mfg.each_index { |i| puts "Memory	#{mfg[i]}	#{size[i]} MB #{ddr}	#{serial[i]}" }' "$MEM_MANUFACTURER" "$MEM_SIZE" "$MEM_DDR" "$MEM_SERIAL" >>~/DEVICES
-else
-	echo "Memory	$MEM_MANUFACTURER	$MEM_SIZE $MEM_DDR	$MEM_SERIAL" >>~/DEVICES
-fi
-publish ~/DEVICES
+decode-dimms.pl | grep '^Decoding EEPROM: ' | while read L; do 
+	MEM_INFO=`decode-dimms.pl | grep -A 27 "^$L"`
+	MEM_SIZE=`echo "$MEM_INFO" | sed -ne '/^Size/{s/^Size *//;p}'`
+	MEM_SPEED=`echo "$MEM_INFO" | sed -ne '/Maximum module speed/{s/^Maximum module speed *//;p}'`
+	MEM_TYPE=`echo "$MEM_INFO" | sed -ne '/^Fundamental Memory type/{s/^Fundamental Memory type *//;p}'`
+	MEM_VENDOR=`echo "$MEM_INFO" | sed -ne '/^Manufacturer/{s/^Manufacturer *//;p}'`
+	MEM_SERIAL=`echo "$MEM_INFO" | sed -ne '/^Part Number/{s/^Part Number *//;p}'`
+	add-component Memory "$MEM_VENDOR" "$MEM_SIZE $MEM_SPEED $MEM_TYPE" "$MEM_SERIAL"
+done

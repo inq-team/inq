@@ -19,8 +19,8 @@ if hciconfig hci0 2>/dev/null | grep -q hci0; then
 	BT_ADDR=`cat ~/bluetooth.log | sed -ne '/BD Address: / s/^.*BD Address: \([0-9A-Z:]*\) .*$/\1/ p'`
 	echo "Bluetooth	$BT_VENDOR	$BT_PRODUCT ($BT_TYPE)	$BT_ADDR" >>~/DEVICES
 
-	publish ~/DEVICES
-	publish ~/bluetooth.log
+	cat ~/DEVICES
+	cat ~/bluetooth.log
 fi
 
 # Check for WiFi-Bluetooth combined PCI cards
@@ -32,5 +32,5 @@ if lspci -n | grep -q 'Class 0200: 17fe:2220'; then
 	echo "Bluetooth	$BT_VENDOR	$BT_PRODUCT	" >>~/DEVICES
 	echo "WiFi	$BT_VENDOR	$BT_PRODUCT	" >>~/DEVICES
 
-	publish ~/DEVICES
+	cat ~/DEVICES
 fi

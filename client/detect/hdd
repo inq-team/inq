@@ -1,47 +1,8 @@
 #!/bin/sh
 
-strip_vendor()
-{
-	if echo $HDD_MODEL | grep -q "^$1"; then
-		HDD_VENDOR=$2
-		HDD_MODEL=`echo $HDD_MODEL | sed "s/^$1//;"`
-	fi
-}
-
-detect_vendor()
-{
-	if echo $HDD_MODEL | grep -q "^$1"; then
-		HDD_VENDOR=$2
-	fi
-}
-
-for DISK in `storagescan | grep Disk | cut -f1`; do
-	smartctl -a /dev/$DISK >~/hdd1.log
-	cat ~/hdd1.log >>~/hdd.log
-
-	HDD_SERIAL=`grep -i 'Serial Number:' ~/hdd1.log | sed 's/Serial [Nn]umber: *//g;'`
-	HDD_MODEL=`grep 'Device Model:' ~/hdd1.log | sed 's/Device Model: *//g;'`
-
-	if [ -z "$HDD_MODEL" ]; then
-		HDD_MODEL=`grep 'Device:' ~/hdd1.log | sed 's/Device: ATA//g;s/Device: //g;s/Version:.*$//;s/^ *//g;s/ *$//g;'`
-	fi
-
-	echo $HDD_MODEL | grep -q '^ICSI' && continue
-
-	echo "HDD	$HDD_MODEL / $HDD_SERIAL" >>~/SERIALS
-
-	strip_vendor 'TOSHIBA ' Toshiba
-	strip_vendor 'HITACHI_' Hitachi
-	strip_vendor 'FUJITSU ' Fujitsu
-	strip_vendor 'SAMSUNG ' SAMSUNG
-	strip_vendor 'WDC ' WD
-	detect_vendor HT Hitachi
-	detect_vendor IC IBM
-	detect_vendor ST Seagate
-
-	echo "HDD	$HDD_VENDOR	$HDD_MODEL	$HDD_SERIAL" >>~/DEVICES
+raidcli -t lsi_megarc physical list | while read L; do
+	HDD_VENDOR=`echo "$L" | cut -f2 | cut -f1 -d' '`
+	HDD_MODEL=`echo "$L" | cut -f2 | cut -f2 -d' '`
+	HDD_SERIAL=`echo "$L" | cut -f4`
+	add-component HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL"
 done
-
-publish ~/hdd.log
-publish ~/SERIALS
-publish ~/DEVICES
