@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+require 'socket'
+
+# Listen for a connection on @@WAIT_STRING_PORT@@
+f = TCPServer.new(@@WAIT_STRING_PORT@@).accept
+
+# Send ARGV[0] to someone who will connect there
+f.puts ARGV[0] if ARGV[0]
+
+# Execute ARGV[1] command
+system(ARGV[1]) if ARGV[1]
+
+# Wait for a string, receive it and return it
+puts f.gets
+f.close

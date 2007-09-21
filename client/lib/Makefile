@@ -1,5 +1,5 @@
 #SUBDIRS=alert hide-mouse memtest pci-patch wait-serial watchdog inquisitor thermometer
-SUBDIRS=memtest watchdog
+SUBDIRS=memtest watchdog wait-string
 
 include ../../Makefile.config
 
