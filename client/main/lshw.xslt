@@ -9,15 +9,25 @@
 	</list>
 </xsl:template>
 
-<xsl:template match="//node[@class='processor']">
+
+<xsl:template match="//node[description='Motherboard']">
+	<component>
+		<type>Motherboard</type>
+		<vendor><xsl:value-of select="vendor"/></vendor>
+		<model><xsl:value-of select="product"/></model>
+	</component>
+	<xsl:apply-templates/>
+</xsl:template>
+
+<xsl:template match="//node[description='CPU']">
 	<component>
 		<type>CPU</type>
 		<vendor><xsl:value-of select="vendor"/></vendor>
 		<model><xsl:value-of select="product"/></model>
-	</component>
+	</component>	
 </xsl:template>
 
-<xsl:template match="//node[@class='display']">
+<xsl:template match="//node[description='VGA compatible controller']">
 	<component>
 		<type>Video</type>
 		<vendor><xsl:value-of select="vendor"/></vendor>
@@ -25,7 +35,7 @@
 	</component>
 </xsl:template>
 
-<xsl:template match="//node[@class='network']">
+<xsl:template match="//node[description='Ethernet interface']">
 	<component>
 		<type>NIC</type>
 		<vendor><xsl:value-of select="vendor"/></vendor>
@@ -33,6 +43,23 @@
 		<serial><xsl:value-of select="serial"/></serial>
 	</component>
 </xsl:template>
+
+<xsl:template match="//node[description='USB Controller']">
+	<component>
+		<type>USB Controller</type>
+		<vendor><xsl:value-of select="vendor"/></vendor>
+		<model><xsl:value-of select="product"/></model>
+	</component>
+</xsl:template>
+
+<xsl:template match="//node[description='FireWire (IEEE 1394)']">
+	<component>
+		<type>Fire Wire</type>
+		<vendor><xsl:value-of select="vendor"/></vendor>
+		<model><xsl:value-of select="product"/></model>
+	</component>
+</xsl:template>
+
 
 <xsl:template match="text()"/>
 
