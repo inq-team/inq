@@ -2,5 +2,5 @@
 
 hal-find-by-property --key storage.drive_type --string cdrom | while read L; do
 	OSD_MODEL=`hal-get-property --udi $L --key storage.model`
-	add-component OSD "" "$OSD_MODEL" ""
+	$SHARE_DIR/add-component OSD "" "$OSD_MODEL" ""
 done 
