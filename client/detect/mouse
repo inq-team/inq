@@ -2,4 +2,4 @@
 
 MOUSE_MODEL=`mousescan | cut -f3 | sed 's/^"//;s/"$//'`
 
-add-component Mouse '' "$MOUSE_MODEL" ''
+$SHARE_DIR/add-component Mouse '' "$MOUSE_MODEL" ''
