@@ -1,0 +1,7 @@
+#!/bin/sh
+
+. /etc/inquisitor/global
+
+for I in $SHARE_DIR/detect/*; do
+	. $I
+done
