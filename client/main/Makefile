@@ -11,7 +11,7 @@ ifdef $(INIT)
 	install -m644 init $(DESTDIR)$(SHARE_DIR)
 endif
 	install -m644 global $(DESTDIR)$(ETC_DIR)
-	install -m755 run-detects $(DESTDIR)$(BIN_DIR)
+	install -m755 add-component $(DESTDIR)$(SHARE_DIR)
 
 clean:
 	rm -f global

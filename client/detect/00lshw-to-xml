@@ -1,0 +1,5 @@
+#!/bin/sh
+
+lshw -xml | xsltproc $SHARE_DIR/lshw.xslt - > ~/components.xml
+
+ 

@@ -1,4 +1,0 @@
-#!/bin/sh
-
-lspci |grep USB >~/usb.log
-publish ~/usb.log

@@ -1,0 +1,34 @@
+#!/usr/bin/env ruby
+
+require 'rexml/document'
+
+type = REXML::Element.new 'type'
+type.text = ARGV[0]
+
+vendor = REXML::Element.new 'vendor'
+vendor.text = ARGV[1]
+
+model = REXML::Element.new 'model'
+model.text = ARGV[2]
+
+serial = REXML::Element.new 'serial'
+serial.text = ARGV[3]
+
+comp = REXML::Element.new 'component'
+comp.add_element type
+comp.add_element vendor
+comp.add_element model
+comp.add_element serial
+
+begin
+	doc = REXML::Document.new(File.new('~/components.xml'))
+rescue Errno::ENOENT
+	doc = REXML::Document.new
+	doc.add_element(REXML::Element.new('list'))
+end
+
+doc.root.add_element comp
+
+File.open('~/components.xml', 'w') { |f|
+	doc.write f
+}
