@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+COMP_FILE = "#{ENV['HOME']}/components.xml"
+
 require 'rexml/document'
 
 type = REXML::Element.new 'type'
@@ -21,7 +23,7 @@ comp.add_element model
 comp.add_element serial
 
 begin
-	doc = REXML::Document.new(File.new('~/components.xml'))
+	doc = REXML::Document.new(File.new(COMP_FILE))
 rescue Errno::ENOENT
 	doc = REXML::Document.new
 	doc.add_element(REXML::Element.new('list'))
@@ -29,6 +31,6 @@ end
 
 doc.root.add_element comp
 
-File.open('~/components.xml', 'w') { |f|
+File.open(COMP_FILE, 'w') { |f|
 	doc.write f
 }
