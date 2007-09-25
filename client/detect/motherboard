@@ -1,6 +1,0 @@
-#!/bin/sh
-
-MB_MANUFACTURER=`echo $MANUFACTURER2 | sed 's/TechnologyCo.,Ltd.//g;s/MICRO-STARINTERNATIONALCO.,LTD/MSI/g;'`
-
-echo "Motherboard	$MB_MANUFACTURER	$PRODUCT_NAME2	" >>~/DEVICES
-publish ~/DEVICES
