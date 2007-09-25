@@ -12,6 +12,7 @@ ifdef $(INIT)
 endif
 	install -m644 global $(DESTDIR)$(ETC_DIR)
 	install -m755 add-component $(DESTDIR)$(SHARE_DIR)
+	install -m755 inq-detect $(DESTDIR)$(BIN_DIR)
 
 clean:
 	rm -f global
