@@ -19,6 +19,7 @@ xdelta1
 udev
 hotplug
 openssh-clients
+openssh-server
 xorg-x11-drv-ati
 xorg-x11-drv-sis
 xorg-x11-drv-s3
@@ -84,3 +85,4 @@ dialog
 #doom3demo
 #ut2004demo
 synaptics
+lshw
