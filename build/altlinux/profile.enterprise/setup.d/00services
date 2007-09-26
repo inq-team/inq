@@ -1,7 +1,4 @@
-$in_chroot /sbin/chkconfig hotplug on ||:
-$in_chroot /sbin/chkconfig udevd on ||:
-$in_chroot /sbin/chkconfig hal on ||:
-$in_chroot /sbin/chkconfig messagebus on ||:
-$in_chroot /sbin/chkconfig ntpd on ||:
-$in_chroot /sbin/chkconfig pcmcia on ||:
-$in_chroot find $ROOT/etc/rc.d/ -name \*smartd | xargs rm -f --
+/sbin/chkconfig udevd on
+/sbin/chkconfig hal on
+/sbin/chkconfig messagebus on
+/sbin/chkconfig ntpd on

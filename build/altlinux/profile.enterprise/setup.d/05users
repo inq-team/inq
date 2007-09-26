@@ -1,4 +1,0 @@
-$in_chroot /usr/sbin/usermod -d /home root
-$in_chroot /bin/cp -fr $ROOT/root/* $ROOT/root/.[a-z]* $ROOT/home/
-$in_chroot /usr/sbin/groupadd -r -f messagebus >/dev/null 2>&1 ||:
-$in_chroot /usr/sbin/useradd -r -n -g messagebus -d /var/run/dbus -s /dev/null messagebus >/dev/null 2>&1 ||:

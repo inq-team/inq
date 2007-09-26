@@ -1,7 +1,3 @@
-$in_chroot ln -sf inquisitor/remounttab /etc/
-$in_chroot ln -sf inquisitor/overlaytab /etc/
-$in_chroot ln -sf inquisitor/pci.ids /usr/share/
-$in_chroot subst 's|mount\ -n\ -tmini_fo\ -o\ dir=\$mntpt\,dir2=\/mnt\/root/\$mntpt\ \$mntpt\ \$mntpt|mount -n -t unionfs -o dirs=/mnt/root/$mntpt=rw:$mntpt=ro null $mntpt|g' /etc/init.d/functions
-$in_chroot echo "XROOTWARN=no" > $ROOT/etc/sysconfig/xinitrc
-$in_chroot subst 's,^\(PCIC=$\),\1\yenta_socket,' /etc/sysconfig/pcmcia
-$in_chroot subst 's,PCMCIA=no,PCMCIA=yes,' /etc/sysconfig/pcmcia
+ln -sf inquisitor/remounttab /etc/
+ln -sf inquisitor/overlaytab /etc/
+#ln -sf inquisitor/pci.ids /usr/share/
