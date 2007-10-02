@@ -20,9 +20,10 @@
 <tr valign="top">
 <td>
 <div class="menu">
-<%= link_to 'Running now', :action => 'now' %> &bull;
-<%= link_to 'Archive', :action => 'archive' %> &bull;
-<%= link_to 'Statistics', :action => 'stats' %>
+<%= link_to 'Orders', :controller => 'orders' %> &bull;
+<%= link_to 'Running now', :controller => 'computers', :action => 'now' %> &bull;
+<%= link_to 'Archive', :controller => 'computers', :action => 'archive' %> &bull;
+<%= link_to 'Statistics', :controller => 'computers', :action => 'stats' %>
 </div>
 </td>
 </tr>
