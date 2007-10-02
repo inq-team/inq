@@ -1,8 +1,10 @@
 #!/bin/sh
 
-raidcli -t lsi_megarc physical list | while read L; do
-	HDD_VENDOR=`echo "$L" | cut -f2 | cut -f1 -d' '`
-	HDD_MODEL=`echo "$L" | cut -f2 | cut -f2 -d' '`
-	HDD_SERIAL=`echo "$L" | cut -f4`
-	add-component HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL"
+einarc -t lsi_megarc physical list | while read L; do
+	if [ -n "$L" ]; then
+		HDD_VENDOR=`echo "$L" | cut -f2 | cut -f1 -d' '`
+		HDD_MODEL=`echo "$L" | cut -f2 | cut -f2 -d' '`
+		HDD_SERIAL=`echo "$L" | cut -f4`
+		add-component HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL"
+	fi
 done
