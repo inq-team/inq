@@ -66,8 +66,6 @@ class ComputersController < ApplicationController
 
 	def update
 		@computer = Computer.find(params[:id])
-		puts params[:id]
-		p params[:computer]
 		if @computer.update_attributes(params[:computer])
 			flash[:notice] = 'Computer was successfully updated.'
 			format.html { redirect_to :action => 'show', :id => @computer }
@@ -79,6 +77,7 @@ class ComputersController < ApplicationController
 	end
 
 	def submit_components
+		#serial_no = 4431, id = 4363
 		@computer = Computer.find(params[:id])
 		d = REXML::Document.new(params[:list])
 		components = []
@@ -90,7 +89,28 @@ class ComputersController < ApplicationController
 				:serial => c.elements['serial'] ? c.elements['serial'].text : ''
 			}
 		}
-		p components
+
+		testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }.last
+		unless testing && testing.components.inject(true) { |b, cmp| b && components.find() { |h| (h[:vendor] == cmp.model.vendor && h[:model] == cmp.model.name ) || h[:serial] == cmp.hw_serial } }
+			testing = Testing.new do |t|
+				t.test_start = Time.new
+				t.components = components.collect { |h| Component.new(:hw_serial => h[:serial], :model => (ComponentModel.find_or_create_by_name_and_vendor(h[:model], h[:vendor]))) }
+			end
+			@computer.testings << testing
+		end
+
+		if @computer.save
+			flash[:notice] = 'Components successfully updated.'
+			respond_to() do |format|
+				format.html { render(:action => 'latest') }
+				format.xml { render(:xml => testing.to_xml(:include => :components)) }
+			end
+		else
+			respond_to() do |format|
+				format.html { redirect_to(:action => 'show', :id => @computer) }
+				format.xml { render(:xml => @compter.errors.to_xml()) }
+			end
+		end
 	end
 
 	def destroy
