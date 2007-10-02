@@ -1,25 +1,23 @@
 class OrdersController < ApplicationController
-  # GET /orders
-  # GET /orders.xml
-  def index
-    @orders = Order.find(:all)
+	# GET /orders
+	# GET /orders.xml
+	def index
+		@orders = Order.find(:all)
+		respond_to do |format|
+			format.html # index.rhtml
+			format.xml  { render :xml => @orders.to_xml }
+		end
+	end
 
-    respond_to do |format|
-      format.html # index.rhtml
-      format.xml  { render :xml => @orders.to_xml }
-    end
-  end
-
-  # GET /orders/1
-  # GET /orders/1.xml
-  def show
-    @order = Order.find(params[:id])
-
-    respond_to do |format|
-      format.html # show.rhtml
-      format.xml  { render :xml => @order.to_xml }
-    end
-  end
+	# GET /orders/1
+	# GET /orders/1.xml
+	def show
+		@order = Order.find(params[:id])
+		respond_to do |format|
+			format.html # show.rhtml
+			format.xml  { render :xml => @order.to_xml(:include => [:order_lines, :manager]) }
+		end
+	end
 
   # GET /orders/new
   def new
@@ -48,22 +46,22 @@ class OrdersController < ApplicationController
     end
   end
 
-  # PUT /orders/1
-  # PUT /orders/1.xml
-  def update
-    @order = Order.find(params[:id])
-
-    respond_to do |format|
-      if @order.update_attributes(params[:order])
-        flash[:notice] = 'Order was successfully updated.'
-        format.html { redirect_to order_url(@order) }
-        format.xml  { head :ok }
-      else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @order.errors.to_xml }
-      end
-    end
-  end
+	# PUT /orders/1
+	# PUT /orders/1.xml
+	def update
+		@order = Order.find(params[:id])
+		p params[:order]
+		respond_to do |format|
+			if @order.update_order(params[:order])
+				flash[:notice] = 'Order was successfully updated.'
+				format.html { redirect_to order_url(@order) }
+				format.xml  { head :ok }
+			else
+				format.html { render :action => "edit" }
+				format.xml  { render :xml => @order.errors.to_xml }
+			end
+		end
+	end
 
   # DELETE /orders/1
   # DELETE /orders/1.xml
