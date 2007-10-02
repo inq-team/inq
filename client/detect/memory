@@ -1,13 +1,15 @@
 #!/bin/sh
 
 decode-dimms.pl | grep '^Decoding EEPROM: ' | while read L; do 
-	MEM_INFO=`decode-dimms.pl | grep -A 27 "^$L"`
-	MEM_SIZE=`echo "$MEM_INFO" | sed -ne '/^Size/{s/^Size *//;s/ *$//;p}'`
-	MEM_SPEED=`echo "$MEM_INFO" | sed -ne '/Maximum module speed/{s/^Maximum module speed *//;s/ *$//;p}'`
-	MEM_TYPE=`echo "$MEM_INFO" | sed -ne '/^Fundamental Memory type/{s/^Fundamental Memory type *//;s/ *$//;p}'`
-	MEM_VENDOR=`echo "$MEM_INFO" | sed -ne '/^Manufacturer/{s/^Manufacturer *//;s/ *$//;p}'`
-	MEM_SERIAL=`echo "$MEM_INFO" | sed -ne '/^Part Number/{s/^Part Number *//;s/ *$//;p}'`
-	$SHARE_DIR/add-component Memory "$MEM_VENDOR" "$MEM_SIZE $MEM_SPEED $MEM_TYPE" "$MEM_SERIAL"
+	if [ -n "$L" ]; then
+		MEM_INFO=`decode-dimms.pl | grep -A 27 "^$L"`
+		MEM_SIZE=`echo "$MEM_INFO" | sed -ne '/^Size/{s/^Size *//;s/ *$//;p}'`
+		MEM_SPEED=`echo "$MEM_INFO" | sed -ne '/Maximum module speed/{s/^Maximum module speed *//;s/ *$//;p}'`
+		MEM_TYPE=`echo "$MEM_INFO" | sed -ne '/^Fundamental Memory type/{s/^Fundamental Memory type *//;s/ *$//;p}'`
+		MEM_VENDOR=`echo "$MEM_INFO" | sed -ne '/^Manufacturer/{s/^Manufacturer *//;s/ *$//;p}'`
+		MEM_SERIAL=`echo "$MEM_INFO" | sed -ne '/^Part Number/{s/^Part Number *//;s/ *$//;p}'`
+		$SHARE_DIR/add-component Memory "$MEM_VENDOR" "$MEM_SIZE $MEM_SPEED $MEM_TYPE" "$MEM_SERIAL"
+	fi
 done
 
 
