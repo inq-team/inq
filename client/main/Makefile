@@ -9,7 +9,7 @@ install:
 	install -m755 inquisitor $(DESTDIR)$(BIN_DIR)
 	install -m644 functions outformat lshw.xslt $(DESTDIR)$(SHARE_DIR)
 	if [ -n "$(INIT)" ]; then install -m644 init $(DESTDIR)$(SHARE_DIR); fi
-	install -m644 global $(DESTDIR)$(ETC_DIR)
+	install -m644 global overlaytab remounttab $(DESTDIR)$(ETC_DIR)
 	install -m755 add-component $(DESTDIR)$(SHARE_DIR)
 	install -m755 inq-detect $(DESTDIR)$(BIN_DIR)
 
