@@ -1,9 +1,12 @@
+.EXPORT_ALL_VARIABLES:
+
 #SUBDIRS=alert hide-mouse memtest pci-patch wait-serial watchdog inquisitor thermometer
-SUBDIRS=memtest watchdog wait-string
+SUBDIRS=memtest watchdog wait-string einarc
 
 include ../../Makefile.config
 
 all:
+	cd einarc && ./configure && cd ..
 	for I in $(SUBDIRS); do $(MAKE) -C $$I all; done
 
 install:
