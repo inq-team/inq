@@ -4,46 +4,48 @@ mount -n -t proc proc /proc
 mount -n -t sysfs sysfs /sys
 
 . /etc/inquisitor/global
-. $LIB_DIR/functions
 
 # Remount read-write
 REMOUNTTAB=/etc/remounttab
-LIVETAB=/etc/overlaytab
 if [ -s $REMOUNTTAB ]; then
-	grep -ve '^\(#\|\$\)' $REMOUNTTAB |while read mntpt rest; do
-	if [ -d $mntpt ]; then
-		[ -z "$rest" ] || rest="-o $rest"
-		echo -n "Remounting $mntpt read/write:"
-		(cd $mntpt && tar cp --same-owner --same-permissions . 2> /dev/null) |\
-		(mount -n -ttmpfs $rest /dev/shm $mntpt && tar xp -C $mntpt/ 2>/dev/null) && echo_success || echo_failure
-	fi
+	grep -ve '^\(#\|\$\)' $REMOUNTTAB | while read mntpt rest; do
+		if [ -d $mntpt ]; then
+			[ -z "$rest" ] || rest="-o $rest"
+			echo -n "Remounting $mntpt read/write:"
+			(cd $mntpt && tar cp --same-owner --same-permissions . 2> /dev/null) |\
+			(mount -n -ttmpfs $rest /dev/shm $mntpt && tar xp -C $mntpt/ 2>/dev/null) && echo_success || echo_failure
+		fi
 	done
-		if [ -s $LIVETAB ]; then
-		grep -ve '^\(#\|\$\)' $LIVETAB |while read mntpt; do
-			if [ -d $mntpt ]; then
-				mkdir -p /mnt/root/$mntpt
-				echo -n "Remounting $mntpt to overlay:"
-				mount -n -t unionfs -o dirs=/mnt/root/$mntpt=rw:$mntpt=ro null $mntpt && echo_success || echo_failure
-			fi
-		done
-	fi
 fi
 
-modprobe -a ide-core atiixp ide-generic ide-disk ide-cd
-modprobe thermal
+LIVETAB=/etc/overlaytab
+if [ -s $LIVETAB ]; then
+	grep -ve '^\(#\|\$\)' $LIVETAB |while read mntpt; do
+		if [ -d $mntpt ]; then
+			mkdir -p /mnt/root/$mntpt
+			echo -n "Remounting $mntpt to overlay:"
+			mount -n -t unionfs -o dirs=/mnt/root/$mntpt=rw:$mntpt=ro null $mntpt && echo_success || echo_failure
+		fi
+	done
+fi
+
+#modprobe -a ide-core atiixp ide-generic ide-disk ide-cd
+#modprobe thermal
+
+export PATH=$PATH:/usr/sbin:/sbin
 
 /sbin/service udevd start
-/sbin/depmod
-/sbin/service hotplug start
+/sbin/service messagebus start
+/sbin/service haldaemon start
 
-rm -f /etc/passwd || fatal_failure 'Preparting initialization'
-rm -f /etc/group || fatal_failure 'Preparting initialization'
+#rm -f /etc/passwd || fatal_failure 'Preparing initialization'
+#rm -f /etc/group || fatal_failure 'Preparing initialization'
 
-touch -t 197001010000.00 /etc/modules.conf
+#touch -t 197001010000.00 /etc/modules.conf
 
-echo 'root:x:0:0::/home:/bin/bash' >/etc/passwd || fatal_failure 'Preparing /etc/passwd (root)'
-echo 'ntpd:x:113:57::/dev/null:/dev/null' >>/etc/passwd || fatal_failure 'Preparing /etc/passwd (ntpd)'
-echo 'root:x:0:root' >/etc/group || fatal_failure 'Preparing /etc/group'
-echo -n >/etc/fstab || fatal_failure 'Make null /etc/fstab'
+#echo 'root:x:0:0::/home:/bin/bash' >/etc/passwd || fatal_failure 'Preparing /etc/passwd (root)'
+#echo 'ntpd:x:113:57::/dev/null:/dev/null' >>/etc/passwd || fatal_failure 'Preparing /etc/passwd (ntpd)'
+#echo 'root:x:0:root' >/etc/group || fatal_failure 'Preparing /etc/group'
+#echo -n >/etc/fstab || fatal_failure 'Make null /etc/fstab'
 
 setterm -powersave off
