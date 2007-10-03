@@ -19,6 +19,7 @@ xdelta1
 udev
 hotplug
 openssh-clients
+openssh-server
 xorg-x11-drv-ati
 xorg-x11-drv-sis
 xorg-x11-drv-s3
@@ -33,6 +34,7 @@ mount
 portmap
 #libggi
 ruby
+ruby-stdlibs
 console-tools
 procmail
 dosfstools
@@ -64,7 +66,7 @@ eject
 less
 mc
 ratpoison
-#inquisitor-client
+inquisitor-client
 syslogd
 klogd
 shadow-utils
@@ -85,3 +87,5 @@ dialog
 #ut2004demo
 synaptics
 lshw
+xsltproc
+lm_sensors
