@@ -1,10 +1,23 @@
 #!/bin/sh -ef
 
 . /etc/inquisitor/global
-[ -r $SHARE_DIR/init ] && . $SHARE_DIR/init
 . $SHARE_DIR/functions
+[ -r $SHARE_DIR/init ] && . $SHARE_DIR/init
 
-. $SHARE_DIR/self-id
+# Try various methods for self-id, stop after successful one
+COMPUTER_ID=
+for I in $SHARE_DIR/self-id/*; do
+	echo -n "Trying self-id using $I"
+	. $I
+	if [ -n "$COMPUTER_ID" ]; then
+		echo_success
+		break
+	else
+		echo_failure
+	fi
+done
+
+[ -n "$COMPUTER_ID" ] || fatal_failure 'Self-identification'
 
 #if [ -x /sbin/splash ]; then
 #ifndef INIT

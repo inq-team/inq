@@ -1,3 +1,5 @@
+.EXPORT_ALL_VARIABLES:
+
 include ../Makefile.config
 include ../flavour/$(FLAVOUR)
 
@@ -22,12 +24,13 @@ install:
 	mkdir -p \
 		$(DESTDIR)$(SHARE_DIR)/detect \
 		$(DESTDIR)$(SHARE_DIR)/test \
-		$(DESTDIR)$(SHARE_DIR)/monitoring
+		$(DESTDIR)$(SHARE_DIR)/monitoring \
+		$(DESTDIR)$(SHARE_DIR)/self-id
 	find detect -type f -and ! -path '*.svn*' | xargs install -m644 -t $(DESTDIR)$(SHARE_DIR)/detect/
 	find test -type f -and ! -path '*.svn*' | xargs install -m644 -t $(DESTDIR)$(SHARE_DIR)/test/
 	find monitoring -type f -and ! -path '*.svn*' | xargs install -m644 -t $(DESTDIR)$(SHARE_DIR)/monitoring/
 	install -m644 communication/$(COMMUNICATION) $(DESTDIR)$(SHARE_DIR)/communication
-	install -m644 self-id/$(SELF_ID) $(DESTDIR)$(SHARE_DIR)/self-id
+	N=0; echo $(SELF_ID): | while read -d: I; do install -m644 self-id/$$I $(DESTDIR)$(SHARE_DIR)/self-id/$$N$$I; N=$$[$$N+1]; done
 
 clean:
 	$(MAKE) -C lib clean

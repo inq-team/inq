@@ -1,2 +1,5 @@
 #!/bin/sh -ef
 
+echo "Enter serial number: "
+read COMPUTER_ID
+export COMPUTER_ID
