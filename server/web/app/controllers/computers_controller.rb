@@ -91,12 +91,11 @@ class ComputersController < ApplicationController
 		}
 		ccp = components.dup
 
+		errors = []
 		testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }.last
 		unless testing && testing.components.size == components.size && testing.components.inject(true) { |b, cmp| b && ccp.delete(ccp.find() { |h| (h[:vendor] == cmp.model.vendor && h[:model] == cmp.model.name) || (!h[:serial].blank? && h[:serial] == cmp.hw_serial)  }) }
-			testing = Testing.new do |t|
-				t.test_start = Time.new
-				t.components = components.collect { |h| Component.new(:hw_serial => h[:serial], :model => (ComponentModel.find_or_create_by_name_and_vendor(h[:model], h[:vendor]))) }
-			end
+			# BAD: component_group_id column used here directly
+			testing = Testing.new(:test_start => Time.new(), :components => components.collect() { |h| Component.new(:hw_serial => h[:serial], :model => ComponentModel.find_or_initialize_by_name_and_vendor_and_component_group_id(h[:model], h[:vendor], ComponentGroup.find_or_create_by_name(h[:type]).id)) })
 			@computer.testings << testing
 		end
 
@@ -112,6 +111,10 @@ class ComputersController < ApplicationController
 				format.xml { render(:xml => @compter.errors.to_xml()) }
 			end
 		end
+	end
+
+	def id_from_macs
+		@macs = params[:macs]
 	end
 
 	def destroy
