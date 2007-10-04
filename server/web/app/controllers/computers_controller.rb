@@ -89,9 +89,10 @@ class ComputersController < ApplicationController
 				:serial => c.elements['serial'] ? c.elements['serial'].text : ''
 			}
 		}
+		ccp = components.dup
 
 		testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }.last
-		unless testing && testing.components.inject(true) { |b, cmp| b && components.find() { |h| (h[:vendor] == cmp.model.vendor && h[:model] == cmp.model.name ) || h[:serial] == cmp.hw_serial } }
+		unless testing && testing.components.size == components.size && testing.components.inject(true) { |b, cmp| b && ccp.delete(ccp.find() { |h| (h[:vendor] == cmp.model.vendor && h[:model] == cmp.model.name) || (!h[:serial].blank? && h[:serial] == cmp.hw_serial)  }) }
 			testing = Testing.new do |t|
 				t.test_start = Time.new
 				t.components = components.collect { |h| Component.new(:hw_serial => h[:serial], :model => (ComponentModel.find_or_create_by_name_and_vendor(h[:model], h[:vendor]))) }
@@ -103,7 +104,7 @@ class ComputersController < ApplicationController
 			flash[:notice] = 'Components successfully updated.'
 			respond_to() do |format|
 				format.html { render(:action => 'latest') }
-				format.xml { render(:xml => testing.to_xml(:include => :components)) }
+				format.xml { render(:xml => testing.to_xml()) }
 			end
 		else
 			respond_to() do |format|
