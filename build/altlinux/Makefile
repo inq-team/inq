@@ -26,12 +26,12 @@ build-root:
 	if [ -d $(REPO_HUGE) ]; then echo "rpm file:$(REPO_HUGE) $(TARGET) huge" >>$(WORKDIR)/aptbox/etc/apt/sources.list; fi
 	spt-init-chroot -w $(WORKDIR)
 	spt-make-chroot -w $(WORKDIR)
+	spt-run-scripts -w $(WORKDIR)
 
 build-huge:
 	genbasedir --create --topdir $(REPO_HUGE) $(TARGET) huge
 
 build-boot:
-	spt-run-scripts -w $(WORKDIR)
 	spt-boot-propagator -w $(WORKDIR)
 
 build-live:
