@@ -7,8 +7,9 @@
 </table>
 
 <% t = @testing %>
-
+<% if t.test_start and t.test_end then %>
 Testing <%=h t.test_start %> - <%=h t.test_end %> (length: <%=h (t.test_end - t.test_start) %>), using profile "<%=h t.profile_id %>"
+<% end %>
 
 <table id="computer_components">
 <tr>
