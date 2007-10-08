@@ -1,6 +1,7 @@
 PACKAGE_NAME=inquisitor-client
 PACKAGE_VERSION=1.0
 PACKAGE_RELEASE=alt1
+PACKAGE_RPM=$(PACKAGE_NAME)-$(PACKAGE_VERSION)-$(PACKAGE_RELEASE).$(TARGET).rpm
 
 # Local build paths
 RPM_BUILD_DIR=$(HOME)
@@ -14,7 +15,7 @@ build-package:
 	rm -f $(RPM_BUILD_DIR)/RPM/SOURCES/$(PACKAGE_NAME).tar
 	tar -cf $(RPM_BUILD_DIR)/RPM/SOURCES/$(PACKAGE_NAME).tar client flavour Makefile.config
 	rpmbuild -bb --target=$(TARGET) $(RPM_BUILD_DIR)/RPM/SPECS/$(PACKAGE_NAME).spec
-	mv -f $(RPM_BUILD_DIR)/RPM/RPMS/$(TARGET)/$(PACKAGE_NAME)-$(PACKAGE_VERSION)-$(PACKAGE_RELEASE).$(TARGET).rpm $(REPO)/$(TARGET)/RPMS.hasher/
+	mv -f $(RPM_BUILD_DIR)/RPM/RPMS/$(TARGET)/$(PACKAGE_RPM) $(REPO)/$(TARGET)/RPMS.hasher/
 	genbasedir --create --topdir $(REPO) $(TARGET) hasher
 
 build-root:
@@ -40,6 +41,13 @@ build-live:
 
 update-package:
 	if hsh-run $(WORKDIR) -- rpm -q $(PACKAGE_NAME); then hsh-run --rooter $(WORKDIR) -- rpm -e $(PACKAGE_NAME); fi
-	cp $(REPO)/$(TARGET)/RPMS.hasher/$(PACKAGE_NAME)-$(PACKAGE_VERSION)-$(PACKAGE_RELEASE).$(TARGET).rpm $(WORKDIR)/$(ROOTDIR)
-	hsh-run --rooter $(WORKDIR) -- rpm -U /$(PACKAGE_NAME)-$(PACKAGE_VERSION)-$(PACKAGE_RELEASE).$(TARGET).rpm
-	rm -f $(WORKDIR)/$(ROOTDIR)/$(PACKAGE_NAME)-$(PACKAGE_VERSION)-$(PACKAGE_RELEASE).$(TARGET).rpm
+	cp $(REPO)/$(TARGET)/RPMS.hasher/$(PACKAGE_RPM) $(WORKDIR)/$(ROOTDIR)
+	hsh-run --rooter $(WORKDIR) -- rpm -U /$(PACKAGE_RPM)
+	rm -f $(WORKDIR)/$(ROOTDIR)/$(PACKAGE_RPM)
+
+update-package-remote:
+	scp $(REPO)/$(TARGET)/RPMS.hasher/$(PACKAGE_RPM) $(DEPLOY_HOST):
+	ssh $(DEPLOY_HOST) -- sudo mv $(PACKAGE_RPM) $(DEPLOY_PATH)
+	ssh $(DEPLOY_HOST) -- sudo chroot $(DEPLOY_PATH) rpm -e $(PACKAGE_NAME) || true
+	ssh $(DEPLOY_HOST) -- sudo chroot $(DEPLOY_PATH) rpm -U /$(PACKAGE_RPM)
+	ssh $(DEPLOY_HOST) -- sudo rm -f $(DEPLOY_PATH)/$(PACKAGE_RPM)
