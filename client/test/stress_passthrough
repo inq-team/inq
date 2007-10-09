@@ -1,0 +1,22 @@
+#!/bin/sh
+# NAME=Stress_passthrough
+# DESCRIPTION=Stress test passthrough
+# DESTROYS_HDD=Y
+# IS_INTERACTIVE=N
+# POWEROFF_DURING_TEST=N
+
+. /usr/share/inquisitor/functions-test
+
+./additional/stress-build &
+
+BGPID=$!
+BGPID=`ps -ef | grep 'stress-build' | head -n1 | sed 's/^[^0-9]*\([0-9]\+\)[^0-9].*$/\1/'`
+echo "PID=$BGPID"
+
+if ! ./additional/hdd-passthrough.rb; then
+	kill $BGPID
+	test_failed
+fi
+
+wait $BGPID
+test_success

@@ -1,7 +1,16 @@
 #!/bin/sh
-pushd $HOME
-memtest all 1 -l || (publish memtest.log; popd; test_failed_file)
+# NAME=Memory
+# DESCRIPTION=Memory test
+# DESTROYS_HDD=N
+# IS_INTERACTIVE=N
+# POWEROFF_DURING_TEST=N
 
-publish memtest.log
-popd
-test_ok_file
+. /usr/share/inquisitor/functions-test
+
+TOTAL_MEMORY=$[(`cat /proc/meminfo | grep MemTotal | awk '{print $2}'` / 1024)-16]
+
+memtester $TOTAL_MEMORY 1 > memtest.log
+
+publish_log memtest
+
+test_success

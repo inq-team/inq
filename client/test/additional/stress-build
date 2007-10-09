@@ -1,0 +1,68 @@
+#!/bin/sh -e
+# NAME=Stress_build
+# DESCRIPTION=Stress test kernel building
+# DESTROYS_HDD=N
+# IS_INTERACTIVE=N
+# POWEROFF_DURING_TEST=N
+# VAR=STRESS_BUILD_DEVICE:str:Device which will be used for kernel building in it
+# VAR=STRESS_BUILD_TIMEOUT:int:No description
+# VAR=STRESS_BUILD_TARGET:str:No description
+# VAR=STRESS_BUILD_LOGTIME:int:No description
+
+. /usr/share/inquisitor/functions-test
+
+#Load ramdisk kernel module
+modprobe $STRESS_BUILD_TARGET
+
+LASTTIME=0
+START=`date "+%s"`
+
+sz=$((`grep MemTotal /proc/meminfo | sed 's/^[^0-9]*\([0-9]\+\)[^0-9]*$/\1/'`/1024))
+jobs=16
+if [ "$sz" -lt 512 ] ; then
+	jobs=8
+	publish_msg "Detected less than 512MB Of Memory. Will only run 8 jobs at once."  
+fi
+
+mke2fs -m0 -F /dev/$STRESS_BUILD_DEVICE
+
+mount /dev/$STRESS_BUILD_DEVICE /stresstest-$STRESS_BUILD_TARGET
+cd /stresstest-$STRESS_BUILD_TARGET
+
+tar xzf /linux-2.6.15_stress.tar.gz
+if (( $? )); then exit -1; fi
+cd linux-2.6.15_stress
+find | xargs touch
+touch .config 
+touch include/linux/autoconf.h
+if (( $? )); then exit -1; fi
+
+PASS=0
+for (( ;; )); do {
+	TIME=`date "+%s"`
+	if (( TIME - START > TIMEOUT )); then {
+		publish_msg "Stress build test passed"
+		cd /
+		umount /stresstest-$STRESS_BUILD_TARGET
+		exit 0
+	} fi
+
+	(( CURTIME = (TIME - START) / STRESS_BUILD_LOGTIME ))
+	if (( CURTIME > LASTTIME )); then {
+		(( LASTTIME = CURTIME ))
+		(( ELAPSED = TIME - START ))
+		publish_msg "${ELAPSED} seconds elapsed"
+	} fi
+
+	echo PASS $PASS: START
+	make clean >/dev/tty5 2>/dev/tty5
+	make -j $jobs fs >/dev/tty5 2>/dev/tty5
+	echo PASS $PASS: FINISH
+
+	if (( $? )); then {
+		cd /
+		umount /stresstest-$STRESS_BUILD_TARGET
+		test_failed
+	} fi
+	PASS=$[$PASS+1]
+}; done

@@ -2,6 +2,8 @@
 # NAME=CPU
 # DESCRIPTION=CPU burn-in testing
 # DESTROYS_HDD=N
+# IS_INTERACTIVE=N
+# POWEROFF_DURING_TEST=N
 # VAR=CPU_NO_SCALE:bool:Enable CPU scaling tests
 # VAR=CPU_WAIT_USERSPACE:int:Time to wait for settling up the CPU after switching to userspace governor, s
 # VAR=CPU_WAIT_MAX_FREQ:int:Time to burn on maximum frequency, s
@@ -13,6 +15,39 @@
 CPU_FAMILY_NUM=`grep 'cpu family' ~/cpu.log | cut -c14-`
 CPU_MODEL_ID=`grep 'model		:' ~/cpu.log | cut -c10-`
 CPU_VENDOR_ID=`grep 'vendor_id' ~/cpu.log | cut -c13-`
+
+. /usr/share/inquisitor/functions-test
+
+start_burn()
+{
+	CPU_VENDOR_ID=`grep 'vendor_id' ~/cpu.log | cut -c13-`
+
+	case $CPU_VENDOR_ID in
+	AuthenticAMD)
+	        burnK7 &
+	        ;;
+	*)
+	        burnP6 &
+	        ;;
+	esac
+
+	echo $! >~/cpuburn.pid
+}
+
+stop_burn()
+{
+	killbypid cpuburn
+}
+
+test_burn()
+{
+	echo -n "Generic non-scalable CPU testing ("
+	echo -n $[$CPU_WAIT_MAX_FREQ + $CPU_WAIT_MIN_FREQ]
+	echo -n " sec)"
+	sleep $CPU_WAIT_MAX_FREQ
+	sleep $CPU_WAIT_MIN_FREQ
+	echo_success
+}
 
 test_scaling()
 {
@@ -118,16 +153,6 @@ test_scaling()
 	popd >/dev/null
 }
 
-test_burn()
-{
-	echo -n "Generic non-scalable CPU testing ("
-	echo -n $[$CPU_WAIT_MAX_FREQ + $CPU_WAIT_MIN_FREQ]
-	echo -n " sec)"
-	sleep $CPU_WAIT_MAX_FREQ
-	sleep $CPU_WAIT_MIN_FREQ
-	echo_success
-}
-
 start_burn
 
 if [ -n "$CPU_NO_SCALE" ]; then
@@ -142,5 +167,7 @@ else
 fi
 
 stop_burn
-publish ~/cpu.log
-test_ok_file
+
+publish_log cpu
+
+test_success
