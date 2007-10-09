@@ -13,7 +13,7 @@ ALERT_ATTENTION='65535 65535 0'
 ALERT_FAILURE='65535 0 0'
 ALERT_PASSED='0 65535 0'
 
-. $LIB_DIR/outformat
+. $SHARE_DIR/outformat
 
 echo_success()
 {
