@@ -52,6 +52,13 @@ submit_components $HOME/components.xml
 # Run all tests
 # ===========================================================================
 
-CPU_NO_SCALE=0 CPU_WAIT_USERSPACE=20 CPU_WAIT_MAX_FREQ=60 CPU_WAIT_MIN_FREQ=60 CPU_WAIT_FREQ_STEP=60 CPU_RANDOM_TIMES=50 CPU_WAIT_RANDOM=3 $SHARE_DIR/test/cpu
+echo -n "Planning tests with"
+inq-planner $ETC_DIR/tests/$PROFILE.xml >~/testscript || test_failed_file 'Failed to make a test plan'
+echo_success
+
+# Run generated testscript
+success "Generated test script... Running..."
+. ~/testscript
+
 
 bash
