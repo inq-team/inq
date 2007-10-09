@@ -102,19 +102,72 @@ class ComputersController < ApplicationController
 		if @computer.save
 			flash[:notice] = 'Components successfully updated.'
 			respond_to() do |format|
-				format.html { render(:action => 'latest') }
+				format.html { redirect_to(:action => 'show', :id => @computer) }
 				format.xml { render(:xml => testing.to_xml()) }
 			end
 		else
+			head(:status => 500)
+		end
+	end
+
+	def identify
+		@macs = params[:macs].split(",")
+		@computers = Computer.find_by_hw_serials(@macs)
+		if @computers.blank?
+			head(:status => 404) 
+		elsif @computers.size > 1
+			head(:status => 500) 
+		else
 			respond_to() do |format|
-				format.html { redirect_to(:action => 'show', :id => @computer) }
-				format.xml { render(:xml => @compter.errors.to_xml()) }
+				format.xml { render(:xml => computer.to_xml()) }
+				format.html { redirect_to(:action => 'show', :id => @computers.first.id) }
 			end
 		end
 	end
 
-	def id_from_macs
-		@macs = params[:macs]
+	def advance
+		@computer = Computer.find(params[:id])
+		event = params[:event].to_sym() || :start
+		stage = params[:stage]
+		comment = params[:comment] || ""
+		raise "Event not supported: #{ event }." unless [:start, :finish, :fail].include?(event)
+                testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }.last
+		stage = testing.testing_stages.sort() { |a, b| a.test_start <=> b.test_start }.last
+		case event
+		when :start
+			testing.testing_stages << TestingStage.new(:start => Time.new(), :comment => comment, :stage => stage)
+		when :finish, :fail
+			stage.comment = comment
+			stage.end = Time.new()
+			stage.result = event == :finish ? 1 : 2
+		end
+		if @computer.save
+			flash[:notice] = 'Stage #{stage}(#{event},"#{comment}") successfully updated.'
+			respond_to() do |format|
+				format.html { redirect_to(:action => 'show', :id => @computer) }
+				format.xml { render(:xml => testing.to_xml()) }
+			end
+		else
+			head(:status => 500)
+		end
+	end
+
+	def progress
+		@computer = Computer.find(params[:id])
+                testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }.last
+		progress = params[:complete] || 0
+		total = params[:total]
+		testing.progress_complete = progress
+		testing.progress_total = total 
+		if @computer.save
+			flash[:notice] = 'Progress of current stage set successfully to #{ progress }/#{ total }.'
+			respond_to() do |format|
+				format.html { redirect_to(:action => 'show', :id => @computer) }
+				format.xml { render(:xml => testing.to_xml()) }
+			end
+		else
+			head(:status => 500)
+		end
 	end
 
 	def destroy
