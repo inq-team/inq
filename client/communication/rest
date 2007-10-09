@@ -1,10 +1,33 @@
 #!/bin/sh
 
+get_id_by_macs()
+{
+	MACS=$1
+	Z=`curl -sf "http://$SERVER/computers/identify/$MACS.xml"` 
+	CODE=$?
+	[ "$CODE" -eq 0 ] && echo "$Z" | grep 'comp-id' | sed 's/^.*comp-id[^>]*>\s*\([0-9]\+\)\s*<\/\s*comp-id.*$/\1/' 
+	return $CODE
+}
+
+test_stage_advance()
+{
+	STAGE=$1
+	EVENT=$2
+	COMMENT=$3
+	curl -sf "http://$SERVER/computers/advance/$COMPUTER_ID.xml?stage=$STAGE&event=$EVENT&comment=$COMMENT"
+}
+
+test_stage_progress()
+{
+	COMPLETE=$1
+	TOTAL=$2
+	curl -sf "http://$SERVER/computers/progress/$COMPUTER_ID.xml?complete=$COMPLETE&total=$TOTAL"
+}
+
 submit_configuration()
 {
-	if curl -f --data list=\""`cat $1 `"\" -X POST "http://$SERVER/computers/submit_components/$COMPUTER_ID.xml"; then
-		echo_success
-	else
-		echo_failure
-	fi	
+	FILENAME=$1
+	curl -f --data list=\""`cat $FILENAME `"\" -X POST "http://$SERVER/computers/submit_components/$COMPUTER_ID.xml"
 }
+
+
