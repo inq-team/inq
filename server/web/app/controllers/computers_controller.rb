@@ -119,7 +119,7 @@ class ComputersController < ApplicationController
 			head(:status => 500) 
 		else
 			respond_to() do |format|
-				format.xml { render(:xml => computer.to_xml()) }
+				format.xml { render(:xml => @computers.first.to_xml()) }
 				format.html { redirect_to(:action => 'show', :id => @computers.first.id) }
 			end
 		end
@@ -167,6 +167,58 @@ class ComputersController < ApplicationController
 			end
 		else
 			head(:status => 500)
+		end
+	end
+
+	def plan
+		@computer = Computer.find(params[:id])
+                testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }.last
+		if testing.profile_id.blank? 
+			respond_to() do |format|
+				format.html { redirect_to(:action => 'show', :id => @computer) }
+				format.xml do
+					output = ""
+					build = Builder::XmlMarkup.new(:target => output)
+					build.instruct! 
+					build.testing_plan do |plan|
+						plan.script do |s| 
+							s.cdata! <<__EOF__
+#!/bin/sh -ef
+
+PLANNED_TESTS=cpu memory hdd
+cd $TESTS_DIR
+
+for TEST in PLANNED_TESTS; do
+	if [ -x "$TEST" ] ; then
+		case "$TEST" in
+		cpu)
+			export CPU_NO_SCALE=0 
+			export CPU_WAIT_USERSPACE=20 
+			export CPU_WAIT_MAX_FREQ=60 
+			export CPU_WAIT_MIN_FREQ=60 
+			export CPU_WAIT_FREQ_STEP=60 
+			export CPU_RANDOM_TIMES=50 
+			export CPU_WAIT_RANDOM=3 
+			;;
+		memory)
+			;
+			;;
+		hdd)
+			;
+			;;
+		esac			
+		./$TEST
+	fi
+done
+
+__EOF__
+						end
+					end
+					render(:xml => output) 
+				end
+			end
+		else
+			head(:status => 404)
 		end
 	end
 
