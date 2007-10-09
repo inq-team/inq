@@ -78,7 +78,7 @@ class ComputersController < ApplicationController
 
 	def submit_components
 		#serial_no = 4431, id = 4363
-		@computer = Computer.find(params[:id])
+		@computer = Computer.find_by_serial_no(params[:id])
 		d = REXML::Document.new(params[:list])
 		components = []
 		d.root.each_element { |c|
