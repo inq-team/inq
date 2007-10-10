@@ -10,7 +10,6 @@
 
 [ -z "$TEST_NAME" ] && TEST_NAME=`basename $0`
 TOTAL_MEMORY=$[(`cat /proc/meminfo | grep MemTotal | awk '{print $2}'` / 1024)-16]
-TOTAL_MEMORY=10
 TEST_LOOPS=3
 TOTAL_SUBSTAGES=$((16 * $TEST_LOOPS))
 COMPLETED_SUBSTAGES=0
