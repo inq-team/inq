@@ -64,6 +64,13 @@ class ComputersController < ApplicationController
 		head :ok
 	end
 
+	def set_shelf
+		@computer = Computer.find(params[:id])
+		@computer.shelf = params[:shelf]
+		@computer.save!
+		head :ok
+	end
+
 	def update
 		@computer = Computer.find(params[:id])
 		if @computer.update_attributes(params[:computer])
