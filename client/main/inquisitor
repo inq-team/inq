@@ -1,4 +1,4 @@
-#!/bin/sh -ef
+#!/bin/sh -e
 
 . /etc/inquisitor/global
 . $SHARE_DIR/functions
