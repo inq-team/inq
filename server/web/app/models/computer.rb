@@ -5,8 +5,12 @@ class Computer < ActiveRecord::Base
 	belongs_to :tester, :class_name => 'Person', :foreign_key => 'tester_id'
 	has_many :testings
 
+	def serial_no
+		sprintf "%010d", id
+	end
+
 	def title
-		sprintf "%s %010d", model.name, serial_no
+		model.name + ' ' + serial_no
 	end
 
 	def self.find_by_hw_serials(serials)
