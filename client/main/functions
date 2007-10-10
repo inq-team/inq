@@ -146,6 +146,55 @@ test_skipped_file()
 	test_skipped $TESTNAME $TEST_ID
 }
 
+test_progress()
+{
+	COMPLETE=$1
+	TOTAL=$2
+
+	echo -en "\r"
+	echo -n "Test $TEST_NAME "
+
+	echo -en $COMPLETE/$TOTAL"\t"
+
+	#Show percents
+	if [ "$TOTAL" -gt 40 ] ; then
+		echo -n "("$(( 100 * $COMPLETE / $TOTAL ))%")"
+	else
+		echo -n "["
+		for i in `seq 1 $COMPLETE` ; do echo -n "#" ; done
+		for i in `seq $(($COMPLETE + 1)) $TOTAL` ; do echo -n "." ; done
+		echo -n "]"
+	fi
+
+#	test_stage_progress $COMPLETE $TOTAL
+}
+
+test_started()
+{
+	TOTAL=$1
+	echo -n Test $TEST_NAME
+	echo_running
+	test_stage_advance $TEST_NAME start
+	test_progress 0 $TOTAL
+}
+
+test_succeeded()
+{
+	echo
+	echo -n Test $TEST_NAME
+	echo_success
+	test_stage_advance $TEST_NAME finish
+}
+
+test_failed()
+{
+	echo
+	echo -n Test $TEST_NAME
+	echo_failure
+	test_stage_advance $TEST_NAME fail
+	exit 1
+}
+
 refresh_console()
 {
 	chvt 4
@@ -156,9 +205,7 @@ refresh_console()
 
 run_test()
 {
-	test_running $1 $2
 	TESTNAME=$1
-	TEST_ID=$2
 	. $1
 }
 

@@ -5,12 +5,34 @@
 # IS_INTERACTIVE=N
 # POWEROFF_DURING_TEST=N
 
-. /usr/share/inquisitor/functions-test
+#. /usr/share/inquisitor/functions
 
+
+[ -z "$TEST_NAME" ] && TEST_NAME=`basename $0`
 TOTAL_MEMORY=$[(`cat /proc/meminfo | grep MemTotal | awk '{print $2}'` / 1024)-16]
+TOTAL_MEMORY=10
+TEST_LOOPS=3
+TOTAL_SUBSTAGES=$((16 * $TEST_LOOPS))
+COMPLETED_SUBSTAGES=0
+MEMORY_LOG=/tmp/memtest.log
 
-memtester $TOTAL_MEMORY 1 > memtest.log
+test_started $TOTAL_SUBSTAGES  
 
-publish_log memtest
+memtester $TOTAL_MEMORY $TEST_LOOPS > $MEMORY_LOG &
+MEMTESTER_PID=`ps -ewf | grep 'memtester' | head -n1 | sed 's/^[^0-9]*\([0-9]\+\)[^0-9].*$/\1/'`
 
-test_success
+while true ; do
+	sleep 1
+	COMPLETED_SUBSTAGES=`cat $MEMORY_LOG | sed '{:loop g; n; s/^Loop\|Done/\0/; T loop; g; b nloop; :nloop n; s/^Loop\|Done/\0/; T nloop; g; b nloop; }' | grep -v '^$' | wc -l`
+	if [ -d /proc/$MEMTESTER_PID ] ; then
+		test_progress $COMPLETED_SUBSTAGES $TOTAL_SUBSTAGES
+	else
+		if [ "$COMPLETED_SUBSTAGES" -eq "$TOTAL_SUBSTAGES" ] ; then
+			test_succeeded
+			break
+		else
+			test_failed 
+		fi
+	fi
+done
+
