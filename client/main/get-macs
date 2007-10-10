@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+require 'rexml/document'
+
+doc = REXML::Document.new(File.new("#{ENV['HOME']}/components.xml"))
+macs = []
+doc.elements.each("list/component[type='NIC']/serial") { |e|
+	macs << e.text
+}
+
+puts macs.join(',')
