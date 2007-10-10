@@ -1,3 +1,3 @@
 #!/bin/sh
 
-COMPUTER_ID=get_id_by_mac `get-macs`
+COMPUTER_ID=`get_id_by_macs \`get-macs\``
