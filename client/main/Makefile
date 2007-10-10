@@ -12,6 +12,7 @@ install:
 	install -m644 global overlaytab remounttab $(DESTDIR)$(ETC_DIR)
 	install -m755 add-component $(DESTDIR)$(SHARE_DIR)
 	install -m755 inq-detect $(DESTDIR)$(BIN_DIR)
+	install -m755 inq-planner $(DESTDIR)$(BIN_DIR)
 
 clean:
 	rm -f global
