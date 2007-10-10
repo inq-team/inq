@@ -1,12 +1,13 @@
 <table id="computer_organizational">
-<tr><th>Serial:</th><td><%=h @computer.serial_no %></td></tr>
+<tr><th>Serial:</th><td><%=h @computer.id %></td></tr>
 <tr><th>Model:</th><td><%=h @computer.model.name %></td></tr>
 <tr><th>Customer:</th><td><%=h @computer.customer.name %></td></tr>
 <tr><th>Doc no:</th><td><%=h @computer.doc_no %></td></tr>
 <tr><th>Shelf:</th><td><%=h @computer.shelf %></td></tr>
 </table>
 
-<% t = @testing %>
+<% if @testing then
+	t = @testing %>
 <% if t.test_start and t.test_end then %>
 Testing <%=h t.test_start %> - <%=h t.test_end %> (length: <%=h (t.test_end - t.test_start) %>), using profile "<%=h t.profile_id %>"
 <% end %>
@@ -35,3 +36,5 @@ Testing <%=h t.test_start %> - <%=h t.test_end %> (length: <%=h (t.test_end - t.
 </tr>
 <% } %>
 </table>
+
+<% end %>
