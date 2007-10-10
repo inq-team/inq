@@ -102,7 +102,7 @@ class ComputersController < ApplicationController
 		testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }.last
 		unless testing && testing.components.size == components.size && testing.components.inject(true) { |b, cmp| b && ccp.delete(ccp.find() { |h| (h[:vendor] == cmp.model.vendor && h[:model] == cmp.model.name) || (!h[:serial].blank? && h[:serial] == cmp.hw_serial)  }) }
 			# BAD: component_group_id column used here directly
-			testing = Testing.new(:test_start => Time.new(), :components => components.collect() { |h| Component.new(:hw_serial => h[:serial], :model => ComponentModel.find_or_initialize_by_name_and_vendor_and_component_group_id(h[:model], h[:vendor], ComponentGroup.find_or_create_by_name(h[:type]).id)) })
+			testing = Testing.new(:test_start => Time.new(), :components => components.collect() { |h| Component.new(:hw_serial => h[:serial], :model => ComponentModel.find_or_create_by_name_and_vendor_and_component_group_id(h[:model], h[:vendor], ComponentGroup.find_or_create_by_name(h[:type]).id)) })
 			@computer.testings << testing
 		end
 
@@ -193,19 +193,18 @@ class ComputersController < ApplicationController
 #!/bin/sh -ef
 
 PLANNED_TESTS=cpu memory hdd
-cd $TESTS_DIR
 
-for TEST in PLANNED_TESTS; do
-	if [ -x "$TEST" ] ; then
+for TEST in $PLANNED_TESTS; do
+	if [ -x $TEST ] ; then
 		case "$TEST" in
 		cpu)
-			export CPU_NO_SCALE=0 
-			export CPU_WAIT_USERSPACE=20 
-			export CPU_WAIT_MAX_FREQ=60 
-			export CPU_WAIT_MIN_FREQ=60 
-			export CPU_WAIT_FREQ_STEP=60 
-			export CPU_RANDOM_TIMES=50 
-			export CPU_WAIT_RANDOM=3 
+			CPU_NO_SCALE=0 
+			CPU_WAIT_USERSPACE=20 
+			CPU_WAIT_MAX_FREQ=60 
+			CPU_WAIT_MIN_FREQ=60 
+			CPU_WAIT_FREQ_STEP=60 
+			CPU_RANDOM_TIMES=50 
+			CPU_WAIT_RANDOM=3 
 			;;
 		memory)
 			;
@@ -214,7 +213,7 @@ for TEST in PLANNED_TESTS; do
 			;
 			;;
 		esac			
-		./$TEST
+		run_test $TEST
 	fi
 done
 
