@@ -12,8 +12,7 @@ Source: %name.tar
 
 Packager: Inquisitor team <team@inquisitor.ru>
 
-# Automatically added by buildreq on Fri Feb 25 2005
-BuildRequires: freetype2-devel gpp hwdatabase libggi-devel libgii-devel ruby xorg-x11-devel
+BuildRequires: freetype2-devel gpp hwdatabase libggi-devel libgii-devel ruby xorg-x11-devel rpm-build-ruby
 
 %description
 Inquisitor client RPM for installation in chroot
@@ -22,7 +21,7 @@ Inquisitor client RPM for installation in chroot
 %setup -q -c
 
 %build
-%make_build -C client
+%make_build -C client RUBY_SHARE_DIR=%ruby_sitelibdir RUBY_LIB_DIR=%ruby_sitearchdir
 
 %install
 %make -C client DESTDIR=%buildroot install
@@ -67,8 +66,11 @@ EOF
 %attr(755,root,root) %_ifcfgdir/eth0/ifup-post
 %_bindir/*
 %_datadir/inquisitor
+%_libdir/inquisitor
 #%_x11bindir/*
 #%_libdir/jtkey
+%ruby_sitelibdir/raid
+#%ruby_sitearchdir/raid
 
 %changelog
 * Mon Sep 17 2007 Inquisitor team <team@inquisitor.ru> 1.0-alt1
