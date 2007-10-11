@@ -89,3 +89,5 @@ synaptics
 lshw
 xsltproc
 lm_sensors
+memtester
+curl
