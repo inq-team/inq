@@ -314,3 +314,11 @@ watchdog_stop()
 		echo_skipped
 	fi
 }
+
+killbypid()
+{
+	if [ -f ~/$1.pid ]; then
+		kill `cat ~/$1.pid`
+		rm -f ~/$1.pid
+	fi
+}
