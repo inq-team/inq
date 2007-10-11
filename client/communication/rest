@@ -25,7 +25,7 @@ test_stage_progress()
 	curl -sf "$REST_SERVER/computers/progress/$COMPUTER_ID.xml?complete=$COMPLETE&total=$TOTAL"
 }
 
-submit_configuration()
+submit_components()
 {
 	FILENAME=$1
 	curl -f --data list=\""`cat $FILENAME `"\" -X POST "$REST_SERVER/computers/submit_components/$COMPUTER_ID.xml"
