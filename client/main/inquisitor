@@ -9,15 +9,19 @@
 # Detects
 # ===========================================================================
 
+echo 'Starting detects'
 for I in $SHARE_DIR/detect/*; do
+	echo -n "Detecting `basename $I`"
 	. $I
+	echo_success
 done
-
+echo 'Detects finished'
 
 # ===========================================================================
 # Self-identification
 # ===========================================================================
 
+echo 'Starting self-identification'
 # Try various methods for self-id, stop after successful one
 COMPUTER_ID=
 for I in $SHARE_DIR/self-id/*; do
@@ -33,7 +37,7 @@ done
 [ -n "$COMPUTER_ID" ] || fatal_failure 'Self-identification'
 
 # Start watchdog, if available
-start_watchdog
+watchdog_start
 
 # ===========================================================================
 # Submit configuration by REST
