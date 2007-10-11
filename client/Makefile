@@ -27,7 +27,7 @@ install:
 		$(DESTDIR)$(SHARE_DIR)/monitoring \
 		$(DESTDIR)$(SHARE_DIR)/self-id
 	find detect -type f -and ! -path '*.svn*' | xargs install -m644 -t $(DESTDIR)$(SHARE_DIR)/detect/
-	find test -type f -and ! -path '*.svn*' | xargs install -m644 -t $(DESTDIR)$(SHARE_DIR)/test/
+	find test -type f -and ! -path '*.svn*' | xargs install -m755 -t $(DESTDIR)$(SHARE_DIR)/test/
 	mkdir $(DESTDIR)$(SHARE_DIR)/test/additional
 	find test/additional -type f -and ! -path '*.svn*' | xargs install -m644 -t $(DESTDIR)$(SHARE_DIR)/test/additional
 	find monitoring -type f -and ! -path '*.svn*' | xargs install -m644 -t $(DESTDIR)$(SHARE_DIR)/monitoring/
