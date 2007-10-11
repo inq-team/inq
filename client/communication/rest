@@ -1,9 +1,11 @@
 #!/bin/sh
 
+REST_SERVER=http://$SERVER:3000
+
 get_id_by_macs()
 {
 	MACS=$1
-	if Z=`curl -sf "http://$SERVER/computers/identify?macs=$MACS"`; then
+	if Z=`curl -sf "$REST_SERVER/computers/identify?macs=$MACS"`; then
 		echo "$Z" | grep '<id' | sed 's/^.*id [^>]*>\s*\([0-9]\+\)\s*<\/\s*id.*$/\1/' 
 	fi
 }
@@ -13,26 +15,26 @@ test_stage_advance()
 	STAGE=$1
 	EVENT=$2
 	COMMENT=$3
-	curl -sf "http://$SERVER/computers/advance/$COMPUTER_ID.xml?stage=$STAGE&event=$EVENT&comment=$COMMENT"
+	curl -sf "$REST_SERVER/computers/advance/$COMPUTER_ID.xml?stage=$STAGE&event=$EVENT&comment=$COMMENT"
 }
 
 test_stage_progress()
 {
 	COMPLETE=$1
 	TOTAL=$2
-	curl -sf "http://$SERVER/computers/progress/$COMPUTER_ID.xml?complete=$COMPLETE&total=$TOTAL"
+	curl -sf "$REST_SERVER/computers/progress/$COMPUTER_ID.xml?complete=$COMPLETE&total=$TOTAL"
 }
 
 submit_configuration()
 {
 	FILENAME=$1
-	curl -f --data list=\""`cat $FILENAME `"\" -X POST "http://$SERVER/computers/submit_components/$COMPUTER_ID.xml"
+	curl -f --data list=\""`cat $FILENAME `"\" -X POST "$REST_SERVER/computers/submit_components/$COMPUTER_ID.xml"
 }
 
 watchdog()
 {
 	while true; do
-		curl -f http://$SERVER/computers/watchdog/$COMPUTER_ID || echo 'Watchdog ping failed!'
+		curl -f "$REST_SERVER/computers/watchdog/$COMPUTER_ID" || echo 'Watchdog ping failed!'
 		sleep $[45 + $RANDOM % 15]
 	done
 }
