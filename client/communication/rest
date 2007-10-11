@@ -30,4 +30,10 @@ submit_configuration()
 	curl -f --data list=\""`cat $FILENAME `"\" -X POST "http://$SERVER/computers/submit_components/$COMPUTER_ID.xml"
 }
 
-
+watchdog()
+{
+	while true; do
+		curl -f http://$SERVER/computers/watchdog/$COMPUTER_ID || echo 'Watchdog ping failed!'
+		sleep $[45 + $RANDOM % 15]
+	done
+}

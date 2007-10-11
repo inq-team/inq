@@ -23,6 +23,9 @@ for I in $SHARE_DIR/self-id/*; do
 done
 [ -n "$COMPUTER_ID" ] || fatal_failure 'Self-identification'
 
+# Start watchdog, if available
+start_watchdog
+
 # ===========================================================================
 # Detects
 # ===========================================================================

@@ -300,3 +300,23 @@ prepare_pxelinux_hdd()
 	ssh $TESTER /usr/local/bin/prepare-pxelinux-hdd $MAC
 #endif
 }
+
+watchdog_start()
+{
+	echo -n 'Starting watchdog'
+	watchdog &
+	echo $! >~/watchdog.pid
+	echo_success
+}
+
+watchdog_stop()
+{
+	echo -n 'Stopping watchdog'
+	if [ -r ~/watchdog.pid ]; then
+		kill `cat ~/watchdog.pid` ||
+		rm -f ~/watchdog.pid
+		echo_success
+	else
+		echo_skipped
+	fi
+}
