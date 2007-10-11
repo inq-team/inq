@@ -228,6 +228,20 @@ __EOF__
 		end
 	end
 
+	def watchdog
+		@computer = Computer.find(params[:id])
+		if @computer then
+			@computer.last_ping = Time.now
+			if @computer.save!
+				head(:status => 200)
+			else
+				head(:status => 500)
+			end
+		else
+			head(:status => 404)
+		end
+	end
+
 	def destroy
 		Computer.find(params[:id]).destroy
 		redirect_to :action => 'list'
