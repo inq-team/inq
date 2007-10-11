@@ -1,11 +1,10 @@
 #!/usr/bin/env ruby
 
-
 require 'fileutils'
 require 'socket'
 require 'getoptlong'
 
-require 'inquisitord-config'
+require 'scannerd-config'
 require 'scanner'
 require 'daemonize'
 
@@ -40,20 +39,19 @@ init
 
 puts 'Entering main operational loop'
 
-id_timeout=nil
-t=nil
+id_timeout = nil
+t = nil
 ids = []
 while true do
-	
 	puts 'Waiting for new numbers'
 	activated = select($scanners_dev, nil, nil, id_timeout)
 
 	if activated.nil? then
-	    puts 'Timeout exceded. Saving abort.'
-	    id_timeout=nil
-	    next
+		puts 'Timeout exceeded. Saving abort.'
+		id_timeout = nil
+		next
 	end
-	
+
 	activated[0].each { |dev|
 		# Find out scanner
 #		scanner_id = nil
@@ -63,37 +61,38 @@ while true do
 		scanner = $scanners[scanner_id]
 
 		# Get line from device
-		line = dev.gets
+		# GREYFIX: somehow scanner produces \r instead of normal EOL
+		line = dev.gets("\r")
 		
 		if line.nil? then
 			puts 'PANIC: Null line entered. Check the devices! Sleeping for 5 seconds'
 			sleep 5
 			next
 		end
-		
+
 		line.chomp!
 		puts "Got from scanner #{scanner_id}: #{line}"
 
-		if id_timeout==nil then 
+		if id_timeout.nil? then 
 			scanner.scan_vals.clear
-			puts "Set timeout #{$TIMEOUT_LIMIT} sec for waiting pared ID"
-			id_timeout=$TIMEOUT_LIMIT
-			t=Time.now
+			puts "Set timeout #{$TIMEOUT_LIMIT} sec for waiting paired ID"
+			id_timeout = $TIMEOUT_LIMIT
+			t = Time.now
 		end
-		
+
 		scanner.scan_vals.push(line)
-		r = scanner.proccess_vals()
+		r = scanner.process_vals()
 		if r == 0 then
-			puts "Proccessing OK"
-			id_timeout=nil
+			puts "Processing OK"
+			id_timeout = nil
 		elsif r == 1
-			puts 'Waiting next number'
-			id_timeout=$TIMEOUT_LIMIT-(Time.now-t)
-			id_timeout=nil if id_timeout < 0
-			puts "Timeout set to #{id_timeout}"
+			puts 'Waiting for next number'
+			id_timeout = $TIMEOUT_LIMIT - (Time.now - t)
+			id_timeout = nil if id_timeout < 0
+			puts "Timeout is set to #{id_timeout}"
 		else
 			puts 'Error - incompatible types of bars'
-			id_timeout=nil
+			id_timeout = nil
 		end
 
 	}

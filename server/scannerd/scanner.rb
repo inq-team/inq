@@ -14,7 +14,7 @@ class Scanner
 		p @dev
 	end
 	
-	def proccess_vals()
+	def process_vals()
 	    if @scan_vals.size == 3
 		    if @scan_vals.sort!.map{|i| i[/./]} == $PAIRED_SCANS[0].sort! then
 			puts "Scaned values:"
@@ -24,8 +24,8 @@ class Scanner
 			place_id=@scan_vals[$PAIRED_SCANS[0].index('P')]
 			tester_id=@scan_vals[$PAIRED_SCANS[0].index('T')]
 			
-			proccess_ip(place_id.sub(/./,''), system_id)
-			proccess_it(tester_id.sub(/./,''), system_id)
+			process_ip(place_id.sub(/./,''), system_id)
+			process_it(tester_id.sub(/./,''), system_id)
 		    else
 			return -1
 		    end
@@ -58,7 +58,7 @@ class Scanner
 	end    
 	
 	
-	def proccess_ip(place_id, system_id)
+	def process_ip(place_id, system_id)
 	    puts "Match to place (#{place_id})"
 	    puts  "Send shelf"
 	    puts "curl \"http://#{$SERVER_ADDR}/computers/set_shelf/#{system_id}.xml?shelf=#{place_id}\""
@@ -66,13 +66,13 @@ class Scanner
 	    send2place($IP_BY_PLACE[place_id], system_id)
 	end
 	
-	def proccess_it(tid, id)
+	def process_it(tid, id)
 	    puts  "Send tester ID"
 	    puts "curl \"http://#{$SERVER_ADDR}/computers/set_tester/#{id}.xml?tester_id=#{tid}\""
 	    system("curl \"http://#{$SERVER_ADDR}/computers/set_tester/#{id}.xml?tester_id=#{tid}\"")
 	end
 	
-	def proccess_ia(aid, id)
+	def process_ia(aid, id)
 	    puts "Send assembler ID to server ..."
 	    puts "curl -i \"http://#{$SERVER_ADDR}/computers/set_assembler/#{id}.xml?assembler_id=#{aid}\""
 #	    system("curl -i \"http://#{$SERVER_ADDR}/computers/set_assembler/#{id}.xml?assembler_id=#{aid}\"")
