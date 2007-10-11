@@ -3,10 +3,9 @@
 get_id_by_macs()
 {
 	MACS=$1
-	Z=`curl -sf "http://$SERVER/computers/identify?macs=$MACS"` 
-	CODE=$?
-	[ "$CODE" -eq 0 ] && echo "$Z" | grep '<id' | sed 's/^.*id [^>]*>\s*\([0-9]\+\)\s*<\/\s*id.*$/\1/' 
-	return $CODE
+	if Z=`curl -sf "http://$SERVER/computers/identify?macs=$MACS"`; then
+		echo "$Z" | grep '<id' | sed 's/^.*id [^>]*>\s*\([0-9]\+\)\s*<\/\s*id.*$/\1/' 
+	fi
 }
 
 test_stage_advance()
