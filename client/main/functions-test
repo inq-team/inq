@@ -1,0 +1,8 @@
+#!/bin/sh
+# Obligatory functions to process before every test.
+
+if [ -z "$PLANNER" ]; then
+	# Running in free state; need to get all variable for test
+else
+	# Planner has supplied us all variables
+fi
