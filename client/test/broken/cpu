@@ -52,6 +52,7 @@ stop_burn()
 detect_burn_program
 detect_cpu_quantity
 start_burn
+test_started $CPU_TEST_TIME
 
 LASTTIME=0
 START=`date "+%s"`
