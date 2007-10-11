@@ -1,0 +1,100 @@
+#!/usr/bin/env ruby
+
+
+require 'fileutils'
+require 'socket'
+require 'getoptlong'
+
+require 'inquisitord-config'
+require 'scanner'
+require 'daemonize'
+
+def init
+	opts = GetoptLong.new(
+		[ "--daemon",      "-d",            GetoptLong::NO_ARGUMENT ],
+		[ "--config-file", "-c",            GetoptLong::REQUIRED_ARGUMENT ],
+		[ "--pid-file",    "-p",            GetoptLong::REQUIRED_ARGUMENT ],
+		[ "--log-file",    "-l",            GetoptLong::REQUIRED_ARGUMENT ]
+	)
+
+	$daemonize = false
+	$pid_file = '/var/run/scannerd.pid'
+
+	opts.each { |opt, arg|
+		case opt
+		when '--daemon':      $daemonize = true
+		when '--pid-file':    $pid_file = arg
+		when '--config-file': $config_file = arg
+		end
+	}
+
+	go_daemon if $daemonize
+
+	# Scanners
+	$scanners_dev = []
+	$scanners = []
+	$SCANNER_FILENAMES.each { |f| $scanners << Scanner.new(f) }
+end
+
+init
+
+puts 'Entering main operational loop'
+
+id_timeout=nil
+t=nil
+ids = []
+while true do
+	
+	puts 'Waiting for new numbers'
+	activated = select($scanners_dev, nil, nil, id_timeout)
+
+	if activated.nil? then
+	    puts 'Timeout exceded. Saving abort.'
+	    id_timeout=nil
+	    next
+	end
+	
+	activated[0].each { |dev|
+		# Find out scanner
+#		scanner_id = nil
+#		$scanners.each_index { |i| scanner_id = i if $scanners[i].dev == dev }
+#		raise 'Got message from unknown scanner!' if scanner_id.nil?
+		scanner_id = $scanners_dev.index(dev)
+		scanner = $scanners[scanner_id]
+
+		# Get line from device
+		line = dev.gets
+		
+		if line.nil? then
+			puts 'PANIC: Null line entered. Check the devices! Sleeping for 5 seconds'
+			sleep 5
+			next
+		end
+		
+		line.chomp!
+		puts "Got from scanner #{scanner_id}: #{line}"
+
+		if id_timeout==nil then 
+			scanner.scan_vals.clear
+			puts "Set timeout #{$TIMEOUT_LIMIT} sec for waiting pared ID"
+			id_timeout=$TIMEOUT_LIMIT
+			t=Time.now
+		end
+		
+		scanner.scan_vals.push(line)
+		r = scanner.proccess_vals()
+		if r == 0 then
+			puts "Proccessing OK"
+			id_timeout=nil
+		elsif r == 1
+			puts 'Waiting next number'
+			id_timeout=$TIMEOUT_LIMIT-(Time.now-t)
+			id_timeout=nil if id_timeout < 0
+			puts "Timeout set to #{id_timeout}"
+		else
+			puts 'Error - incompatible types of bars'
+			id_timeout=nil
+		end
+
+	}
+end
