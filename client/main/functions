@@ -24,7 +24,6 @@ echo_success()
 	SETCOLOR_NORMAL
 	echo -ne ' ]\r'
 	echo
-	return 0
 }
 
 echo_failure()
@@ -36,7 +35,6 @@ echo_failure()
 	SETCOLOR_NORMAL
 	echo -ne ']\r'
 	echo
-	return 1
 }
 
 echo_skipped()
@@ -48,7 +46,6 @@ echo_skipped()
 	SETCOLOR_NORMAL
 	echo -ne ']\r'
 	echo
-	return 1
 }
 
 echo_passed()
@@ -60,7 +57,6 @@ echo_passed()
 	SETCOLOR_NORMAL
 	echo -ne ']\r'
 	echo
-	return 1
 }
 
 echo_running()
@@ -72,7 +68,6 @@ echo_running()
 	SETCOLOR_NORMAL
 	echo -ne ']\r'
 	echo
-	return 1
 }
 
 # Log that something succeeded
@@ -80,7 +75,6 @@ success()
 {
 	echo -n $1
 	echo_success
-	return 0
 }
 
 # Log that something failed
