@@ -23,7 +23,7 @@ build-root:
 	rm -rf $(WORKDIR)
 	mkdir -p $(WORKDIR)
 	ln -sf ../build/altlinux/profile.$(FLAVOUR) $(WORKDIR)/profile
-	sed -i 's/^ARCH=.*$/ARCH=$(TARGET)/' $(WORKDIR)/profile/config 
+	sed -i 's/^ARCH=.*$$/ARCH=$(TARGET)/' $(WORKDIR)/profile/config 
 	if [ -d $(REPO) ]; then rm -fr $(WORKDIR)/repo && ln -sf ../repo $(WORKDIR); fi
 	if [ -d $(REPO_HUGE) ]; then echo "rpm file:$(REPO_HUGE) $(TARGET) huge" >>$(WORKDIR)/aptbox/etc/apt/sources.list; fi
 	spt-init-chroot -w $(WORKDIR)
