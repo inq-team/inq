@@ -1,0 +1,48 @@
+#!/bin/sh
+# NAME=FDD
+# DESCRIPTION=Floppy drive test
+# DESTROYS_HDD=N
+# IS_INTERACTIVE=N
+# POWEROFF_DURING_TEST=N
+# VAR=FDD_TEST_IMAGE:str:Path to temporary test image
+
+. /usr/share/inquisitor/functions
+
+
+[ -z "$TEST_NAME" ] && TEST_NAME=`basename $0`
+FDD_TEST_IMAGE="/tmp/fdd_test.raw"
+
+detect_fdd_quantity()
+{
+	FDD_QUANTITY=`ls /dev/* | sed 's/\/dev\///g' | grep '^fd[0-9]*$' | wc -l`
+}
+
+generate_test_image()
+{
+	dd if=/dev/random of=$FDD_TEST_IMAGE bs=1024 count=1440 || test_failure
+}
+
+remove_test_image()
+{
+	rm -f $FDD_TEST_IMAGE
+}
+
+test_fdd()
+{
+	dd if=$FDD_TEST_IMAGE of=/dev/fd$1 bs=18k
+	dd if=/dev/fd$1 of=fd_$FDD_TEST_IMAGE
+	diff fd_$FDD_TEST_IMAGE $FDD_TEST_IMAGE || test_failure
+}
+
+detect_fdd_quantity
+generate_test_image
+
+test_started $FDD_QUANTITY
+for i in `seq 1 $FDD_QUANTITY`;
+do
+	test_fdd $i
+	test_progress $i $FDD_QUANTITY
+done
+
+remove_test_image
+test_succeeded
