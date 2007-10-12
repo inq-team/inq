@@ -91,6 +91,7 @@ do_load()
 				;;
 			--logevery=*)
 				STRESS_BUILD_LOGTIME=${1#--logtime=}
+				;;
 			-t)
 				LOOPS=
 				CHOOSE=timeout
