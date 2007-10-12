@@ -7,6 +7,10 @@ if [ -z "$PLANNER" ]; then
 	. $SHARE_DIR/functions
 	. $SHARE_DIR/communications
 	TEST_NAME=$0
+
+	CPU_TEST_TIME=600
+	CPU_LOG_TIME=30
+	MEM_TEST_LOOPS=3
 else
 	# Planner has supplied us all variables
 	true
