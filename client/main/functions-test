@@ -12,6 +12,7 @@ if [ -z "$PLANNER" ]; then
 	CPU_LOG_TIME=30
 	MEM_TEST_LOOPS=3
 	MEM_LOG_TIME=30
+	FDD_SIZE=1440
 else
 	# Planner has supplied us all variables
 	true

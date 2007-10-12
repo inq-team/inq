@@ -4,6 +4,7 @@
 # DESTROYS_HDD=N
 # IS_INTERACTIVE=N
 # POWEROFF_DURING_TEST=N
+# VAR=FDD_SIZE:int:Size of testing floppy, KB
 
 . /usr/share/inquisitor/functions-test
 
@@ -16,19 +17,20 @@ detect_fdd_quantity()
 
 generate_test_image()
 {
-	dd if=/dev/random of=$FDD_TEST_IMAGE bs=1024 count=1440 || test_failure
+	dd if=/dev/urandom of=$FDD_TEST_IMAGE bs=1024 count=$FDD_SIZE || test_failed
 }
 
 remove_test_image()
 {
 	rm -f $FDD_TEST_IMAGE
+	rm -f "$FDD_TEST_IMAGE"_fd
 }
 
 test_fdd()
 {
-	dd if=$FDD_TEST_IMAGE of=/dev/fd$1 bs=18k
-	dd if=/dev/fd$1 of=fd_$FDD_TEST_IMAGE
-	diff fd_$FDD_TEST_IMAGE $FDD_TEST_IMAGE || test_failure
+	dd if=$FDD_TEST_IMAGE of=/dev/fd$1
+	dd if=/dev/fd$1 of="$FDD_TEST_IMAGE"_fd bs=1024 count=$FDD_SIZE
+	diff "$FDD_TEST_IMAGE"_fd $FDD_TEST_IMAGE || test_failed
 }
 
 detect_fdd_quantity
@@ -37,7 +39,7 @@ generate_test_image
 test_started $FDD_QUANTITY
 for i in `seq 1 $FDD_QUANTITY`;
 do
-	test_fdd $i
+	test_fdd $[$i - 1]
 	test_progress $i $FDD_QUANTITY
 done
 
