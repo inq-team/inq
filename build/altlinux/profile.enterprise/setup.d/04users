@@ -1,0 +1,3 @@
+#!/bin/sh
+sed -i 's/enforce=.*/enforce=none/' /etc/passwdqc.conf
+echo inq | passwd root --stdin
