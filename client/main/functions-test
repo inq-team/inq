@@ -9,4 +9,5 @@ if [ -z "$PLANNER" ]; then
 	TEST_NAME=$0
 else
 	# Planner has supplied us all variables
+	true
 fi
