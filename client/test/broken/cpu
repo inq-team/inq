@@ -50,7 +50,6 @@ detect_cpu_quantity
 start_burn
 test_started $CPU_TEST_TIME
 
-LASTTIME=0
 START=`date "+%s"`
 while true; do
 	sleep $CPU_LOG_TIME
@@ -60,6 +59,6 @@ while true; do
 		test_succeeded
 		break
 	else
-		test_progress $TIME $CPU_TEST_TIME
+		test_progress $[$TIME - $START] $CPU_TEST_TIME
 	fi
 done
