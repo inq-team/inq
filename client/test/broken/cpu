@@ -64,6 +64,6 @@ while true; do
 		test_succeeded
 		break
 	else
-		test_progress $[$TIME * 100 / $TIMEOUT] $CPU_TEST_TIME
+		test_progress $TIME $CPU_TEST_TIME
 	fi
 done
