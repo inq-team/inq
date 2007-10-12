@@ -3,7 +3,9 @@
 . /etc/inquisitor/global
 . $SHARE_DIR/functions
 . $SHARE_DIR/communication
-[ -r $SHARE_DIR/init ] && . $SHARE_DIR/init
+if [ -r $SHARE_DIR/init ] && ! [ -r /proc/cpuinfo ]; then
+	. $SHARE_DIR/init
+fi
 
 # ===========================================================================
 # Detects
@@ -35,6 +37,10 @@ for I in $SHARE_DIR/self-id/*; do
 	fi
 done
 [ -n "$COMPUTER_ID" ] || fatal_failure 'Self-identification'
+
+# Start logging
+hostname c$COMPUTER_ID
+/sbin/service syslog-ng start
 
 # Start watchdog, if available
 watchdog_start
