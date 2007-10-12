@@ -100,9 +100,9 @@ class ComputersController < ApplicationController
 
 		errors = []
 		testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }.last
-		unless testing && testing.components.size == components.size && testing.components.inject(true) { |b, cmp| b && ccp.delete(ccp.find() { |h| (h[:vendor] == cmp.model.vendor && h[:model] == cmp.model.name) || (!h[:serial].blank? && h[:serial] == cmp.hw_serial)  }) }
+		unless testing && testing.components.size == components.size && testing.components.inject(true) { |b, cmp| b && ccp.delete(ccp.find() { |h| (h[:vendor] == cmp.model.vendor && h[:model] == cmp.model.name) || (!h[:serial].blank? && h[:serial] == cmp.serial)  }) }
 			# BAD: component_group_id column used here directly
-			testing = Testing.new(:test_start => Time.new(), :components => components.collect() { |h| Component.new(:hw_serial => h[:serial], :model => ComponentModel.find_or_create_by_name_and_vendor_and_component_group_id(h[:model], h[:vendor], ComponentGroup.find_or_create_by_name(h[:type]).id)) })
+			testing = Testing.new(:test_start => Time.new(), :components => components.collect() { |h| Component.new(:serial => h[:serial], :model => ComponentModel.find_or_create_by_name_and_vendor_and_component_group_id(h[:model], h[:vendor], ComponentGroup.find_or_create_by_name(h[:type]).id)) })
 			@computer.testings << testing
 		end
 
@@ -121,9 +121,9 @@ class ComputersController < ApplicationController
 		@macs = params[:macs].split(",")
 		@computers = Computer.find_by_hw_serials(@macs)
 		if @computers.blank?
-			head(:status => 404) 
+			head(:status => 404)
 		elsif @computers.size > 1
-			head(:status => 500) 
+			head(:status => 500)
 		else
 			respond_to() do |format|
 				format.xml { render(:xml => @computers.first.to_xml()) }

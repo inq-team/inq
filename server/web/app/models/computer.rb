@@ -15,6 +15,6 @@ class Computer < ActiveRecord::Base
 
 	def self.find_by_hw_serials(serials)
 		param1 = serials.sort() { |a,b| a <=> b }
-		self.find_by_sql(["SELECT DISTINCT computers.*, group_concat(hw_serial ORDER BY hw_serial SEPARATOR ',') AS serials  FROM `computers` JOIN `testings` on testings.computer_id = computers.id JOIN `components` ON components.testing_id = testings.id JOIN component_models ON components.component_model_id = component_models.id JOIN component_groups ON component_models.component_group_id = component_groups.id AND component_groups.name in ('LAN', 'NIC') GROUP BY testings.id HAVING serials = ?", param1.join(',')])
+		self.find_by_sql(["SELECT DISTINCT computers.*, group_concat(serial ORDER BY serial SEPARATOR ',') AS serials FROM `computers` JOIN `testings` on testings.computer_id = computers.id JOIN `components` ON components.testing_id = testings.id JOIN component_models ON components.component_model_id = component_models.id JOIN component_groups ON component_models.component_group_id = component_groups.id AND component_groups.name in ('LAN', 'NIC') GROUP BY testings.id HAVING serials = ?", param1.join(',')])
 	end
 end

@@ -15,15 +15,15 @@ Testing <%=h t.test_start %> - <%=h t.test_end %> (length: <%=h (t.test_end - t.
 <table id="computer_components">
 <tr>
 <th>Device</th>
-<th>Vendor</th>
-<th>Model</th>
-<th>Qty</th>
+<th>Full model name</th>
+<th>Serial</th>
+<th>Short name</th>
 <% t.components.each { |c| %>
 <tr>
 <td><%=h c.model.group.name %></td>
-<td><%=h c.model.vendor %></td>
-<td><%=h c.model.name %></td>
-<td><%=h c.hw_qty %></td>
+<td><%=h c.model.vendor %> <%=h c.model.name %></td>
+<td><%=h c.serial %>
+<td><%=h c.model.vendor %> <%=h c.model.short_name %></td>
 </tr>
 <% } %>
 </table>
