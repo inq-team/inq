@@ -4,19 +4,18 @@
 # DESTROYS_HDD=N
 # IS_INTERACTIVE=N
 # POWEROFF_DURING_TEST=N
+# VAR=MEM_TEST_LOOPS:int:Testing loops
 
 . /usr/share/inquisitor/functions-test
 
-[ -z "$TEST_NAME" ] && TEST_NAME=`basename $0`
 TOTAL_MEMORY=$[(`cat /proc/meminfo | grep MemTotal | awk '{print $2}'` / 1024)-16]
-TEST_LOOPS=3
-TOTAL_SUBSTAGES=$((16 * $TEST_LOOPS))
+TOTAL_SUBSTAGES=$((16 * $MEM_TEST_LOOPS))
 COMPLETED_SUBSTAGES=0
 MEMORY_LOG=/tmp/memtest.log
 
 test_started $TOTAL_SUBSTAGES
 
-memtester $TOTAL_MEMORY $TEST_LOOPS > $MEMORY_LOG &
+memtester $TOTAL_MEMORY $MEM_TEST_LOOPS > $MEMORY_LOG &
 MEMTESTER_PID=`ps -ewf | grep 'memtester' | head -n1 | sed 's/^[^0-9]*\([0-9]\+\)[^0-9].*$/\1/'`
 
 while true ; do

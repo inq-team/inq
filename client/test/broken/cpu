@@ -7,11 +7,7 @@
 # VAR=CPU_TEST_TIME:int:Total time of CPU testing
 # VAR=CPU_LOG_TIME:int:Time between progress updates
 
-. /usr/share/inquisitor/functions
-
-[ -z "$TEST_NAME" ] && TEST_NAME=`basename $0`
-CPU_TEST_TIME=3600
-CPU_LOG_TIME=30
+. /usr/share/inquisitor/functions-test
 
 detect_burn_program()
 {

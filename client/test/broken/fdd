@@ -4,13 +4,10 @@
 # DESTROYS_HDD=N
 # IS_INTERACTIVE=N
 # POWEROFF_DURING_TEST=N
-# VAR=FDD_TEST_IMAGE:str:Path to temporary test image
 
-. /usr/share/inquisitor/functions
+. /usr/share/inquisitor/functions-test
 
-
-[ -z "$TEST_NAME" ] && TEST_NAME=`basename $0`
-FDD_TEST_IMAGE="/tmp/fdd_test.raw"
+FDD_TEST_IMAGE="dd/tmp/fdd_test.raw"
 
 detect_fdd_quantity()
 {
