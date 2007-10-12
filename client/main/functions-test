@@ -3,6 +3,10 @@
 
 if [ -z "$PLANNER" ]; then
 	# Running in free state; need to get all variable for test
+	. /etc/inquisitor/global
+	. $SHARE_DIR/functions
+	. $SHARE_DIR/communications
+	TEST_NAME=$0
 else
 	# Planner has supplied us all variables
 fi
