@@ -1,2 +1,2 @@
 echo 'destination udp_dst { udp("10.254.254.1"); };' >> /etc/syslog-ng.conf
-echo 'log{source(src); destination(udp_dst); };' >> /etc/syslog-ng.conf
+echo 'log{source(sys); destination(udp_dst); };' >> /etc/syslog-ng.conf
