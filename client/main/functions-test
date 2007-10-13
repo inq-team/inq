@@ -13,6 +13,7 @@ if [ -z "$PLANNER" ]; then
 	MEM_TEST_LOOPS=3
 	MEM_LOG_TIME=30
 	FDD_SIZE=1440
+	FLASH_SIZE_LIMIT_MB=2048
 else
 	# Planner has supplied us all variables
 	true

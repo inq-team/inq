@@ -4,31 +4,58 @@
 # DESTROYS_HDD=Y
 # IS_INTERACTIVE=N
 # POWEROFF_DURING_TEST=N
-# VAR=STRESS_FLASH_SIZE_LIMIT_MB:int:Everything that is less than this amount (MB) is an IDE flash
+# VAR=FLASH_SIZE_LIMIT_MB:int:Everything that is less than this amount (MB) is an IDE flash
 
 . /usr/share/inquisitor/functions-test
 
-rmmod pata-amd || echo WARNING: no pata-amd
-sleep 10
-modprobe ide-generic
-sleep 10
+FLASH_SIZE_LIMIT=$[$FLASH_SIZE_LIMIT_MB * 1024 * 2]
+DEVICE_LIST_FILE="/tmp/flash_stress_devices"
 
-# Same in blocks (1 block = 512 bytes)
-FLASH_SIZE_LIMIT=$[$STRESS_FLASH_SIZE_LIMIT_MB * 1024 * 2]
+function load_ide_devices()
+{
+	rmmod pata-amd
+	sleep 10
+	modprobe ide-generic
+	sleep 10
+}
 
-for P in /sys/block/*; do
-	I=`basename $P`
-	echo "$I" | egrep -q '[0-9]' && continue
-	echo -n "Querying device $I... "
-	grep -q "$I" /proc/partitions || continue
-	SIZE=`cat /sys/block/$I/size`
-	if [ "$SIZE" -lt "$FLASH_SIZE_LIMIT" ]; then
-		echo "found IDE flash!"
-		publish_msg "Testing flash drive $I"
-		badblocks -svw /dev/$I || ( echo "failed IDE flash test on $I"; publish_msg "Failed IDE flash test on $I")
-	else
-		echo "not an IDE flash ($SIZE blocks)"
-	fi
-done
+function clear_after_test()
+{
+	rm -f $DEVICE_LIST_FILE
+}
 
-test_success
+function detect_flash_devices()
+{
+	FLASH_QUANTITY=0
+
+	for i in /sys/block/*; do
+		DEVICE=`basename $i`
+		echo $DEVICE | egrep -q '[0-9]' && continue
+		grep -q "$DEVICE" /proc/partitions || continue
+
+		SIZE=`cat /sys/block/$DEVICE/size`
+		if [ "$SIZE" -lt "$FLASH_SIZE_LIMIT" ]; then
+			echo $DEVICE >> $DEVICE_LIST_FILE
+			FLASH_QUANTITY=$[ $FLASH_QUANTITY + 1 ]
+		fi
+	done
+}
+
+function flash_test()
+{
+	$TESTED_DEVICES=1
+	for i in `cat $DEVICE_LIST_FILE`; do
+		badblocks -svw /dev/$i || test_failed
+		test_progress $TESTED_DEVICES $FLASH_QUANTITY
+		TESTED_DEVICES=$[ $TESTED_DEVICES + 1 ]
+	done
+}
+
+detect_flash_devices
+
+if [ "$FLASH_QUANTITY" -gt "0" ]; then
+	test_started $FLASH_QUANTITY
+	flash_test
+	test_succeeded
+	clear_after_test
+fi
