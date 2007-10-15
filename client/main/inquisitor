@@ -44,7 +44,7 @@ hostname c$COMPUTER_ID
 
 #Set time
 /usr/sbin/ntpdate $NTP_SERVER
-/usr/sbin/hwclock --systohc
+/sbin/hwclock --systohc
 
 # Start watchdog, if available
 watchdog_start
