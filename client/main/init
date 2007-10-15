@@ -39,8 +39,6 @@ export PATH=$PATH:/usr/sbin:/sbin
 /sbin/service haldaemon start
 /sbin/service sshd start
 
-/sbin/modeprobe eeprom
-
 #rm -f /etc/passwd || fatal_failure 'Preparing initialization'
 #rm -f /etc/group || fatal_failure 'Preparing initialization'
 
