@@ -42,6 +42,10 @@ done
 hostname c$COMPUTER_ID
 /sbin/service syslog-ng start
 
+#Set time
+/usr/sbin/ntpdate $NTP_SERVER
+/usr/sbin/hwclock --systohc
+
 # Start watchdog, if available
 watchdog_start
 
