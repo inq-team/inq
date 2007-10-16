@@ -52,6 +52,15 @@
 	</component>
 </xsl:template>
 
+<xsl:template match="//node[@class='disk']">
+	<component>
+		<type>HDD</type>
+		<vendor><xsl:value-of select="vendor"/></vendor>
+		<model><xsl:value-of select="product"/></model>
+		<serial><xsl:value-of select="serial"/></serial>
+	</component>
+</xsl:template>
+
 <xsl:template match="//node[description='FireWire (IEEE 1394)']">
 	<component>
 		<type>Fire Wire</type>
@@ -59,7 +68,6 @@
 		<model><xsl:value-of select="product"/></model>
 	</component>
 </xsl:template>
-
 
 <xsl:template match="text()"/>
 
