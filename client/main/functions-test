@@ -5,7 +5,7 @@ if [ -z "$PLANNER" ]; then
 	# Running in free state; need to get all variable for test
 	. /etc/inquisitor/global
 	. $SHARE_DIR/functions
-	. $SHARE_DIR/communications
+	. $SHARE_DIR/communication
 	TEST_NAME=$0
 
 	CPU_TEST_TIME=600

@@ -8,7 +8,7 @@
 
 . /usr/share/inquisitor/functions-test
 
-FDD_TEST_IMAGE="dd/tmp/fdd_test.raw"
+FDD_TEST_IMAGE="/tmp/fdd_test.raw"
 
 detect_fdd_quantity()
 {

@@ -54,7 +54,7 @@ START=`date "+%s"`
 while true; do
 	sleep $CPU_LOG_TIME
 	TIME=`date "+%s"`
-	if (( TIME - START > CPU_TEST_TIME )); then 
+	if (( TIME - START > CPU_TEST_TIME )); then
 		stop_burn
 		test_succeeded
 		break
