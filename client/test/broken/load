@@ -1,15 +1,86 @@
-#!/bin/sh
+#!/bin/sh -e
+# NAME=Load
+# DESCRIPTION=Loading stress test
+# DESTROYS_HDD=N
+# IS_INTERACTIVE=N
+# POWEROFF_DURING_TEST=N
+# VAR=LOAD_ROOT:str:Root directory for testings
+# VAR=LOAD_TREE:str:Linux source code tree
+# VAR=LOAD_TEST_TIME:int:Total time of Load testing
+# VAR=LOAD_LOG_TIME:int:Time between progress updates
 
-build_filesystem
+. /usr/share/inquisitor/functions
 
-cp $LIB_DIR/rpmmacros ~/.rpmmacros || test_failed_file 'install rpm macros'
-rm -Rf ~/build/tmp
-mkdir -p ~/build/tmp || test_failed_file 'mkdir temporary directory'
+JOBS=16
 
-I=0
-while [ $I -lt $LOAD_TIMES ]; do
-	rpmbuild --rebuild $LIB_DIR/sed-4.0.9-alt1.src.rpm || test_failed_file 'rpmbuild'
-	I=$[$I+1]
+before_load()
+{
+	rm -rf "$LOAD_ROOT/$LOAD_TREE" 2>/dev/null 1>/dev/null || true
+	cd "$LOAD_ROOT"
+	TREE_NAME=`basename "$LOAD_TREE"`
+	tar xzf "${LOAD_TREE}.tar.gz"
+	cd "$TREE_NAME"
+
+	#is it linux source?
+	if echo "$TREE_NAME" | grep '^linux' ; then
+		find | xargs touch
+		touch .config 
+		touch include/linux/autoconf.h
+	fi
+}
+
+prepare_ramdrive()
+{
+	RAMDRIVE=$1
+
+	#check if we need to load the ramdrive module
+	lsmod | grep -w rd 2>/dev/null >/dev/null || modprobe rd
+
+	#determine default ramdrive if none was specified in params
+	[ -z "$RAMDRIVE" ] && RAMDRIVE=/dev/`ls /sys/block/ | grep 'ram[0-9]' | sort | head -n 1`
+
+	prepare_partition $RAMDRIVE
+}
+
+remove_ramdrive()
+{
+	RAMDRIVE=$1
+        [ -z "$RAMDRIVE" ] && RAMDRIVE=/dev/`ls /sys/block/ | grep 'ram[0-9]' | sort | head -n 1`
+	remove_partition "$RAMDRIVE"
+}
+
+
+remove_partition()
+{
+	DRIVE=$1
+	umount "$DRIVE" 2>/dev/null
+}
+
+prepare_partition()
+{
+	DEVICE=$1
+	mke2fs -m0 -F "$DEVICE"
+	[ ! -e "${LOAD_ROOT}/${DEVICE}" ] && mkdir -p "${LOAD_ROOT}/${DEVICE}"
+	mount "$DEVICE" "${LOAD_ROOT}/${DEVICE}" 2>/dev/null
+}
+
+before_load
+prepare_ramdrive
+
+LASTTIME=0
+START=`date "+%s"`
+test_started $LOAD_TEST_TIME
+
+while true; do 
+	TIME=`date "+%s"`
+
+	if (( TIME - START > LOAD_TEST_TIME )); then 
+		remove_ramdrive
+		test_succeeded
+		break
+	else
+		test_progress $[$TIME - $START] $LOAD_TEST_TIME
+	fi
+
+	make clean >/dev/null 2>/dev/null && make -j $JOBS fs >/dev/null 2>/dev/null || test_failed
 done
-
-test_ok_file

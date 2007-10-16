@@ -10,10 +10,18 @@ if [ -z "$PLANNER" ]; then
 
 	CPU_TEST_TIME=600
 	CPU_LOG_TIME=30
+
 	MEM_TEST_LOOPS=3
 	MEM_LOG_TIME=30
+
 	FDD_SIZE=1440
+
 	FLASH_SIZE_LIMIT_MB=2048
+
+	LOAD_ROOT="/tmp/stresstest"
+	LOAD_TREE="/usr/share/inquisitor/linux-2.6.15-stress"
+	LOAD_TEST_TIME=3600
+	LOAD_LOG_TIME=60
 else
 	# Planner has supplied us all variables
 	true
