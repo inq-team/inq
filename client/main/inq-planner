@@ -5,4 +5,4 @@ require 'rexml/document'
 
 computer_id = ENV['COMPUTER_ID']
 
-puts(REXML::Document.new(open("http://#{ ENV['SERVER'] }/computers/plan/#{ ENV['COMPUTER_ID'] }.xml").read()).root.elements['script'].text())
+puts(REXML::Document.new(open("#{ ENV['REST_SERVER'] }/computers/plan/#{ ENV['COMPUTER_ID'] }.xml").read()).root.elements['script'].text())
