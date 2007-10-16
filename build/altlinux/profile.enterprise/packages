@@ -67,7 +67,7 @@ less
 mc
 ratpoison
 inquisitor-client
-syslogd
+syslog-ng
 klogd
 shadow-utils
 dhcpcd
