@@ -59,9 +59,9 @@ remove_partition()
 prepare_partition()
 {
 	DEVICE=$1
-	mke2fs -m0 -F "$DEVICE"
+	mke2fs -m0 -F "$DEVICE" || test_failed
 	[ ! -e "${LOAD_ROOT}/${DEVICE}" ] && mkdir -p "${LOAD_ROOT}/${DEVICE}"
-	mount "$DEVICE" "${LOAD_ROOT}/${DEVICE}" 2>/dev/null
+	mount "$DEVICE" "${LOAD_ROOT}/${DEVICE}" 2>/dev/null || test_failed
 }
 
 before_load

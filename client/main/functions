@@ -160,7 +160,7 @@ test_progress()
 		echo -n "]"
 	fi
 
-#	test_stage_progress $COMPLETE $TOTAL
+	test_stage_progress $COMPLETE $TOTAL
 }
 
 test_started()
@@ -262,28 +262,6 @@ build_add_dos_filesystem()
 	DEV_HDD=/dev/`storagescan | grep 'Disk$' | head -n1 | cut -f1`
 	mkfs.vfat -F 32 -S 4096 -s 128 ${DEV_HDD}1
 	sfdisk -A1 $DEV_HDD
-}
-
-build_dos_filesystem()
-{
-	if [ ! -d ~/dos ]; then
-#		echo 'This test will destroy all data on HDD!'
-#		echo 'Press Ctrl+D to continue'
-#		bash
-		DEV_HDD=/dev/`storagescan | grep 'Disk$' | head -n1 | cut -f1`
-
-		if [ "$NEW_PRODUCT_NAME" == "Mission_A4" -o "$NEW_PRODUCT_NAME" == "TravelBook_320" -o "$NEW_PRODUCT_NAME" == "Optima_E320" -o "$NEW_PRODUCT_NAME" == "Mission_T34" ]; then
-			dd if=$LIB_DIR/hda-msdos.img of=$DEV_HDD
-		else
-			dd if=$LIB_DIR/hda-dos-O525.img of=$DEV_HDD
-		fi
-		sfdisk -R $DEV_HDD
-		service udevd restart
-		fdisk -l $DEV_HDD
-		mkdir ~/dos || test_failed_file 'Create ~/dos mount point'
-		modprobe vfat || test_failed_file 'Load vfat module in kernel'
-		mount -t vfat ${DEV_HDD}1 ~/dos || test_failed_file 'Mount file system'
-	fi
 }
 
 prepare_pxelinux_hdd()
