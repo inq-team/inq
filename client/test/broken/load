@@ -4,18 +4,17 @@
 # DESTROYS_HDD=N
 # IS_INTERACTIVE=N
 # POWEROFF_DURING_TEST=N
-# VAR=LOAD_ROOT:str:Root directory for testings
-# VAR=LOAD_TREE:str:Linux source code tree
+# VAR=LOAD_JOBS:int:Number of parallely running jobs during compile
 # VAR=LOAD_TEST_TIME:int:Total time of Load testing
 # VAR=LOAD_LOG_TIME:int:Time between progress updates
 
 . /usr/share/inquisitor/functions
 
-JOBS=16
+LOAD_ROOT=`mktemp -d /tmp/load_test.XXXXX`
+LOAD_TREE="/usr/share/inquisitor/linux-2.6.15-stress"
 
 before_load()
 {
-	rm -rf "$LOAD_ROOT/$LOAD_TREE" 2>/dev/null 1>/dev/null || true
 	cd "$LOAD_ROOT"
 	TREE_NAME=`basename "$LOAD_TREE"`
 	tar xzf "${LOAD_TREE}.tar.gz"

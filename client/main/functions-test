@@ -18,8 +18,7 @@ if [ -z "$PLANNER" ]; then
 
 	FLASH_SIZE_LIMIT_MB=2048
 
-	LOAD_ROOT="/tmp/stresstest"
-	LOAD_TREE="/usr/share/inquisitor/linux-2.6.15-stress"
+	LOAD_JOBS=16
 	LOAD_TEST_TIME=3600
 	LOAD_LOG_TIME=60
 else
