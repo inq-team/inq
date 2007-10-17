@@ -45,6 +45,14 @@ stop_burn()
 	done
 }
 
+check_alive_burners()
+{
+	for i in `seq 1 $CPU_QUANTITY`;
+	do
+		(( `ps \`cat ~/cpuburn$i.pid\` | wc -l` == 2 )) || test_failed
+	done
+}
+
 detect_burn_program
 detect_cpu_quantity
 start_burn
@@ -54,6 +62,7 @@ START=`date "+%s"`
 while true; do
 	sleep $CPU_LOG_TIME
 	TIME=`date "+%s"`
+	check_alive_burners
 	if (( TIME - START > CPU_TEST_TIME )); then
 		stop_burn
 		test_succeeded
