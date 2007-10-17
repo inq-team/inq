@@ -1,4 +1,0 @@
-/sbin/chkconfig udevd on
-/sbin/chkconfig hal on
-/sbin/chkconfig messagebus on
-/sbin/chkconfig ntpd on
