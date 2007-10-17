@@ -144,12 +144,14 @@ class ComputersController < ApplicationController
 		case event
 		when :start
 			testing.testing_stages << TestingStage.new(:start => Time.new(), :comment => comment, :stage => name)
+			z = testing
 		when :finish, :fail
 			stage.comment = comment
 			stage.end = Time.new()
 			stage.result = event == :finish ? 1 : 2
+			z = stage
 		end
-		if @computer.save
+		if z.save
 			flash[:notice] = 'Stage #{stage}(#{event},"#{comment}") successfully updated.'
 			respond_to() do |format|
 				format.html { redirect_to(:action => 'show', :id => @computer) }
