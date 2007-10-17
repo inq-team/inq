@@ -1,8 +1,8 @@
 #!/bin/sh
 
 cpuscan -v 2>/dev/null | sed -ne '/^ID/s/ID *: //p' | while read ID; do
-	CPU_VENDOR=`cpuscan -p 2>/dev/null | sed -ne "/\/sys\/cpu\/"$ID"\/\tvendor_id/p" | sed 's,/sys/cpu/0/\tvendor_id:,,'`
-	CPU_MODEL=`cpuscan -p 2>/dev/null | sed -ne "/\/sys\/cpu\/"$ID"\/\tdevice/p" | sed 's,/sys/cpu/0/\tdevice:,,'`
+	CPU_VENDOR=`cpuscan -p 2>/dev/null | sed -ne "/\/sys\/cpu\/"$ID"\/\tvendor_id/p" | sed "s,/sys/cpu/"$ID"/\tvendor_id:,,"`
+	CPU_MODEL=`cpuscan -p 2>/dev/null | sed -ne "/\/sys\/cpu\/"$ID"\/\tdevice/p" | sed "s,/sys/cpu/"$ID"/\tdevice:,,"`
 	
 	CPU_VENDOR=`echo $CPU_VENDOR | sed 's/Genuine//g;s/Authentic//g;'`
 	CPU_MODEL=`echo $CPU_MODEL | sed 's/(R)//g;s/(tm)//g;s/processor//ig;s/CPU//g;s/Intel//g;s/AMD//g;s/Genuine/Core Solo/;s/  */ /g;s/^ *//g;'`
