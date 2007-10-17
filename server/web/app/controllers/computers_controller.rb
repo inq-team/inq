@@ -119,6 +119,7 @@ class ComputersController < ApplicationController
 
 	def identify
 		@macs = params[:macs].split(",")
+		p @macs
 		@computers = Computer.find_by_hw_serials(@macs)
 		if @computers.blank?
 			head(:status => 404)
@@ -139,7 +140,7 @@ class ComputersController < ApplicationController
 		comment = params[:comment] || ""
 		raise "Event not supported: #{ event }." unless [:start, :finish, :fail].include?(event)
                 testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }.last
-		stage = testing.testing_stages.sort() { |a, b| a.test_start <=> b.test_start }.last
+		stage = testing.testing_stages.sort() { |a, b| a.start <=> b.start }.last
 		case event
 		when :start
 			testing.testing_stages << TestingStage.new(:start => Time.new(), :comment => comment, :stage => stage)
