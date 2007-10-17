@@ -38,9 +38,9 @@ clean:
 #===============================================================================
 
 rsync:
-	ssh $(DEPLOY_HOST) "mkdir -p $(DEPLOY_PATH); sudo chown -R greycat:inquisitor $(DEPLOY_PATH)"
-	rsync -rlptv --delete-after --exclude=usr/lib/inquisitor/images --exclude=etc/inquisitor/users $(WORKDIR)/$(ROOTDIR)/* $(DEPLOY_HOST):$(DEPLOY_PATH)
-	ssh $(DEPLOY_HOST) "sudo chown -R root:root $(DEPLOY_PATH); sudo rm -f $(DEPLOY_PATH)/dev/console $(DEPLOY_PATH)/dev/null; sudo mknod $(DEPLOY_PATH)/dev/console c 5 1; sudo mknod $(DEPLOY_PATH)/dev/null c 1 3"
+	ssh $(DEPLOY_HOST) "mkdir -p $(DEPLOY_PATH); sudo chown root:inquisitor $(DEPLOY_PATH)"
+	sudo rsync -rlptv --delete-after --exclude=usr/lib/inquisitor/images --exclude=etc/inquisitor/users $(WORKDIR)/$(ROOTDIR)/* root@$(DEPLOY_HOST):$(DEPLOY_PATH)
+	ssh $(DEPLOY_HOST) "sudo rm -f $(DEPLOY_PATH)/dev/console $(DEPLOY_PATH)/dev/null; sudo mknod $(DEPLOY_PATH)/dev/console c 5 1; sudo mknod $(DEPLOY_PATH)/dev/null c 1 3"
 
 rsync-list:
 	rsync -rlptvn --delete-after --exclude=usr/lib/inquisitor/images --exclude=etc/inquisitor/users $(WORKDIR)/$(ROOTDIR)/* $(DEPLOY_HOST):$(DEPLOY_PATH)
