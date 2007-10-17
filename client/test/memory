@@ -10,9 +10,9 @@
 . /usr/share/inquisitor/functions-test
 
 TOTAL_MEMORY=$[(`cat /proc/meminfo | grep MemTotal | awk '{print $2}'` / 1024)-16]
-TOTAL_SUBSTAGES=$((16 * $MEM_TEST_LOOPS))
+TOTAL_SUBSTAGES=$((16 * MEM_TEST_LOOPS))
 COMPLETED_SUBSTAGES=0
-MEMORY_LOG=/tmp/memtest.log
+MEMORY_LOG=`mktemp /tmp/memtest_test.XXXXX`
 
 test_started $TOTAL_SUBSTAGES
 
