@@ -28,7 +28,9 @@ build-root:
 	if [ -d $(REPO_HUGE) ]; then echo "rpm file:$(REPO_HUGE) $(TARGET) huge" >>$(WORKDIR)/aptbox/etc/apt/sources.list; fi
 	spt-init-chroot -w $(WORKDIR)
 	spt-make-chroot -w $(WORKDIR)
+	if [ -d image ]; then cp -r image $(WORKDIR)/$(ROOTDIR); fi
 	spt-run-scripts -w $(WORKDIR)
+	if [ -d image ]; then rm -rf $(WORKDIR)/$(ROOTDIR)/image; fi
 
 build-huge:
 	genbasedir --create --topdir $(REPO_HUGE) $(TARGET) huge

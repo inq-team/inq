@@ -1,0 +1,10 @@
+#!/bin/sh
+cd /
+[ -r image/*.tar.gz ] && for I in image/*.tar.gz; do
+	echo Unpacking $I
+	tar xzf $I;
+done
+[ -r image/*.tar.bz2 ] && for I in image/*.tar.bz2; do
+	echo Unpacking $I
+	tar xvjf $I
+done
