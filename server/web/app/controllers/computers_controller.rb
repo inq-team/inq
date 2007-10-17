@@ -136,14 +136,14 @@ class ComputersController < ApplicationController
 	def advance
 		@computer = Computer.find(params[:id])
 		event = params[:event].to_sym() || :start
-		stage = params[:stage]
+		name = params[:stage]
 		comment = params[:comment] || ""
 		raise "Event not supported: #{ event }." unless [:start, :finish, :fail].include?(event)
                 testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }.last
 		stage = testing.testing_stages.sort() { |a, b| a.start <=> b.start }.last
 		case event
 		when :start
-			testing.testing_stages << TestingStage.new(:start => Time.new(), :comment => comment, :stage => stage)
+			testing.testing_stages << TestingStage.new(:start => Time.new(), :comment => comment, :stage => name)
 		when :finish, :fail
 			stage.comment = comment
 			stage.end = Time.new()
@@ -163,11 +163,11 @@ class ComputersController < ApplicationController
 	def progress
 		@computer = Computer.find(params[:id])
                 testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }.last
-		progress = params[:complete] || 0
-		total = params[:total]
+		progress = params[:complete].to_f() || 0
+		total = params[:total].to_f()
 		testing.progress_complete = progress
 		testing.progress_total = total 
-		if @computer.save
+		if testing.save
 			flash[:notice] = 'Progress of current stage set successfully to #{ progress }/#{ total }.'
 			respond_to() do |format|
 				format.html { redirect_to(:action => 'show', :id => @computer) }
