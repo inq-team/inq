@@ -19,14 +19,6 @@
 	<xsl:apply-templates/>
 </xsl:template>
 
-<xsl:template match="//node[description='CPU']">
-	<component>
-		<type>CPU</type>
-		<vendor><xsl:value-of select="vendor"/></vendor>
-		<model><xsl:value-of select="product"/></model>
-	</component>	
-</xsl:template>
-
 <xsl:template match="//node[description='VGA compatible controller']">
 	<component>
 		<type>Video</type>
