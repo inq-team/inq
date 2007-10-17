@@ -79,13 +79,6 @@ submit_components $HOME/components.xml
 # Run all tests
 # ===========================================================================
 
-echo -n "Planning tests with"
-inq-planner $ETC_DIR/tests/$PROFILE.xml >~/testscript || test_failed_file 'Failed to make a test plan'
-echo_success
-
-# Run generated testscript
-success "Generated test script... Running..."
-. ~/testscript
-
+PLANNER=1 TEST_NAME=cpu CPU_TEST_TIME=30 CPU_LOG_TIME=10 . $SHARE_DIR/test/cpu
 
 bash

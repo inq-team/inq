@@ -4,8 +4,8 @@
 # DESTROYS_HDD=N
 # IS_INTERACTIVE=N
 # POWEROFF_DURING_TEST=N
-# VAR=CPU_TEST_TIME:int:Total time of CPU testing
-# VAR=CPU_LOG_TIME:int:Time between progress updates
+# VAR=CPU_TEST_TIME:int:300:Total time of CPU testing
+# VAR=CPU_LOG_TIME:int:30:Time between progress updates
 
 . /usr/share/inquisitor/functions-test
 

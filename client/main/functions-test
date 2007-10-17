@@ -7,20 +7,7 @@ if [ -z "$PLANNER" ]; then
 	. $SHARE_DIR/functions
 	. $SHARE_DIR/communication
 	TEST_NAME=$0
-
-	CPU_TEST_TIME=600
-	CPU_LOG_TIME=30
-
-	MEM_TEST_LOOPS=3
-	MEM_LOG_TIME=30
-
-	FDD_SIZE=1440
-
-	FLASH_SIZE_LIMIT_MB=2048
-
-	LOAD_JOBS=16
-	LOAD_TEST_TIME=3600
-	LOAD_LOG_TIME=60
+	eval `sed -ne '/^# VAR=/ s/^# VAR=\(.*\):\(.*\):\(.*\):\(.*\)$/\1=\3/p' <$SHARE_DIR/test/$TEST_NAME`
 else
 	# Planner has supplied us all variables
 	true

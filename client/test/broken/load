@@ -4,9 +4,9 @@
 # DESTROYS_HDD=N
 # IS_INTERACTIVE=N
 # POWEROFF_DURING_TEST=N
-# VAR=LOAD_JOBS:int:Number of parallely running jobs during compile
-# VAR=LOAD_TEST_TIME:int:Total time of Load testing
-# VAR=LOAD_LOG_TIME:int:Time between progress updates
+# VAR=LOAD_JOBS:int:16:Number of parallely running jobs during compile
+# VAR=LOAD_TEST_TIME:int:3600:Total time of Load testing
+# VAR=LOAD_LOG_TIME:int:60:Time between progress updates
 
 . /usr/share/inquisitor/functions
 
