@@ -32,7 +32,7 @@ Testing <%=h t.test_start %> - <%=h t.test_end %> (length: <%=h (t.test_end - t.
 <% t.testing_stages.each { |ts| %>
 <tr>
 <td><%=h ts.stage %></td>
-<td><%=h ts.end - ts.start %></td>
+<td><% if ts.end and ts.start %><%=h ts.end - ts.start %><% end %></td>
 </tr>
 <% } %>
 </table>
