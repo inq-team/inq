@@ -21,7 +21,7 @@ class Scanner
 	    $PAIRED_SCANS.each { |ps|
     
 		if @scan_vals.sort!.map{|i| i[/./]} == ps.sort! then
-		    puts "Scaned values:"
+		    puts "Scanned values:"
 		    puts @scan_vals
 			    
 		    r=check_vals(ps)
@@ -66,13 +66,13 @@ class Scanner
 	    subnet=nil
 	    
 	    ip_range.scan(/^(\d+\.\d+\.\d+\.)(\d+)\s\d+\.\d+\.\d+\.(\d+)/){|subnet, host1, host2|}
-	    puts "Tryinf send to #{host1} .. #{host2}"
+	    puts "Trying to send to #{host1} .. #{host2}"
 	    host1.to_i.step(host2.to_i, 1){|h| Thread.new(h) { |lh| send2ip_addr(subnet+"#{lh}", system_id) }}
 	end
 	
 	def send2ip_addr(ip_addr, system_id)
 	    begin
-		puts "Trying send ID(#{system_id}) to #{ip_addr}:#{$CLIENT_PORT}"
+		puts "Trying to send ID(#{system_id}) to #{ip_addr}:#{$CLIENT_PORT}"
 		TCPSocket.new(ip_addr, $CLIENT_PORT).puts(system_id)
 	    rescue Exception => ex
 		puts ex
