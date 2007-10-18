@@ -46,6 +46,7 @@ while true do
 	puts 'Waiting for new numbers'
 	activated = select($scanners_dev, nil, nil, id_timeout)
 
+	puts 'After select'
 	if activated.nil? then
 		puts 'Timeout exceeded. Saving abort.'
 		id_timeout = nil
@@ -62,7 +63,7 @@ while true do
 
 		# Get line from device
 		# GREYFIX: somehow scanner produces \r instead of normal EOL
-		line = dev.gets("\r")
+		line = dev.gets
 		
 		if line.nil? then
 			puts 'PANIC: Null line entered. Check the devices! Sleeping for 5 seconds'
