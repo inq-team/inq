@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 # NAME=Load
 # DESCRIPTION=Loading stress test
 # DESTROYS_HDD=N
@@ -8,10 +8,10 @@
 # VAR=LOAD_TEST_TIME:int:3600:Total time of Load testing
 # VAR=LOAD_LOG_TIME:int:60:Time between progress updates
 
-. /usr/share/inquisitor/functions
+. /usr/share/inquisitor/functions-test
 
 LOAD_ROOT=`mktemp -d /tmp/load_test.XXXXX`
-LOAD_TREE="/usr/share/inquisitor/linux-2.6.15-stress"
+LOAD_TREE="/usr/share/inquisitor/linux-2.6.15_stress"
 
 before_load()
 {

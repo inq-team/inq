@@ -1,6 +1,6 @@
-#!/bin/sh -e
-# NAME=Stress_flash
-# DESCRIPTION=Stress test for flash
+#!/bin/sh
+# NAME=Flash
+# DESCRIPTION=Flash disk badblocks test
 # DESTROYS_HDD=Y
 # IS_INTERACTIVE=N
 # POWEROFF_DURING_TEST=N
@@ -9,19 +9,16 @@
 . /usr/share/inquisitor/functions-test
 
 FLASH_SIZE_LIMIT=$[$FLASH_SIZE_LIMIT_MB * 1024 * 2]
-DEVICE_LIST_FILE="/tmp/flash_stress_devices"
+DEVICE_LIST_FILE=`mktemp /tmp/flash_stress.XXXXX`
 
 function load_ide_devices()
 {
-	rmmod pata-amd
+	rmmod ata_generic
+	rmmod ata_piix
+	rmmod libata
 	sleep 10
 	modprobe ide-generic
 	sleep 10
-}
-
-function clear_after_test()
-{
-	rm -f $DEVICE_LIST_FILE
 }
 
 function detect_flash_devices()
@@ -43,19 +40,19 @@ function detect_flash_devices()
 
 function flash_test()
 {
-	$TESTED_DEVICES=1
+	TESTED_DEVICES=1
 	for i in `cat $DEVICE_LIST_FILE`; do
-		badblocks -svw /dev/$i || test_failed
+		badblocks -svw /dev/$i >/dev/null 2>/dev/null || test_failed
 		test_progress $TESTED_DEVICES $FLASH_QUANTITY
 		TESTED_DEVICES=$[ $TESTED_DEVICES + 1 ]
 	done
 }
 
+load_ide_devices
 detect_flash_devices
 
 if [ "$FLASH_QUANTITY" -gt "0" ]; then
 	test_started $FLASH_QUANTITY
 	flash_test
 	test_succeeded
-	clear_after_test
 fi
