@@ -27,7 +27,7 @@ def go_daemon
 			File.open($pid_file, "w") { |file| file.puts pid }
 			exit!
 		end
-		
+
 		## change process group and lose control tty
 		Process.setpgrp
 	end
@@ -40,7 +40,7 @@ def go_daemon
 	#$thishost = Socket.gethostbyname(Socket.gethostname)[0]
 	#$sl = Syslog.new('pray', Syslog::LOG_PID|Syslog::LOG_CONS, Syslog::LOG_DAEMON)
 
-	Syslog.open('inquisitord', Syslog::LOG_PID|Syslog::LOG_CONS, Syslog::LOG_DAEMON)
+	Syslog.open('scannerd', Syslog::LOG_PID|Syslog::LOG_CONS, Syslog::LOG_DAEMON)
 	def puts(x)
 		Syslog.info(x)
 	end
