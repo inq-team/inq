@@ -1,0 +1,24 @@
+#info_tab_log {
+	color: white;
+	font-weight: bold;
+	text-decoration: none;
+	cursor: default;
+	background: #4668d7;
+	color: white;
+}
+
+#selected_testing_tab {
+	background: #4668d7;
+}
+
+#testing_plan, #content {
+	border: solid 0.5em #4668d7;
+}
+
+/**********************/
+
+#log_area {
+	margin: 0.5em;
+}
+
+

@@ -1,0 +1,15 @@
+<table id='components'>
+	<tr>
+		<th class='component_num'>#</th>
+		<th class='component_name'>P/N</th>
+		<th class='component_qty'>Qty</th>
+	</tr>
+	<% @components.each_index do |i| %>
+		<% component = @components[i] %>
+		<tr>
+		<td class='component_num'> <%= i %> </td>
+		<td class='component_name'><%= component[:name] %></td>
+		<td class='component_qty'><%= component[:count] %></td>
+		</tr>
+	<% end %>
+</table>

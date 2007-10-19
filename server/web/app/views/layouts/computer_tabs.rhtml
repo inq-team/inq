@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+	<title>Inquisitor: Enterprise - <%= controller.action_name %></title>
+	<%= stylesheet_link_tag 'inq' %>
+	<%= stylesheet_link_tag "computer_tab_#{controller.action_name}" %>
+</head>
+<body>
+
+	<div id='title_bar'> 
+	<table><tr>
+		<td id='title_bar_model'><%= @computer.model.name %></td>
+		<td id='title_bar_serial'><%= @computer.serial_no %></td>
+		<td id='title_bar_shelf'><%= @computer.shelf %></td>
+		<td id='title_bar_doc'><%= @computer.doc_no %></td>
+	</tr></table>
+	</div>
+	
+	<div id='progress_bar'> 
+	<table><tr>
+	<% stages = ['Ordering', 'Warehouse', 'Acceptance', 'Assembling', 'Testing', 'Packaging'] %>
+	<% @computer.computer_stages.sort { |a, b| (a.end || Time.new()) <=> (b.end || Time.new()) }.each() do |stage| %>
+	<%
+		span = ((stage.end || Time.new()) - stage.start).round ;
+		span_txt = "< 1m"
+		name = stage.stage.capitalize()
+	        if (z = span / 86400) > 0
+			span_txt = sprintf("%id %ih", z, span % 86400 / 3600)
+		elsif ( z = span / 3600) > 0
+			span_txt = sprintf("%ih %im", z, span % 3600 / 60)
+		elsif (z = span / 60) > 0
+			span_txt = sprintf("%im", z)
+		end
+		classname = stage.end ? 'finished' : 'running'
+		stages.delete(name)
+	%>
+		<td class='computer_stage_<%= classname %>'>
+			<p> <%= name %> </p><p> <%= span_txt %> </p>	
+		</td>
+	<% end %>
+	<% stages.each do |stage| %><td class='computer_stage_planned'><%= stage %></td><% end %>
+	</tr></table>
+	</div>
+	
+	<div id='testing_pane'>
+	
+		<div id='testings_tabs'> 			
+
+			<%= javascript_tag("function select_testing_tab() { z = document.getElementById('testing_select'); y = (z.options[z.selectedIndex].value); y.match(/\\d+/) && window.location.assign('#{ url_for(:action => controller.action_name, :id => @computer.id, :testing => '__replace_me') }'.replace('__replace_me', y)); }") if @sorted_testings.size > 10 %>
+			
+			<% in_combo = @sorted_testings.size - @testing_number > 10 ; options = [] ; j = 0 ; @sorted_testings.size.downto(1) do |i| %>
+				<% if j < 10 %>
+					<div class='testing_tab' <%= (i - 1 == @testing_number) ? " id='selected_testing_tab' " : "" %> ><%= link_to(i, {:action => controller.action_name, :testing => i - 1}) %></div>
+				<% else %>
+					<% options << content_tag(:option, i, { :value => i - 1 }.merge(i - 1 == @testing_number ? { :selected => 1 } : {})) %>					
+					<%= content_tag(:div, select_tag('testing', ((( in_combo ? [] : [ content_tag(:option, '>>', :selected => 1) ])  + options).join()), :id => 'testing_select', :onchange => 'select_testing_tab();'), { :class => 'testing_tab' }.merge(in_combo ? { :id => 'selected_testing_tab' } : {})) if j == @sorted_testings.size - 1 %>
+				<% end ; j += 1 %>
+			<% end %>
+		</div>
+	
+		<div id='info_tabs'>
+			<%= link_to("Configuration", {:action => 'hw', :id => @computer.id, :testing => @testing_number}, :id => 'info_tab_hw') %>
+			<%= link_to("Sticker", {:action => 'sticker', :id => @computer.id, :testing => @testing_number}, :id => 'info_tab_sticker') %>
+			<%= link_to("Logs", {:action => 'log', :id => @computer.id, :testing => @testing_number}, :id => 'info_tab_log') %>
+		</div>
+	
+		<div id='testing_plan'>
+			<table><% @computer.testings[@testing_number].testing_stages.sort { |a, b| (a.end || Time.new()) <=> (b.end || Time.new()) }.each do |stage| %>
+				<% 
+					span = ((stage.end || Time.new()) - stage.start).round ; 
+					span_txt = sprintf("%02i:%02i:%02i", span/3600, span%3600/60, span%3600%60)
+					classname = stage.end ? stage.result == 1 ? 'finished' : stage.result == 2 ? 'failed' : 'unknown' : 'running'
+				%>
+				<tr class='testing_stage_<%= classname %>'>
+					<td class='testing_stage_name'><%= stage.stage %></td>
+					<td class='testing_stage_span'><%= span_txt %></td>
+				</tr>
+			<% end %></table>
+			&nbsp;
+		</div>
+	
+		<div id='content'>
+			<%= yield %>		
+		</div>
+
+	</div>
+</body>

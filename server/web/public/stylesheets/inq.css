@@ -1,0 +1,179 @@
+
+/*******************************************************************************
+
+Styles for computer_tabs layout
+
+********************************************************************************/
+
+body {
+	padding: 0px;
+	margin: 0px;
+	font-size: 0.85em;
+}
+
+a img {
+	border: 0px;
+}
+
+
+/* Title bar */
+
+#title_bar {
+	background: #26ab38;
+	border: hidden;
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
+}
+
+#title_bar table {
+	border-collapse: collapse;
+	border: hidden;
+}
+
+#title_bar td{
+	padding-left: 1em;
+	padding-right: 1em;
+	color: white;
+	border-left: 2px white solid;
+	border-right: 2px white solid;	
+}
+
+#title_bar_model {
+	font-size: 1.15em;
+	font-weight: bold;
+}
+
+#title_bar_serial {
+	font-size: 1.1em;
+	font-weight: bold;
+}
+
+#title_bar_shelf {
+	font-size: 1.05em;
+}
+
+#title_bar_doc {
+	font-size: 1em;
+}
+
+/* Progress bar */
+
+#progress_bar {
+	padding: 0.5em;
+}
+
+#progress_bar table {
+	border-collapse: separate;
+	border: none;
+	border-spacing: 0.5em;
+}
+
+#progress_bar td {
+	text-align: center;
+	vertical-align: middle;	
+	border: 1px solid;
+	width: 6em;
+	height: 4em;
+}
+
+.computer_stage_planned {
+	background-color: #ebffef;
+	color: #999;
+}
+
+.computer_stage_finished {
+}
+
+.computer_stage_running {
+}
+
+/* Main tabbar */
+
+#testing_pane {
+	clear: left;
+	height: 40em;
+	padding: 0.3em;
+}
+
+#testings_tabs {
+	float: left;
+	padding-top: 1.5em;
+	padding-left: 0.5em;
+	background: white;
+}
+
+.testing_tab {
+	margin-bottom:0.1em;
+	text-align: right;
+	padding: 0.5em;
+	width: 2.5em;
+}
+
+#info_tabs {
+	height: 1.5em;
+	text-align: center;
+	background: white;
+}
+
+#info_tabs a {
+	padding-left: 1em;
+	padding-right: 1em;
+	line-height: 1.8em;
+	padding-top: 0.3em;
+}
+
+#selected_testing_tab a {
+	text-decoration: none;
+	font-weight: bold;
+	cursor: default;
+	text-decoration: none;
+	color: white;
+}
+
+#testing_plan {
+	float: left;
+	width: 14em;
+	height: 100%;
+	background-color: white;
+	padding: 0.5em;
+}
+
+#testing_plan table {
+	width: 100%;
+	border-collapse: collapse;
+	border: hidden;		
+}
+
+#testing_plan td {
+	border-bottom: 1px solid #999;	
+	vertical-align: bottom;
+	height: 2em;
+}
+
+.testing_stage_span {
+	text-align: right;
+}
+
+.testing_stage_name {
+	text-align: left;
+	padding-left: 25px;
+}
+
+.testing_stage_finished {
+	background: url('/images/stage_finished.png') 1px 70% no-repeat;
+}
+
+.testing_stage_failed {
+	background: url('/images/stage_failed.png') 1px 70% no-repeat;
+}
+
+.testing_stage_running {
+	background: url('/images/stage_running.png') 1px 70% no-repeat;
+}
+
+#content {
+	background-color: white;
+	min-height: 100%;
+	padding: 0.5em;
+	margin-left: 4em;
+}

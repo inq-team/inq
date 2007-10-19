@@ -1,0 +1,49 @@
+#info_tab_hw {
+	color: white;
+	font-weight: bold;
+	text-decoration: none;
+	cursor: default;
+	background: #2dbb49;
+	color: white;
+}
+
+#selected_testing_tab {
+	background: #2dbb49;
+}
+
+#testing_plan, #content {
+	border: solid 0.5em #2dbb49;
+}
+
+/**********************/
+
+#components {
+	border-collapse: collapse;
+	border: hidden;
+	margin: 0.5em;
+	min-width: 40em;
+}
+
+
+#components td, #components th {
+	vertical-align: top;
+	padding: 0.5em;
+	padding: 0.5em;
+	border-right: 1px solid #aaa;
+}
+
+
+#components th {
+	border-bottom: 1px solid #aaa;
+	vertical-align: middle;
+	background-color: #eaedea;
+}
+
+
+.component_odd {
+}
+
+.component_even {
+	background-color: #f0f4f0;
+}
+

@@ -1,0 +1,21 @@
+<table id='components'>
+	<tr>
+		<th class='component_group'>Device</th>
+		<th class='component_name'>Full model name</th>
+		<th class='component_serial'>Serial</th>
+	</tr>
+	<% hardware = ''; style = 0 %>
+	<% @components.sort() { |a, b| (z = (a.model.group ? a.model.group.name : '') <=> (b.model.group ? b.model.group.name : '')) == 0 ? (y = a.model.name <=> b.model.name) == 0 ? (a.serial ? a.serial : '') <=> (b.serial ? b.serial : '') : y : z }.each() do |component| %>
+		<% model = component.model.group ? component.model.group.name : '' %>
+		<% style = (style + 1) % 2 if hardware != model %>
+		<tr class='component_<%= style == 0 ? 'even' : 'odd' %>'>
+		<td class='component_group'>
+			<% if hardware != model %>
+				<%= hardware = model %>
+			<% end %>
+		</td>
+		<td class='component_name'><%= component.model.name %></td>
+		<td class='component_serial'><%= component.serial %></td>
+		</tr>
+	<% end %>
+</table>

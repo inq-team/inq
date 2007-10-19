@@ -1,0 +1,57 @@
+#info_tab_sticker {
+	color: white;
+	font-weight: bold;
+	text-decoration: none;
+	cursor: default;
+	background: #e79830;
+	color: white;
+}
+
+#selected_testing_tab {
+	background: #e79830;
+}
+
+#testing_plan, #content {
+	border: solid 0.5em #e79830;
+}
+
+/**********************/
+
+#components {
+	border-collapse: collapse;
+	border: hidden;
+	margin: 0.5em;
+	min-width: 40em;
+}
+
+#components td, #components th {
+	vertical-align: bottom;
+	padding: 0.5em;
+	padding: 0.5em;
+	border-bottom: 1px solid #aaa;
+}
+
+#components td.component_num {
+	text-align: right;
+}
+
+#components .component_qty {
+	text-align: center;
+	border-right: 1px solid #aaa;
+}
+
+#components .component_name {
+	border-left: 1px solid #aaa;
+	border-right: 1px solid #aaa;
+}
+
+#components th {
+	text-align: center;
+        background-color: #eaedea;
+}
+
+.component_edit {
+	vertical-align: middle;
+}
+
+

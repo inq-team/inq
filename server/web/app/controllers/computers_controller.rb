@@ -71,6 +71,47 @@ class ComputersController < ApplicationController
 		head :ok
 	end
 
+	def index
+			
+	end
+
+	def show
+		@computer = Computer.find(params[:id])
+                @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
+		@testing_number = @sorted_testings.size - 1
+		
+		redirect_to(:action => 'hw', :id => params[:id], :testing => @testing_number)
+	end
+
+	def hw
+		@computer = Computer.find(params[:id])
+		@testing_number = params[:testing].to_i()
+                @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
+		@components = @sorted_testings[@testing_number].components
+		
+		render(:layout => 'computer_tabs')
+	end
+	
+	def sticker
+		@computer = Computer.find(params[:id])
+		@testing_number = params[:testing].to_i()
+                @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
+		@components = @sorted_testings[@testing_number].components.collect { |c| c.model }.inject({}) { |h, m| h[m] = h[m] ? h[m] + 1 : 1 ; h }.collect { |k, v| { :name => k.short_name || k.name, :count => v, :model => k  } }.sort() { |a, b| a = a[:model] ; b = b[:model]; (z = ((a.group ? a.group.name : '') <=> (b.group ? b.group.name : ''))) == 0 ? ((a.short_name || a.name) <=> (b.short_name || b.name)) : z }
+
+		render(:layout => 'computer_tabs')
+	end
+
+	def log
+		@computer = Computer.find(params[:id])
+		@testing_number = params[:testing].to_i()
+                @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
+		@components = @sorted_testings[@testing_number].components
+
+		@logs = "Under construction"
+
+		render(:layout => 'computer_tabs')
+	end
+
 	def update
 		@computer = Computer.find(params[:id])
 		if @computer.update_attributes(params[:computer])
