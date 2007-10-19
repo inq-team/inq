@@ -45,8 +45,15 @@
 	</div>
 	
 	<div id='testing_pane'>
-	
-		<div id='testings_tabs'> 			
+
+		<div id='info_tabs'>
+			<%= link_to("Configuration", {:action => 'hw', :id => @computer.id, :testing => @testing_number}, :id => 'info_tab_hw') %>
+			<%= link_to("Sticker", {:action => 'sticker', :id => @computer.id, :testing => @testing_number}, :id => 'info_tab_sticker') %>
+			<%= link_to("Logs", {:action => 'log', :id => @computer.id, :testing => @testing_number}, :id => 'info_tab_log') %>
+		</div>
+
+		<div><table id='testing_border'><tr>
+		<td id='testings_tabs'> 			
 
 			<%= javascript_tag("function select_testing_tab() { z = document.getElementById('testing_select'); y = (z.options[z.selectedIndex].value); y.match(/\\d+/) && window.location.assign('#{ url_for(:action => controller.action_name, :id => @computer.id, :testing => '__replace_me') }'.replace('__replace_me', y)); }") if @sorted_testings.size > 10 %>
 			
@@ -58,15 +65,9 @@
 					<%= content_tag(:div, select_tag('testing', ((( in_combo ? [] : [ content_tag(:option, '>>', :selected => 1) ])  + options).join()), :id => 'testing_select', :onchange => 'select_testing_tab();'), { :class => 'testing_tab' }.merge(in_combo ? { :id => 'selected_testing_tab' } : {})) if j == @sorted_testings.size - 1 %>
 				<% end ; j += 1 %>
 			<% end %>
-		</div>
+		</td>
 	
-		<div id='info_tabs'>
-			<%= link_to("Configuration", {:action => 'hw', :id => @computer.id, :testing => @testing_number}, :id => 'info_tab_hw') %>
-			<%= link_to("Sticker", {:action => 'sticker', :id => @computer.id, :testing => @testing_number}, :id => 'info_tab_sticker') %>
-			<%= link_to("Logs", {:action => 'log', :id => @computer.id, :testing => @testing_number}, :id => 'info_tab_log') %>
-		</div>
-	
-		<div id='testing_plan'>
+		<td id='testing_plan'>
 			<table><% @computer.testings[@testing_number].testing_stages.sort { |a, b| (a.end || Time.new()) <=> (b.end || Time.new()) }.each do |stage| %>
 				<% 
 					span = ((stage.end || Time.new()) - stage.start).round ; 
@@ -79,11 +80,11 @@
 				</tr>
 			<% end %></table>
 			&nbsp;
-		</div>
-	
-		<div id='content'>
-			<%= yield %>		
-		</div>
+		</td> 
 
+		<td id='content'>
+			<%= yield %>		
+		</td> 
+	</tr></table></div>
 	</div>
 </body>

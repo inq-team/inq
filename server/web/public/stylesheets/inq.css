@@ -9,6 +9,7 @@ body {
 	padding: 0px;
 	margin: 0px;
 	font-size: 0.85em;
+	background: white;
 }
 
 a img {
@@ -90,27 +91,34 @@ a img {
 /* Main tabbar */
 
 #testing_pane {
-	clear: left;
-	height: 40em;
-	padding: 0.3em;
+	border: 10px solid white;
 }
 
-#testings_tabs {
-	float: left;
-	padding-top: 1.5em;
+#testing_border {
+	border-collapse: collapse;
+	width:100%;
+}
+
+#testing_border td {
+	vertical-align: top;
+	padding: 0px;
+}
+
+#testing_border #testings_tabs {
+	width: 3em;
+	padding-top: 0.5em; 
 	padding-left: 0.5em;
-	background: white;
+	padding-bottom: 1em;
 }
 
 .testing_tab {
-	margin-bottom:0.1em;
-	text-align: right;
+	margin-bottom:0.5em;
+	text-align: center;
 	padding: 0.5em;
-	width: 2.5em;
 }
 
 #info_tabs {
-	height: 1.5em;
+	height: 2.5em;
 	text-align: center;
 	background: white;
 }
@@ -118,7 +126,7 @@ a img {
 #info_tabs a {
 	padding-left: 1em;
 	padding-right: 1em;
-	line-height: 1.8em;
+	line-height: 3em;
 	padding-top: 0.3em;
 }
 
@@ -130,12 +138,10 @@ a img {
 	color: white;
 }
 
-#testing_plan {
-	float: left;
+#testing_border #testing_plan {
 	width: 14em;
-	height: 100%;
-	background-color: white;
-	padding: 0.5em;
+	border: 10px solid; 
+	padding: 0px;
 }
 
 #testing_plan table {
@@ -152,28 +158,26 @@ a img {
 
 .testing_stage_span {
 	text-align: right;
+	padding-right: 0.5em ! important;
 }
 
 .testing_stage_name {
 	text-align: left;
-	padding-left: 25px;
+	padding-left: 30px ! important; 
 }
 
-.testing_stage_finished {
-	background: url('/images/stage_finished.png') 1px 70% no-repeat;
+.testing_stage_finished .testing_stage_name {
+	background: url('/images/stage_finished.png') 8px 70% no-repeat;
 }
 
-.testing_stage_failed {
-	background: url('/images/stage_failed.png') 1px 70% no-repeat;
+.testing_stage_failed .testing_stage_name {
+	background: url('/images/stage_failed.png') 8px 70% no-repeat;
 }
 
-.testing_stage_running {
-	background: url('/images/stage_running.png') 1px 70% no-repeat;
+.testing_stage_running .testing_stage_name {
+	background: url('/images/stage_running.png') 8px 70% no-repeat;
 }
 
-#content {
-	background-color: white;
-	min-height: 100%;
-	padding: 0.5em;
-	margin-left: 4em;
+#testing_border #content {
+	border: 10px solid;
 }

@@ -12,7 +12,7 @@
 }
 
 #testing_plan, #content {
-	border: solid 0.5em #e79830;
+	border-color: #e79830 ! important;
 }
 
 /**********************/
@@ -20,8 +20,7 @@
 #components {
 	border-collapse: collapse;
 	border: hidden;
-	margin: 0.5em;
-	min-width: 40em;
+	width: 100%;
 }
 
 #components td, #components th {

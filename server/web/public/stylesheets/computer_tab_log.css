@@ -12,13 +12,12 @@
 }
 
 #testing_plan, #content {
-	border: solid 0.5em #4668d7;
+	border-color: #4668d7 ! important;
 }
 
 /**********************/
 
 #log_area {
-	margin: 0.5em;
 }
 
 
