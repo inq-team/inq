@@ -1,7 +1,10 @@
 #!/usr/bin/env ruby
 
-TLOG_ID=ENV['TLOG_ID']
-p TLOG_ID
+COMPUTER_ID=ENV['COMPUTER_ID']
+
+def temporary_workaround(cmd)
+	`TEST_NAME=hdd . /usr/share/inquisitor/functions-test && export COMPUTER_ID=#{COMPUTER_ID} && ${cmd}`
+end
 
 class Screen
 	def self.clear
@@ -13,20 +16,10 @@ class Screen
 	end
 end
 
-class Log
-	def self.failed(msg)
-		`echo '#{msg}' | tlog #{TLOG_ID} 4 'stress [hdd r/w]'`
-	end
-
-	def self.info(msg)
-		`echo '#{msg}' | tlog #{TLOG_ID} 2 'stress [hdd r/w]'`
-	end
-end
-
 class DiscTest
 	# Configuration
-	PERIOD_LOG=15*60
-	PERIOD_SCREEN=2
+	PERIOD_LOG=15
+	PERIOD_SCREEN=15
 
 	def initialize(devices)
 		@devices = devices
@@ -55,9 +48,6 @@ class DiscTest
 			        STDOUT.reopen(pr[1])
 			        STDERR.reopen(pr[1])
 			        pr[1].close
-
-#			        pe[0].close
-#			        pe[1].close
 
 			        exec("badblocks -sv /dev/#{hdd}")
 			}
@@ -134,8 +124,9 @@ class DiscTest
 			sum_total += @total[i] if @total[i]
 		}
 		sum_total = 1 if sum_total == 0
-		perc = (sum_done / sum_total * 100).to_i
-		Log::info("Progress: #{perc}%")
+		s1=sum_done.to_i;
+		s2=sum_total.to_i;
+		temporary_workaround("test_progress #{s1} #{s2}")
 	end
 
 	def wait_completion
@@ -149,7 +140,8 @@ class DiscTest
 				ind = @process.index(s[0])
 				if ind then
 					failed_hdd = @devices[ind]
-					Log::failed("Single HDD test failed: #{failed_hdd}")
+					temporary_workaround("test_failed #{failed_hdd}");
+					exit 1
 					status = s[1].exitstatus 
 				end
 			end

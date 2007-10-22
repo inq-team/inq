@@ -6,8 +6,10 @@ if [ -z "$PLANNER" ]; then
 	. /etc/inquisitor/global
 	. $SHARE_DIR/functions
 	. $SHARE_DIR/communication
-	TEST_NAME=$0
-	eval `sed -ne '/^# VAR=/ s/^# VAR=\(.*\):\(.*\):\(.*\):\(.*\)$/\1=\3/p' <$SHARE_DIR/test/$TEST_NAME`
+	if [ -z "$TEST_NAME" ]; then
+		TEST_NAME=`basename $0`
+		eval `sed -ne '/^# VAR=/ s/^# VAR=\(.*\):\(.*\):\(.*\):\(.*\)$/\1=\3/p' <$SHARE_DIR/test/$TEST_NAME`
+	fi
 else
 	# Planner has supplied us all variables
 	true
