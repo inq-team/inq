@@ -73,8 +73,9 @@ a img {
 	text-align: center;
 	vertical-align: middle;	
 	border: 1px solid;
-	width: 6em;
+	width: 8em;
 	height: 4em;
+	border: 1px solid #999;
 }
 
 .computer_stage_planned {
@@ -83,9 +84,11 @@ a img {
 }
 
 .computer_stage_finished {
+	background-color: #9af9a6;
 }
 
 .computer_stage_running {
+	background-color: #fbec8a;
 }
 
 /* Main tabbar */

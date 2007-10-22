@@ -20,24 +20,32 @@
 	
 	<div id='progress_bar'> 
 	<table><tr>
-	<% stages = ['Ordering', 'Warehouse', 'Acceptance', 'Assembling', 'Testing', 'Packaging'] %>
-	<% @computer.computer_stages.sort { |a, b| (a.end || Time.new()) <=> (b.end || Time.new()) }.each() do |stage| %>
+	<% stages = ['Ordering', 'Warehouse', 'Acceptance', 'Assembling', 'Testing', 'Packaging'] ; now = Time.new() %>
+	<% @computer.computer_stages.sort { |a, b| (a.end || now) <=> (b.end || now) }.each() do |stage| %>
 	<%
-		span = ((stage.end || Time.new()) - stage.start).round ;
-		span_txt = "< 1m"
+		ary = [{ :span => (stage.end - stage.start).round(), :span_txt => "< 1m" }]
+		ary << { :span => (now - stage.start).round(), :span_txt => "< 1m" } if stage.end > now
 		name = stage.stage.capitalize()
-	        if (z = span / 86400) > 0
-			span_txt = sprintf("%id %ih", z, span % 86400 / 3600)
-		elsif ( z = span / 3600) > 0
-			span_txt = sprintf("%ih %im", z, span % 3600 / 60)
-		elsif (z = span / 60) > 0
-			span_txt = sprintf("%im", z)
+		ary = ary.collect do |h|
+		        if (z = h[:span] / 86400) > 0
+				h[:span_txt] = sprintf("%id %ih", z, h[:span] % 86400 / 3600)
+			elsif ( z = h[:span] / 3600) > 0
+				h[:span_txt] = sprintf("%ih %im", z, h[:span] % 3600 / 60)
+			elsif (z = h[:span] / 60) > 0
+				h[:span_txt] = sprintf("%im", z)
+			end
+			h
 		end
-		classname = stage.end ? 'finished' : 'running'
+		classname = stage.end <= now ? 'finished' : 'running'
 		stages.delete(name)
 	%>
-		<td class='computer_stage_<%= classname %>'>
-			<p> <%= name %> </p><p> <%= span_txt %> </p>	
+		<td title='<%= stage.comment %>' class='computer_stage_<%= classname %>'>
+			<p> <%= name %>
+				<% if stage.end > now && stage.stage == 'testing' && @sorted_testings.last.progress_total %>
+				(<%= @sorted_testings.last.progress_total > 30 ? "#{ ((@sorted_testings.last.progress_complete || 0) * 100 / @sorted_testings.last.progress_total).round() }" : "#{ (@sorted_testings.last.progress_complete || 0).round() } / #{ @sorted_testings.last.progress_total.round() }" %>)
+				<% end %>
+			</p>
+			<p> <%= ary.reverse.collect { |h| h[:span_txt] }.join(" / ") %> </p>
 		</td>
 	<% end %>
 	<% stages.each do |stage| %><td class='computer_stage_planned'><%= stage %></td><% end %>
