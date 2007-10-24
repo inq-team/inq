@@ -30,8 +30,7 @@ detect_cpu_quantity()
 
 start_burn()
 {
-	for i in `seq 1 $CPU_QUANTITY`;
-	do
+	for i in `seq 1 $CPU_QUANTITY`; do
 		$BURN_PROGRAM &
 		echo $! >~/cpuburn$i.pid
 	done
@@ -39,16 +38,14 @@ start_burn()
 
 stop_burn()
 {
-	for i in `seq 1 $CPU_QUANTITY`;
-	do
+	for i in `seq 1 $CPU_QUANTITY`; do
 		killbypid cpuburn$i
 	done
 }
 
 check_alive_burners()
 {
-	for i in `seq 1 $CPU_QUANTITY`;
-	do
+	for i in `seq 1 $CPU_QUANTITY`; do
 		(( `ps \`cat ~/cpuburn$i.pid\` | wc -l` == 2 )) || test_failed
 	done
 }

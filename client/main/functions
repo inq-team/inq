@@ -182,10 +182,12 @@ test_succeeded()
 
 test_failed()
 {
+	COMMENT=$1
+
 	echo
 	echo -n Test $TEST_NAME
 	echo_failure
-	test_stage_advance $TEST_NAME fail
+	test_stage_advance $TEST_NAME fail $COMMENT
 	exit 1
 }
 

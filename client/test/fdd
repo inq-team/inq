@@ -37,8 +37,7 @@ detect_fdd_quantity
 generate_test_image
 
 test_started $FDD_QUANTITY
-for i in `seq 1 $FDD_QUANTITY`;
-do
+for i in `seq 1 $FDD_QUANTITY`; do
 	test_fdd $[$i - 1]
 	test_progress $i $FDD_QUANTITY
 done

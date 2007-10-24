@@ -10,8 +10,9 @@
 
 FLASH_SIZE_LIMIT=$[$FLASH_SIZE_LIMIT_MB * 1024 * 2]
 DEVICE_LIST_FILE=`mktemp /tmp/flash_stress.XXXXX`
+BADBLOCKS_COMMAND="badblocks -svw"
 
-function load_ide_devices()
+load_ide_devices()
 {
 	rmmod ata_generic
 	rmmod ata_piix
@@ -21,7 +22,7 @@ function load_ide_devices()
 	sleep 10
 }
 
-function detect_flash_devices()
+detect_flash_devices()
 {
 	FLASH_QUANTITY=0
 
@@ -38,11 +39,11 @@ function detect_flash_devices()
 	done
 }
 
-function flash_test()
+flash_test()
 {
 	TESTED_DEVICES=1
 	for i in `cat $DEVICE_LIST_FILE`; do
-		badblocks -svw /dev/$i >/dev/null 2>/dev/null || test_failed
+		$BADBLOCKS_COMMAND /dev/$i >/dev/null 2>/dev/null || test_failed
 		test_progress $TESTED_DEVICES $FLASH_QUANTITY
 		TESTED_DEVICES=$[ $TESTED_DEVICES + 1 ]
 	done

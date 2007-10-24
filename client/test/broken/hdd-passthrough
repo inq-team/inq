@@ -1,4 +1,10 @@
 #!/usr/bin/env ruby
+# NAME=HDD_passthrough
+# DESCRIPTION=HDD passthrough disks test
+# DESTROYS_HDD=Y
+# IS_INTERACTIVE=N
+# POWEROFF_DURING_TEST=N
+
 require 'raid/baseraid'
 
 COMPUTER_ID=ENV['COMPUTER_ID']
@@ -12,7 +18,7 @@ temporary_workaround("test_started 100")
 def test_available
 	drivenames = `ls -1 /sys/block/ | grep -v '[0-9]$'`.split(/\n/)
 	puts "Drivenames: #{drivenames.join(',')}"
-	system("./hdd-badblocks.rb #{drivenames.join(' ')}")
+	system("./additional/hdd-badblocks.rb #{drivenames.join(' ')}")
 	return drivenames.size
 end
 
@@ -24,7 +30,7 @@ RAID::BaseRaid::query_adapters.each { |ad|
 	a.adapter_restart
 }
 
-test_available
+test_available == 0 && temporary_workaround("test_failed")
 
 adapters.each { |a|
 	a.logical_clear

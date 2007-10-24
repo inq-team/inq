@@ -1,0 +1,111 @@
+#!/bin/sh -e
+# NAME=HDD_array
+# DESCRIPTION=HDD array stress test
+# DESTROYS_HDD=Y
+# IS_INTERACTIVE=N
+# POWEROFF_DURING_TEST=N
+# VAR=HDDARR_TIMEOUT:int:60:Total time of HDD array testing
+# VAR=HDDARR_LOGTIME:int:30:Time between progress updates
+# VAR=HDDARR_JOBS:int:7:Number of parallely running jobs during compile
+
+. /usr/share/inquisitor/functions-test
+
+STRESS_TREE="/usr/share/inquisitor/linux-2.6.15_stress.tar.gz"
+
+make_arrays()
+{
+	raid-wizard-optimal || test_failed
+}
+
+prepare_source_tree()
+{
+	TREE_ROOT=$1
+
+	cd $TREE_ROOT
+	tar xzf "$STRESS_TREE" || test_failed
+	TREE_NAME=`basename "$STRESS_TREE" .tar.gz`
+	cd "$TREE_NAME"
+
+	#is it linux source?
+	if echo "$TREE_NAME" | grep '^linux' ; then
+		find . -print | xargs touch
+		touch .config include/linux/autoconf.h
+	fi
+}
+
+get_drives_list()
+{
+	DRIVES_LIST=`ls -1 /sys/block/ | grep -v '[0-9]$'`
+	DRIVES_QUANTITY=`ls -1 /sys/block/ | grep -v '[0-9]$' | wc -l`
+
+	[ "$DRIVES_QUANTITY" -gt 0 ] && TIME_PER_ARRAY=$[ $HDDARR_TIMEOUT / $DRIVES_QUANTITY ] || TIME_PER_ARRAY=$[ $HDDARR_TIMEOUT / 2 ]
+}
+
+temporary_hddarr_jobs_check()
+{
+	TOTAL_MEMORY=$[(`cat /proc/meminfo | grep MemTotal | awk '{print $2}'` / 1024)-16]
+
+	[ "$TOTAL_MEMORY" -lt 512 ] && HDDARR_JOBS=4
+}
+
+prepare_array_for_test()
+{
+	ARRAY=$1
+	MOUNTPOINT=$2
+
+	mke2fs -m0 -F /dev/$ARRAY || test_failed
+	mount /dev/$ARRAY $MOUNTPOINT
+	prepare_source_tree $MOUNTPOINT
+}
+
+test_command_itself()
+{
+	make clean >/dev/null 2>/dev/null && make -j $HDDARR_JOBS fs >/dev/null 2>/dev/null || test_failed
+}
+
+clear_testing_environment()
+{
+	TREE_ROOT=$1
+
+	rm -rf $TREE_ROOT/*
+	umount $TREE_ROOT
+	rmdir $TREE_ROOT
+}
+
+array_stress_check()
+{
+	$ARRAY=$1
+	$MOUNTPOINT=`mktemp -d /tmp/hddarr_test.XXXXX`
+
+	prepare_array_for_test $ARRAY $MOUNTPOINT
+
+	START=`date "+%s"`
+	LAST_LOG_TIME=$TOTAL_START
+
+	while true; do
+		TIME=`date "+%s"`
+		if (( TIME - START > TIME_PER_ARRAY )); then
+			clear_testing_enviroment $MOUNTPOINT
+			break
+		else
+			test_command_itself
+		fi
+
+		if (( TIME - LAST_LOG_TIME > HDDARR_LOGTIME )); then
+			test_progress $[$TIME - $TOTAL_START] $HDDARR_TIMEOUT
+			LAST_LOG_TIME=$TIME
+		fi
+	done
+}
+
+make_arrays
+get_drives_list
+temporary_hddarr_jobs_check
+
+TOTAL_START=`date "+%s"`
+
+for i in $DRIVES_LIST; do
+	array_stress_check $i
+done
+
+test_succeeded

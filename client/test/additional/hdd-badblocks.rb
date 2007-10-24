@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 
 COMPUTER_ID=ENV['COMPUTER_ID']
+PERIOD_SCREEN=5
+PERIOD_LOG=15
+BADBLOCKS_COMMAND="badblocks -svw"
 
 def temporary_workaround(cmd)
 	`TEST_NAME=hdd . /usr/share/inquisitor/functions-test && export COMPUTER_ID=#{COMPUTER_ID} && ${cmd}`
@@ -17,10 +20,6 @@ class Screen
 end
 
 class DiscTest
-	# Configuration
-	PERIOD_LOG=15
-	PERIOD_SCREEN=15
-
 	def initialize(devices)
 		@devices = devices
 		@progress = []
@@ -49,7 +48,7 @@ class DiscTest
 			        STDERR.reopen(pr[1])
 			        pr[1].close
 
-			        exec("badblocks -sv /dev/#{hdd}")
+			        exec(BADBLOCKS_COMMAND + " /dev/#{hdd}")
 			}
 
 			pw[0].close
@@ -124,8 +123,8 @@ class DiscTest
 			sum_total += @total[i] if @total[i]
 		}
 		sum_total = 1 if sum_total == 0
-		s1=sum_done.to_i;
-		s2=sum_total.to_i;
+		s1=sum_done.to_i
+		s2=sum_total.to_i
 		temporary_workaround("test_progress #{s1} #{s2}")
 	end
 
