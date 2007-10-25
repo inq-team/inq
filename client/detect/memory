@@ -1,30 +1,31 @@
 #!/bin/sh
 
-ipmitool fru 2>/dev/null > $HOME/fru.log
-DIMMS=`cat $HOME/fru.log | grep 'cpu[0-9]*.mem[0-9]*.vpd'`
+decode-dimms.pl > $HOME/spd.log
+DIMMS=`cat $HOME/spd.log | grep '^Decoding EEPROM: '`
 if [ -n "$DIMMS" ]; then
+    echo "$DIMMS" | while read L; do 
+	MEM_INFO=`decode-dimms.pl | grep -A 69 "^$L"`
+	MEM_SIZE=`echo "$MEM_INFO" | sed -n 's/^Size *//p' | head -n1 | sed 's/ *$//'`
+	MEM_SPEED=`echo "$MEM_INFO" | sed -n 's/^Maximum module speed *//p' | head -n1 | sed 's/DDR //' | sed 's/ *$//'`
+	MEM_TYPE=`echo "$MEM_INFO" | sed -n 's/^Fundamental Memory type *//p' | head -n1 | sed 's/ *$//'`
+	MEM_VENDOR=`echo "$MEM_INFO" | sed -n 's/^Manufacturer *//p' | head -n1 | sed 's/ *$//'`
+	MEM_SERIAL=`echo "$MEM_INFO" | sed -n 's/^Assembly Serial Number *0x//p' | head -n1 | sed 's/ *$//'`
+	MEM_MODEL="$MEM_SIZE $MEM_SPEED $MEM_TYPE"
+	$SHARE_DIR/add-component Memory "$MEM_VENDOR" "$MEM_MODEL" "$MEM_SERIAL"
+	done
+else
+    ipmitool fru 2>/dev/null > $HOME/fru.log
+    DIMMS=`cat $HOME/fru.log | grep 'cpu[0-9]*.mem[0-9]*.vpd'`
+    if [ -n "$DIMMS" ]; then
 	echo "$DIMMS" | while read L; do
 		MEM_INFO=`cat $HOME/fru.log | grep -A 9 "^$L"`
 		MEM_VENDOR=`$SAHRE_DIR/vendor \`echo "$MEM_INFO" |  sed -n 's/ Board Mfg *: //p' | head -n1 \``
 		MEM_MODEL=`echo "$MEM_INFO" | sed -n 's/ Board Product *: //p' | head -n1`
-		MEM_SERIAL=`echo "$MEM_INFO" | sed -n 's/ Product Part Number *: //p' | sed 's/ *$//' | head -n1`
-		$SHARE_DIR/add-component Memory "$MEM_VENDOR" "$MEM_MODEL" "$MEM_SERIAL"
+		MEM_SERIAL=`echo "$MEM_INFO" | sed -n 's/ Product Part Number *: //p' | head -n1 | sed 's/ *$//'`
+		$SAHRE+DIR/add-component Memory "$MEM_VENDOR" "$MEM_MODEL" "$MEM_SERIAL"
 	done
-else
-	decode-dimms.pl > $HOME/spd.log
-	DIMMS=`cat $HOME/spd.log | grep '^Decoding EEPROM: '`
-	if [ -n "$DIMMS" ]; then
-		echo "$DIMMS" | while read L; do 
-			MEM_INFO=`decode-dimms.pl | grep -A 69 "^$L"`
-			MEM_SIZE=`echo "$MEM_INFO" | sed -n 's/^Size *//p' | head -n1 | sed 's/ *$//'`
-			MEM_SPEED=`echo "$MEM_INFO" | sed -n 's/^Maximum module speed *//p' | head -n1 | sed 's/DDR //' | sed 's/ *$//'`
-			MEM_TYPE=`echo "$MEM_INFO" | sed -n 's/^Fundamental Memory type *//p' | head -n1 | sed 's/ *$//'`
-			MEM_VENDOR=`echo "$MEM_INFO" | sed -n 's/^Manufacturer *//p' | head -n1 | sed 's/ *$//'`
-			MEM_SERIAL=`echo "$MEM_INFO" | sed -n 's/^Assembly Serial Number *0x//p' | head -n1 | sed 's/ *$//'`
-			MEM_MODEL="$MEM_SIZE $MEM_SPEED $MEM_TYPE"
-			$SHARE_DIR/add-component Memory "$MEM_VENDOR" "$MEM_MODEL" "$MEM_SERIAL"
-		done
-	fi
-	rm -f $HOME/spd.log
+    fi
+    rm -f $HOME/fru.log
+
 fi
-rm -f $HOME/fru.log
+rm -f $HOME/spd.log
