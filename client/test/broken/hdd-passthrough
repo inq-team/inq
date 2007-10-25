@@ -13,8 +13,6 @@ def temporary_workaround(cmd)
 	`TEST_NAME=hdd . /usr/share/inquisitor/functions-test && export COMPUTER_ID=#{COMPUTER_ID} && ${cmd}`
 end
 
-temporary_workaround("test_started 100")
-
 def test_available
 	drivenames = `ls -1 /sys/block/ | grep -v '[0-9]$'`.split(/\n/)
 	puts "Drivenames: #{drivenames.join(',')}"
@@ -29,6 +27,8 @@ RAID::BaseRaid::query_adapters.each { |ad|
 	a.logical_clear
 	a.adapter_restart
 }
+
+temporary_workaround("test_started 100")
 
 test_available == 0 && temporary_workaround("test_failed")
 

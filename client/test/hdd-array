@@ -6,7 +6,7 @@
 # POWEROFF_DURING_TEST=N
 # VAR=HDDARR_TIMEOUT:int:60:Total time of HDD array testing
 # VAR=HDDARR_LOGTIME:int:30:Time between progress updates
-# VAR=HDDARR_JOBS:int:7:Number of parallely running jobs during compile
+# VAR=HDDARR_JOBS:int:8:Number of parallely running jobs during compile
 
 . /usr/share/inquisitor/functions-test
 
@@ -22,7 +22,7 @@ prepare_source_tree()
 	TREE_ROOT=$1
 
 	cd $TREE_ROOT
-	tar xzf "$STRESS_TREE" || test_failed
+	tar xzf "$STRESS_TREE" >/dev/null 2>/dev/null || test_failed
 	TREE_NAME=`basename "$STRESS_TREE" .tar.gz`
 	cd "$TREE_NAME"
 
@@ -53,7 +53,7 @@ prepare_array_for_test()
 	ARRAY=$1
 	MOUNTPOINT=$2
 
-	mke2fs -m0 -F /dev/$ARRAY || test_failed
+	mke2fs -m0 -F /dev/$ARRAY >/dev/null 2>/dev/null || test_failed
 	mount /dev/$ARRAY $MOUNTPOINT
 	prepare_source_tree $MOUNTPOINT
 }
@@ -67,6 +67,7 @@ clear_testing_environment()
 {
 	TREE_ROOT=$1
 
+	cd /
 	rm -rf $TREE_ROOT/*
 	umount $TREE_ROOT
 	rmdir $TREE_ROOT
@@ -74,8 +75,8 @@ clear_testing_environment()
 
 array_stress_check()
 {
-	$ARRAY=$1
-	$MOUNTPOINT=`mktemp -d /tmp/hddarr_test.XXXXX`
+	ARRAY=$1
+	MOUNTPOINT=`mktemp -d /tmp/hddarr_test.XXXXX`
 
 	prepare_array_for_test $ARRAY $MOUNTPOINT
 
@@ -85,7 +86,7 @@ array_stress_check()
 	while true; do
 		TIME=`date "+%s"`
 		if (( TIME - START > TIME_PER_ARRAY )); then
-			clear_testing_enviroment $MOUNTPOINT
+			clear_testing_environment $MOUNTPOINT
 			break
 		else
 			test_command_itself
@@ -103,6 +104,7 @@ get_drives_list
 temporary_hddarr_jobs_check
 
 TOTAL_START=`date "+%s"`
+test_started $HDDARR_TIMEOUT
 
 for i in $DRIVES_LIST; do
 	array_stress_check $i
