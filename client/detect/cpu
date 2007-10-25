@@ -1,11 +1,14 @@
 #!/bin/sh
 
-cpuscan -v 2>/dev/null | sed -ne '/^ID/s/ID *: //p' | while read ID; do
-	CPU_VENDOR=`cpuscan -p 2>/dev/null | sed -ne "/\/sys\/cpu\/"$ID"\/\tvendor_id/p" | sed "s,/sys/cpu/"$ID"/\tvendor_id:,,"`
-	CPU_MODEL=`cpuscan -p 2>/dev/null | sed -ne "/\/sys\/cpu\/"$ID"\/\tdevice/p" | sed "s,/sys/cpu/"$ID"/\tdevice:,,"`
-	
-	CPU_VENDOR=`echo $CPU_VENDOR | sed 's/Genuine//g;s/Authentic//g;'`
-	CPU_MODEL=`echo $CPU_MODEL | sed 's/(R)//g;s/(tm)//g;s/processor//ig;s/CPU//g;s/Intel//g;s/AMD//g;s/Genuine/Core Solo/;s/  */ /g;s/^ *//g;'`
-	
-	$SHARE_DIR/add-component CPU "$CPU_VENDOR" "$CPU_MODEL" ''
+LAST_PH_ID=''
+
+cat /proc/cpuinfo | grep 'processor' | while read P; do
+    CPU_INFO=`cat /proc/cpuinfo | grep -A8 "$P"`
+    PH_ID=`echo "$CPU_INFO" | grep -m1 'physical id'`
+    if [ "$PH_ID" != "$LAST_PH_ID" ] || [ -z "$PH_ID" ]; then
+        CPU_VENDOR=`echo "$CPU_INFO" | sed -n 's/vendor_id.*: //p' | sed 's/Genuine//g;s/Authentic//g;'`
+        CPU_MODEL=`echo "$CPU_INFO" | sed -n 's/model name.*: //p' | sed 's/(R)//g;s/(tm)//g;s/processor//ig;s/CPU//g;s/Intel//g;s/AMD//g;s/Genuine/Core Solo/;s/  */ /g;s/^ *//g;'`
+	LAST_PH_ID="$PH_ID"
+        $SHARE_DIR/add-component CPU "$CPU_VENDOR" "$CPU_MODEL" ''        
+    fi
 done
