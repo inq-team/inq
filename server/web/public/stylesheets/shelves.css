@@ -1,0 +1,53 @@
+#stacks td {
+	padding: 32px;
+}
+
+table.stack {
+	border-collapse: collapse;
+	border: none;
+}
+
+table.stack td {
+	border: 1px solid black;
+	width: 64px;
+	height: 64px;
+	position: relative;
+	padding: 0px ! important;
+	background-color: #eee;
+}
+
+table.stack td.hole {
+	border: none;
+	background: transparent;
+}
+
+td.occupied_shelf {
+	text-align: right;
+	vertical-align: bottom;
+}
+
+.shelf_title {
+	font-family: serif;
+}
+
+td.occupied_shelf p.shelf_title {
+	font-size: 12px;		
+}
+
+td.free_shelf {
+	text-align: center;
+	vertical-align: middle;
+}
+
+td.free_shelf p.shelf_title {
+	font-size: 18px;		
+}
+
+
+/********************************/
+
+table.stack td[id|='shelf_K'], table.stack td[id|='shelf_H'], table.stack td[id|='shelf_E'], table.stack td[id|='shelf_B'] {
+	background-color: #e0e0e0;
+}
+
+

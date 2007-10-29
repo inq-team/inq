@@ -18,4 +18,8 @@ class Computer < ActiveRecord::Base
 		param1 = serials.sort() { |a,b| a <=> b }
 		self.find_by_sql(["SELECT DISTINCT computers.*, group_concat(serial ORDER BY serial SEPARATOR ',') AS serials FROM `computers` JOIN `testings` on testings.computer_id = computers.id JOIN `components` ON components.testing_id = testings.id JOIN component_models ON components.component_model_id = component_models.id JOIN component_groups ON component_models.component_group_id = component_groups.id AND component_groups.name in ('LAN', 'NIC') GROUP BY testings.id HAVING serials = ?", param1.join(',')])
 	end
+
+	def self.find_testing()
+		self.find_by_sql(["SELECT computers.* FROM computers join computer_stages on computers.id = computer_stages.computer_id WHERE computer_stages.stage = 'testing' AND computer_stages.start <= now() AND computer_stages.end > now()"])
+	end
 end
