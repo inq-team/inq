@@ -2,7 +2,7 @@
 # NAME=FDD
 # DESCRIPTION=Floppy drive test
 # DESTROYS_HDD=N
-# IS_INTERACTIVE=N
+# IS_INTERACTIVE=Y
 # POWEROFF_DURING_TEST=N
 # VAR=FDD_SIZE:int:1440:Size of testing floppy, KB
 
@@ -28,9 +28,34 @@ remove_test_image()
 
 test_fdd()
 {
-	dd if=$FDD_TEST_IMAGE of=/dev/fd$1
-	dd if=/dev/fd$1 of="$FDD_TEST_IMAGE"_fd bs=1024 count=$FDD_SIZE
-	diff "$FDD_TEST_IMAGE"_fd $FDD_TEST_IMAGE || test_failed
+	dd if=$FDD_TEST_IMAGE of=/dev/fd$1 >/dev/null 2>/dev/null
+	floppycontrol -f -d /dev/fd$1 >/dev/null 2>/dev/null
+	dd if=/dev/fd$1 of="$FDD_TEST_IMAGE"_fd bs=1024 count=$FDD_SIZE >/dev/null 2>/dev/null
+	diff "$FDD_TEST_IMAGE"_fd $FDD_TEST_IMAGE >/dev/null 2>/dev/null || return 1
+	return 0
+}
+
+interactive()
+{
+	FDD=$1
+	NON_PASSED=1
+
+	while ( [ $NON_PASSED ] ); do
+		echo -n "\nDrive ${FDD}:Either press Y and insert floppy for testing, or N if you want to finish test: "
+		read foobar
+
+		[ $foobar = "N" ] && test_failed
+
+		test_fdd $[$FDD - 1]
+
+		if (( $? == 0 )); then
+			echo "Drive test passed"
+			test_progress $FDD $FDD_QUANTITY
+			NON_PASSED=0
+		else
+			echo "Drive test failed!"
+		fi
+	done
 }
 
 detect_fdd_quantity
@@ -38,8 +63,7 @@ generate_test_image
 
 test_started $FDD_QUANTITY
 for i in `seq 1 $FDD_QUANTITY`; do
-	test_fdd $[$i - 1]
-	test_progress $i $FDD_QUANTITY
+	interactive $i
 done
 
 remove_test_image

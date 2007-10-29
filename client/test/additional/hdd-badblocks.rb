@@ -3,7 +3,7 @@
 COMPUTER_ID=ENV['COMPUTER_ID']
 PERIOD_SCREEN=5
 PERIOD_LOG=15
-BADBLOCKS_COMMAND="badblocks -svw"
+BADBLOCKS_COMMAND="badblocks -sv"
 
 def temporary_workaround(cmd)
 	`TEST_NAME=hdd-pass . /usr/share/inquisitor/functions-test && export COMPUTER_ID=#{COMPUTER_ID} && #{cmd}`
