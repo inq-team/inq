@@ -10,7 +10,7 @@ require 'raid/baseraid'
 COMPUTER_ID=ENV['COMPUTER_ID']
 
 def temporary_workaround(cmd)
-	`TEST_NAME=hdd . /usr/share/inquisitor/functions-test && export COMPUTER_ID=#{COMPUTER_ID} && ${cmd}`
+	`TEST_NAME=hdd-pass . /usr/share/inquisitor/functions-test && export COMPUTER_ID=#{COMPUTER_ID} && #{cmd}`
 end
 
 def test_available

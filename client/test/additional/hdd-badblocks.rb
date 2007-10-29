@@ -6,7 +6,7 @@ PERIOD_LOG=15
 BADBLOCKS_COMMAND="badblocks -svw"
 
 def temporary_workaround(cmd)
-	`TEST_NAME=hdd . /usr/share/inquisitor/functions-test && export COMPUTER_ID=#{COMPUTER_ID} && ${cmd}`
+	`TEST_NAME=hdd-pass . /usr/share/inquisitor/functions-test && export COMPUTER_ID=#{COMPUTER_ID} && #{cmd}`
 end
 
 class Screen
