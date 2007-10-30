@@ -1,9 +1,6 @@
 #!/bin/sh
 
-FLP_UDI=`hal-find-by-property  --key storage.drive_type --string floppy | head -n1`
-
-if [ -n "$FLP_UDI" ]; then
-	FLP_VENDOR=`hal-get-property --udi $FLP_UDI --key storage.vendor`
-	FLP_MODEL=`hal-get-property --udi $FLP_UDI --key info.product`
-	$SHARE_DIR/add-component OSD "$FLP_VENDOR" "$FLP_MODEL" ''
+FLP=`dmesg | grep 'Floppy drive'`
+if [ -n "$FLP" ]; then
+        $SHARE_DIR/add-component Floppy '' '1.44 Floppy Drive' ''
 fi
