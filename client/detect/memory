@@ -26,6 +26,5 @@ else
 	done
     fi
     rm -f $HOME/fru.log
-
 fi
 rm -f $HOME/spd.log
