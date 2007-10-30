@@ -1,5 +1,5 @@
 #!/bin/sh
-# NAME=FDD
+# NAME=fdd
 # DESCRIPTION=Floppy drive test
 # DESTROYS_HDD=N
 # IS_INTERACTIVE=Y
@@ -41,7 +41,7 @@ interactive()
 	NON_PASSED=1
 
 	while ( [ $NON_PASSED ] ); do
-		echo -n "\nDrive ${FDD}:Either press Y and insert floppy for testing, or N if you want to finish test: "
+		echo -n "Drive ${FDD}:Either press Y and insert floppy for testing, or N if you want to finish test: "
 		read foobar
 
 		[ $foobar = "N" ] && test_failed

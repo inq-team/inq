@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# NAME=HDD_passthrough
+# NAME=hdd_passthrough
 # DESCRIPTION=HDD passthrough disks test
 # DESTROYS_HDD=Y
 # IS_INTERACTIVE=N

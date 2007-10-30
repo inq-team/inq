@@ -1,5 +1,5 @@
 #!/bin/sh -ef
-# NAME=CPU
+# NAME=cpu
 # DESCRIPTION=CPU burn-in testing
 # DESTROYS_HDD=N
 # IS_INTERACTIVE=N

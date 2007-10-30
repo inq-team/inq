@@ -1,5 +1,5 @@
 #!/bin/sh
-# NAME=Flash
+# NAME=flash
 # DESCRIPTION=Flash disk badblocks test
 # DESTROYS_HDD=Y
 # IS_INTERACTIVE=N

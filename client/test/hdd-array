@@ -1,5 +1,5 @@
 #!/bin/sh -e
-# NAME=HDD_array
+# NAME=hdd_array
 # DESCRIPTION=HDD array stress test
 # DESTROYS_HDD=Y
 # IS_INTERACTIVE=N

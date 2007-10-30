@@ -1,5 +1,5 @@
 #!/bin/sh
-# NAME=Memory
+# NAME=memory
 # DESCRIPTION=Memory test
 # DESTROYS_HDD=N
 # IS_INTERACTIVE=N
