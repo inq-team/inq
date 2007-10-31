@@ -1,0 +1,135 @@
+#!/bin/sh
+# NAME=odd_write
+# DESCRIPTION=Optical Disc Drive write test
+# DESTROYS_HDD=N
+# IS_INTERACTIVE=Y
+# POWEROFF_DURING_TEST=N
+# VAR=ODD_TEST_IMAGE:str:/usr/share/inquisitor/linux-2.6.15_stress.tar.gz:Default image for comparison
+# VAR=ODD_TEST_IMAGE_BLOCKS:int:2048:This images size in blocks (2048 bytes each)
+# VAR=ODD_WRITE_SPEED:int:10:Default write speed if it won't detect
+
+ODD_IMAGE=`mktemp /tmp/odd_read_test.XXXXX`
+
+load_kernel_modules()
+{
+	modprobe ide-cd
+	sleep 5
+}
+
+detect_odd_quantity()
+{
+	ODD_QUANTITY=`hal-find-by-capability --capability storage.cdrom | wc -l`
+}
+
+test_read()
+{
+	ODD=$1
+
+	readcd -v dev=$ODD f=$ODD_IMAGE sectors=0-$ODD_TEST_IMAGE_BLOCKS >/dev/null 2>/dev/null
+	[ ! -s $ODD_IMAGE ] && dd if=$ODD of=$ODD_IMAGE bs=2048 count=$ODD_TEST_IMAGE_BLOCKS >/dev/null 2>/dev/null
+
+	diff ${ODD_IMAGE}-image $ODD_IMAGE >/dev/null 2>/dev/null || return 1
+	return 0
+}
+
+prepare_image_to_be_recorded()
+{
+	dd if=$ODD_TEST_IMAGE of=${ODD_IMAGE}-image bs=2048 count=$ODD_TEST_IMAGE_BLOCKS
+}
+
+test_write()
+{
+	ODD=$1
+
+	check_media_existence $ODD
+	detect_maxspeed $ODD
+	blank_if_needed $ODD $SPEED
+
+	cdrecord -tao dev=$ODD driveropts=burnfree speed=$SPEED $ODD_IMAGE-image >/dev/null 2>/dev/null || return 1
+
+	return 0
+}
+
+check_media_existence()
+{
+	ODD=$1
+
+	if cdrecord dev=$ODD -atip | grep -q 'Is erasable'; then
+		echo 'Rewritable media already inserted, not ejecting'
+	else
+		echo "Insert writable media..."
+		eject
+	fi
+}
+
+detect_maxspeed()
+{
+	ODD=$1
+
+	SPEED=`cdrecord dev=$ODD -atip | sed -ne '/speed high/ s/^.*speed high: \(.*\)$/\1/ p' | head -n 1`
+	[ -z "$SPEED" ] && SPEED=$ODD_WRITE_SPEED
+}
+
+blank_if_needed()
+{
+	ODD=$1
+	SPEED=$1
+
+	if cdrecord dev=$CDRW_DEV -atip | grep -q 'Is erasable'; then
+		echo "Blanking..."
+		cdrecord -tao dev=$ODD speed=$SPEED blank=fast
+	else
+		echo 'Non rewritable media. Skipping blanking...'
+	fi
+}
+
+interactive()
+{
+	ODD=$1
+	NON_PASSED=1
+
+	while ( [ $NON_PASSED ] ); do
+		echo -n "Drive $[ $TESTED_QUANTITY + 1]:Either press Y and insert media for testing, or N if you want to finish test: "
+		read foobar
+
+		[ $foobar = "N" ] && test_failed
+
+		test_write $ODD
+
+		if (( $? == 0 )); then
+			echo "Write stage passed, performing read test..."
+
+			test_read $ODD
+
+			if (( $? == 0 )); then
+				echo "Drive test passed"
+				TESTED_QUANTITY=$[ $TESTED_QUANTITY + 1 ]
+				test_progress $TESTED_QUANTITY $ODD_QUANTITY
+				NON_PASSED=0
+			else
+				echo "Drive test failed!"
+			fi
+		else
+			echo "Write stage failed!"
+		fi
+	done
+}
+
+remove_test_image()
+{
+	rm -f $ODD_IMAGE
+}
+
+load_kernel_modules
+detect_odd_quantity
+[ $ODD_QUANTITY eq 0 ] && test_failed
+prepare_image_to_be_recorded
+TESTED_QUANTITY=0
+test_started $ODD_QUANTITY
+
+for i in `hal-find-by-capability --capability storage.cdrom`; do
+	interactive `hal-device $i | grep access_control.file | awk '{print $3}' | sed "s/'//g"`
+done
+
+remove_test_image
+test_succeeded

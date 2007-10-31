@@ -31,7 +31,8 @@ interactive()
 	NON_PASSED=1
 
 	while ( [ $NON_PASSED ] ); do
-		echo -n "Drive $[ $TESTED_QUANTITY + 1]:Either press Y and insert disc for testing, or N if you want to finish test: "
+		eject $ODD
+		echo -n "Drive $[ $TESTED_QUANTITY + 1]:Either press Y and insert media for testing, or N if you want to finish test: "
 		read foobar
 
 		[ $foobar = "N" ] && test_failed
