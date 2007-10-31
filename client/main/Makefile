@@ -14,6 +14,7 @@ install:
 	install -m755 inq-detect $(DESTDIR)$(BIN_DIR)
 	install -m755 inq-planner $(DESTDIR)$(BIN_DIR)
 	install -m755 get-macs $(DESTDIR)$(BIN_DIR)
+	install -m755 inq-sensors-detect $(DESTDIR)$(BIN_DIR)
 
 clean:
 	rm -f global
