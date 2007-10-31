@@ -1,10 +1,10 @@
 #!/bin/sh
 
-einarc -t lsi_megarc physical list | while read L; do
-	if [ -n "$L" ]; then
+einarc -l | cut -f1 | while read TYPE; do
+	einarc -t  "$TYPE" list | while read L; do
 		HDD_VENDOR=`echo "$L" | cut -f2 | cut -f1 -d' '`
 		HDD_MODEL=`echo "$L" | cut -f2 | cut -f2 -d' '`
 		HDD_SERIAL=`echo "$L" | cut -f4`
 		$SHARE_DIR/add-component HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL"
-	fi
+	done
 done
