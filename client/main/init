@@ -39,6 +39,8 @@ export PATH=$PATH:/usr/sbin:/sbin
 /sbin/service haldaemon start
 /sbin/service sshd start
 
+$SHARE_DIR/inq-sensors-detect 1>/dev/null 2>/dev/null || true
+
 #rm -f /etc/passwd || fatal_failure 'Preparing initialization'
 #rm -f /etc/group || fatal_failure 'Preparing initialization'
 
