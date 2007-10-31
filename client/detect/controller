@@ -1,2 +1,14 @@
 #!/bin/sh
 
+einarc -l | while read L; do
+	CTRL_TYPE=`echo "$L" | cut -f1`
+	CTRL_MODEL=`echo "$L" | cut -f3`
+	CTRL_SERIAL=`einarc -t $CTRL_TYPE adapter info | sed -n "s/Serial number\t//p" | sed 's/[^ -~]//g'`
+	if [ "$CTRL_TYPE" = "areca" ]; then
+		CTRL_VENDOR='Areca'
+	elif [ "$CTRL_TYPE" = "lsi_megarc" ]; then
+		CTRL_VENDOR='LSI'
+	fi
+	$SHARE_DIR/add-component 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" "$CTRL_SERIAL"
+done
+
