@@ -39,7 +39,8 @@ export PATH=$PATH:/usr/sbin:/sbin
 /sbin/service haldaemon start
 /sbin/service sshd start
 
-$SHARE_DIR/inq-sensors-detect 1>/dev/null 2>/dev/null || true
+echo -n 'Starting lm_sensors detection'
+$SHARE_DIR/inq-sensors-detect >/dev/null 2>/dev/null && echo_success || echo_failure
 
 #rm -f /etc/passwd || fatal_failure 'Preparing initialization'
 #rm -f /etc/group || fatal_failure 'Preparing initialization'
