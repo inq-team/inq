@@ -18,8 +18,8 @@ perform_benchmark()
 	DRIVE=$1
 	DRIVE_NUMBER=$2
 
-	./additional/bonnie -s $BONNIE_SIZE > ${RESULT_FILE}_tmp
-	echo -n "hdd"${DRIVE_NUMBER}"="`cat ${RESULT_FILE}_tmp | sed -n '$p' | sed 's/^ *[0-9]* *// ; s/ /,/g ; s/,,/,/g'`\& >> $RESULT_FILE
+	bonnie++ -s $BONNIE_SIZE -n 1 -m benchmark > ${RESULT_FILE}_tmp
+	echo -n "hdd"${DRIVE_NUMBER}"="`cat ${RESULT_FILE}_tmp | sed 's/^benchmark,//'`\& >> $RESULT_FILE
 }
 
 clean_up_after_benchmark()
@@ -39,12 +39,3 @@ done
 
 benchmark_finished `cat $RESULT_FILE`
 clean_up_after_benchmark
-
-#bonnie's example output:
-#              -------Sequential Output-------- ---Sequential Input-- --Random--
-#              -Per Char- --Block--- -Rewrite-- -Per Char- --Block--- --Seeks---
-#Machine    MB K/sec %CPU K/sec %CPU K/sec %CPU K/sec %CPU K/sec %CPU  /sec %CPU
-#          100 48158 91.9 56546 10.4 54308  9.6 66496 98.9 1405820 84.0 69145.5 99.4
-#
-#after parsing:
-#48158,91.9,56546,10.4,54308,9.6,66496,98.9,1405820,84.0,69145.5,99.4

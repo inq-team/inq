@@ -16,7 +16,7 @@ detect_cpu_quantity()
 start_benchmarking()
 {
 	for i in `seq 1 $CPU_QUANTITY`; do
-		./additional/whetstone $WHETSTONE_LOOPS | grep Whetstones | awk '{print $6}' > ${RESULT_FILE}${i} &
+		whetstone $WHETSTONE_LOOPS | grep Whetstones | awk '{print $6}' > ${RESULT_FILE}${i} &
 	done
 }
 
@@ -44,7 +44,7 @@ while true; do
 	sleep $WHETSTONE_CHECKTIME
 	
 	ps a | grep whetstone > /dev/null
-	(( $? == 0 )); then
+	if (( $? == 0 )); then
 		parse_results
 		break
 	fi
