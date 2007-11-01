@@ -47,6 +47,7 @@ hal-find-by-property --key storage.drive_type --string cdrom | while read L; do
 		detect_vendor 'UJDA' Panasonic
 		detect_vendor 'LSC-' LITE-ON
 		detect_vendor 'SDW-431S' LITE-ON
+		detect_vendor 'SSC-2485' LITE-ON
 
 		OSD_MODEL=`echo $OSD_MODEL | sed 's/^  *//;s/  *$//;'`
 
