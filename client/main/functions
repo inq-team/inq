@@ -204,7 +204,7 @@ benchmark_finished()
 
 	echo
 	echo -n Benchmark $BENCHMARK_NAME
-	echo_succedd
+	echo_success
 	benchmark_stage_advance $BENCHMARK_NAME finish $RESULT
 	exit 0
 }
