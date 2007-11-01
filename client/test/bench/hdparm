@@ -1,0 +1,37 @@
+#!/bin/sh -ef
+# NAME=hdparm
+# DESCRIPTION=Hdparm HDD speed benchmark
+
+. /usr/share/inquisitor/functions-benchmark
+
+RESULT_FILE=`mktemp /tmp/benchmark_hdparm.XXXXX`
+
+get_drives_list()
+{
+	DRIVES_LIST=`ls -1 /sys/block/ | grep -v '[0-9]$'`
+}
+
+perform_benchmark()
+{
+	DRIVE=$1
+	DRIVE_NUMBER=$2
+
+	echo -n "hdd"${DRIVE_NUMBER}"="`hdparm -t /dev/$DRIVE | grep '^ Timing' | awk '{print $11}'`\& >> $RESULT_FILE
+}
+
+clean_up_after_benchmark()
+{
+	rm -f $RESULT_FILE
+}
+
+get_drives_list
+benchmark_started
+
+BENCHED_DRIVES=0
+for i in $DRIVES_LIST; do
+	perform_benchmark $i $BENCHED_DRIVES
+	BENCHED_DRIVES=$[ $BENCHED_DRIVES + 1 ]
+done
+
+benchmark_finished `cat $RESULT_FILE`
+clean_up_after_benchmark

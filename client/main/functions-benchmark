@@ -1,0 +1,72 @@
+#!/bin/sh
+# Obligatory functions to process before every benchmark.
+
+if [ -z "$PLANNER" ]; then
+	# Running in free state; need to get all variable for benchmark
+	. /etc/inquisitor/global
+	. $SHARE_DIR/functions
+	. $SHARE_DIR/communication
+
+	show_usage()
+	{
+		echo -n 'Inquisitor benchmark: '
+		sed -ne '/^# *DESCRIPTION=/ s/# *DESCRIPTION=//p' <$0
+		cat <<__EOF__
+A part of Inquisitor platform, version ${INQ_VERSION}
+
+Usage: [variables] $0 [options]
+
+Options:
+  -h, --help            display this help and exit
+  -V, --version         output version information and exit
+
+Variables:
+__EOF__
+		# Parse all the variables from benchmark script
+		sed -ne '/^# *VAR=/ s/^# *VAR=//p' <$0 | while read L; do
+			printf '  %-20s  %s (%s)\n' "`echo $L | cut -f1 -d:`" "`echo $L | cut -f4 -d:`" "`echo $L | cut -f3 -d:`"
+		done
+		exit 0
+	}
+
+	show_version()
+	{
+		echo -n 'Inquisitor benchmark: '
+		sed -ne '/^# *DESCRIPTION=/ s/# *DESCRIPTION=//p' <$0
+		cat <<__EOF__
+A part of Inquisitor platform, version ${INQ_VERSION}
+
+Copyright (C) 2004-2007 by Inquisitor team
+This is free software.  You may redistribute copies of it under the terms of
+the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.
+There is NO WARRANTY, to the extent permitted by law.
+__EOF__
+		exit 0
+	}
+
+	# Parse command-line options
+	TEMP=`getopt -n ${0##*/} -o h,V -l help,version -- "$@"` || show_usage
+	eval set -- "$TEMP"
+
+	while :; do
+		case "$1" in
+		-h|--help) show_usage
+			;;
+		-V|--version) show_version
+			;;
+		--) shift; break
+			;;
+		*) show_usage
+			;;
+		esac
+		shift
+	done
+
+	if [ -z "$TEST_NAME" ]; then
+		BENCHMARK_NAME=`basename $0`
+		eval `sed -ne '/^# *VAR=/ s/^# *VAR=\(.*\):\(.*\):\(.*\):\(.*\)$/\1=\3/p' <$SHARE_DIR/test/bench/$BENCHMARK_NAME`
+	fi
+else
+	# Planner has supplied us all variables
+	true
+fi

@@ -1,0 +1,54 @@
+#!/bin/sh -ef
+# NAME=whetstone
+# DESCRIPTION=Whetstone floating-point speed calculations benchmark
+# VAR=WHETSTONE_LOOPS:int:20000:Loop count
+# VAR=WHETSTONE_CHECKTIME:int:60:Time between checks of alive benchmarks
+
+. /usr/share/inquisitor/functions-benchmark
+
+RESULT_FILE=`mktemp /tmp/benchmark_whetstone.XXXXX`
+
+detect_cpu_quantity()
+{
+	CPU_QUANTITY=`cat /proc/cpuinfo | grep processor | wc -l`
+}
+
+start_benchmarking()
+{
+	for i in `seq 1 $CPU_QUANTITY`; do
+		./additional/whetstone $WHETSTONE_LOOPS | grep Whetstones | awk '{print $6}' > ${RESULT_FILE}${i} &
+	done
+}
+
+parse_results()
+{
+	for i in `seq 1 $CPU_QUANTITY`; do
+		echo -n "cpu"${i}"="`cat ${RESULT_FILE}${i}`\& >> ${RESULT_FILE}_parsed
+	done
+}
+
+clean_up_after_benchmark()
+{
+	for i in `seq 1 $CPU_QUANTITY`; do
+		rm -f ${RESULT_FILE}${i}
+	done
+	rm -f ${RESULT_FILE}_parsed
+}
+
+detect_cpu_quantity
+start_benchmarking
+
+benchmark_started
+
+while true; do
+	sleep $WHETSTONE_CHECKTIME
+	
+	ps a | grep whetstone > /dev/null
+	(( $? == 0 )); then
+		parse_results
+		break
+	fi
+done
+
+benchmark_finished `cat ${RESULT_FILE}_parsed`
+clean_up_after_benchmark

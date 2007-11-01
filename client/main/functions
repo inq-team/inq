@@ -191,6 +191,24 @@ test_failed()
 	exit 1
 }
 
+benchmark_started()
+{
+	echo -n Benchmark $BENCHMARK_NAME
+	echo_running
+	benchmark_stage_advance $BENCHMARK_NAME start
+}
+
+benchmark_finished()
+{
+	RESULT=`echo $1 | sed 's/\&$//'`
+
+	echo
+	echo -n Benchmark $BENCHMARK_NAME
+	echo_succedd
+	benchmark_stage_advance $BENCHMARK_NAME finish $RESULT
+	exit 0
+}
+
 refresh_console()
 {
 	chvt 4

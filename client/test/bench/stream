@@ -1,0 +1,11 @@
+#!/bin/sh -ef
+# NAME=stream
+# DESCRIPTION=STREAM memory throughput benchmark
+
+. /usr/share/inquisitor/functions-benchmark
+
+benchmark_started
+
+RESULT=`./additional/stream | grep -A 4 Function | sed '1d' | awk '{print $2}'`
+
+benchmark_finished "result="${RESULT}
