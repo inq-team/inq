@@ -6,6 +6,8 @@
 . /usr/share/inquisitor/functions-benchmark
 
 RESULT_FILE=`mktemp /tmp/benchmark_bonnie.XXXXX`
+SCRATCH_DIRECTORY="${RESULT_FILE}_scratch"
+mkdir -p $SCRATCH_DIRECTORY
 
 get_drives_list()
 {
@@ -18,14 +20,20 @@ perform_benchmark()
 	DRIVE=$1
 	DRIVE_NUMBER=$2
 
-	bonnie++ -s $BONNIE_SIZE -n 1 -m benchmark > ${RESULT_FILE}_tmp
-	echo -n "hdd"${DRIVE_NUMBER}"="`cat ${RESULT_FILE}_tmp | sed 's/^benchmark,//'`\& >> $RESULT_FILE
+	mke2fs -m0 -F /dev/$DRIVE >/dev/null 2>/dev/null
+	mount /dev/$DRIVE $SCRATCH_DIRECTORY
+
+	bonnie++ -u root -d $SCRATCH_DIRECTORY -s $BONNIE_SIZE -n 1 -m benchmark > ${RESULT_FILE}_tmp
+	echo -n "hdd"${DRIVE_NUMBER}"="`cat ${RESULT_FILE}_tmp | sed -n '$p' | sed 's/^benchmark,//'`\& >> $RESULT_FILE
+
+	umount $SCRATCH_DIRECTORY
 }
 
 clean_up_after_benchmark()
 {
 	rm -f $RESULT_FILE
 	rm -f ${RESULT_FILE}_tmp
+	rmdir $SCRATCH_DIRECTORY
 }
 
 get_drives_list
