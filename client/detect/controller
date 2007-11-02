@@ -1,5 +1,28 @@
 #!/bin/sh
 
+TYPES='IDE interface
+RAID bus controller
+Mass storage controller
+SCSI storage controller'
+
+lspci > $HOME/lspci.log
+lshw > $HOME/lshw.log
+
+echo "$TYPES" | while read TYPE; do
+	CTRLS=`cat $HOME/lspci.log | grep -i "$TYPE"`
+	echo "$CTRLS" | while read CTRL; do
+		if [ -n "$CTRL" ]; then
+			BUS=`echo "$CTRL" | grep -o  '..:..\..'`
+			CTRL_INFO=`cat $HOME/lshw.log | grep -i -B3 "$BUS"`
+			CTRL_VENDOR=`echo "$CTRL_INFO" | sed -n 's/ *vendor: //p'`
+			CTRL_MODEL=`echo "$CTRL_INFO" | sed -n 's/ *product: //p'`
+			if [ -z "`echo "$CTRL_VENDOR" | grep -i 'lsi logic'`" ] && [ -z "`echo "$CTRL_VENDOR" | grep -i 'areca'`" ]; then
+				 $SHARE_DIR/add-component 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" ''
+			fi
+		fi	
+	done
+done
+
 einarc -l | while read L; do
 	CTRL_TYPE=`echo "$L" | cut -f1`
 	CTRL_MODEL=`echo "$L" | cut -f3`
@@ -8,7 +31,13 @@ einarc -l | while read L; do
 		CTRL_VENDOR='Areca'
 	elif [ "$CTRL_TYPE" = "lsi_megarc" ]; then
 		CTRL_VENDOR='LSI'
-	fi
+	elif [ "$CTRL_TYPE" = "lsi_megcli" ]; then
+		CTRL_VENDOR='LSI'
+	elif [ "$CTRL_TYPE" = "adaptec_aaccli" ]; then
+		CTRL_VENDOR='Adaptec'
+	fi	
 	$SHARE_DIR/add-component 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" "$CTRL_SERIAL"
 done
 
+rm -f $HOME/lspci.log
+rm -f $HOME/lshw.log
