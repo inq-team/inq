@@ -1,12 +1,12 @@
 #!/bin/sh -ef
-# NAME=whetstone
-# DESCRIPTION=Whetstone floating-point calculations benchmark
-# VAR=WHETSTONE_LOOPS:int:20000:Loop count
-# VAR=WHETSTONE_CHECKTIME:int:60:Time between checks of alive benchmarks
+# NAME=dhrystone
+# DESCRIPTION=Dhrystone integer calculations benchmark
+# VAR=DHRYSTONE_DURATION:int:60:Benchmark duration (sec)
+# VAR=DHRYSTONE_CHECKTIME:int:60:Time between checks of alive benchmarks
 
 . /usr/share/inquisitor/functions-benchmark
 
-RESULT_FILE=`mktemp /tmp/benchmark_whetstone.XXXXX`
+RESULT_FILE=`mktemp /tmp/benchmark_dhrystone.XXXXX`
 
 detect_cpu_quantity()
 {
@@ -16,7 +16,7 @@ detect_cpu_quantity()
 start_benchmarking()
 {
 	for i in `seq 1 $CPU_QUANTITY`; do
-		whetstone $WHETSTONE_LOOPS | grep Whetstones | awk '{print $6}' > ${RESULT_FILE}${i} &
+		dhrystone $DHRYSTONE_DURATION | awk '{print $1}' > ${RESULT_FILE}${i} &
 	done
 }
 
@@ -41,9 +41,9 @@ start_benchmarking
 benchmark_started
 
 while true; do
-	sleep $WHETSTONE_CHECKTIME
+	sleep $DHRYSTONE_CHECKTIME
 	
-	ps a | grep whetstone > /dev/null
+	ps a | grep dhrystone > /dev/null
 	if (( $? == 0 )); then
 		parse_results
 		break
