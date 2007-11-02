@@ -6,8 +6,12 @@
 # POWEROFF_DURING_TEST=N
 # VAR=ODD_TEST_IMAGE:str:/usr/share/inquisitor/linux-2.6.15_stress.tar.gz:Default image for comparison
 # VAR=ODD_TEST_IMAGE_BLOCKS:int:2048:This images size in blocks (2048 bytes each)
+# VAR=ODD_MESH_POINTS:int:1024:Points for meshes for monitoring drive's speed
+
+. /usr/share/inquisitor/functions-test
 
 ODD_IMAGE=`mktemp /tmp/odd_read_test.XXXXX`
+RESULT_FILE=`mktemp /tmp/odd_read_result.XXXXX`
 
 detect_odd_quantity()
 {
@@ -18,7 +22,7 @@ test_odd()
 {
 	ODD=$1
 
-	readcd -v dev=$ODD f=$ODD_IMAGE sectors=0-$ODD_TEST_IMAGE_BLOCKS >/dev/null 2>/dev/null
+	readcd -v dev=$ODD f=$ODD_IMAGE sectors=0-$ODD_TEST_IMAGE_BLOCKS meshpoints=$ODD_MESH_POINTS 2>/dev/null >$RESULT_FILE
 	[ ! -s $ODD_IMAGE ] && dd if=$ODD of=$ODD_IMAGE bs=2048 count=$ODD_TEST_IMAGE_BLOCKS >/dev/null 2>/dev/null
 
 	diff $ODD_TEST_IMAGE $ODD_IMAGE >/dev/null 2>/dev/null || return 1
@@ -44,6 +48,8 @@ interactive()
 			TESTED_QUANTITY=$[ $TESTED_QUANTITY + 1 ]
 			test_progress $TESTED_QUANTITY $ODD_QUANTITY
 			NON_PASSED=0
+
+			generate_speed_results
 		else
 			echo "Drive test failed!"
 		fi
@@ -53,6 +59,17 @@ interactive()
 remove_test_image()
 {
 	rm -f $ODD_IMAGE
+}
+
+generate_speed_results()
+{
+	FOO=`cat $RESULT | grep addr: /tmp/f | awk '{OFS=",";print $5,$6}' | sed '$d; s/$/\;/'`
+	BAR=""
+	for i in $FOO; do
+		BAR=${BAR}$i
+	done
+
+	#here will be call to publish this monitoring results
 }
 
 detect_odd_quantity
