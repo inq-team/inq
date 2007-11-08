@@ -49,6 +49,7 @@ hal-find-by-property --key storage.drive_type --string cdrom | while read L; do
 		detect_vendor 'SDW-431S' LITE-ON
 		detect_vendor 'SSC-2485' LITE-ON
 		detect_vendor 'DW-552' TEAC
+		detect_vendor 'CRX880A' Sony
 
 		OSD_MODEL=`echo $OSD_MODEL | sed 's/^  *//;s/  *$//;'`
 
