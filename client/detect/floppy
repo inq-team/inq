@@ -1,7 +1,7 @@
 #!/bin/sh
 
-USB_FLP=`dmesg | grep -i 'usb floppy'`
-FLP=`dmesg | grep -i 'floppy'`
+USB_FLP=`dmesg | grep -i 'usb floppy' || true`
+FLP=`dmesg | grep -i 'floppy' || true`
 
 if [ -n "$USB_FLP" ]; then
         $SHARE_DIR/add-component Floppy '' '1.44 USB Floppy Drive' ''
