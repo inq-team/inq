@@ -28,8 +28,8 @@ perform_averaging()
 {
 	DRIVE_NUMBER=$1
 
-	CACHED=`perl -e '$s=0;$i=0;while(<STDIN>){/buffer/ && next;@d=split(" ",$_);$s+=$d[$#d-1];$i++};print $s/$i' < ${RESULT_FILE}_tmp`
-	BUFFERED=`perl -e '$s=0;$i=0;while(<STDIN>){/cache/ && next;@d=split(" ",$_);$s+=$d[$#d-1];$i++};print $s/$i' < ${RESULT_FILE}_tmp`
+	CACHED=`perl -ne 'next if /buffer/;@d=split(" ");$s+=$d[$#d-1];print $s/(++$i),"\n"' <  ${RESULT_FILE}_tmp | sed -n '$p'`
+	BUFFERED=`perl -ne 'next if /cache/;@d=split(" ");$s+=$d[$#d-1];print $s/(++$i),"\n"' <  ${RESULT_FILE}_tmp | sed -n '$p'`
 
 	echo -n "hdd"${DRIVE_NUMBER}"="${CACHED}","${BUFFERED}\& >> $RESULT_FILE
 }
