@@ -166,6 +166,7 @@ test_progress()
 test_started()
 {
 	TOTAL=$1
+
 	echo -n Test $TEST_NAME
 	echo_running
 	test_stage_advance $TEST_NAME start
@@ -174,10 +175,16 @@ test_started()
 
 test_succeeded()
 {
+	if echo $TEST_NAME | grep -q "^bench_"; then
+		RESULT=`echo $1 | sed 's/\&$//'`
+	else
+		RESULT=$1
+	fi
+
 	echo
 	echo -n Test $TEST_NAME
 	echo_success
-	test_stage_advance $TEST_NAME finish
+	test_stage_advance $TEST_NAME finish $RESULT
 }
 
 test_failed()
@@ -189,24 +196,6 @@ test_failed()
 	echo_failure
 	test_stage_advance $TEST_NAME fail $COMMENT
 	exit 1
-}
-
-benchmark_started()
-{
-	echo -n Benchmark $BENCHMARK_NAME
-	echo_running
-	benchmark_stage_advance $BENCHMARK_NAME start
-}
-
-benchmark_finished()
-{
-	RESULT=`echo $1 | sed 's/\&$//'`
-
-	echo
-	echo -n Benchmark $BENCHMARK_NAME
-	echo_success
-	benchmark_stage_advance $BENCHMARK_NAME finish $RESULT
-	exit 0
 }
 
 refresh_console()

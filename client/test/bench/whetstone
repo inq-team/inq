@@ -1,12 +1,14 @@
-#!/bin/sh -ef
+#!/bin/sh -f
 # NAME=whetstone
 # DESCRIPTION=Whetstone floating-point calculations benchmark
+# DESTROYS_HDD=N
+# POWEROFF_DURING_TEST=N
 # VAR=WHETSTONE_LOOPS:int:20000:Loop count
 # VAR=WHETSTONE_CHECKTIME:int:60:Time between checks of alive benchmarks
 
-. /usr/share/inquisitor/functions-benchmark
+. /usr/share/inquisitor/functions-test
 
-RESULT_FILE=`mktemp /tmp/benchmark_whetstone.XXXXX`
+RESULT_FILE=`mktemp`
 
 detect_cpu_quantity()
 {
@@ -17,6 +19,7 @@ start_benchmarking()
 {
 	for i in `seq 1 $CPU_QUANTITY`; do
 		whetstone $WHETSTONE_LOOPS | grep Whetstones | awk '{print $6}' > ${RESULT_FILE}${i} &
+		echo $$ > ~/whetstone$i.pid
 	done
 }
 
@@ -38,17 +41,20 @@ clean_up_after_benchmark()
 detect_cpu_quantity
 start_benchmarking
 
-benchmark_started
+test_started 1
 
 while true; do
 	sleep $WHETSTONE_CHECKTIME
 	
-	ps a | grep whetstone > /dev/null
-	if (( $? == 0 )); then
+	ALIVE=0
+	for i in `seq 1 $CPU_QUANTITY`; do
+		(( `ps \`cat ~/whetstone$i.pid\` | wc -l` == 2 )) && $[$ALIVE=$ALIVE + 1]
+	done
+	if (( ALIVE == 0 )); then
 		parse_results
 		break
 	fi
 done
 
-benchmark_finished `cat ${RESULT_FILE}_parsed`
+test_succeeded `cat ${RESULT_FILE}_parsed`
 clean_up_after_benchmark

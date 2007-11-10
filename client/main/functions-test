@@ -66,8 +66,14 @@ __EOF__
 	done
 
 	if [ -z "$TEST_NAME" ]; then
-		TEST_NAME=`basename $0`
-		eval `sed -ne '/^# *VAR=/ s/^# *VAR=\(.*\):\(.*\):\(.*\):\(.*\)$/\1=\3/p' <$SHARE_DIR/test/$TEST_NAME`
+		if echo $0 | grep -q "/bench/"; then
+			TEST_NAME="bench_"`basename $0`
+			TEST_FILENAME="$SHARE_DIR/test/bench/"`basename $0`
+		else
+			TEST_NAME=`basename $0`
+			TEST_FILENAME="$SHARE_DIR/test/"`basename $0`
+		fi
+		eval `sed -ne '/^# *VAR=/ s/^# *VAR=\(.*\):\(.*\):\(.*\):\(.*\)$/\1=\3/p' <$TEST_FILENAME`
 	fi
 else
 	# Planner has supplied us all variables

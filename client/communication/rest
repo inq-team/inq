@@ -18,15 +18,6 @@ test_stage_advance()
 	curl -sf "$REST_SERVER/computers/advance/$COMPUTER_ID.xml?stage=$STAGE&event=$EVENT&comment=$COMMENT" > /dev/null
 }
 
-benchmark_stage_advance()
-{
-	STAGE=$1
-	EVENT=$2
-	RESULT=$3
-	#need to create
-	#curl -sf ...
-}
-
 test_stage_progress()
 {
 	COMPLETE=$1

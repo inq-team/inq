@@ -1,10 +1,12 @@
-#!/bin/sh -ef
+#!/bin/sh -f
 # NAME=hdparm
 # DESCRIPTION=Hdparm HDD speed benchmark
+# DESTROYS_HDD=N
+# POWEROFF_DURING_TEST=N
 
-. /usr/share/inquisitor/functions-benchmark
+. /usr/share/inquisitor/functions-test
 
-RESULT_FILE=`mktemp /tmp/benchmark_hdparm.XXXXX`
+RESULT_FILE=`mktemp`
 
 get_drives_list()
 {
@@ -16,7 +18,20 @@ perform_benchmark()
 	DRIVE=$1
 	DRIVE_NUMBER=$2
 
-	echo -n "hdd"${DRIVE_NUMBER}"="`hdparm -t /dev/$DRIVE | grep '^ Timing' | awk '{print $11}'`\& >> $RESULT_FILE
+	for i in `seq 1 10`; do
+		echo "hdd"${DRIVE_NUMBER}"="`hdparm -t /dev/$DRIVE | grep '^ Timing'`\& >> ${RESULT_FILE}_tmp
+	done
+	perform_averaging $DRIVE_NUMBER
+}
+
+perform_averaging()
+{
+	DRIVE_NUMBER=$1
+
+	CACHED=`perl -e '$s=0;$i=0;while(<STDIN>){/buffer/ && next;@d=split(" ",$_);$s+=$d[$#d-1];$i++};print $s/$i' < ${RESULT_FILE}_tmp`
+	BUFFERED=`perl -e '$s=0;$i=0;while(<STDIN>){/cache/ && next;@d=split(" ",$_);$s+=$d[$#d-1];$i++};print $s/$i' < ${RESULT_FILE}_tmp`
+
+	echo -n "hdd"${DRIVE_NUMBER}"="${CACHED}","${BUFFERED}\& >> $RESULT_FILE
 }
 
 clean_up_after_benchmark()
@@ -25,13 +40,13 @@ clean_up_after_benchmark()
 }
 
 get_drives_list
-benchmark_started
+test_started 1
 
 BENCHED_DRIVES=0
-for i in $DRIVES_LIST; do
+for i in "$DRIVES_LIST"; do
 	perform_benchmark $i $BENCHED_DRIVES
 	BENCHED_DRIVES=$[ $BENCHED_DRIVES + 1 ]
 done
 
-benchmark_finished `cat $RESULT_FILE`
+test_succeeded `cat $RESULT_FILE`
 clean_up_after_benchmark

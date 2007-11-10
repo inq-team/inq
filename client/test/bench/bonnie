@@ -1,11 +1,13 @@
-#!/bin/sh -ef
+#!/bin/sh -f
 # NAME=bonnie
 # DESCRIPTION=Bonnie HDD performance benchmark
+# DESTROYS_HDD=Y
+# POWEROFF_DURING_TEST=N
 # VAR=BONNIE_SIZE:int:100:Testing file size in MiB
 
-. /usr/share/inquisitor/functions-benchmark
+. /usr/share/inquisitor/functions-test
 
-RESULT_FILE=`mktemp /tmp/benchmark_bonnie.XXXXX`
+RESULT_FILE=`mktemp`
 SCRATCH_DIRECTORY="${RESULT_FILE}_scratch"
 mkdir -p $SCRATCH_DIRECTORY
 
@@ -20,11 +22,11 @@ perform_benchmark()
 	DRIVE=$1
 	DRIVE_NUMBER=$2
 
-	mke2fs -m0 -F /dev/$DRIVE >/dev/null 2>/dev/null
+	mke2fs -m0 -F /dev/$DRIVE >/dev/null 2>&1
 	mount /dev/$DRIVE $SCRATCH_DIRECTORY
 
-	bonnie++ -u root -d $SCRATCH_DIRECTORY -s $BONNIE_SIZE -n 1 -m benchmark > ${RESULT_FILE}_tmp
-	echo -n "hdd"${DRIVE_NUMBER}"="`cat ${RESULT_FILE}_tmp | sed -n '$p' | sed 's/^benchmark,//'`\& >> $RESULT_FILE
+	bonnie++ -u root -d $SCRATCH_DIRECTORY -s $BONNIE_SIZE -n 1 -m benchmark > ${RESULT_FILE}_tmp 2>&1
+	echo -n "hdd"${DRIVE_NUMBER}"="`cat ${RESULT_FILE}_tmp | sed -n '$p' | sed 's/^benchmark,//' | sed 's/+//g;s/,,//g'`\& >> $RESULT_FILE
 
 	umount $SCRATCH_DIRECTORY
 }
@@ -37,13 +39,13 @@ clean_up_after_benchmark()
 }
 
 get_drives_list
-benchmark_started
+test_started 1
 
 BENCHED_DRIVES=0
-for i in $DRIVES_LIST; do
+for i in "$DRIVES_LIST"; do
 	perform_benchmark $i $BENCHED_DRIVES
 	BENCHED_DRIVES=$[ $BENCHED_DRIVES + 1 ]
 done
 
-benchmark_finished `cat $RESULT_FILE`
+test_succeeded `cat $RESULT_FILE`
 clean_up_after_benchmark

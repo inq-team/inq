@@ -1,0 +1,18 @@
+#!/bin/sh -f
+# NAME=mencoder
+# DESCRIPTION=Mencoder encoding time benchmark
+# DESTROYS_HDD=N
+# POWEROFF_DURING_TEST=N
+# VAR=MENCODER_ENCODE_OPTIONS:str:-ovc lavc -lavcopts vcodec=mpeg4 -oac mp3lame -lameopts vbr=3:Encoding options
+# VAR=MENCODER_FILE_TO_ENCODE:str:/usr/share/inquisitor/movie.avi:Path to file need to be encoded
+
+. /usr/share/inquisitor/functions-test
+
+RESULT_FILE=`mktemp`
+
+test_started 1
+
+time -o $RESULT_FILE mencoder $MENCODER_ENCODE_OPTIONS -o /dev/null $MENCODER_FILE_TO_ENCODE
+RESULT=`cat $RESULT_FILE | awk '{print $1,$2}' | sed -n 's/user//;s/system//;s/ /,/;1p'`
+
+test_succeeded "result=${RESULT}"
