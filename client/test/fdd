@@ -4,11 +4,12 @@
 # DESTROYS_HDD=N
 # IS_INTERACTIVE=Y
 # POWEROFF_DURING_TEST=N
+# VERSION=0.1
 # VAR=FDD_SIZE:int:1440:Size of testing floppy, KB
 
 . /usr/share/inquisitor/functions-test
 
-FDD_TEST_IMAGE=`mktemp /tmp/fdd_test.XXXXX`
+FDD_TEST_IMAGE=`mktemp`
 
 detect_fdd_quantity()
 {

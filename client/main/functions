@@ -91,40 +91,6 @@ skipped()
 	echo_skipped
 }
 
-# Rotate file in $HOME, adding ".LASTTEST", where LASTTEST is least
-# non-occupied non-negative integer number
-calc_rotate()
-{
-	LASTTEST=0
-	while [ -f $1.$LASTTEST ]; do
-		LASTTEST=$[$LASTTEST+1]
-	done
-	mv $1 $1.$LASTTEST
-}
-
-fatal_failure()
-{
-	alert n $ALERT_FAILURE "FAILURE: $TESTER_PATH ($1)" || echo "\n\n\nFAILURE: $TESTER_PATH ($1)\n\nCannot continue.\n"
-	sleep 99999999
-}
-
-test_skipped()
-{
-	lockfile ~/RESULTS.lock
-	sed "s/^$1	.*$/$1	SKIPPED/;" <~/RESULTS >~/RESULTS.new
-	mv -f ~/RESULTS.new ~/RESULTS
-	rm -f ~/RESULTS.lock
-
-	echo -n "$2: skipped - " >>~/TIME
-	date >>~/TIME
-	publish ~/TIME
-
-	publish ~/RESULTS
-	echo -n Testing: $1
-	echo_skipped
-	echo
-}
-
 test_ok_file()
 {
 	test_ok $TESTNAME $TEST_ID
@@ -204,82 +170,6 @@ refresh_console()
 	sleep 1
 	chvt 1
 	test_set_status	
-}
-
-run_test()
-{
-	TESTNAME=$1
-	. $1
-}
-
-build_filesystem()
-{
-	if [ ! -d ~/build ]; then
-#		echo 'This test will destroy all data on HDD!'
-#		echo 'Press Ctrl+D to continue'
-#		bash
-		DEV_HDD=/dev/`storagescan | grep 'Disk$' | head -n1 | cut -f1`
-		DEV_SWAP=${DEV_HDD}5
-		DEV_DATA=${DEV_HDD}6
-
-		SFDISK_DUMP="$LIB_DIR/sfdisk.dump.clear"
-
-		sfdisk --no-reread $DEV_HDD <$SFDISK_DUMP || test_failed_file 'Clear partition HDD'
-		FULL_BYTES=`fdisk -l $DEV_HDD | grep '^Disk' | sed 's/.* \(.*\) bytes$/\1/;'`
-		WIN_MBYTES=$[$FULL_BYTES/(1024*1024)-10*1024]
-		echo "FAT partition size: $WIN_MBYTES"
-		fdisk $DEV_HDD <<EOF
-n
-p
-1
-1
-+${WIN_MBYTES}M
-t
-c
-n
-e
-2
-		
-
-n
-l
-
-+650M
-n
-l
-
-
-t
-5
-82
-w
-EOF
-		#sfdisk $DEV_HDD <$SFDISK_DUMP || test_failed_file 'Re-partition HDD'
-		sfdisk -A1 ${DEV_HDD} || test_failed_file 'Activate bootable flag'
-		service udevd restart
-		fdisk -l $DEV_HDD
-		mkfs.ext3 ${DEV_DATA} || test_failed_file 'Create file system'
-		mkdir ~/build || test_failed_file 'Create ~/build mount point'
-		modprobe ext3 || test_failed_file 'Load ext3 module in kernel'
-		mount -t ext3 ${DEV_DATA} ~/build || test_failed_file 'Mount file system'
-		mkswap ${DEV_SWAP} || test_failed_file 'Create swap'
-	fi
-}
-
-build_add_dos_filesystem()
-{
-	DEV_HDD=/dev/`storagescan | grep 'Disk$' | head -n1 | cut -f1`
-	mkfs.vfat -F 32 -S 4096 -s 128 ${DEV_HDD}1
-	sfdisk -A1 $DEV_HDD
-}
-
-prepare_pxelinux_hdd()
-{
-	MAC=01-`ifconfig eth0 | grep HWaddr | sed 's/^.*HWaddr //g;s/:/-/g;y/ABCDEF/abcdef/;'`
-#ifdef FLASH_BIOS
-	echo "Preparing for BIOS reflashing, local HDD load..."
-	ssh $TESTER /usr/local/bin/prepare-pxelinux-hdd $MAC
-#endif
 }
 
 watchdog_start()

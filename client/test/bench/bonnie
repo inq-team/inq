@@ -3,6 +3,7 @@
 # DESCRIPTION=Bonnie HDD performance benchmark
 # DESTROYS_HDD=Y
 # POWEROFF_DURING_TEST=N
+# VERSION=0.1
 # VAR=BONNIE_SIZE:int:100:Testing file size in MiB
 
 . /usr/share/inquisitor/functions-test

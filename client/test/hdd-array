@@ -4,6 +4,7 @@
 # DESTROYS_HDD=Y
 # IS_INTERACTIVE=N
 # POWEROFF_DURING_TEST=N
+# VERSION=0.1
 # VAR=HDDARR_TIMEOUT:int:60:Total time of HDD array testing
 # VAR=HDDARR_LOGTIME:int:30:Time between progress updates
 # VAR=HDDARR_JOBS:int:8:Number of parallely running jobs during compile
@@ -76,7 +77,7 @@ clear_testing_environment()
 array_stress_check()
 {
 	ARRAY=$1
-	MOUNTPOINT=`mktemp -d /tmp/hddarr_test.XXXXX`
+	MOUNTPOINT=`mktemp -d`
 
 	prepare_array_for_test $ARRAY $MOUNTPOINT
 

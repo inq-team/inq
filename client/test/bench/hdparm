@@ -3,6 +3,7 @@
 # DESCRIPTION=Hdparm HDD speed benchmark
 # DESTROYS_HDD=N
 # POWEROFF_DURING_TEST=N
+# VERSION=0.1
 
 . /usr/share/inquisitor/functions-test
 

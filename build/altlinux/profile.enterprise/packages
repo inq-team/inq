@@ -90,3 +90,4 @@ xsltproc
 lm_sensors
 memtester
 curl
+bonnie++

@@ -4,13 +4,14 @@
 # DESTROYS_HDD=N
 # IS_INTERACTIVE=Y
 # POWEROFF_DURING_TEST=N
+# VERSION=0.1
 # VAR=ODD_TEST_IMAGE:str:/usr/share/inquisitor/linux-2.6.15_stress.tar.gz:Default image for comparison
 # VAR=ODD_TEST_IMAGE_BLOCKS:int:2048:This images size in blocks (2048 bytes each)
 # VAR=ODD_WRITE_SPEED:int:10:Default write speed if it won't detect
 
 . /usr/share/inquisitor/functions-test
 
-ODD_IMAGE=`mktemp /tmp/odd_read_test.XXXXX`
+ODD_IMAGE=`mktemp`
 
 load_kernel_modules()
 {

@@ -4,12 +4,13 @@
 # DESTROYS_HDD=Y
 # IS_INTERACTIVE=N
 # POWEROFF_DURING_TEST=N
+# VERSION=0.1
 # VAR=FLASH_SIZE_LIMIT_MB:int:2048:Everything that is less than this amount (MB) is an IDE flash
 
 . /usr/share/inquisitor/functions-test
 
 FLASH_SIZE_LIMIT=$[$FLASH_SIZE_LIMIT_MB * 1024 * 2]
-DEVICE_LIST_FILE=`mktemp /tmp/flash_stress.XXXXX`
+DEVICE_LIST_FILE=`mktemp`
 BADBLOCKS_COMMAND="badblocks -svw"
 
 load_ide_devices()

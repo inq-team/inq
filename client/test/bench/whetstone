@@ -3,6 +3,7 @@
 # DESCRIPTION=Whetstone floating-point calculations benchmark
 # DESTROYS_HDD=N
 # POWEROFF_DURING_TEST=N
+# VERSION=0.1
 # VAR=WHETSTONE_LOOPS:int:20000:Loop count
 # VAR=WHETSTONE_CHECKTIME:int:60:Time between checks of alive benchmarks
 

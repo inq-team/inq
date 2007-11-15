@@ -4,6 +4,7 @@
 # DESTROYS_HDD=N
 # IS_INTERACTIVE=N
 # POWEROFF_DURING_TEST=N
+# VERSION=0.1
 # VAR=MEM_TEST_LOOPS:int:3:Testing loops
 # VAR=MEM_LOG_TIME:int:30:Time between progress updates
 
@@ -12,7 +13,7 @@
 TOTAL_MEMORY=$[(`cat /proc/meminfo | grep MemTotal | awk '{print $2}'` / 1024)-16]
 TOTAL_SUBSTAGES=$((16 * MEM_TEST_LOOPS))
 COMPLETED_SUBSTAGES=0
-MEMORY_LOG=`mktemp /tmp/memtest_test.XXXXX`
+MEMORY_LOG=`mktemp`
 
 test_started $TOTAL_SUBSTAGES
 
