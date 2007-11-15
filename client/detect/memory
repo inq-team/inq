@@ -1,8 +1,13 @@
 #!/bin/sh
 
+DMI_TOTAL_MEM_COUNT=`dmidecode | grep -c '^Memory Device$'`
+DMI_NOT_INST_COUNT=`dmidecode | grep -c 'Size: No Module Installed'`
+let DMI_MEM_COUNT=DMI_TOTAL_MEM_COUNT-DMI_NOT_INST_COUNT
+SPD_MEM_COUNT=`decode-dimms.pl | sed -n 's/Number of SDRAM DIMMs detected and decoded: //p'`
+
 decode-dimms.pl > $HOME/spd.log
 DIMMS=`cat $HOME/spd.log | grep '^Decoding EEPROM: '`
-if [ -n "$DIMMS" ]; then
+if [ -n "$DIMMS" ] && [ "$SPD_MEM_COUNT" -eq "$DMI_MEM_COUNT" ]; then
     echo "$DIMMS" | while read L; do 
 	MEM_INFO=`decode-dimms.pl | grep -A 69 "^$L"`
 	MEM_SIZE=`echo "$MEM_INFO" | sed -n 's/^Size *//p' | head -n1 | sed 's/ *$//'`
