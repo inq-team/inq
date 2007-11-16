@@ -6,7 +6,7 @@
 # POWEROFF_DURING_TEST=N
 # VERSION=0.1
 # VAR=MEM_TEST_LOOPS:int:3:Testing loops
-# VAR=MEM_LOG_TIME:int:30:Time between progress updates
+# VAR=MEM_LOG_TIME:int:120:Time between progress updates
 
 . /usr/share/inquisitor/functions-test
 

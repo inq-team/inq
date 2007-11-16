@@ -5,9 +5,9 @@
 # IS_INTERACTIVE=N
 # POWEROFF_DURING_TEST=N
 # VERSION=0.1
-# VAR=HDDARR_TIMEOUT:int:60:Total time of HDD array testing
-# VAR=HDDARR_LOGTIME:int:30:Time between progress updates
-# VAR=HDDARR_JOBS:int:8:Number of parallely running jobs during compile
+# VAR=HDDARR_TIMEOUT:int:3600:Total time of HDD array testing
+# VAR=HDDARR_LOGTIME:int:120:Time between progress updates
+# VAR=HDDARR_JOBS:int:4:Number of parallely running jobs during compile
 
 . /usr/share/inquisitor/functions-test
 
