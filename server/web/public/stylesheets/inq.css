@@ -219,7 +219,7 @@ a img {
 
 .order_cell {
 	background: #f0dfbd;
-	border-right: none;
+	border-right: none !important;
 	margin-left: 2em;
 }
 

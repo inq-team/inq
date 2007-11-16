@@ -7,8 +7,8 @@
 
 <tr>
 
-<% @staging.each { |ost| %>
-<td style="vertical-align: top">
+<% @staging.each_with_index { |ost, i| %>
+<td style="vertical-align: top<%= '; border-right: none' if i == 2 %>">
 <table width="100%">
 <%	ost.each { |o| %>
 <tr><td class="order_cell">
