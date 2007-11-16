@@ -9,7 +9,23 @@ body {
 	padding: 0px;
 	margin: 0px;
 	font-size: 0.85em;
+	font-family: sans-serif;
 	background: white;
+}
+
+#topbar {
+	background: #F5F5F5;
+	border-bottom: 1px solid #E0E0E0;
+}
+
+#topmenu {
+	padding: 0.5em;
+	float: left;
+}
+
+#login {
+	padding: 0.5em;
+	float: right;
 }
 
 a img {
@@ -183,4 +199,50 @@ a img {
 
 #testing_border #content {
 	border: 10px solid;
+}
+
+/* Orders */
+
+.order_staging {
+	border-collapse: collapse;
+}
+
+.order_staging td {
+	border-right: 2px dotted #845905;
+}
+
+.order_staging th {
+	background: #845905;
+	color: white;
+	padding: 0.5em;
+}
+
+.order_cell {
+	background: #f0dfbd;
+	border-right: none;
+	margin-left: 2em;
+}
+
+.order_cell a {
+	display: block;
+	text-decoration: none;
+	color: black;
+}
+
+.order_cell .order_number {
+	float: left;
+	width: 80px;
+	min-height: 38px;
+	height: 38px;
+	text-indent: 12px;
+	padding-top: 10px;
+	font-size: 1.3em;
+	margin-right: 0.5em;
+	background: url(/img/order.png);
+}
+
+.order_cell .timer {
+	text-align: right;
+	font-style: italic;
+	padding-right: 0.5em;
 }

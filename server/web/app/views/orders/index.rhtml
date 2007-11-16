@@ -1,20 +1,20 @@
-<h1>Listing orders</h1>
+<h1>Orders</h1>
 
 <table>
-  <tr>
-    <th>Doc no</th>
-  </tr>
-  
+<tr>
+<th>buyer_order_number</th>
+<th>mfg_task_number</th>
+<th>mfg_report_number</th>
+</tr>
+
 <% for order in @orders %>
   <tr>
-    <td><%=h order.doc_no %></td>
+    <td><%=h order.buyer_order_number %></td>
+    <td><%=h order.mfg_task_number %></td>
+    <td><%=h order.mfg_report_number %></td>
     <td><%= link_to 'Show', order_path(order) %></td>
     <td><%= link_to 'Edit', edit_order_path(order) %></td>
     <td><%= link_to 'Destroy', order_path(order), :confirm => 'Are you sure?', :method => :delete %></td>
   </tr>
 <% end %>
 </table>
-
-<br />
-
-<%= link_to 'New order', new_order_path %>

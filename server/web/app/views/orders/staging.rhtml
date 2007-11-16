@@ -1,0 +1,30 @@
+<table class="order_staging">
+<tr>
+<th width="33%">Ordering</th>
+<th width="34%">Warehouse</th>
+<th width="33%">Ready for mfg</th>
+</tr>
+
+<tr>
+
+<% @staging.each { |ost| %>
+<td style="vertical-align: top">
+<table width="100%">
+<%	ost.each { |o| %>
+<tr><td class="order_cell">
+<a href="/orders/<%= o.id %>">
+<div class="order_number"><%=h o.buyer_order_number %></div>
+<div class="title"><%=h truncate(o.title, 40) %></div>
+<div class="customer"><%=h truncate(o.customer, 40) %></div>
+<div class="timer"><%=h o.from_delay %>d</div>
+</a>
+</td>
+</tr>
+<%	} %>
+</table>
+</td>
+
+<% } %>
+
+</tr>
+</table>

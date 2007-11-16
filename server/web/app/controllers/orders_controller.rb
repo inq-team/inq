@@ -9,10 +9,16 @@ class OrdersController < ApplicationController
 		end
 	end
 
+	def staging
+		@staging = Order.staging
+	end
+
 	# GET /orders/1
 	# GET /orders/1.xml
 	def show
 		@order = Order.find(params[:id])
+		@computers = Computer.find_all_by_order_id(params[:id])
+#		@computers = []
 		respond_to do |format|
 			format.html # show.rhtml
 			format.xml  { render :xml => @order.to_xml(:include => [:order_lines, :manager]) }
