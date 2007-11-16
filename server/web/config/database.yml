@@ -17,6 +17,7 @@ development:
   username: inq
   password: inq
   socket: /var/lib/mysql/mysql.sock
+  encoding: utf8
 
 # Warning: The database defined as 'test' will be erased and
 # re-generated from your development database when you run 'rake'.
