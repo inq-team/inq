@@ -1,4 +1,4 @@
 /sbin/chkconfig udevd on
-/sbin/chkconfig hal on
+/sbin/chkconfig haldaemon on
 /sbin/chkconfig messagebus on
-/sbin/chkconfig ntpd on
+/sbin/chkconfig ntpd on || true
