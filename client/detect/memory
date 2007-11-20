@@ -57,8 +57,8 @@ dmi_detect()
 		if [ "$MEM_SIZE" != "No Module Installed" ]; then
 			MEM_SPEED=`echo "$MEM_INFO" | sed -n 's/^.*Speed: //p' | sed 's/Unknown//'`
 			MEM_TYPE=`echo "$MEM_INFO" | sed -n 's/^.*Type: //p'`
-			MEM_VENDOR=`echo "$MEM_INFO" | sed -n 's/^.*Manufacturer: //p' | sed 's/Manufacturer[0-9]*//'`
-			MEM_SERIAL=`echo "$MEM_INFO" | sed -n 's/^.*Serial Number: //p'| sed 's/SerNum[0-9]*//'`
+			MEM_VENDOR=`echo "$MEM_INFO" | sed -n 's/^.*Manufacturer: //p' | sed 's/Manufacturer[0-9]*//;s/Not Specified//'`
+			MEM_SERIAL=`echo "$MEM_INFO" | sed -n 's/^.*Serial Number: //p'| sed 's/SerNum[0-9]*//;s/Not Specified//'`
 			echo Memory "$MEM_VENDOR" "$MEM_SIZE $MEM_TYPE $MEM_SPEED" "$MEM_SERIAL" ' - dmi' >> $HOME/debug.log 
 			$SHARE_DIR/add-component Memory "$MEM_VENDOR" "$MEM_SIZE $MEM_TYPE $MEM_SPEED" "$MEM_SERIAL"
 		fi
