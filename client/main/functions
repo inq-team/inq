@@ -161,7 +161,6 @@ test_failed()
 	echo -n Test $TEST_NAME
 	echo_failure
 	test_stage_advance $TEST_NAME fail $COMMENT
-	exit 1
 }
 
 refresh_console()

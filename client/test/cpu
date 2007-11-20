@@ -69,5 +69,3 @@ while true; do
 		test_progress $[$TIME - $START] $CPU_TEST_TIME
 	fi
 done
-
-exit 0
