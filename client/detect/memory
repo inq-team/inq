@@ -2,9 +2,9 @@
 
 write_logs()
 {
-	dmidecode > $HOME/dmi.log
-	decode-dimms.pl > $HOME/spd.log
-	ipmitool fru 2>/dev/null > $HOME/fru.log
+	dmidecode > $HOME/dmi.log || true
+	decode-dimms.pl > $HOME/spd.log || true
+	ipmitool fru 2>/dev/null > $HOME/fru.log || true
 }
 
 clear_logs()
@@ -16,8 +16,8 @@ clear_logs()
 
 detect_mem_quantity()
 {
-	DMI_TOTAL_MEM_COUNT=`cat $HOME/dmi.log | grep -c '^Memory Device$'`
-	DMI_NOT_INST_COUNT=`cat $HOME/dmi.log | grep -c 'Size: No Module Installed'`
+	DMI_TOTAL_MEM_COUNT=`cat $HOME/dmi.log | grep -c '^Memory Device$' || true`
+	DMI_NOT_INST_COUNT=`cat $HOME/dmi.log | grep -c 'Size: No Module Installed' || true`
 	let DMI_MEM_COUNT=DMI_TOTAL_MEM_COUNT-DMI_NOT_INST_COUNT
 	SPD_MEM_COUNT=`cat $HOME/spd.log | sed -n 's/Number of SDRAM DIMMs detected and decoded: //p'`
 }
@@ -25,7 +25,7 @@ detect_mem_quantity()
 spd_detect()
 {
 	echo "$1" | while read L; do 
-		MEM_INFO=`cat $HOME/spd.log | grep -A 69 "^$L"`
+		MEM_INFO=`cat $HOME/spd.log | grep -A 69 "^$L" || true`
 		MEM_SIZE=`echo "$MEM_INFO" | sed -n 's/^Size *//p' | head -n1 | sed 's/ *$//'`
 		MEM_SPEED=`echo "$MEM_INFO" | sed -n 's/^Maximum module speed *//p' | head -n1 | sed 's/DDR //' | sed 's/ *$//'`
 		MEM_TYPE=`echo "$MEM_INFO" | sed -n 's/^Fundamental Memory type *//p' | head -n1 | sed 's/ *$//'`
@@ -40,12 +40,14 @@ spd_detect()
 fru_detect()
 {
 	echo "$1" | while read L; do
-		MEM_INFO=`cat $HOME/fru.log | grep -A 9 "^$L"`
-		MEM_VENDOR=`$SHARE_DIR/vendor \`echo "$MEM_INFO" |  sed -n 's/ Board Mfg *: //p' | head -n1 \``
-		MEM_MODEL=`echo "$MEM_INFO" | sed -n 's/ Board Product *: //p' | head -n1`
-		MEM_SERIAL=`echo "$MEM_INFO" | sed -n 's/ Product Part Number *: //p' | head -n1 | sed 's/ *$//'`
-		echo Memory "$MEM_VENDOR" "$MEM_MODEL" "$MEM_SERIAL" ' - ipmi' >> $HOME/debug.log
-		$SHARE_DIR/add-component Memory "$MEM_VENDOR" "$MEM_MODEL" "$MEM_SERIAL"
+		MEM_INFO=`cat $HOME/fru.log | grep -A 9 "^$L" || true`
+		if [ -n "MEM_INFO" ]; then
+			MEM_VENDOR=`$SHARE_DIR/vendor \`echo "$MEM_INFO" |  sed -n 's/ Board Mfg *: //p' | head -n1 \``
+			MEM_MODEL=`echo "$MEM_INFO" | sed -n 's/ Board Product *: //p' | head -n1`
+			MEM_SERIAL=`echo "$MEM_INFO" | sed -n 's/ Product Part Number *: //p' | head -n1 | sed 's/ *$//'`
+			echo Memory "$MEM_VENDOR" "$MEM_MODEL" "$MEM_SERIAL" ' - ipmi' >> $HOME/debug.log
+			$SHARE_DIR/add-component Memory "$MEM_VENDOR" "$MEM_MODEL" "$MEM_SERIAL"
+		fi
 	done	
 }
 
