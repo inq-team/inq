@@ -29,10 +29,10 @@ remove_test_image()
 
 test_fdd()
 {
-	dd if=$FDD_TEST_IMAGE of=/dev/fd$1 >/dev/null 2>/dev/null
-	floppycontrol -f -d /dev/fd$1 >/dev/null 2>/dev/null
-	dd if=/dev/fd$1 of="$FDD_TEST_IMAGE"_fd bs=1024 count=$FDD_SIZE >/dev/null 2>/dev/null
-	diff "$FDD_TEST_IMAGE"_fd $FDD_TEST_IMAGE >/dev/null 2>/dev/null || return 1
+	dd if=$FDD_TEST_IMAGE of=/dev/fd$1 >/dev/null 2>&1
+	floppycontrol -f -d /dev/fd$1 >/dev/null 2>&1
+	dd if=/dev/fd$1 of="$FDD_TEST_IMAGE"_fd bs=1024 count=$FDD_SIZE >/dev/null 2>&1
+	diff "$FDD_TEST_IMAGE"_fd $FDD_TEST_IMAGE >/dev/null 2>&1 || return 1
 	return 0
 }
 

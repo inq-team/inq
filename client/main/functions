@@ -141,10 +141,9 @@ test_started()
 
 test_succeeded()
 {
+	RESULT=$1
 	if echo $TEST_NAME | grep -q "^bench_"; then
 		RESULT=`echo $1 | sed 's/\&$//'`
-	else
-		RESULT=$1
 	fi
 
 	echo

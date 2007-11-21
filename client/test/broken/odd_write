@@ -28,10 +28,10 @@ test_read()
 {
 	ODD=$1
 
-	readcd -v dev=$ODD f=$ODD_IMAGE sectors=0-$ODD_TEST_IMAGE_BLOCKS >/dev/null 2>/dev/null
-	[ ! -s $ODD_IMAGE ] && dd if=$ODD of=$ODD_IMAGE bs=2048 count=$ODD_TEST_IMAGE_BLOCKS >/dev/null 2>/dev/null
+	readcd -v dev=$ODD f=$ODD_IMAGE sectors=0-$ODD_TEST_IMAGE_BLOCKS >/dev/null 2>&1
+	[ ! -s $ODD_IMAGE ] && dd if=$ODD of=$ODD_IMAGE bs=2048 count=$ODD_TEST_IMAGE_BLOCKS >/dev/null 2>&1
 
-	diff ${ODD_IMAGE}-image $ODD_IMAGE >/dev/null 2>/dev/null || return 1
+	diff ${ODD_IMAGE}-image $ODD_IMAGE >/dev/null 2>$1 || return 1
 	return 0
 }
 
@@ -48,7 +48,7 @@ test_write()
 	detect_maxspeed $ODD
 	blank_if_needed $ODD $SPEED
 
-	cdrecord -tao dev=$ODD driveropts=burnfree speed=$SPEED $ODD_IMAGE-image >/dev/null 2>/dev/null || return 1
+	cdrecord -tao dev=$ODD driveropts=burnfree speed=$SPEED $ODD_IMAGE-image >/dev/null 2>&1 || return 1
 
 	return 0
 }
@@ -80,7 +80,7 @@ blank_if_needed()
 
 	if cdrecord dev=$CDRW_DEV -atip | grep -q 'Is erasable'; then
 		echo "Blanking..."
-		cdrecord -tao dev=$ODD speed=$SPEED blank=fast
+		cdrecord -tao dev=$ODD speed=$SPEED blank=fast >/dev/null 2>&1
 	else
 		echo 'Non rewritable media. Skipping blanking...'
 	fi

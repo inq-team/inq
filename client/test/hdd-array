@@ -23,7 +23,7 @@ prepare_source_tree()
 	TREE_ROOT=$1
 
 	cd $TREE_ROOT
-	tar xzf "$STRESS_TREE" >/dev/null 2>/dev/null || test_failed
+	tar xzf "$STRESS_TREE" >/dev/null 2>&1 || test_failed
 	TREE_NAME=`basename "$STRESS_TREE" .tar.gz`
 	cd "$TREE_NAME"
 
@@ -54,14 +54,14 @@ prepare_array_for_test()
 	ARRAY=$1
 	MOUNTPOINT=$2
 
-	mke2fs -m0 -F /dev/$ARRAY >/dev/null 2>/dev/null || test_failed
+	mke2fs -m0 -F /dev/$ARRAY >/dev/null 2>&1 || test_failed
 	mount /dev/$ARRAY $MOUNTPOINT
 	prepare_source_tree $MOUNTPOINT
 }
 
 test_command_itself()
 {
-	make clean >/dev/null 2>/dev/null && make -j $HDDARR_JOBS fs >/dev/null 2>/dev/null || test_failed
+	make clean >/dev/null 2>&1 && make -j $HDDARR_JOBS fs >/dev/null 2>&1 || test_failed
 }
 
 clear_testing_environment()

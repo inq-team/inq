@@ -15,14 +15,14 @@ test_stage_advance()
 	STAGE=$1
 	EVENT=$2
 	COMMENT=$3
-	curl -sf "$REST_SERVER/computers/advance/$COMPUTER_ID.xml?stage=$STAGE&event=$EVENT&comment=$COMMENT" > /dev/null
+	curl -sf "$REST_SERVER/computers/advance/$COMPUTER_ID.xml?stage=$STAGE&event=$EVENT&comment=$COMMENT" >/dev/null
 }
 
 test_stage_progress()
 {
 	COMPLETE=$1
 	TOTAL=$2
-	curl -sf "$REST_SERVER/computers/progress/$COMPUTER_ID.xml?complete=$COMPLETE&total=$TOTAL" > /dev/null
+	curl -sf "$REST_SERVER/computers/progress/$COMPUTER_ID.xml?complete=$COMPLETE&total=$TOTAL" >/dev/null
 }
 
 submit_components()

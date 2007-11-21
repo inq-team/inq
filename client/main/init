@@ -12,7 +12,7 @@ if [ -s $REMOUNTTAB ]; then
 		if [ -d $mntpt ]; then
 			[ -z "$rest" ] || rest="-o $rest"
 			echo -n "Remounting $mntpt read/write:"
-			(cd $mntpt && tar cp --same-owner --same-permissions . 2> /dev/null) |\
+			(cd $mntpt && tar cp --same-owner --same-permissions . 2>/dev/null) |\
 			(mount -n -ttmpfs $rest /dev/shm $mntpt && tar xp -C $mntpt/ 2>/dev/null) && echo_success || echo_failure
 		fi
 	done
