@@ -6,7 +6,7 @@ Mass storage controller
 SCSI storage controller'
 
 echo "$TYPES" | while read TYPE; do
-	CTRLS=`cat $HOME/lspci.log | grep -i "$TYPE"`
+	CTRLS=`cat $HOME/lspci.log | grep -i "$TYPE" || true`
 	echo "$CTRLS" | while read CTRL; do
 		if [ -n "$CTRL" ]; then
 			BUS=`echo "$CTRL" | grep -o  '..:..\..'`
