@@ -1,19 +1,5 @@
 #!/bin/sh
 
-write_logs()
-{
-	dmidecode > $HOME/dmi.log || true
-	decode-dimms.pl > $HOME/spd.log || true
-	ipmitool fru 2>/dev/null > $HOME/fru.log || true
-}
-
-clear_logs()
-{
-	rm -f $HOME/dmi.log
-	rm -f $HOME/spd.log
-	rm -f $HOME/fru.log	
-}
-
 detect_mem_quantity()
 {
 	DMI_TOTAL_MEM_COUNT=`cat $HOME/dmi.log | grep -c '^Memory Device$' || true`
@@ -67,7 +53,6 @@ dmi_detect()
 	done	
 }
 
-write_logs
 detect_mem_quantity
 DIMMS=`cat $HOME/spd.log | grep '^Decoding EEPROM: ' || true`
 if [ -n "$DIMMS" ] && [ "$SPD_MEM_COUNT" -eq "$DMI_MEM_COUNT" ]; then
@@ -80,4 +65,3 @@ else
 		dmi_detect
 	fi
 fi
-clear_logs
