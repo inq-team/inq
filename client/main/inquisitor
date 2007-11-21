@@ -11,6 +11,11 @@ fi
 # Detects
 # ===========================================================================
 
+#saving logs
+dmidecode > $HOME/dmi.log
+decode-dimms.pl > $HOME/spd.log
+ipmitool fru 2>/dev/null > $HOME/fru.log || true
+
 echo 'Starting detects'
 for I in $SHARE_DIR/detect/*; do
 	echo -n "Detecting `basename $I`"
@@ -18,6 +23,11 @@ for I in $SHARE_DIR/detect/*; do
 	echo_success
 done
 echo 'Detects finished'
+
+#removing logs
+rm -f $HOME/dmi.log
+rm -f $HOME/spd.log
+rm -f $HOME/fru.log	
 
 # ===========================================================================
 # Self-identification
