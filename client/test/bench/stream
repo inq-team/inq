@@ -9,6 +9,6 @@
 
 test_started 1
 
-RESULT=`stream-mem | grep -A 4 Function | perl -e 'while(<>){next if /^Function/;@d=split(" ",$_);$l.=$d[1].",";};chop $l;print $l;'`
+RESULT=`stream-mem | grep -A 4 Function | perl -e '@l=map{split}<STDIN>;print join ",",$l[10],$l[15],$l[20],$l[25]'`
 
 test_succeeded "result=${RESULT}"

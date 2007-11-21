@@ -29,8 +29,8 @@ perform_averaging()
 {
 	DRIVE_NUMBER=$1
 
-	CACHED=`perl -ne 'next if /buffer/;@d=split(" ");$s+=$d[$#d-1];print $s/(++$i),"\n"' <  ${RESULT_FILE}_tmp | sed -n '$p'`
-	BUFFERED=`perl -ne 'next if /cache/;@d=split(" ");$s+=$d[$#d-1];print $s/(++$i),"\n"' <  ${RESULT_FILE}_tmp | sed -n '$p'`
+	CACHED=`perl -e '@l=map{@d=split;@d[$#d-1] if /cache/}<>;for(@l){$s+=$_;$i++ if $_};print $s/$i' < ${RESULT_FILE}_tmp`
+	BUFFERED=`perl -e '@l=map{@d=split;@d[$#d-1] if /buffer/}<>;for(@l){$s+=$_;$i++ if $_};print $s/$i' < ${RESULT_FILE}_tmp`
 
 	echo -n "hdd"${DRIVE_NUMBER}"="${CACHED}","${BUFFERED}\& >> $RESULT_FILE
 }
