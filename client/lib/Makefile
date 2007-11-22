@@ -6,7 +6,7 @@ SUBDIRS=memtest watchdog wait-string einarc stream-mem whetstone dhrystone
 include ../../Makefile.config
 
 all:
-	cd einarc && ./configure && cd ..
+	cd einarc && ./configure --module=areca,lsi_megarc,lsi_megacli && cd ..
 	for I in $(SUBDIRS); do $(MAKE) -C $$I all; done
 
 install:
