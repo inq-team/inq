@@ -6,11 +6,11 @@ Mass storage controller
 SCSI storage controller'
 
 echo "$TYPES" | while read TYPE; do
-	CTRLS=`cat $HOME/lspci.log | grep -i "$TYPE" || true`
+	CTRLS=`cat $HOME/lspci.log 2>/dev/null | grep -i "$TYPE" || true`
 	echo "$CTRLS" | while read CTRL; do
 		if [ -n "$CTRL" ]; then
 			BUS=`echo "$CTRL" | grep -o  '..:..\..'`
-			CTRL_INFO=`cat $HOME/lshw.log | grep -i -B3 "$BUS"$`
+			CTRL_INFO=`cat $HOME/lshw.log 2>/dev/null | grep -i -B3 "$BUS"$`
 			CTRL_VENDOR=`echo "$CTRL_INFO" | sed -n 's/ *vendor: //p'`
 			CTRL_MODEL=`echo "$CTRL_INFO" | sed -n 's/ *product: //p'`
 			if [ -z "`echo "$CTRL_VENDOR" | grep -i 'lsi'`" ] && [ -z "`echo "$CTRL_VENDOR" | grep -i 'areca'`" ] && [ -z "`echo "$CTRL_VENDOR" | grep -i 'adaptec'`" ] || [ -n "`echo "$CTRL_MODEL" | grep -i 'SAS1064ET'`" ]; then
