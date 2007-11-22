@@ -1,6 +1,6 @@
 #!/bin/sh
 
-FRU_INFO=`cat fru.log | grep -A13 'Builtin FRU Device' || true`
+FRU_INFO=`cat $HOME/fru.log | grep -A13 'Builtin FRU Device' || true`
 if [ -n "$FRU_INFO" ]; then
 	CHASSIS_VENDOR=`echo "$FRU_INFO" | sed -n 's/ Product Manufacturer *: //p'`
 	CHASSIS_TYPE=`echo "$FRU_INFO" | sed -n 's/ Chassis Type *: //p' | sed 's/Unspecified//'`
@@ -29,7 +29,7 @@ if [ -n "$FRU_INFO" ]; then
 	$SHARE_DIR/add-component Platform "$PLATFORM_VENDOR" "$PLATFORM_MODEL" "$PLATFORM_SERIAL"
 fi
 
-PS_INFO=`cat fru.log | grep -A9 'ps\.vpd' || true`
+PS_INFO=`cat $HOME/fru.log | grep -A9 'ps\.vpd' || true`
 if [ -n "$PS_INFO" ]; then
 	PS_VENDOR=`echo "$PS_INFO" | sed -n 's/ Product Manufacturer *: //p'`
 	PS_MODEL=`echo "$PS_INFO" | sed -n 's/ Product Part Number *: //p'`
@@ -37,7 +37,7 @@ if [ -n "$PS_INFO" ]; then
 	$SHARE_DIR/add-component 'Power Supply' "$PS_VENDOR" "$PS_MODEL" "$PS_SERIAL"
 fi
 
-BP_INFO=`cat fru.log | grep -A9 'scsibp\.vpd' || true`
+BP_INFO=`cat $HOME/fru.log | grep -A9 'scsibp\.vpd' || true`
 if [ -n "$BP_INFO" ]; then
 	BP_VENDOR=`echo "$BP_INFO" | sed -n 's/ Product Manufacturer *: //p'`
 	BP_MODEL=`echo "$BP_INFO" | sed -n 's/ Product Part Number *: //p'`
