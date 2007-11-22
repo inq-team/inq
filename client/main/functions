@@ -193,7 +193,7 @@ watchdog_stop()
 killbypid()
 {
 	if [ -f ~/$1.pid ]; then
-		kill `cat ~/$1.pid`
+		kill `cat ~/$1.pid` >/dev/null 2>/dev/null
 		rm -f ~/$1.pid
 	fi
 }

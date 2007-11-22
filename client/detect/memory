@@ -2,16 +2,16 @@
 
 detect_mem_quantity()
 {
-	DMI_TOTAL_MEM_COUNT=`cat $HOME/dmi.log | grep -c '^Memory Device$' || true`
-	DMI_NOT_INST_COUNT=`cat $HOME/dmi.log | grep -c 'Size: No Module Installed' || true`
+	DMI_TOTAL_MEM_COUNT=`cat $HOME/dmi.log 2>/dev/null | grep -c '^Memory Device$' || true`
+	DMI_NOT_INST_COUNT=`cat $HOME/dmi.log 2>/dev/null | grep -c 'Size: No Module Installed' || true`
 	let DMI_MEM_COUNT=DMI_TOTAL_MEM_COUNT-DMI_NOT_INST_COUNT
-	SPD_MEM_COUNT=`cat $HOME/spd.log | sed -n 's/Number of SDRAM DIMMs detected and decoded: //p'`
+	SPD_MEM_COUNT=`cat $HOME/spd.log 2>/dev/null | sed -n 's/Number of SDRAM DIMMs detected and decoded: //p'`
 }
 
 spd_detect()
 {
 	echo "$1" | while read L; do 
-		MEM_INFO=`cat $HOME/spd.log | grep -A 69 "^$L" || true`
+		MEM_INFO=`cat $HOME/spd.log 2>/dev/null | grep -A 69 "^$L" || true`
 		MEM_SIZE=`echo "$MEM_INFO" | sed -n 's/^Size *//p' | head -n1 | sed 's/ *$//'`
 		MEM_SPEED=`echo "$MEM_INFO" | sed -n 's/^Maximum module speed *//p' | head -n1 | sed 's/DDR //' | sed 's/ *$//'`
 		MEM_TYPE=`echo "$MEM_INFO" | sed -n 's/^Fundamental Memory type *//p' | head -n1 | sed 's/ *$//'`
@@ -26,7 +26,7 @@ spd_detect()
 fru_detect()
 {
 	echo "$1" | while read L; do
-		MEM_INFO=`cat $HOME/fru.log | grep -A 9 "^$L" || true`
+		MEM_INFO=`cat $HOME/fru.log 2>/dev/null | grep -A 9 "^$L" || true`
 		if [ -n "MEM_INFO" ]; then
 			MEM_VENDOR=`$SHARE_DIR/vendor \`echo "$MEM_INFO" |  sed -n 's/ Board Mfg *: //p' | head -n1 \``
 			MEM_MODEL=`echo "$MEM_INFO" | sed -n 's/ Board Product *: //p' | head -n1`
@@ -39,8 +39,8 @@ fru_detect()
 
 dmi_detect()
 {
-	cat $HOME/dmi.log | grep -n '^Memory Device$' || true | sed 's/:Memory Device$//' | while read N; do
-		MEM_INFO=`cat $HOME/dmi.log | sed -n "$N,+16 p"`
+	cat $HOME/dmi.log 2>/dev/null | grep -n '^Memory Device$' || true | sed 's/:Memory Device$//' | while read N; do
+		MEM_INFO=`cat $HOME/dmi.log 2>/dev/null | sed -n "$N,+16 p"`
 		MEM_SIZE=`echo "$MEM_INFO" | sed -n 's/^.*Size: //p'`
 		if [ "$MEM_SIZE" != "No Module Installed" ]; then
 			MEM_SPEED=`echo "$MEM_INFO" | sed -n 's/^.*Speed: //p' | sed 's/Unknown//'`
@@ -54,11 +54,11 @@ dmi_detect()
 }
 
 detect_mem_quantity
-DIMMS=`cat $HOME/spd.log | grep '^Decoding EEPROM: ' || true`
+DIMMS=`cat $HOME/spd.log 2>/dev/null | grep '^Decoding EEPROM: ' || true`
 if [ -n "$DIMMS" ] && [ "$SPD_MEM_COUNT" -eq "$DMI_MEM_COUNT" ]; then
 	spd_detect "$DIMMS"
 else
-	DIMMS=`cat $HOME/fru.log | grep 'cpu[0-9]*.mem[0-9]*.vpd' || true`
+	DIMMS=`cat $HOME/fru.log 2>/dev/null | grep 'cpu[0-9]*.mem[0-9]*.vpd' || true`
 	if [ -n "$DIMMS" ]; then
 		fru_detect "$DIMMS"
 	else
