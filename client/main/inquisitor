@@ -16,7 +16,7 @@ dmidecode > $HOME/dmi.log
 decode-dimms.pl > $HOME/spd.log
 ipmitool fru 2>/dev/null > $HOME/fru.log || true
 lspci > $HOME/lspci.log
-lshw 2>dev/null > $HOME/lshw.log
+lshw 2>/dev/null > $HOME/lshw.log
 
 echo 'Starting detects'
 for I in $SHARE_DIR/detect/*; do
@@ -27,11 +27,11 @@ done
 echo 'Detects finished'
 
 #removing logs
-rm -f $HOME/dmi.log
-rm -f $HOME/spd.log
-rm -f $HOME/fru.log
-rm -f $HOME/lspci.log
-rm -f $HOME/lshw.log
+#rm -f $HOME/dmi.log
+#rm -f $HOME/spd.log
+#rm -f $HOME/fru.log
+#rm -f $HOME/lspci.log
+#rm -f $HOME/lshw.log
 
 # ===========================================================================
 # Self-identification
