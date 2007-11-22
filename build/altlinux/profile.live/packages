@@ -91,3 +91,5 @@ lm_sensors
 memtester
 curl
 bonnie++
+ipmitool
+readcd

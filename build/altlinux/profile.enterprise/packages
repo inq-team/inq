@@ -92,3 +92,4 @@ memtester
 curl
 bonnie++
 ipmitool
+readcd
