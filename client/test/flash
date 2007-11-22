@@ -9,7 +9,7 @@
 
 . /usr/share/inquisitor/functions-test
 
-FLASH_SIZE_LIMIT=$[$FLASH_SIZE_LIMIT_MB * 1024 * 2]
+FLASH_SIZE_LIMIT=(( $FLASH_SIZE_LIMIT_MB * 1024 * 2 ))
 DEVICE_LIST_FILE=`mktemp`
 BADBLOCKS_COMMAND="badblocks -svw"
 
