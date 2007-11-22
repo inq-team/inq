@@ -39,7 +39,7 @@ fru_detect()
 
 dmi_detect()
 {
-	cat $HOME/dmi.log 2>/dev/null | grep -n '^Memory Device$' || true | sed 's/:Memory Device$//' | while read N; do
+	cat $HOME/dmi.log 2>/dev/null | grep -n '^Memory Device$' | sed 's/:Memory Device$//' | while read N; do
 		MEM_INFO=`cat $HOME/dmi.log 2>/dev/null | sed -n "$N,+16 p"`
 		MEM_SIZE=`echo "$MEM_INFO" | sed -n 's/^.*Size: //p'`
 		if [ "$MEM_SIZE" != "No Module Installed" ]; then
