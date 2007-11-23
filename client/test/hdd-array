@@ -102,6 +102,7 @@ array_stress_check()
 
 make_arrays
 get_drives_list
+[ -z $DRIVES_LIST ] && return
 temporary_hddarr_jobs_check
 
 TOTAL_START=`date "+%s"`

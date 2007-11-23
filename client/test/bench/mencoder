@@ -14,6 +14,6 @@ RESULT_FILE=`mktemp`
 test_started 1
 
 time -o $RESULT_FILE mencoder $MENCODER_ENCODE_OPTIONS -o /dev/null $MENCODER_FILE_TO_ENCODE
-RESULT=`cat $RESULT_FILE | awk '{print $1,$2}' | sed -n 's/user//;s/system//;s/ /,/;1p'`
+RESULT=`awk '{print $1,$2}' < $RESULT_FILE | sed -n 's/user//;s/system//;s/ /,/;1p'`
 
 test_succeeded "result=${RESULT}"

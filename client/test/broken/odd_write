@@ -125,7 +125,7 @@ remove_test_image()
 
 load_kernel_modules
 detect_odd_quantity
-[ $ODD_QUANTITY eq 0 ] && test_failed
+[ $ODD_QUANTITY -eq 0 ] && return
 prepare_image_to_be_recorded
 TESTED_QUANTITY=0
 test_started $ODD_QUANTITY

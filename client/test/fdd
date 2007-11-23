@@ -60,6 +60,7 @@ interactive()
 }
 
 detect_fdd_quantity
+[ $FDD_QUANTITY -eq 0 ] && return
 generate_test_image
 
 test_started $FDD_QUANTITY
