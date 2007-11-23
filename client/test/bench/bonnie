@@ -27,7 +27,7 @@ perform_benchmark()
 	mount /dev/$DRIVE $SCRATCH_DIRECTORY
 
 	bonnie++ -u root -d $SCRATCH_DIRECTORY -s $BONNIE_SIZE -n 1 -m benchmark > ${RESULT_FILE}_tmp 2>&1
-	echo -n "hdd"${DRIVE_NUMBER}"="`cat ${RESULT_FILE}_tmp | sed -n '$p' | sed 's/^benchmark,//' | sed 's/+//g;s/,,//g'`\& >> $RESULT_FILE
+	echo -n "hdd"${DRIVE_NUMBER}"="`sed -n '$p' < ${RESULT_FILE}_tmp | sed 's/^benchmark,//;s/+//g;s/,,//g'`\& >> $RESULT_FILE
 
 	umount $SCRATCH_DIRECTORY
 }

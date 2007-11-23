@@ -12,7 +12,7 @@
 
 detect_burn_program()
 {
-	CPU_VENDOR=`cat /proc/cpuinfo | grep vendor_id | awk '{print $3}' | sed '2,$d'`
+	CPU_VENDOR=`grep vendor_id /proc/cpuinfo | awk '{print $3}' | sed '2,$d'`
 
 	case $CPU_VENDOR in
 	AuthenticAMD)
@@ -26,7 +26,7 @@ detect_burn_program()
 
 detect_cpu_quantity()
 {
-	CPU_QUANTITY=`cat /proc/cpuinfo | grep processor | wc -l`
+	CPU_QUANTITY=`grep processor /proc/cpuinfo | wc -l`
 }
 
 start_burn()

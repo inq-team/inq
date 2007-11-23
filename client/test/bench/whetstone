@@ -13,7 +13,7 @@ RESULT_FILE=`mktemp`
 
 detect_cpu_quantity()
 {
-	CPU_QUANTITY=`cat /proc/cpuinfo | grep processor | wc -l`
+	CPU_QUANTITY=`grep processor /proc/cpuinfo | wc -l`
 }
 
 start_benchmarking()

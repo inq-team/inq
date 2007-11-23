@@ -44,7 +44,7 @@ get_drives_list()
 
 temporary_hddarr_jobs_check()
 {
-	TOTAL_MEMORY=$[(`cat /proc/meminfo | grep MemTotal | awk '{print $2}'` / 1024)-16]
+	TOTAL_MEMORY=$[(`grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024)-16]
 
 	[ "$TOTAL_MEMORY" -lt 512 ] && HDDARR_JOBS=4
 }

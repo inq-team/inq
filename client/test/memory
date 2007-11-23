@@ -10,7 +10,7 @@
 
 . /usr/share/inquisitor/functions-test
 
-TOTAL_MEMORY=$[(`cat /proc/meminfo | grep MemTotal | awk '{print $2}'` / 1024)-64]
+TOTAL_MEMORY=$[(`grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024)-64]
 TOTAL_SUBSTAGES=$((16 * MEM_TEST_LOOPS))
 COMPLETED_SUBSTAGES=0
 MEMORY_LOG=`mktemp`
@@ -22,7 +22,7 @@ MEMTESTER_PID=`ps -ewf | grep 'memtester' | head -n1 | sed 's/^[^0-9]*\([0-9]\+\
 
 while true ; do
 	sleep $MEM_LOG_TIME
-	COMPLETED_SUBSTAGES=`cat $MEMORY_LOG | sed '{:loop g; n; s/^Loop\|Done/\0/; T loop; g; b nloop; :nloop n; s/^Loop\|Done/\0/; T nloop; g; b nloop; }' | grep -v '^$' | wc -l`
+	COMPLETED_SUBSTAGES=`sed '{:loop g; n; s/^Loop\|Done/\0/; T loop; g; b nloop; :nloop n; s/^Loop\|Done/\0/; T nloop; g; b nloop; }' < $MEMORY_LOG | grep -v '^$' | wc -l`
 	if [ -d /proc/$MEMTESTER_PID ] ; then
 		test_progress $COMPLETED_SUBSTAGES $TOTAL_SUBSTAGES
 	else
