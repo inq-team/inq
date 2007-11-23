@@ -23,7 +23,7 @@ test_odd()
 {
 	ODD=$1
 
-	readcd -v dev=$ODD f=$ODD_IMAGE sectors=0-$ODD_TEST_IMAGE_BLOCKS meshpoints=$ODD_MESH_POINTS 2>&1 >$RESULT_FILE
+	readcd -v dev=$ODD f=$ODD_IMAGE sectors=0-$ODD_TEST_IMAGE_BLOCKS meshpoints=$ODD_MESH_POINTS >$RESULT_FILE
 	[ ! -s $ODD_IMAGE ] && dd if=$ODD of=$ODD_IMAGE bs=2048 count=$ODD_TEST_IMAGE_BLOCKS >/dev/null 2>&1
 
 	diff $ODD_TEST_IMAGE $ODD_IMAGE >/dev/null 2>&1 || return 1
@@ -64,11 +64,7 @@ remove_test_image()
 
 generate_speed_results()
 {
-	FOO=`cat $RESULT | grep addr: $RESULT_FILE | awk '{OFS=",";print $5,$6}' | sed '$d; s/$/\;/'`
-	BAR=""
-	for i in $FOO; do
-		BAR=${BAR}$i
-	done
+	RESULTS=`perl -e '@l=map{split}<>;print join ",",@l' $RESULT_FILE`
 
 	#here will be call to publish this monitoring results
 }
