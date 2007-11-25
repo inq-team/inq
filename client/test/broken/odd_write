@@ -95,7 +95,7 @@ interactive()
 		echo -n "Drive $[ $TESTED_QUANTITY + 1]:Either press Y and insert media for testing, or N if you want to finish test: "
 		read foobar
 
-		[ $foobar = "N" ] && {test_failed; break;}
+		[ "$foobar" == N ] && {test_failed; break}
 
 		test_write $ODD
 
