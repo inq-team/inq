@@ -15,7 +15,7 @@ ODD_IMAGE=`mktemp`
 
 load_kernel_modules()
 {
-	modprobe ide-cd
+	modprobe ide-cd || true
 	sleep 5
 }
 
@@ -28,11 +28,10 @@ test_read()
 {
 	ODD=$1
 
-	readcd -v dev=$ODD f=$ODD_IMAGE sectors=0-$ODD_TEST_IMAGE_BLOCKS >/dev/null 2>&1
+	readcd -v dev=$ODD f=$ODD_IMAGE sectors=0-$ODD_TEST_IMAGE_BLOCKS >/dev/null 2>&1 || true
 	[ ! -s $ODD_IMAGE ] && dd if=$ODD of=$ODD_IMAGE bs=2048 count=$ODD_TEST_IMAGE_BLOCKS >/dev/null 2>&1
 
-	diff ${ODD_IMAGE}-image $ODD_IMAGE >/dev/null 2>$1 || return 1
-	return 0
+	diff ${ODD_IMAGE}-image $ODD_IMAGE >/dev/null 2>$1 && FLAG=1 || FLAG=0
 }
 
 prepare_image_to_be_recorded()
@@ -48,9 +47,7 @@ test_write()
 	detect_maxspeed $ODD
 	blank_if_needed $ODD $SPEED
 
-	cdrecord -tao dev=$ODD driveropts=burnfree speed=$SPEED $ODD_IMAGE-image >/dev/null 2>&1 || return 1
-
-	return 0
+	cdrecord -tao dev=$ODD driveropts=burnfree speed=$SPEED $ODD_IMAGE-image >/dev/null 2>&1 && FLAG=1 || FLAG=0
 }
 
 check_media_existence()
@@ -95,16 +92,21 @@ interactive()
 		echo -n "Drive $[ $TESTED_QUANTITY + 1]:Either press Y and insert media for testing, or N if you want to finish test: "
 		read foobar
 
-		[ "$foobar" == N ] && {test_failed; break}
+		if [ "$foobar" == N ]; then
+			test_failed
+			break
+		fi
 
+		FLAG=0
 		test_write $ODD
 
-		if (( $? == 0 )); then
+		if [ $FLAG -eq 1 ]; then
 			echo "Write stage passed, performing read test..."
 
+			FLAG=0
 			test_read $ODD
 
-			if (( $? == 0 )); then
+			if [ $FLAG -eq 1 ]; then
 				echo "Drive test passed"
 				TESTED_QUANTITY=$[ $TESTED_QUANTITY + 1 ]
 				test_progress $TESTED_QUANTITY $ODD_QUANTITY

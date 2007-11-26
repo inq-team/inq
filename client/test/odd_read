@@ -5,7 +5,7 @@
 # IS_INTERACTIVE=Y
 # POWEROFF_DURING_TEST=N
 # VERSION=0.1
-# VAR=ODD_TEST_IMAGE:str:/usr/share/inquisitor/testimage.iso:Default image for comparison
+# VAR=ODD_TEST_IMAGE_HASH:str:6fa7786eef2e11d36e8bc1663679f161:Default image for comparison hash
 # VAR=ODD_TEST_IMAGE_BLOCKS:int:332800:This images size in blocks (2048 bytes each)
 # VAR=ODD_MESH_POINTS:int:1024:Points for meshes for monitoring drive's speed
 
@@ -23,11 +23,10 @@ test_odd()
 {
 	ODD=$1
 
-	readcd -v dev=$ODD f=$ODD_IMAGE sectors=0-$ODD_TEST_IMAGE_BLOCKS meshpoints=$ODD_MESH_POINTS >$RESULT_FILE
+	readcd -v dev=$ODD f=$ODD_IMAGE sectors=0-$ODD_TEST_IMAGE_BLOCKS meshpoints=$ODD_MESH_POINTS >$RESULT_FILE || true
 	[ ! -s $ODD_IMAGE ] && dd if=$ODD of=$ODD_IMAGE bs=2048 count=$ODD_TEST_IMAGE_BLOCKS >/dev/null 2>&1
 
-	diff $ODD_TEST_IMAGE $ODD_IMAGE >/dev/null 2>&1 || return 1
-	return 0
+	[ `cat $ODD_IMAGE | md5sum | awk '{print $1}'` = $ODD_TEST_IMAGE_HASH ] && FLAG=1 || FLAG=0
 }
 
 interactive()
@@ -40,11 +39,15 @@ interactive()
 		echo -n "Drive $[ $TESTED_QUANTITY + 1]:Either press Y and insert media for testing, or N if you want to finish test: "
 		read foobar
 
-		[ "$foobar" == N ] && {test_failed; break}
+		if [ "$foobar" == N ]; then
+			test_failed
+			break
+		fi
 
+		FLAG=0
 		test_odd $ODD
 
-		if (( $? == 0 )); then
+		if [ $FLAG -eq 1 ]; then
 			echo "Drive test passed"
 			TESTED_QUANTITY=$[ $TESTED_QUANTITY + 1 ]
 			test_progress $TESTED_QUANTITY $ODD_QUANTITY

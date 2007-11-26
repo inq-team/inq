@@ -15,11 +15,11 @@ BADBLOCKS_COMMAND="badblocks -svw"
 
 load_ide_devices()
 {
-	rmmod ata_generic
-	rmmod ata_piix
-	rmmod libata
+	rmmod ata_generic || true
+	rmmod ata_piix || true
+	rmmod libata || true
 	sleep 10
-	modprobe ide-generic
+	modprobe ide-generic || true
 	sleep 10
 }
 
