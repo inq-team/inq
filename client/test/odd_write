@@ -11,6 +11,8 @@
 
 . /usr/share/inquisitor/functions-test
 
+echo "WARNING! *odd_write* currently is broken!!!"
+
 ODD_IMAGE=`mktemp`
 
 load_kernel_modules()
