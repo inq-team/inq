@@ -12,13 +12,13 @@ COMPUTER_ID=ENV['COMPUTER_ID']
 SHARE_DIR=ENV['SHARE_DIR']
 
 def temporary_workaround(cmd)
-	`TEST_NAME=hdd_passthrough . /usr/share/inquisitor/functions-test && export COMPUTER_ID=#{COMPUTER_ID} && #{cmd}`
+	`PLANNER='' TEST_NAME=hdd_passthrough . /usr/share/inquisitor/functions-test && export COMPUTER_ID=#{COMPUTER_ID} && #{cmd}`
 end
 
 def test_available
 	drivenames = `ls -1 /sys/block/ | grep -v '[0-9]$'`.split(/\n/)
 	puts "Drivenames: #{drivenames.join(',')}"
-	system("#{SHARE_DIR}/test/additional/hdd-badblocks.rb #{drivenames.join(' ')}")
+	system("export COMPUTER_ID=#{COMPUTER_ID} && #{SHARE_DIR}/test/additional/hdd-badblocks.rb #{drivenames.join(' ')}")
 	return drivenames.size
 end
 

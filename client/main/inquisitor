@@ -95,7 +95,7 @@ submit_components $HOME/components.xml
 
 PLANNER=1 TEST_NAME=cpu CPU_TEST_TIME=1800 CPU_LOG_TIME=120 . $SHARE_DIR/test/cpu
 PLANNER=1 TEST_NAME=memory MEM_TEST_LOOPS=3 MEM_LOG_TIME=120 . $SHARE_DIR/test/memory
-#PLANNER=1 TEST_NAME=hdd-passthrough $SHARE_DIR/test/hdd-passthrough
+export COMPUTER_ID && export SHARE_DIR && PLANNER=1 TEST_NAME=hdd-passthrough $SHARE_DIR/test/hdd-passthrough
 PLANNER=1 TEST_NAME=hdd-array HDDARR_TIMEOUT=3600 HDDARR_LOGTIME=120 HDDARR_JOBS=16 . $SHARE_DIR/test/hdd-array
 PLANNER=1 TEST_NAME=fdd FDD_SIZE=1440 . $SHARE_DIR/test/fdd
 #PLANNER=1 TEST_NAME=flash FLASH_SIZE_LIMIT=2048 . $SHARE_DIR/test/flash
