@@ -43,9 +43,9 @@ interactive()
 
 	while ( [ $NON_PASSED ] ); do
 		echo -n "Drive ${FDD}:Either press Y and insert floppy for testing, or N if you want to finish test: "
-		read foobar
+		read choice
 
-		[ $foobar = "N" ] && test_failed
+		[ "$choice" = "N" ] && test_failed
 
 		test_fdd $[$FDD - 1]
 
@@ -60,7 +60,7 @@ interactive()
 }
 
 detect_fdd_quantity
-[ $FDD_QUANTITY -eq 0 ] && return
+[ "$FDD_QUANTITY" -eq 0 ] && return
 generate_test_image
 
 test_started $FDD_QUANTITY

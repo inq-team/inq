@@ -30,15 +30,18 @@ test_read()
 {
 	ODD=$1
 
-	readcd -v dev=$ODD f=$ODD_IMAGE sectors=0-$ODD_TEST_IMAGE_BLOCKS >/dev/null 2>&1 || true
-	[ ! -s $ODD_IMAGE ] && dd if=$ODD of=$ODD_IMAGE bs=2048 count=$ODD_TEST_IMAGE_BLOCKS >/dev/null 2>&1
+	readcd -v dev=$ODD f=$ODD_IMAGE sectors=0-$ODD_TEST_IMAGE_BLOCKS \
+		>/dev/null 2>&1 || true
+	[ ! -s "$ODD_IMAGE" ] && dd if=$ODD of=$ODD_IMAGE bs=2048 \
+		count=$ODD_TEST_IMAGE_BLOCKS >/dev/null 2>&1
 
 	diff ${ODD_IMAGE}-image $ODD_IMAGE >/dev/null 2>$1 && FLAG=1 || FLAG=0
 }
 
 prepare_image_to_be_recorded()
 {
-	dd if=$ODD_TEST_IMAGE of=${ODD_IMAGE}-image bs=2048 count=$ODD_TEST_IMAGE_BLOCKS
+	dd if=$ODD_TEST_IMAGE of=${ODD_IMAGE}-image bs=2048 \
+		count=$ODD_TEST_IMAGE_BLOCKS
 }
 
 test_write()
@@ -49,7 +52,8 @@ test_write()
 	detect_maxspeed $ODD
 	blank_if_needed $ODD $SPEED
 
-	cdrecord -tao dev=$ODD driveropts=burnfree speed=$SPEED $ODD_IMAGE-image >/dev/null 2>&1 && FLAG=1 || FLAG=0
+	cdrecord -tao dev=$ODD driveropts=burnfree speed=$SPEED \
+		$ODD_IMAGE-image >/dev/null 2>&1 && FLAG=1 || FLAG=0
 }
 
 check_media_existence()
@@ -68,7 +72,8 @@ detect_maxspeed()
 {
 	ODD=$1
 
-	SPEED=`cdrecord dev=$ODD -atip | sed -ne '/speed high/ s/^.*speed high: \(.*\)$/\1/ p' | head -n 1`
+	SPEED=`cdrecord dev=$ODD -atip | \
+		sed -ne '/speed high/ s/^.*speed high: \(.*\)$/\1/ p' | head -n 1`
 	[ -z "$SPEED" ] && SPEED=$ODD_WRITE_SPEED
 }
 
@@ -90,11 +95,12 @@ interactive()
 	ODD=$1
 	NON_PASSED=1
 
-	while ( [ $NON_PASSED -eq 1 ] ); do
-		echo -n "Drive $[ $TESTED_QUANTITY + 1]:Either press Y and insert media for testing, or N if you want to finish test: "
-		read foobar
+	while ( [ "$NON_PASSED" -eq 1 ] ); do
+		echo -n "Drive $[ $TESTED_QUANTITY + 1]:"
+		echo -n "Either press Y and insert media for testing, or N if you want to finish test: "
+		read choice
 
-		if [ "$foobar" == N ]; then
+		if [ "$choice" = "N" ]; then
 			test_failed
 			break
 		fi
@@ -102,13 +108,13 @@ interactive()
 		FLAG=0
 		test_write $ODD
 
-		if [ $FLAG -eq 1 ]; then
+		if [ "$FLAG" -eq 1 ]; then
 			echo "Write stage passed, performing read test..."
 
 			FLAG=0
 			test_read $ODD
 
-			if [ $FLAG -eq 1 ]; then
+			if [ "$FLAG" -eq 1 ]; then
 				echo "Drive test passed"
 				TESTED_QUANTITY=$[ $TESTED_QUANTITY + 1 ]
 				test_progress $TESTED_QUANTITY $ODD_QUANTITY
@@ -129,13 +135,14 @@ remove_test_image()
 
 load_kernel_modules
 detect_odd_quantity
-[ $ODD_QUANTITY -eq 0 ] && return
+[ "$ODD_QUANTITY" -eq 0 ] && return
 prepare_image_to_be_recorded
 TESTED_QUANTITY=0
 test_started $ODD_QUANTITY
 
 for i in `hal-find-by-capability --capability storage.cdrom`; do
-	interactive `hal-device $i | grep access_control.file | awk '{print $3}' | sed "s/'//g"`
+	interactive `hal-device $i | grep access_control.file | \
+		awk '{print $3}' | sed "s/'//g"`
 done
 
 remove_test_image

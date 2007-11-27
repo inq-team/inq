@@ -20,7 +20,8 @@ perform_benchmark()
 	DRIVE_NUMBER=$2
 
 	for i in `seq 1 10`; do
-		echo "hdd"${DRIVE_NUMBER}"="`hdparm -t /dev/$DRIVE | grep '^ Timing'`\& >> ${RESULT_FILE}_tmp
+		echo "hdd"${DRIVE_NUMBER}"="`hdparm -t /dev/$DRIVE | \
+			grep '^ Timing'`\& >> ${RESULT_FILE}_tmp
 	done
 	perform_averaging $DRIVE_NUMBER
 }

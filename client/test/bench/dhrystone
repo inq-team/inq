@@ -19,7 +19,8 @@ detect_cpu_quantity()
 start_benchmarking()
 {
 	for i in `seq 1 $CPU_QUANTITY`; do
-		dhrystone $DHRYSTONE_DURATION 2>&1 | awk '{print $1}' > ${RESULT_FILE}${i} &
+		dhrystone $DHRYSTONE_DURATION 2>&1 | awk '{print $1}' > \
+			${RESULT_FILE}${i} &
 		echo $$ > ~/dhrystone$i.pid
 	done
 }
@@ -27,7 +28,8 @@ start_benchmarking()
 parse_results()
 {
 	for i in `seq 1 $CPU_QUANTITY`; do
-		echo -n "cpu"${i}"="`cat ${RESULT_FILE}${i}`\& >> ${RESULT_FILE}_parsed
+		echo -n "cpu"${i}"="`cat ${RESULT_FILE}${i}`\& >> \
+			${RESULT_FILE}_parsed
 	done
 }
 
@@ -49,7 +51,8 @@ while true; do
 	
 	ALIVE=0
 	for i in `seq 1 $CPU_QUANTITY`; do
-		(( `ps \`cat ~/dhrystone$i.pid\` | wc -l` == 2 )) && $[$ALIVE=$ALIVE + 1]
+		(( `ps \`cat ~/dhrystone$i.pid\` | wc -l` == 2 )) && \
+			$[$ALIVE=$ALIVE + 1]
 	done
 	if (( ALIVE == 0 )); then
 		parse_results

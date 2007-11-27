@@ -23,10 +23,13 @@ test_odd()
 {
 	ODD=$1
 
-	readcd -v dev=$ODD f=$ODD_IMAGE sectors=0-$ODD_TEST_IMAGE_BLOCKS meshpoints=$ODD_MESH_POINTS >$RESULT_FILE || true
-	[ ! -s $ODD_IMAGE ] && dd if=$ODD of=$ODD_IMAGE bs=2048 count=$ODD_TEST_IMAGE_BLOCKS >/dev/null 2>&1
+	readcd -v dev=$ODD f=$ODD_IMAGE sectors=0-$ODD_TEST_IMAGE_BLOCKS \
+		meshpoints=$ODD_MESH_POINTS >$RESULT_FILE || true
+	[ ! -s "$ODD_IMAGE" ] && dd if=$ODD of=$ODD_IMAGE bs=2048 \
+				count=$ODD_TEST_IMAGE_BLOCKS >/dev/null 2>&1
 
-	[ `cat $ODD_IMAGE | md5sum | awk '{print $1}'` = $ODD_TEST_IMAGE_HASH ] && FLAG=1 || FLAG=0
+	[ `cat $ODD_IMAGE | md5sum | awk '{print $1}'` = $ODD_TEST_IMAGE_HASH ] && \
+		FLAG=1 || FLAG=0
 }
 
 interactive()
@@ -34,12 +37,12 @@ interactive()
 	ODD=$1
 	NON_PASSED=1
 
-	while ( [ $NON_PASSED -eq 1 ] ); do
+	while ( [ "$NON_PASSED" -eq 1 ] ); do
 		eject $ODD
 		echo -n "Drive $[ $TESTED_QUANTITY + 1]:Either press Y and insert media for testing, or N if you want to finish test: "
-		read foobar
+		read choice
 
-		if [ "$foobar" == N ]; then
+		if [ "$choice" = "N" ]; then
 			test_failed
 			break
 		fi
@@ -47,7 +50,7 @@ interactive()
 		FLAG=0
 		test_odd $ODD
 
-		if [ $FLAG -eq 1 ]; then
+		if [ "$FLAG" -eq 1 ]; then
 			echo "Drive test passed"
 			TESTED_QUANTITY=$[ $TESTED_QUANTITY + 1 ]
 			test_progress $TESTED_QUANTITY $ODD_QUANTITY
@@ -73,12 +76,13 @@ generate_speed_results()
 }
 
 detect_odd_quantity
-[ $ODD_QUANTITY -eq 0 ] && return
+[ "$ODD_QUANTITY" -eq 0 ] && return
 TESTED_QUANTITY=0
 test_started $ODD_QUANTITY
 
 for i in `hal-find-by-capability --capability storage.cdrom`; do
-	interactive `hal-device $i | grep access_control.file | awk '{print $3}' | sed "s/'//g"`
+	interactive `hal-device $i | grep access_control.file | 
+		awk '{print $3}' | sed "s/'//g"`
 done
 
 remove_test_image

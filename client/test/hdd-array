@@ -38,7 +38,11 @@ detect_hdd_quantity()
 {
 	sleep 5
 	HDD_QUANTITY=`hal-find-by-property --key=storage.drive_type --string=disk | wc -l`
-	[ "$HDD_QUANTITY" -gt 0 ] && TIME_PER_ARRAY=$[ $HDDARR_TIMEOUT / $HDD_QUANTITY ] || TIME_PER_ARRAY=$[ $HDDARR_TIMEOUT / 2 ]
+	if [ "$HDD_QUANTITY" -gt 0 ]; then
+		TIME_PER_ARRAY=$[ $HDDARR_TIMEOUT / $HDD_QUANTITY ]
+	else
+		TIME_PER_ARRAY=$[ $HDDARR_TIMEOUT / 2 ]
+	fi
 }
 
 temporary_hddarr_jobs_check()
@@ -60,7 +64,8 @@ prepare_array_for_test()
 
 test_command_itself()
 {
-	make clean >/dev/null 2>&1 && make -j $HDDARR_JOBS fs >/dev/null 2>&1 || test_failed
+	make clean >/dev/null 2>&1 && \
+	make -j $HDDARR_JOBS fs >/dev/null 2>&1 || test_failed
 }
 
 clear_testing_environment()
@@ -101,14 +106,15 @@ array_stress_check()
 
 make_arrays
 detect_hdd_quantity
-[ $HDD_QUANTITY -eq 0 ] && return
+[ "$HDD_QUANTITY" -eq 0 ] && return
 temporary_hddarr_jobs_check
 
 TOTAL_START=`date "+%s"`
 test_started $HDDARR_TIMEOUT
 
 for i in `hal-find-by-property --key=storage.drive_type --string disk`; do
-	array_stress_check `hal-device $i | grep block.device | awk '{print $3}' | sed "s/'//g"`
+	array_stress_check `hal-device $i | grep block.device | \
+				awk '{print $3}' | sed "s/'//g"`
 done
 
 test_succeeded
