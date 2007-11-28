@@ -14,7 +14,7 @@
 				<%= hardware = model %>
 			<% end %>
 		</td>
-		<td class='component_name'><%= component.model.name %></td>
+		<td class='component_name'><span class='component_vendor'><%= component.model.vendor %></span> <%= component.model.name %></td>
 		<td class='component_serial'><%= component.serial %></td>
 		</tr>
 	<% end %>

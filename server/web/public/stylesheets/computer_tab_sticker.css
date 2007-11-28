@@ -1,56 +1,55 @@
-#info_tab_sticker {
-	color: white;
-	font-weight: bold;
+.testing_border, #selected_testing_tab, #testing_pane td table td, #testing_pane td table th {
+	border-color: #A28A50 ! important; 
+}
+
+td#testings_tabs table tr td, td#info_tabs table tr td {
+	border-color: white ! important;
+}
+
+td#testings_tabs table tr td#selected_testing_tab {
+	background-color: #F3D079;
+	border-color: #F3D079 ! important;
+}
+
+td#info_tabs table tr td#info_tab_sticker {
 	text-decoration: none;
 	cursor: default;
-	background: #e79830;
 	color: white;
+	background-color: #F3D079;
+	border-color: #F3D079 ! important;
 }
 
-#selected_testing_tab {
-	background: #e79830;
+td#info_tabs table tr td#info_tab_sticker a {
+	text-decoration: none;
+	cursor: default;
+	color: #1A1406;
+	font-weight: bold;
 }
 
-#testing_plan, #content {
-	border-color: #e79830 ! important;
+/*********************/
+
+#components th, #testing_plan th {
+	background-color: #F3D079;
+	color: #1A1406;
 }
 
-/**********************/
-
-#components {
-	border-collapse: collapse;
-	border: hidden;
-	width: 100%;
+.component_num {
+	width: 8.6em;
 }
 
-#components td, #components th {
-	vertical-align: bottom;
-	padding: 0.5em;
-	padding: 0.5em;
-	border-bottom: 1px solid #aaa;
+.component_qty {
+	width: 17.6em;
 }
 
-#components td.component_num {
-	text-align: right;
+.component_name {
+	width: 26.6em;
 }
 
-#components .component_qty {
-	text-align: center;
-	border-right: 1px solid #aaa;
+.component_odd {
 }
 
-#components .component_name {
-	border-left: 1px solid #aaa;
-	border-right: 1px solid #aaa;
-}
-
-#components th {
-	text-align: center;
-        background-color: #eaedea;
-}
-
-.component_edit {
-	vertical-align: middle;
+.component_even {
+	background-color: #f0f4f0;
 }
 
 

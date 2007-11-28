@@ -74,6 +74,7 @@ class ComputersController < ApplicationController
 	def index
 		@computers = Computer.find_testing()
 		@byshelves = @computers.inject({}) { |h, c| h[c.shelf] = c ; h }
+		p @byshelves
 		
 		render(:layout => 'computer_shelves', :template => 'computers/shelves')				
 	end

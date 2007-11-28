@@ -1,18 +1,35 @@
-#info_tab_log {
-	color: white;
-	font-weight: bold;
+.testing_border, #selected_testing_tab, #testing_pane td table td, #testing_pane td table th {
+	border-color: #6A5338 ! important; 
+}
+
+td#testings_tabs table tr td, td#info_tabs table tr td {
+	border-color: white ! important;
+}
+
+td#testings_tabs table tr td#selected_testing_tab {
+	background-color: #BFA88D;
+	border-color: #BFA88D ! important;
+}
+
+td#info_tabs table tr td#info_tab_log {
 	text-decoration: none;
 	cursor: default;
-	background: #4668d7;
 	color: white;
+	background-color: #BFA88D;
+	border-color: #BFA88D ! important;
 }
 
-#selected_testing_tab {
-	background: #4668d7;
+td#info_tabs table tr td#info_tab_log a {
+	text-decoration: none;
+	cursor: default;
+	color: #4F3D12;
+	font-weight: bold;
 }
+/*********************/
 
-#testing_plan, #content {
-	border-color: #4668d7 ! important;
+#testing_plan th {
+	background-color: #BFA88D;
+	color: #35291C;
 }
 
 /**********************/

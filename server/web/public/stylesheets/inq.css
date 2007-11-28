@@ -1,4 +1,3 @@
-
 /*******************************************************************************
 
 Styles for computer_tabs layout
@@ -36,62 +35,71 @@ a img {
 /* Title bar */
 
 #title_bar {
-	background: #26ab38;
-	border: hidden;
-	padding-top: 0.5em;
-	padding-bottom: 0.5em;
+	background: #AACFBE;
+	border-bottom: 1px solid #559F7D;	
+	padding-left: 4.5em;	
 }
 
 #title_bar table {
 	border-collapse: collapse;
-	border: hidden;
+	border: none;
+
 }
 
-#title_bar td{
-	padding-left: 1em;
-	padding-right: 1em;
-	color: white;
-	border-left: 2px white solid;
-	border-right: 2px white solid;	
+#title_bar td {
+	color: #002514;
+	height: 2.2em;
+	vertical-align: middle;
+	border-right: 1px #559F7D dotted;
+	border-left: 1px #559F7D dotted;
+	text-align: center;
 }
 
 #title_bar_model {
-	font-size: 1.15em;
 	font-weight: bold;
+	width: 18em;
 }
 
 #title_bar_serial {
-	font-size: 1.1em;
 	font-weight: bold;
+	width: 18em;
 }
 
 #title_bar_shelf {
-	font-size: 1.05em;
+	display: none;
 }
 
-#title_bar_doc {
-	font-size: 1em;
+td#title_bar_doc {
+	width: 32em;
+	border: none;
+}
+
+#title_bar_link {
+	float: right;
+	padding-right: 2em;
+	margin-top: -0.1em;
 }
 
 /* Progress bar */
 
 #progress_bar {
-	padding: 0.5em;
+	padding-left: 4.0em;
+	border: 0px solid white;
 }
 
 #progress_bar table {
 	border-collapse: separate;
 	border: none;
-	border-spacing: 0.5em;
+	border-spacing: 1em;
 }
 
 #progress_bar td {
 	text-align: center;
 	vertical-align: middle;	
-	border: 1px solid;
 	width: 8em;
-	height: 4em;
+	height: 4.5em;
 	border: 1px solid #999;
+	padding: 0px;
 }
 
 .computer_stage_planned {
@@ -100,149 +108,131 @@ a img {
 }
 
 .computer_stage_finished {
-	background-color: #9af9a6;
+	background-color: #AACFBE;
+	color: #002514;
+	border-color: #559F7D;
 }
 
 .computer_stage_running {
-	background-color: #fbec8a;
+	background-color: #F3D079;
+	color: #4F3D12;
+	border-color: #A28A50;
 }
 
-/* Main tabbar */
+/* tabbed pane */
 
 #testing_pane {
-	border: 10px solid white;
-}
-
-#testing_border {
+	border-spacing: 0px;
 	border-collapse: collapse;
-	width:100%;
+	height: 23em;
 }
 
-#testing_border td {
+#testing_pane td, #testing_pane th {
 	vertical-align: top;
 	padding: 0px;
+	border: 0px;
 }
 
-#testing_border #testings_tabs {
-	width: 3em;
-	padding-top: 0.5em; 
-	padding-left: 0.5em;
-	padding-bottom: 1em;
-}
-
-.testing_tab {
-	margin-bottom:0.5em;
-	text-align: center;
-	padding: 0.5em;
-}
-
-#info_tabs {
-	height: 2.5em;
-	text-align: center;
-	background: white;
-}
-
-#info_tabs a {
-	padding-left: 1em;
-	padding-right: 1em;
-	line-height: 3em;
-	padding-top: 0.3em;
-}
-
-#selected_testing_tab a {
-	text-decoration: none;
-	font-weight: bold;
-	cursor: default;
-	text-decoration: none;
-	color: white;
-}
-
-#testing_border #testing_plan {
-	width: 14em;
-	border: 10px solid; 
-	padding: 0px;
-}
-
-#testing_plan table {
-	width: 100%;
+#testing_pane td table {
 	border-collapse: collapse;
-	border: hidden;		
+	border: hidden;
 }
 
-#testing_plan td {
-	border-bottom: 1px solid #999;	
-	vertical-align: bottom;
+#testing_pane td table td, #testing_pane td table th {
 	height: 2em;
+	border-right: 1px dotted black;
+	border-bottom: 1px solid black;
+	vertical-align: middle;
+	padding-left: 0.2em;
+	padding-right: 0.2em; 
 }
 
-.testing_stage_span {
+#testing_pane td table th {
+	height: 1.7em;
+}
+
+.testing_border {
+	border: 0.3em solid ! important;
+	height: 100%;
+}
+
+td#testing_plan {
+	border-right: none;
+	width: 18em;
+	height: 100%;
+}
+
+#testing_plan > .testing_border {
+	border-right: 0px ! important;
+}
+
+#testing_plan table td, #testing_plan table th {
+	width: 8.6em;
+}
+
+td#content {
+	height: 100%;
+	width: 53.7em;
+}
+
+#content table {
+	width: 100%;
+}
+
+td#testings_tabs {
+	width: 4.2em;
+	padding-left: 0.3em;
+}
+
+#testings_tabs table {
+	width: 100%;
+}
+
+#testings_tabs td {
+	text-align: center;
+	padding: 0px ! important;
+	border-color: white ! importantth;
+}
+
+#info_tabs td {
+	width: 8.6em;
+	text-align: center;
+	vertical-align: middle;
+	border-right: 2px solid ! important;
+}
+
+td#info_tabs td#info_tab_dummy {
+	width: 4.1em;
+	border: hidden ! important;
+}
+
+
+td.testing_stage_span {
 	text-align: right;
-	padding-right: 0.5em ! important;
+	padding-right: 1em ! important;
 }
 
-.testing_stage_name {
+td.testing_stage_name {
 	text-align: left;
 	padding-left: 30px ! important; 
 }
 
-.testing_stage_finished .testing_stage_name {
-	background: url('/images/stage_finished.png') 8px 70% no-repeat;
+tr.testing_stage_finished .testing_stage_name {
+	background: url('/images/stage_finished.png') 8px 50% no-repeat;
 }
 
-.testing_stage_failed .testing_stage_name {
-	background: url('/images/stage_failed.png') 8px 70% no-repeat;
+tr.testing_stage_failed .testing_stage_name {
+	background: url('/images/stage_failed.png') 8px 50% no-repeat;
 }
 
-.testing_stage_running .testing_stage_name {
-	background: url('/images/stage_running.png') 8px 70% no-repeat;
+tr.testing_stage_running .testing_stage_name {
+	background: url('/images/stage_running.png') 8px 50% no-repeat;
 }
 
-#testing_border #content {
-	border: 10px solid;
+.bad_username {
+	color: red;
 }
 
-/* Orders */
 
-.order_staging {
-	border-collapse: collapse;
-}
 
-.order_staging td {
-	border-right: 2px dotted #845905;
-}
 
-.order_staging th {
-	background: #845905;
-	color: white;
-	padding: 0.5em;
-}
-
-.order_cell {
-	background: #f0dfbd;
-	border-right: none !important;
-	margin-left: 2em;
-}
-
-.order_cell a {
-	display: block;
-	text-decoration: none;
-	color: black;
-}
-
-.order_cell .order_number {
-	float: left;
-	width: 80px;
-	min-height: 38px;
-	height: 38px;
-	text-indent: 12px;
-	padding-top: 10px;
-	font-size: 1.3em;
-	margin-right: 0.5em;
-	background: url(/img/order.png);
-}
-
-.order_cell .timer {
-	text-align: right;
-	font-style: italic;
-	padding-right: 0.5em;
-}
