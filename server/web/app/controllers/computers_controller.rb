@@ -105,6 +105,10 @@ class ComputersController < ApplicationController
 		render(:layout => 'computer_tabs')
 	end
 
+	def free_form
+		sticker()
+	end
+
 	def log
 		@computer = Computer.find(params[:id])
 		@testing_number = params[:testing].to_i()

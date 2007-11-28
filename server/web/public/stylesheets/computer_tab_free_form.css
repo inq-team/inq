@@ -68,18 +68,29 @@ td.component_name:hover span.stub_a {
 	background-color: #f0f4f0;
 }
 
-.hint {
+.confirm {
 	margin-left: 4em;
 	margin-right: 4em;
 }
 
-.hint div table tr td {
-	width: 50%;
+.confirm_border div {
 	text-align: center;
-	vertical-align: top ! important;
 	padding-left: 3em ! important;
 	padding-right: 3em  ! important;
-	border-right-style: solid;
 }
+
+.confirm_border input[type=submit]
+{
+	margin-left: 1em;
+	margin-right: 1em;
+}
+
+textarea {
+	width: 100%;
+	font-size: 150%;
+	border: none;
+	border-bottom: 1px dotted #A28A50;
+}
+
 
 

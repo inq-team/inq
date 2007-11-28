@@ -1,0 +1,19 @@
+<% form_tag(:action => 'print_sticker', :id => @computer.id, :testing => @testing_number) %>
+
+<textarea name='raw' cols='80' rows='<%= @components.size + 2 %>'><% @components.each_index do |i| %><%= sprintf(" %-5s | %-40s | %-20s\n", i, @components[i][:name], @components[i][:count]) %><% end %></textarea>
+
+<% place_hint('confirm') do %>
+	<div>
+		Confirm changes made to the sticker<br /><br />
+		<% form_tag(:action => 'sticker', :id => @computer.id, :testing => @testing_number) do %>
+		<%= submit_tag('Print') %> <%= submit_tag('Cancel') %>
+	</div>
+<% end %>
+<% end %>
+
+<%= javascript_tag(<<_EOF_
+	Event.observe(window, 'load', function () {
+		Rico.Corner.round($$('div.confirm').first());
+	});
+_EOF_
+) %>
