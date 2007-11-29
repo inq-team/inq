@@ -11,8 +11,6 @@
 
 . /usr/share/inquisitor/functions-test
 
-echo "WARNING! *odd_write* currently is broken!!!"
-
 ODD_IMAGE=`mktemp`
 
 load_kernel_modules()
@@ -52,8 +50,10 @@ test_write()
 	detect_maxspeed $ODD
 	blank_if_needed $ODD $SPEED
 
-	cdrecord -tao dev=$ODD driveropts=burnfree speed=$SPEED \
-		$ODD_IMAGE-image >/dev/null 2>&1 && FLAG=1 || FLAG=0
+	echo "Writing..."
+	cdrecord dev=$ODD driveropts=burnfree speed=$SPEED \
+		-data $ODD_IMAGE-image >/dev/null 2>&1 && FLAG=1 || FLAG=0
+	echo "writing done"
 }
 
 check_media_existence()
@@ -74,17 +74,18 @@ detect_maxspeed()
 
 	SPEED=`cdrecord dev=$ODD -atip | \
 		sed -ne '/speed high/ s/^.*speed high: \(.*\)$/\1/ p' | head -n 1`
-	[ -z "$SPEED" ] && SPEED=$ODD_WRITE_SPEED
+	[ -z "$SPEED" ] && SPEED=$ODD_WRITE_SPEED || true
 }
 
 blank_if_needed()
 {
 	ODD=$1
-	SPEED=$1
+	SPEED=$2
 
-	if cdrecord dev=$CDRW_DEV -atip | grep -q 'Is erasable'; then
+	if cdrecord dev=$ODD -atip | grep -q 'Is erasable'; then
 		echo "Blanking..."
-		cdrecord -tao dev=$ODD speed=$SPEED blank=fast >/dev/null 2>&1
+		cdrecord dev=$ODD speed=$SPEED blank=fast >/dev/null 2>&1
+		echo "done blanking"
 	else
 		echo 'Non rewritable media. Skipping blanking...'
 	fi
