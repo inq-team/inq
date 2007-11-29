@@ -100,7 +100,7 @@ class ComputersController < ApplicationController
 		@computer = Computer.find(params[:id])
 		@testing_number = params[:testing].to_i()
                 @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
-		@components = @sorted_testings[@testing_number].components.collect { |c| c.model }.inject({}) { |h, m| h[m] = h[m] ? h[m] + 1 : 1 ; h }.collect { |k, v| { :name => k.short_name || k.name, :count => v, :model => k  } }.sort() { |a, b| a = a[:model] ; b = b[:model]; (z = ((a.group ? a.group.name : '') <=> (b.group ? b.group.name : ''))) == 0 ? ((a.short_name || a.name) <=> (b.short_name || b.name)) : z }
+		@components = @sorted_testings[@testing_number].components.collect { |c| c.model }.inject({}) { |h, m| h[m] = h[m] ? h[m] + 1 : 1 ; h }.collect { |k, v| { :name => k.short_name || k.name, :count => v, :model => k  } }.sort() { |q, w| a = q[:model] ; b = w[:model] ; (z = ((a.group ? a.group.name : '') <=> (b.group ? b.group.name : ''))) == 0 ? (a.short_name || a.name || 'NULL') <=> (b.short_name || b.name || 'NULL') : z }
 
 		render(:layout => 'computer_tabs')
 	end
