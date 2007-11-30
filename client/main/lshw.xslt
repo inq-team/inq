@@ -9,16 +9,6 @@
 	</list>
 </xsl:template>
 
-
-<xsl:template match="//node[description='Motherboard']">
-	<component>
-		<type>Motherboard</type>
-		<vendor><xsl:value-of select="vendor"/></vendor>
-		<model><xsl:value-of select="product"/></model>
-	</component>
-	<xsl:apply-templates/>
-</xsl:template>
-
 <xsl:template match="//node[description='VGA compatible controller']">
 	<component>
 		<type>Video</type>
