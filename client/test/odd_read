@@ -21,24 +21,25 @@ detect_odd_quantity()
 
 test_odd()
 {
-	ODD=$1
+	local odd=$1
 
-	readcd -v dev=$ODD f=$ODD_IMAGE sectors=0-$ODD_TEST_IMAGE_BLOCKS \
+	readcd -v dev=$odd f=$ODD_IMAGE sectors=0-$ODD_TEST_IMAGE_BLOCKS \
 		meshpoints=$ODD_MESH_POINTS >$RESULT_FILE || true
-	[ ! -s "$ODD_IMAGE" ] && dd if=$ODD of=$ODD_IMAGE bs=2048 \
+	[ ! -s "$ODD_IMAGE" ] && dd if=$odd of=$ODD_IMAGE bs=2048 \
 				count=$ODD_TEST_IMAGE_BLOCKS >/dev/null 2>&1
 
-	[ `cat $ODD_IMAGE | md5sum | awk '{print $1}'` = $ODD_TEST_IMAGE_HASH ] && \
+	[ `md5sum -b < $ODD_IMAGE | awk '{print $1}'` = $ODD_TEST_IMAGE_HASH ] && \
 		FLAG=1 || FLAG=0
 }
 
 interactive()
 {
-	ODD=$1
-	NON_PASSED=1
+	local odd=$1
+	non_passed=1
 
-	while ( [ "$NON_PASSED" -eq 1 ] ); do
-		eject $ODD
+	while ( [ "$non_passed" -eq 1 ] ); do
+		eject $odd
+		echo ""
 		echo -n "Drive $[ $TESTED_QUANTITY + 1]:Either press Y and insert media for testing, or N if you want to finish test: "
 		read choice
 
@@ -48,13 +49,13 @@ interactive()
 		fi
 
 		FLAG=0
-		test_odd $ODD
+		test_odd $odd
 
 		if [ "$FLAG" -eq 1 ]; then
 			echo "Drive test passed"
 			TESTED_QUANTITY=$[ $TESTED_QUANTITY + 1 ]
 			test_progress $TESTED_QUANTITY $ODD_QUANTITY
-			NON_PASSED=0
+			non_passed=0
 
 			generate_speed_results
 		else
