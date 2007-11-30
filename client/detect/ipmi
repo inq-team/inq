@@ -1,7 +1,11 @@
 #!/bin/sh
 
-FRU_INFO=`cat $HOME/fru.log | grep -A13 'Builtin FRU Device' || true`
-if [ -n "$FRU_INFO" ]; then
+# ===========================================================================
+# Parsing base info from ipmi
+# ===========================================================================
+
+if FRU_INFO=`cat $HOME/fru.log | grep -A13 'Builtin FRU Device'`; then
+	#Detecting chassis
 	CHASSIS_VENDOR=`echo "$FRU_INFO" | sed -n 's/ Product Manufacturer *: //p'`
 	CHASSIS_TYPE=`echo "$FRU_INFO" | sed -n 's/ Chassis Type *: //p' | sed 's/Unspecified//'`
 	CHASSIS_PART_NUM=`echo "$FRU_INFO" | sed -n 's/ Chassis Part Number *: //p' | sed 's/Unspecified//'`
@@ -14,13 +18,30 @@ if [ -n "$FRU_INFO" ]; then
 	CHASSIS_MODEL="$CHASSIS_TYPE$SEP$CHASSIS_PART_NUM"
 	$SHARE_DIR/add-component Chassis "$CHASSIS_VENDOR" "$CHASSIS_MODEL" "$CHASSIS_SERIAL"
 	
+	#detecting mainboard
 	MB_VENDOR=`echo "$FRU_INFO" | sed -n 's/ Board Mfg *: //p'`
 	MB_PRODUCT=`echo "$FRU_INFO" | sed -n 's/ Board Product *: //p'`
 	MB_PART_NUM=`echo "$FRU_INFO" | sed -n 's/ Board Part Number *: //p'`
 	MB_SERIAL=`echo "$FRU_INFO" | sed -n 's/ Board Serial *: //p'`
 	MB_MODEL="$MB_PRODUCT / $MB_PART_NUM"
-	$SHARE_DIR/add-component Mainboard "$MB_VENDOR" "$MB_MODEL" "$MB_SERIAL"
+
+	#if mainboard model exist
+	if [ -n "$MB_PRODUCT" ] || [ -n "$MB_PART_NUM" ]; then
+		echo Mainboard "$MB_VENDOR" "$MB_MODEL" "$MB_SERIAL" ' - ipmi' >> $HOME/debug.log
+		$SHARE_DIR/add-component Mainboard "$MB_VENDOR" "$MB_MODEL" "$MB_SERIAL"
+	else
+		#if ipmi detect of MB failed
+		if MB_INFO=`cat $HOME/lshw.log | grep -A5 'description: Motherboard'`; then
+			#detecting mainboard from lshw
+			MB_VENDOR=`echo "$MB_INFO" | sed -n 's/ *vendor: //p'`
+			MB_MODEL=`echo "$MB_INFO" | sed -n 's/ *product: //p'`
+			MB_SERIAL=`echo "$MB_INFO" | sed -n 's/ *serial: //p'`
+			echo Mainboard "$MB_VENDOR" "$MB_MODEL" "$MB_SERIAL" ' - lshw' >> $HOME/debug.log
+			$SHARE_DIR/add-component Mainboard "$MB_VENDOR" "$MB_MODEL" "$MB_SERIAL"
+		fi
+	fi
 	
+	#detecting platform
 	PLATFORM_VENDOR=`echo "$FRU_INFO" | sed -n 's/ Product Manufacturer *: //p'`
 	PLATFORM_PRODUCT=`echo "$FRU_INFO" | sed -n 's/ Product Name *: //p'`
 	PLATFORM_PART_NUM=`echo "$FRU_INFO" | sed -n 's/ Product Part Number *: //p'`
@@ -29,16 +50,20 @@ if [ -n "$FRU_INFO" ]; then
 	$SHARE_DIR/add-component Platform "$PLATFORM_VENDOR" "$PLATFORM_MODEL" "$PLATFORM_SERIAL"
 fi
 
-PS_INFO=`cat $HOME/fru.log | grep -A9 'ps\.vpd' || true`
-if [ -n "$PS_INFO" ]; then
+# ===========================================================================
+# Parsig additional info from ipmi
+# ===========================================================================
+
+#detectuing power supply
+if PS_INFO=`cat $HOME/fru.log | grep -A9 'ps\.vpd'`; then
 	PS_VENDOR=`echo "$PS_INFO" | sed -n 's/ Product Manufacturer *: //p'`
 	PS_MODEL=`echo "$PS_INFO" | sed -n 's/ Product Part Number *: //p'`
 	PS_SERIAL=`echo "$PS_INFO" | sed -n 's/ Product Serial *: //p'`
 	$SHARE_DIR/add-component 'Power Supply' "$PS_VENDOR" "$PS_MODEL" "$PS_SERIAL"
 fi
 
-BP_INFO=`cat $HOME/fru.log | grep -A9 'scsibp\.vpd' || true`
-if [ -n "$BP_INFO" ]; then
+#detecting backplane
+if BP_INFO=`cat $HOME/fru.log | grep -A9 'scsibp\.vpd'`; then
 	BP_VENDOR=`echo "$BP_INFO" | sed -n 's/ Product Manufacturer *: //p'`
 	BP_MODEL=`echo "$BP_INFO" | sed -n 's/ Product Part Number *: //p'`
 	BP_SERIAL=`echo "$BP_INFO" | sed -n 's/ Product Serial *: //p'`
