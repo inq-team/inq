@@ -35,6 +35,3 @@ einarc -l | while read L; do
 	fi
 	$SHARE_DIR/add-component 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" "$CTRL_SERIAL"
 done
-
-rm -f $HOME/lspci.log
-rm -f $HOME/lshw.log
