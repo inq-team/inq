@@ -38,6 +38,7 @@ a img {
 	background: #AACFBE;
 	border-bottom: 1px solid #559F7D;	
 	padding-left: 4.5em;	
+	min-height: 2.2em;
 }
 
 #title_bar table {

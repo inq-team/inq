@@ -1,8 +1,4 @@
 class ComputersController < ApplicationController
-	def index
-		archive
-	end
-
 	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
 #	verify :method => :post, :only => [ :destroy, :create, :update ],
 #	       :redirect_to => { :action => :archive }
@@ -71,10 +67,11 @@ class ComputersController < ApplicationController
 		head :ok
 	end
 
-	def index
+	def index	
+		config = params[:config] || DEFAULT_SHELVES_CONFIG
 		@computers = Computer.find_testing()
 		@byshelves = @computers.inject({}) { |h, c| h[c.shelf] = c ; h }
-		p @byshelves
+		@shelves = Shelves::Config.new(config)
 		
 		render(:layout => 'computer_shelves', :template => 'computers/shelves')				
 	end

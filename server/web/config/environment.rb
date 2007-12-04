@@ -59,5 +59,5 @@ end
 
 # Include your application configuration below
 
-DEFAULT_SHELVES_CONFIG = 'shelves.xml'
+DEFAULT_SHELVES_CONFIG = 'config/shelves.xml'
 
