@@ -145,7 +145,7 @@ class ComputersController < ApplicationController
 		@testing = @sorted_testings[@testing_number]
 		@components = @testing.components
 
-		@logs = "Under construction"
+		@logs = File.open("/var/log/HOSTS/c#{ @computer.id }").readlines()
 
 		render(:layout => 'computer_tabs')
 	end
