@@ -1,0 +1,15 @@
+#content_border {
+	background-color: #F3D079;
+}
+
+.title {
+	color: #1A1406;
+	text-indent: 50px ! important;
+	background: url('/images/hardware.png') 0.5em 50% no-repeat;
+	min-height: 36px;
+}
+
+.input_form td, .input_form th {
+	border-color: #A28A50 ! important;
+}
+

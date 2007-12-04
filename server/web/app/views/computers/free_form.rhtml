@@ -1,4 +1,4 @@
-<% form_tag(:action => 'print_sticker', :id => @computer.id, :testing => @testing_number, :method => 'post') do %>
+<% form_tag({ :action => 'print_sticker', :id => @computer.id, :testing => @testing_number }, :method => 'post') do %>
 
 <% if @testing.custom_sticker %>
 	<% text = @testing.custom_sticker ; rows = text.split("\n").size() + 2 %>
@@ -11,7 +11,7 @@
 	<% place_hint('confirm') do %>
 	<div>
 		Confirm changes made to the sticker<br /><br />
-		<%= submit_tag('Print', :onclick => "return confirm('Are you sure you want to update custom sticker for this configuration and send it to printer?')") %> <%= submit_tag('Cancel') %>
+		<%= submit_tag('Print', :onclick => "return confirm('Are you sure?');") %> <%= submit_tag('Cancel') %>
 	</div>
 	<% end %>
 <% end %>

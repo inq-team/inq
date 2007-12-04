@@ -1,0 +1,54 @@
+body {
+	padding: 2em;
+}
+
+#content {
+	padding: 1em;
+}
+
+table.input_form {
+	width: 100%;
+	border-collapse: collapse;
+	border: hidden;
+}
+
+.input_form td, .input_form th {
+	text-align: left;
+	height: 2.5em;
+	text-indent: 0.5em;
+}
+
+.title {
+	font-weight: normal;
+	border-bottom: 1px dotted;
+}
+
+.input_form .label {
+	width: 40%;
+	border-right: 1px dotted;
+	border-bottom: 1px dotted;
+}
+
+.input_form .value {
+	border-bottom: 1px dotted;
+}
+
+.input_form .value input[type='text']{
+	width: 95%;
+}
+
+.input_form .button {
+	text-align: center;
+}
+
+.input_form button {
+	width: 7em; 
+}
+
+
+div.hint {
+	margin: 0px ! important;
+	border: 1px dotted;
+}
+
+

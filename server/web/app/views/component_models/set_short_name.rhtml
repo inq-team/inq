@@ -1,0 +1,6 @@
+<noscript>
+Hardware piece <strong><%= "#{ @model.vendor } #{ @model.name }" %></strong> is now known as: <br/>
+<%= @model.short_name %>
+</noscript>
+<%= javascript_tag('window.opener.location.reload(true); window.close();') %>
+
