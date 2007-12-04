@@ -29,34 +29,38 @@ def shelf_type_G()
 end
 
 def shelf_content(computer)
-	computer.id.to_s
+	memo = render(:partial => 'memo', :locals => { :computer => computer })
+	progress = content_tag(:div, content_tag(:div, '&nbsp;', :style => 'width: 75%'), :class => 'progress', :title => '75%')
+	content_tag(:div, progress + link_to(computer.short_title, { :action => 'show', :id => computer.id}) + memo, :class => 'computer_on_shelf')
 end
 
-def def_shelf(name, layout, computers)
+def def_shelf(name, layout, computers, bonus = {})
 	layout.collect do |a|  
-        	a.collect do |i| 
+		border = a.size 
+        	a.collect do |i|
+			border -= 1 
 			if i
 				content = (c = computers[ shelf = "#{ name }#{ i }" ]) ? shelf_content(c) : ""
-				content_tag(:td, content_tag(:p, shelf, :class => 'shelf_title') + content, :id => "shelf_#{ name }-#{ i }", :class => "#{ c ? 'occupied' : 'free' }_shelf")
+				content_tag(:td, content + content_tag(:p, shelf, { :class => 'shelf_title' }), { :id => "shelf_#{ name }-#{ i }", :class => "#{ c ? 'occupied' : 'free' }_shelf"}.merge(border == 0 ? bonus: {}) )
 			else
-				content_tag(:td, '', :class => 'hole')
+				content_tag(:td, '', { :class => 'hole' }.merge(border == 0 ? bonus : {}))
 			end
                 end 
         end
 end
 
-def stack_of_shelves(computers, arrays)
+def stack_of_shelves(computers, arrays, bonus)
 	y = []
-	(z = arrays.collect() { |a| def_shelf(a.first, a.last, computers) }).first.size.times { |i| y[i] = z.inject([]) { |a, b| a << b[i] } }
+	border = arrays.size
+	(z = arrays.collect() { |a| border -= 1 ; def_shelf(a.first, a.last, computers, border > 0 ? bonus : {} ) }).first.size.times { |i| y[i] = z.inject([]) { |a, b| a << b[i] } }
 	y	
 end
 
 def def_stack(computers, * arrays)
-	content_tag(:table, stack_of_shelves(computers, arrays).collect() { |r| content_tag(:tr, r.join()) }.join(), :class => 'stack')
+	content_tag(:table, stack_of_shelves(computers, arrays, {:style => 'border-right: 3px double #888;'}).collect() { |r| content_tag(:tr, r.join()) }.join(), :class => 'stack')
 end
 
 def def_nice_stack(computers, * names)
-	p names.collect() { |n| [n, shelf_type_G()] }
 	def_stack(computers, *names.collect() { |n| [n, shelf_type_G()] })
 end
 

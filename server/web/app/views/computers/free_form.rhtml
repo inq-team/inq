@@ -1,14 +1,19 @@
-<% form_tag(:action => 'print_sticker', :id => @computer.id, :testing => @testing_number) %>
+<% form_tag(:action => 'print_sticker', :id => @computer.id, :testing => @testing_number, :method => 'post') do %>
 
-<textarea name='raw' cols='80' rows='<%= @components.size + 2 %>'><% @components.each_index do |i| %><%= sprintf(" %-5s | %-40s | %-20s\n", i, @components[i][:name], @components[i][:count]) %><% end %></textarea>
+<% if @testing.custom_sticker %>
+	<% text = @testing.custom_sticker ; rows = text.split("\n").size() + 2 %>
+<% else %>
+	<% text = '' ; @components.each_index do |i| %><% text += sprintf(" %-5s | %-40s | %-20s\n", i, @components[i][:name], @components[i][:count]) ; rows = @components.size + 2 %><% end %>
+<% end %>
 
-<% place_hint('confirm') do %>
+	<textarea name='raw' cols='80' rows='<%= rows %>'><%= text  %></textarea>
+
+	<% place_hint('confirm') do %>
 	<div>
 		Confirm changes made to the sticker<br /><br />
-		<% form_tag(:action => 'sticker', :id => @computer.id, :testing => @testing_number) do %>
-		<%= submit_tag('Print') %> <%= submit_tag('Cancel') %>
+		<%= submit_tag('Print', :onclick => "return confirm('Are you sure you want to update custom sticker for this configuration and send it to printer?')") %> <%= submit_tag('Cancel') %>
 	</div>
-<% end %>
+	<% end %>
 <% end %>
 
 <%= javascript_tag(<<_EOF_

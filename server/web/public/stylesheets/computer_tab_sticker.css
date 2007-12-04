@@ -74,12 +74,16 @@ td.component_name:hover span.stub_a {
 }
 
 .hint div table tr td {
-	width: 50%;
+	width: 33%;
 	text-align: center;
 	vertical-align: top ! important;
-	padding-left: 3em ! important;
-	padding-right: 3em  ! important;
+	padding-left: 1em ! important;
+	padding-right: 1em  ! important;
 	border-right-style: solid;
+}
+
+#hint_type_print .hint_border {
+	background: no-repeat 0.5em 50% url('/images/printer.png');
 }
 
 

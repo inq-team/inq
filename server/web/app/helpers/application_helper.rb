@@ -7,8 +7,9 @@ def shadow(klass = 'shadow')
 #        content_tag('div', '', :class => klass, :id => 'bottom_right')
 end
 
-def place_hint(klass = 'hint', &block)
-	concat("<div class='#{ klass }'><div class='#{ klass }_border'>" + capture(&block) + "</div></div>", block.binding);
+def place_hint(id = 'hint', &block)
+	id ||= 'hint'
+	concat("<div id='hint_type_#{ id }' class='hint'><div class='hint_border'>" + capture(&block) + "</div></div>", block.binding);
 end
 
 end

@@ -3,51 +3,92 @@
 }
 
 table.stack {
-	border-collapse: collapse;
 	border: none;
+	border-collapse: collapse;
 }
 
 table.stack td {
-	border: 1px solid black;
+	border: 1px solid #999;
 	width: 64px;
 	height: 64px;
-	position: relative;
 	padding: 0px ! important;
-	background-color: #eee;
 }
 
 table.stack td.hole {
 	border: none;
-	background: transparent;
 }
 
-td.occupied_shelf {
+table.stack td {
 	text-align: right;
 	vertical-align: bottom;
 }
 
 .shelf_title {
-	font-family: serif;
 }
 
-td.occupied_shelf p.shelf_title {
-	font-size: 12px;		
+p.shelf_title {
+	font-family: serif;
+	font-size: 14px;
+	display: inline;
+	padding-right: 2px;
 }
 
 td.free_shelf {
-	text-align: center;
-	vertical-align: middle;
+	background-color: #f8f8f8;
 }
 
-td.free_shelf p.shelf_title {
-	font-size: 18px;		
+td.occupied_shelf {
+	background-color: #c7ffd2;
 }
 
 
 /********************************/
 
 table.stack td[id|='shelf_K'], table.stack td[id|='shelf_H'], table.stack td[id|='shelf_E'], table.stack td[id|='shelf_B'] {
-	background-color: #e0e0e0;
 }
+
+.computer_on_shelf {
+	text-align: left;
+	padding: 2px;
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
+
+.computer_on_shelf a {
+	display: block;
+	text-align: center;
+	font-weight: bold;
+}
+
+.hidden_memo {
+	display: none;
+	background: white;
+	border: 1px solid #999 ! important;
+	padding: 0.3em;
+	width: 25em;
+	height: 15em;
+}
+
+.computer_on_shelf a:hover .hidden_memo, .stack td.occupied_shelf:hover .hidden_memo {
+	display: block;
+	position: fixed;
+}
+
+.stack td.occupied_shelf:hover {
+	cursor: pointer;
+}
+
+.computer_on_shelf .progress {
+	padding: 0px;
+	height: 3px;
+	border: 1px solid #999;
+	padding: 1px;
+}
+
+.computer_on_shelf .progress div {
+	background-color: #26ab38;
+	height: 3px;
+}
+
 
 

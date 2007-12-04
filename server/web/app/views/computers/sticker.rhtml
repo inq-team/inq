@@ -17,12 +17,25 @@
 	<% end %>
 </table>
 
-<% place_hint() do %>
+<% place_hint(flash[:notice] ? 'print' : flash[:error] ? 'error' : 'info') do %>
 <table><tr><td>
-To edit short names hover over the desired line and follow the link
-</td><td>
-	To switch to <strong>free form</strong> edior press the button below	:
-	<% form_tag(:action => 'free_form', :id => @computer.id, :testing => @testing_number) do %>
+<% if flash[:notice] %>
+	<%= flash[:notice] %>
+<% elsif flash[:error] %>
+	<%= flash[:error] %>
+<% else %>
+	To edit short names hover over the desired line and follow the link
+<% end %>
+</td>
+<td>
+	To <strong>print</strong> the sticker press the button below:
+	<% form_tag({ :action => 'print_sticker', :id => @computer.id, :testing => @testing_number }, :method => 'post') do %>
+	<%= submit_tag('Print') %>
+	<% end %>
+</td>
+<td>
+	For <strong>free form</strong> mode press the button below:
+	<% form_tag({ :action => 'free_form', :id => @computer.id, :testing => @testing_number }, :method => 'get') do %>
 	<%= submit_tag('Edit') %>
 	<% end %>
 </td></tr></table>
@@ -33,7 +46,7 @@ To edit short names hover over the desired line and follow the link
 		Rico.Corner.round($$('div.hint').first());
 		$$('tr.broken_component').each( function(c) {
 			new Effect.Highlight(c, { startcolor: '#ffffff', endcolor: '#FDDCD6', restorecolor: '#FDDCD6' });
-			
+
 		}); 
 	});
 _EOF_

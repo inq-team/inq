@@ -82,16 +82,17 @@ class ComputersController < ApplicationController
 	def show
 		@computer = Computer.find(params[:id])
                 @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
-		@testing_number = @sorted_testings.size - 1
+		@testing_number = params[:testing] ? params[:testing].to_i() : @sorted_testings.size - 1
 		
 		redirect_to(:action => 'hw', :id => params[:id], :testing => @testing_number)
 	end
 
 	def hw
 		@computer = Computer.find(params[:id])
-		@testing_number = params[:testing].to_i()
                 @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
-		@components = @sorted_testings[@testing_number].components
+		@testing_number = params[:testing] ? params[:testing].to_i() : @sorted_testings.size - 1
+		@testing = @sorted_testings[@testing_number]
+		@components = @testing.components
 		
 		render(:layout => 'computer_tabs')
 	end
@@ -100,7 +101,8 @@ class ComputersController < ApplicationController
 		@computer = Computer.find(params[:id])
 		@testing_number = params[:testing].to_i()
                 @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
-		@components = @sorted_testings[@testing_number].components.collect { |c| c.model }.inject({}) { |h, m| h[m] = h[m] ? h[m] + 1 : 1 ; h }.collect { |k, v| { :name => k.short_name || k.name, :count => v, :model => k  } }.sort() { |q, w| a = q[:model] ; b = w[:model] ; (z = ((a.group ? a.group.name : '') <=> (b.group ? b.group.name : ''))) == 0 ? (a.short_name || a.name || 'NULL') <=> (b.short_name || b.name || 'NULL') : z }
+		@testing = @sorted_testings[@testing_number]
+		@components = @testing.components.collect { |c| c.model }.inject({}) { |h, m| h[m] = h[m] ? h[m] + 1 : 1 ; h }.collect { |k, v| { :name => k.short_name || k.name, :count => v, :model => k  } }.sort() { |q, w| a = q[:model] ; b = w[:model] ; (z = ((a.group ? a.group.name : '') <=> (b.group ? b.group.name : ''))) == 0 ? (a.short_name || a.name || 'NULL') <=> (b.short_name || b.name || 'NULL') : z }
 
 		render(:layout => 'computer_tabs')
 	end
@@ -109,11 +111,42 @@ class ComputersController < ApplicationController
 		sticker()
 	end
 
-	def log
+	def print_sticker
 		@computer = Computer.find(params[:id])
 		@testing_number = params[:testing].to_i()
+		@testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }[@testing_number]
+
+		if params[:commit] == 'Print'
+			text = nil
+			prn = '/dev/usblp0'
+			if params[:raw]	
+				@testing.custom_sticker = params[:raw] 
+				@testing.save			
+				text = @testing.custom_sticker
+			else
+				text = 'Generated sticker' #TODO
+			end
+			#TODO:key => , "value"
+			#add some actual printing here
+			
+			result = rand > 0.5;
+			
+			if result
+				flash[:notice] = "TODO: Sent sticker to printer <strong class='printer'>#{ prn }</strong>"
+			else
+				flash[:error] = "TODO: Printer <strong class='printer'>#{ prn }</strong> reported errors."
+			end		
+		end
+
+		redirect_to(:action => 'sticker', :id => params[:id], :testing => @testing_number)
+	end
+
+	def log
+		@computer = Computer.find(params[:id])
                 @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
-		@components = @sorted_testings[@testing_number].components
+		@testing_number = params[:testing] ? params[:testing].to_i() : @sorted_testings.size - 1
+		@testing = @sorted_testings[@testing_number]
+		@components = @testing.components
 
 		@logs = "Under construction"
 

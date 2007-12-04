@@ -166,8 +166,8 @@ td#testing_plan {
 	border-right: 0px ! important;
 }
 
-#testing_plan table td, #testing_plan table th {
-	width: 8.6em;
+#testing_plan table .testing_stage_name {
+	width: 13em;
 }
 
 td#content {
@@ -231,25 +231,29 @@ tr.testing_stage_running .testing_stage_name {
 	color: red;
 }
 
-.hint, .confirm {
+.hint {
 	color: #1A1406;
 	background: #F3D079;
 	margin: 1em;
 }
 
-.hint div.hint_border, .confirm div.confirm_border {
-	background: no-repeat 1em 50%;
+.hint div.hint_border {
+	background: no-repeat 1.5em 50%;
 	padding: 1em;
-	padding-left: 3.5em;
-	padding-right: 3.5em;
+	padding-left: 4em ! important;
+	padding-right: 3em ! important;
 }
 
-div.hint div.hint_border {
+#hint_type_info .hint_border {
 	background-image: url('/images/info.png');
 }
 
-div.confirm div.confirm_border {
+#hint_type_confirm .hint_border {
 	background-image: url('/images/confirm.png');
+}
+
+#hint_type_error .hint_border {
+	background-image: url('/images/error.png');
 }
 
 input[type=submit] {
