@@ -25,7 +25,7 @@ class Computer < ActiveRecord::Base
 	end
 
 	def self.find_testing()
-		self.find_by_sql(["SELECT computers.* FROM computers join computer_stages on computers.id = computer_stages.computer_id WHERE computer_stages.stage = 'testing' AND computer_stages.start <= now() AND computer_stages.end IS NULL"])
+		self.find_by_sql(["SELECT computers.* FROM computers join computer_stages on computers.id = computer_stages.computer_id WHERE computer_stages.stage = 'testing' AND computer_stages.start <= now() AND (computer_stages.end IS NULL OR computer_stages.end > now())"])
 	end
 
 end

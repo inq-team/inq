@@ -1,11 +1,29 @@
-<table id='stacks'>
-<tr>
-	<td id='stack_AC'><%= def_stack(@byshelves, ['A', shelf_type_A()], ['B', shelf_type_B()], ['C', shelf_type_A()] ) %></td>
-	<td id='stack_DF'><%= def_stack(@byshelves, ['D', shelf_type_A()], ['E', shelf_type_E()], ['F', shelf_type_A()] ) %></td>
-</tr>
-<tr>
-<tr>
-	<td id='stack_GI'><%= def_nice_stack(@byshelves, 'G', 'H', 'I') %></td>
-	<td id='stack_JL'><%= def_nice_stack(@byshelves, 'J', 'K', 'L') %></td>
-</tr>
-</table>
+<div class='shelves' id='<%= @shelves.name %>'>
+
+<% @shelves.groups.each do |gr| %>
+<% name = "id='group_#{ gr.name.blank? ? gr.stacks.collect { |st| st.name }.join() : gr.full_name }'" %>
+<div class='group' <%= name %> ><% gr.stacks.each do |st| %>
+	<% name = !st.full_name.blank? ? "id='stack_#{ st.full_name }'" : '' %>
+	<table class='stack' <%= name %> ><% st.rows.each do |rw| %>
+		<% name = !rw.full_name.blank? ? "id='row_#{ rw.full_name }'" : '' %>
+		<tr <%= name %> ><% rw.shelves.each do |sh| %>
+			<% 
+				computer = @byshelves[sh.full_name] 
+				kind = "class='#{ computer ? :testing : sh.kind == :testing ? 'free' : sh.kind.to_s }'"
+				name = !sh.full_name.blank? ? "id='shelf_#{ sh.full_name }'" : ''
+			%>
+			<td <%= kind %> style='border-color: <%= sh.colour %>' <%= name %> >
+				<%= computer ? shelf_content(computer) : '' %>
+				<% if !sh.full_name.blank? && sh.kind == :testing %>
+					<span class='title'><%= sh.full_name %></span>
+				<% end %>
+			</td>
+		<% end %></tr>		
+	<% end %></table>
+<% end %>
+</div>
+<% end %>
+
+</div>
+
+
