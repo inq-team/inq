@@ -88,22 +88,22 @@
 
 <group>
 <stack name='J' prefix='J' template='colours' >
-	<row name='1' prefix='1' colour='green' >
+	<row name='1' prefix='1' colour='orange' >
 		<shelf kind='testing' name='1' prefix='1' />
 		<shelf kind='testing' name='2' prefix='2' />
 		<shelf kind='testing' name='3' prefix='3' />
 	</row>
-	<row name='2' prefix='2' colour='blue' >
+	<row name='2' prefix='2' colour='green' >
 		<shelf kind='testing' name='1' prefix='1' />
 		<shelf kind='console' />
 		<shelf kind='testing' name='3' prefix='3' />
 	</row>
-	<row name='3' prefix='3' colour='orange' >
+	<row name='3' prefix='3' colour='blue' >
 		<shelf kind='testing' name='1' prefix='1' />
 		<shelf kind='testing' name='2' prefix='2' />
 		<shelf kind='testing' name='3' prefix='3' />
 	</row>
-	<row name='4' prefix='4' colour='blue' >
+	<row name='4' prefix='4' colour='orange' >
 		<shelf kind='testing' name='1' prefix='1' />
 		<shelf kind='testing' name='2' prefix='2' />
 		<shelf kind='testing' name='3' prefix='3' />
@@ -115,22 +115,22 @@
 	</row>
 </stack>
 <stack name='K' prefix='K' template='colours' >
-	<row name='1' prefix='1' colour='green' >
+	<row name='1' prefix='1' colour='orange' >
 		<shelf kind='testing' name='1' prefix='1' />
 		<shelf kind='testing' name='2' prefix='2' />
 		<shelf kind='testing' name='3' prefix='3' />
 	</row>
-	<row name='2' prefix='2' colour='blue' >
+	<row name='2' prefix='2' colour='green' >
 		<shelf kind='testing' name='1' prefix='1' />
 		<shelf kind='console' />
 		<shelf kind='testing' name='3' prefix='3' />
 	</row>
-	<row name='3' prefix='3' colour='orange' >
+	<row name='3' prefix='3' colour='blue' >
 		<shelf kind='testing' name='1' prefix='1' />
 		<shelf kind='testing' name='2' prefix='2' />
 		<shelf kind='testing' name='3' prefix='3' />
 	</row>
-	<row name='4' prefix='4' colour='blue' >
+	<row name='4' prefix='4' colour='orange' >
 		<shelf kind='testing' name='1' prefix='1' />
 		<shelf kind='testing' name='2' prefix='2' />
 		<shelf kind='testing' name='3' prefix='3' />
@@ -142,22 +142,22 @@
 	</row>
 </stack>
 <stack name='L' prefix='L' template='colours' >
-	<row name='1' prefix='1' colour='green' >
+	<row name='1' prefix='1' colour='orange' >
 		<shelf kind='testing' name='1' prefix='1' />
 		<shelf kind='testing' name='2' prefix='2' />
 		<shelf kind='testing' name='3' prefix='3' />
 	</row>
-	<row name='2' prefix='2' colour='blue' >
+	<row name='2' prefix='2' colour='green' >
 		<shelf kind='testing' name='1' prefix='1' />
 		<shelf kind='console' />
 		<shelf kind='testing' name='3' prefix='3' />
 	</row>
-	<row name='3' prefix='3' colour='orange' >
+	<row name='3' prefix='3' colour='blue' >
 		<shelf kind='testing' name='1' prefix='1' />
 		<shelf kind='testing' name='2' prefix='2' />
 		<shelf kind='testing' name='3' prefix='3' />
 	</row>
-	<row name='4' prefix='4' colour='blue' >
+	<row name='4' prefix='4' colour='orange' >
 		<shelf kind='testing' name='1' prefix='1' />
 		<shelf kind='testing' name='2' prefix='2' />
 		<shelf kind='testing' name='3' prefix='3' />

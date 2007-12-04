@@ -70,31 +70,30 @@ table.stack td .title {
 
 .hidden_memo {
 	display: none;
-	background: white;
-	border: 1px solid #999 ! important;
+	background-color: white ! important;
 	padding: 0.3em;
 	width: 25em;
 	height: 15em;
 }
 
-.computer_on_shelf a:hover .hidden_memo, .stack td.occupied_shelf:hover .hidden_memo {
+.computer_on_shelf a:hover .hidden_memo, td.testing:hover .hidden_memo {
 	display: block;
 	position: fixed;
 }
 
-.stack td.occupied_shelf:hover {
+td.testing:hover {
 	cursor: pointer;
 }
 
 .computer_on_shelf .progress {
 	padding: 0px;
 	height: 3px;
-	border: 1px solid #999;
+	border: 1px solid;
 	padding: 1px;
 }
 
 .computer_on_shelf .progress div {
-	background-color: #26ab38;
+	border-top: 3px solid #559F7D;
 	height: 3px;
 }
 

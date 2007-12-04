@@ -20,3 +20,9 @@
 	<% end %>
 </table>
 
+<br/>
+<!-- <form action="/computers/label_epassport/<%= @computer.id %>"><input style="width: 20em" type="submit" value="Print E-Passport label"></form> -->
+
+<% form_tag(:action => 'label_epassport', :id => @computer.id, :testing => @testing_number) do %>
+	<input style="width: 20em" type="submit" value="Print E-Passport label"></form>
+<% end %>
