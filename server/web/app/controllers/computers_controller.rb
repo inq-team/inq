@@ -3,6 +3,9 @@ class ComputersController < ApplicationController
 #	verify :method => :post, :only => [ :destroy, :create, :update ],
 #	       :redirect_to => { :action => :archive }
 
+	@@default_config = Shelves::Config.new(DEFAULT_SHELVES_CONFIG)
+
+
 	def archive
 		@computer_pages, @computers = paginate :computers, :per_page => 20
 		render :action => 'list'
@@ -68,10 +71,10 @@ class ComputersController < ApplicationController
 	end
 
 	def index	
-		config = params[:config] || DEFAULT_SHELVES_CONFIG
+		config = Shelves::Config.new(params[:config]) if params[:config]
 		@computers = Computer.find_testing()
 		@byshelves = @computers.inject({}) { |h, c| h[c.shelf] = c ; h }
-		@shelves = Shelves::Config.new(config)
+		@shelves = config || @@default_config 
 		
 		render(:layout => 'computer_shelves', :template => 'computers/shelves')				
 	end
@@ -308,6 +311,22 @@ __EOF__
 		else
 			head(:status => 404)
 		end
+	end
+
+	def ip
+		@computer = Computer.find(params[:id])
+		render(:text => @computer.ip || '')
+	end
+
+	def set_ip
+		@computer = Computer.find(params[:id])
+		ip = params[:ip]
+		@computer.ip = ip
+		if @computer.save
+			head(:ok)
+		else
+			head(:status => 500)
+		end		
 	end
 
 	def watchdog

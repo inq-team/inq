@@ -1,175 +1,169 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-
-<shelves name='Etegro' >
-
-<group>
-<stack name='G' prefix='G' template='colours' >
-	<row name='1' prefix='1' colour='#559F7D' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='testing' name='2' prefix='2' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-	<row name='2' prefix='2' colour='#95B8FF' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='console' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-	<row name='3' prefix='3' colour='#FFB041' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='testing' name='2' prefix='2' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-	<row name='4' prefix='4' colour='#95B8FF' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='testing' name='2' prefix='2' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-	<row name='5' prefix='5' colour='#559F7D' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='testing' name='2' prefix='2' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-</stack>
-<stack name='H' prefix='H' template='colours' >
-	<row name='1' prefix='1' colour='#559F7D' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='testing' name='2' prefix='2' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-	<row name='2' prefix='2' colour='#95B8FF' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='console' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-	<row name='3' prefix='3' colour='#FFB041' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='testing' name='2' prefix='2' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-	<row name='4' prefix='4' colour='#95B8FF' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='testing' name='2' prefix='2' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-	<row name='5' prefix='5' colour='#559F7D' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='testing' name='2' prefix='2' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-</stack>
-<stack name='I' prefix='I' template='colours' >
-	<row name='1' prefix='1' colour='#559F7D' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='testing' name='2' prefix='2' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-	<row name='2' prefix='2' colour='#95B8FF' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='console' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-	<row name='3' prefix='3' colour='#FFB041' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='testing' name='2' prefix='2' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-	<row name='4' prefix='4' colour='#95B8FF' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='testing' name='2' prefix='2' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-	<row name='5' prefix='5' colour='#559F7D' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='testing' name='2' prefix='2' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-</stack>
-</group>
-
-<group>
-<stack name='J' prefix='J' template='colours' >
-	<row name='1' prefix='1' colour='#FFB041' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='testing' name='2' prefix='2' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-	<row name='2' prefix='2' colour='#559F7D' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='console' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-	<row name='3' prefix='3' colour='#95B8FF' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='testing' name='2' prefix='2' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-	<row name='4' prefix='4' colour='#FFB041' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='testing' name='2' prefix='2' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-	<row name='5' prefix='5' colour='#559F7D' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='testing' name='2' prefix='2' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-</stack>
-<stack name='K' prefix='K' template='colours' >
-	<row name='1' prefix='1' colour='#FFB041' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='testing' name='2' prefix='2' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-	<row name='2' prefix='2' colour='#559F7D' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='console' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-	<row name='3' prefix='3' colour='#95B8FF' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='testing' name='2' prefix='2' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-	<row name='4' prefix='4' colour='#FFB041' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='testing' name='2' prefix='2' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-	<row name='5' prefix='5' colour='#559F7D' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='testing' name='2' prefix='2' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-</stack>
-<stack name='L' prefix='L' template='colours' >
-	<row name='1' prefix='1' colour='#FFB041' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='testing' name='2' prefix='2' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-	<row name='2' prefix='2' colour='#559F7D' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='console' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-	<row name='3' prefix='3' colour='#95B8FF' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='testing' name='2' prefix='2' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-	<row name='4' prefix='4' colour='#FFB041' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='testing' name='2' prefix='2' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-	<row name='5' prefix='5' colour='#559F7D' >
-		<shelf kind='testing' name='1' prefix='1' />
-		<shelf kind='testing' name='2' prefix='2' />
-		<shelf kind='testing' name='3' prefix='3' />
-	</row>
-</stack>
-</group>
-
-
+<?xml version="1.0" encoding="UTF-8"?>
+<shelves name="Etegro">
+  <group name="" prefix="">
+    <stack name="G" prefix="G" template="colours">
+      <row name="1" prefix="1" colour="#559F7D">
+        <shelf name="1" prefix="1" ipnet="10.3.2.0/28" kind="testing" colour="#559F7D"/>
+        <shelf name="2" prefix="2" ipnet="10.3.3.0/28" kind="testing" colour="#559F7D"/>
+        <shelf name="3" prefix="3" ipnet="10.3.4.0/28" kind="testing" colour="#559F7D"/>
+      </row>
+      <row name="2" prefix="2" colour="#95B8FF">
+        <shelf name="1" prefix="1" ipnet="10.3.5.0/28" kind="testing" colour="#95B8FF"/>
+        <shelf name="" prefix="" ipnet="" kind="console" colour="#95B8FF"/>
+        <shelf name="3" prefix="3" ipnet="10.3.7.0/28" kind="testing" colour="#95B8FF"/>
+      </row>
+      <row name="3" prefix="3" colour="#FFB041">
+        <shelf name="1" prefix="1" ipnet="10.3.8.0/28" kind="testing" colour="#FFB041"/>
+        <shelf name="2" prefix="2" ipnet="10.3.9.0/28" kind="testing" colour="#FFB041"/>
+        <shelf name="3" prefix="3" ipnet="10.3.10.0/28" kind="testing" colour="#FFB041"/>
+      </row>
+      <row name="4" prefix="4" colour="#95B8FF">
+        <shelf name="1" prefix="1" ipnet="10.3.11.0/28" kind="testing" colour="#95B8FF"/>
+        <shelf name="2" prefix="2" ipnet="10.3.12.0/28" kind="testing" colour="#95B8FF"/>
+        <shelf name="3" prefix="3" ipnet="10.3.13.0/28" kind="testing" colour="#95B8FF"/>
+      </row>
+      <row name="5" prefix="5" colour="#559F7D">
+        <shelf name="1" prefix="1" ipnet="10.3.14.0/28" kind="testing" colour="#559F7D"/>
+        <shelf name="2" prefix="2" ipnet="10.3.15.0/28" kind="testing" colour="#559F7D"/>
+        <shelf name="3" prefix="3" ipnet="10.3.16.0/28" kind="testing" colour="#559F7D"/>
+      </row>
+    </stack>
+    <stack name="H" prefix="H" template="colours">
+      <row name="1" prefix="1" colour="#559F7D">
+        <shelf name="1" prefix="1" ipnet="10.3.17.0/28" kind="testing" colour="#559F7D"/>
+        <shelf name="2" prefix="2" ipnet="10.3.18.0/28" kind="testing" colour="#559F7D"/>
+        <shelf name="3" prefix="3" ipnet="10.3.19.0/28" kind="testing" colour="#559F7D"/>
+      </row>
+      <row name="2" prefix="2" colour="#95B8FF">
+        <shelf name="1" prefix="1" ipnet="10.3.20.0/28" kind="testing" colour="#95B8FF"/>
+        <shelf name="" prefix="" ipnet="" kind="console" colour="#95B8FF"/>
+        <shelf name="3" prefix="3" ipnet="10.3.22.0/28" kind="testing" colour="#95B8FF"/>
+      </row>
+      <row name="3" prefix="3" colour="#FFB041">
+        <shelf name="1" prefix="1" ipnet="10.3.23.0/28" kind="testing" colour="#FFB041"/>
+        <shelf name="2" prefix="2" ipnet="10.3.24.0/28" kind="testing" colour="#FFB041"/>
+        <shelf name="3" prefix="3" ipnet="10.3.25.0/28" kind="testing" colour="#FFB041"/>
+      </row>
+      <row name="4" prefix="4" colour="#95B8FF">
+        <shelf name="1" prefix="1" ipnet="10.3.26.0/28" kind="testing" colour="#95B8FF"/>
+        <shelf name="2" prefix="2" ipnet="10.3.27.0/28" kind="testing" colour="#95B8FF"/>
+        <shelf name="3" prefix="3" ipnet="10.3.28.0/28" kind="testing" colour="#95B8FF"/>
+      </row>
+      <row name="5" prefix="5" colour="#559F7D">
+        <shelf name="1" prefix="1" ipnet="10.3.29.0/28" kind="testing" colour="#559F7D"/>
+        <shelf name="2" prefix="2" ipnet="10.3.30.0/28" kind="testing" colour="#559F7D"/>
+        <shelf name="3" prefix="3" ipnet="10.3.31.0/28" kind="testing" colour="#559F7D"/>
+      </row>
+    </stack>
+    <stack name="I" prefix="I" template="colours">
+      <row name="1" prefix="1" colour="#559F7D">
+        <shelf name="1" prefix="1" ipnet="10.3.32.0/28" kind="testing" colour="#559F7D"/>
+        <shelf name="2" prefix="2" ipnet="10.3.33.0/28" kind="testing" colour="#559F7D"/>
+        <shelf name="3" prefix="3" ipnet="10.3.34.0/28" kind="testing" colour="#559F7D"/>
+      </row>
+      <row name="2" prefix="2" colour="#95B8FF">
+        <shelf name="1" prefix="1" ipnet="10.3.35.0/28" kind="testing" colour="#95B8FF"/>
+        <shelf name="" prefix="" ipnet="" kind="console" colour="#95B8FF"/>
+        <shelf name="3" prefix="3" ipnet="10.3.37.0/28" kind="testing" colour="#95B8FF"/>
+      </row>
+      <row name="3" prefix="3" colour="#FFB041">
+        <shelf name="1" prefix="1" ipnet="10.3.38.0/28" kind="testing" colour="#FFB041"/>
+        <shelf name="2" prefix="2" ipnet="10.3.39.0/28" kind="testing" colour="#FFB041"/>
+        <shelf name="3" prefix="3" ipnet="10.3.40.0/28" kind="testing" colour="#FFB041"/>
+      </row>
+      <row name="4" prefix="4" colour="#95B8FF">
+        <shelf name="1" prefix="1" ipnet="10.3.41.0/28" kind="testing" colour="#95B8FF"/>
+        <shelf name="2" prefix="2" ipnet="10.3.42.0/28" kind="testing" colour="#95B8FF"/>
+        <shelf name="3" prefix="3" ipnet="10.3.43.0/28" kind="testing" colour="#95B8FF"/>
+      </row>
+      <row name="5" prefix="5" colour="#559F7D">
+        <shelf name="1" prefix="1" ipnet="10.3.44.0/28" kind="testing" colour="#559F7D"/>
+        <shelf name="2" prefix="2" ipnet="10.3.45.0/28" kind="testing" colour="#559F7D"/>
+        <shelf name="3" prefix="3" ipnet="10.3.46.0/28" kind="testing" colour="#559F7D"/>
+      </row>
+    </stack>
+  </group>
+  <group name="" prefix="">
+    <stack name="J" prefix="J" template="colours">
+      <row name="1" prefix="1" colour="#FFB041">
+        <shelf name="1" prefix="1" ipnet="" kind="testing" colour="#FFB041"/>
+        <shelf name="2" prefix="2" ipnet="" kind="testing" colour="#FFB041"/>
+        <shelf name="3" prefix="3" ipnet="" kind="testing" colour="#FFB041"/>
+      </row>
+      <row name="2" prefix="2" colour="#559F7D">
+        <shelf name="1" prefix="1" ipnet="" kind="testing" colour="#559F7D"/>
+        <shelf name="" prefix="" ipnet="" kind="console" colour="#559F7D"/>
+        <shelf name="3" prefix="3" ipnet="" kind="testing" colour="#559F7D"/>
+      </row>
+      <row name="3" prefix="3" colour="#95B8FF">
+        <shelf name="1" prefix="1" ipnet="" kind="testing" colour="#95B8FF"/>
+        <shelf name="2" prefix="2" ipnet="" kind="testing" colour="#95B8FF"/>
+        <shelf name="3" prefix="3" ipnet="" kind="testing" colour="#95B8FF"/>
+      </row>
+      <row name="4" prefix="4" colour="#FFB041">
+        <shelf name="1" prefix="1" ipnet="" kind="testing" colour="#FFB041"/>
+        <shelf name="2" prefix="2" ipnet="" kind="testing" colour="#FFB041"/>
+        <shelf name="3" prefix="3" ipnet="" kind="testing" colour="#FFB041"/>
+      </row>
+      <row name="5" prefix="5" colour="#559F7D">
+        <shelf name="1" prefix="1" ipnet="" kind="testing" colour="#559F7D"/>
+        <shelf name="2" prefix="2" ipnet="" kind="testing" colour="#559F7D"/>
+        <shelf name="3" prefix="3" ipnet="" kind="testing" colour="#559F7D"/>
+      </row>
+    </stack>
+    <stack name="K" prefix="K" template="colours">
+      <row name="1" prefix="1" colour="#FFB041">
+        <shelf name="1" prefix="1" ipnet="" kind="testing" colour="#FFB041"/>
+        <shelf name="2" prefix="2" ipnet="" kind="testing" colour="#FFB041"/>
+        <shelf name="3" prefix="3" ipnet="" kind="testing" colour="#FFB041"/>
+      </row>
+      <row name="2" prefix="2" colour="#559F7D">
+        <shelf name="1" prefix="1" ipnet="" kind="testing" colour="#559F7D"/>
+        <shelf name="" prefix="" ipnet="" kind="console" colour="#559F7D"/>
+        <shelf name="3" prefix="3" ipnet="" kind="testing" colour="#559F7D"/>
+      </row>
+      <row name="3" prefix="3" colour="#95B8FF">
+        <shelf name="1" prefix="1" ipnet="" kind="testing" colour="#95B8FF"/>
+        <shelf name="2" prefix="2" ipnet="" kind="testing" colour="#95B8FF"/>
+        <shelf name="3" prefix="3" ipnet="" kind="testing" colour="#95B8FF"/>
+      </row>
+      <row name="4" prefix="4" colour="#FFB041">
+        <shelf name="1" prefix="1" ipnet="" kind="testing" colour="#FFB041"/>
+        <shelf name="2" prefix="2" ipnet="" kind="testing" colour="#FFB041"/>
+        <shelf name="3" prefix="3" ipnet="" kind="testing" colour="#FFB041"/>
+      </row>
+      <row name="5" prefix="5" colour="#559F7D">
+        <shelf name="1" prefix="1" ipnet="" kind="testing" colour="#559F7D"/>
+        <shelf name="2" prefix="2" ipnet="" kind="testing" colour="#559F7D"/>
+        <shelf name="3" prefix="3" ipnet="" kind="testing" colour="#559F7D"/>
+      </row>
+    </stack>
+    <stack name="L" prefix="L" template="colours">
+      <row name="1" prefix="1" colour="#FFB041">
+        <shelf name="1" prefix="1" ipnet="" kind="testing" colour="#FFB041"/>
+        <shelf name="2" prefix="2" ipnet="" kind="testing" colour="#FFB041"/>
+        <shelf name="3" prefix="3" ipnet="" kind="testing" colour="#FFB041"/>
+      </row>
+      <row name="2" prefix="2" colour="#559F7D">
+        <shelf name="1" prefix="1" ipnet="" kind="testing" colour="#559F7D"/>
+        <shelf name="" prefix="" ipnet="" kind="console" colour="#559F7D"/>
+        <shelf name="3" prefix="3" ipnet="" kind="testing" colour="#559F7D"/>
+      </row>
+      <row name="3" prefix="3" colour="#95B8FF">
+        <shelf name="1" prefix="1" ipnet="" kind="testing" colour="#95B8FF"/>
+        <shelf name="2" prefix="2" ipnet="" kind="testing" colour="#95B8FF"/>
+        <shelf name="3" prefix="3" ipnet="" kind="testing" colour="#95B8FF"/>
+      </row>
+      <row name="4" prefix="4" colour="#FFB041">
+        <shelf name="1" prefix="1" ipnet="" kind="testing" colour="#FFB041"/>
+        <shelf name="2" prefix="2" ipnet="" kind="testing" colour="#FFB041"/>
+        <shelf name="3" prefix="3" ipnet="" kind="testing" colour="#FFB041"/>
+      </row>
+      <row name="5" prefix="5" colour="#559F7D">
+        <shelf name="1" prefix="1" ipnet="" kind="testing" colour="#559F7D"/>
+        <shelf name="2" prefix="2" ipnet="" kind="testing" colour="#559F7D"/>
+        <shelf name="3" prefix="3" ipnet="" kind="testing" colour="#559F7D"/>
+      </row>
+    </stack>
+  </group>
 </shelves>
-
