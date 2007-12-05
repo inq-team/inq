@@ -1,0 +1,29 @@
+#!/bin/sh
+
+#prepare_pxelinux()
+#{
+#	BOOT_IMAGE=$1
+#
+#	other_macs=`ifconfig | grep "^eth[0-9]* " | sed 's/^.*HWaddr //g;s/:/-/g;y/ABCDEF/abcdef/;s/^/01-/' | perl -e '@l=map{split}<>;print join ",",@l'`
+#
+#	for mac in `ifconfig | grep "^eth[0-9]* " | sed 's/^.*HWaddr //g;s/:/-/g;y/ABCDEF/abcdef/;s/^/01-/'`; do
+#		ssh /usr/local/bin/prepare_pxelinux $mac $BOOT_IMAGE $other_macs
+#	done
+#}
+
+echo "Detecting if we need to reflash BIOS"
+
+if grep -q "E-9722R" /home/fru.log; then
+	echo "!!! RS160G3 detected !!!"
+	version=`grep -A 8 "^BIOS Information" /home/dmi.log | grep Version | sed 's/.*Version: \(.*\)$/\1/'`
+	echo "BIOS Version: $version"
+	if [ $version != "BIOS Version 1.94" ]; then
+		echo "No required BIOS version detected!"
+		echo "!!! NEED TO REFLASH BIOS !!!"
+		echo "!!! REBOOT AND PRESS f FOR REFLASHING !!!"
+		read foobar
+		#prepare_pxelinux rs160g3.bios
+		#read foobar
+		#reboot
+	fi
+fi

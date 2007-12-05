@@ -83,6 +83,8 @@ watchdog_start
 
 submit_components $HOME/components.xml
 
+$SHARE_DIR/bios_flash
+
 #ifdef WATCHDOG
 # ===========================================================================
 # Set up watchdog
