@@ -18,7 +18,12 @@ detect_fdd_quantity()
 
 generate_test_image()
 {
-	dd if=/dev/urandom of=$FDD_TEST_IMAGE bs=1024 count=$FDD_SIZE || test_failed
+	if dd if=/dev/urandom of=$FDD_TEST_IMAGE bs=1024 count=$FDD_SIZE; then
+		true
+	else
+		test_failed
+		FDD_QUANTITY=0 #to not to start interactive cycles
+	fi
 }
 
 remove_test_image()
@@ -45,7 +50,10 @@ interactive()
 		echo -n "Drive ${FDD}:Either press Y and insert floppy for testing, or N if you want to finish test: "
 		read choice
 
-		[ "$choice" = "N" ] && test_failed
+		if [ "$choice" = "N" ]; then
+			test_failed
+			break
+		fi
 
 		test_fdd $[$FDD - 1]
 

@@ -15,7 +15,13 @@ STRESS_TREE="/usr/share/inquisitor/linux-2.6.15_stress.tar.gz"
 
 make_arrays()
 {
-	raid-wizard-optimal || test_failed
+	if raid-wizard-optimal; then
+		detect_hdd_quantity
+		true
+	else
+		HDD_QUANTITY=0 #not to start testing cycles
+		test_failed
+	fi
 }
 
 prepare_source_tree()
@@ -105,7 +111,6 @@ array_stress_check()
 }
 
 make_arrays
-detect_hdd_quantity
 [ "$HDD_QUANTITY" -eq 0 ] && return
 temporary_hddarr_jobs_check
 
