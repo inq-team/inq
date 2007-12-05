@@ -1,3 +1,5 @@
 #!/bin/sh
 
-lshw -xml 2>/dev/null | xsltproc $SHARE_DIR/lshw.xslt - > ~/components.xml
+lshw -xml |
+	sed 's/[[:cntrl:]]//g' |
+	xsltproc $SHARE_DIR/lshw.xslt - > ~/components.xml
