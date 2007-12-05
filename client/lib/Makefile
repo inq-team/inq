@@ -1,7 +1,7 @@
 .EXPORT_ALL_VARIABLES:
 
 #SUBDIRS=alert hide-mouse memtest pci-patch wait-serial watchdog inquisitor thermometer
-SUBDIRS=memtest watchdog wait-string einarc stream-mem whetstone dhrystone
+SUBDIRS=watchdog wait-string einarc stream-mem whetstone dhrystone
 
 include ../../Makefile.config
 
