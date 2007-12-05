@@ -52,6 +52,11 @@ for I in $SHARE_DIR/self-id/*; do
 done
 [ -n "$COMPUTER_ID" ] || fatal_failure 'Self-identification'
 
+# Reporting IP-address to the server
+IP=`/sbin/ifconfig eth0 | grep -o 'inet addr:[^ ]*'` 
+IP=${IP#inet addr:}
+set_ip $IP || fatal_failure 'IP-address update'
+
 # Start logging
 hostname c$COMPUTER_ID
 /sbin/service syslog-ng start
