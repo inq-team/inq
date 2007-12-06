@@ -73,7 +73,7 @@ class ComputersController < ApplicationController
 	def index	
 		config = Shelves::Config.new(params[:config]) if params[:config]
 		@computers = Computer.find_testing()
-		@byshelves = @computers.inject({}) { |h, c| h[c.shelf] = c ; h }
+		@byshelves = @computers.inject({}) { |h, c| h[config.by_ip(c.ip) || c.shelf] = c ; h }
 		@shelves = config || @@default_config 
 		
 		render(:layout => 'computer_shelves', :template => 'computers/shelves')				

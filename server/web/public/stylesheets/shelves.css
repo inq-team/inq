@@ -69,10 +69,11 @@ table.stack td .title {
 	display: none;
 	background-color: #AACFBE ! important;
 	border: 1px solid #559F7D;
-	width: 25em;
+	width: 30em;
+	min-height: 16em;
 	position: fixed;
 	padding: 0.5em;
-	background: url('/images/server/_server.png') 95% 95% no-repeat;
+	background: url('/images/server/server.jpeg') 95% 95% no-repeat;
 }
 
 .computer_on_shelf a:hover .hidden_memo, td.testing:hover .hidden_memo {

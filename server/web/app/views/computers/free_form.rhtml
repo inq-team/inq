@@ -3,7 +3,7 @@
 <% if @testing.custom_sticker %>
 	<% text = @testing.custom_sticker ; rows = text.split("\n").size() + 2 %>
 <% else %>
-	<% text = '' ; @components.each_index do |i| %><% text += sprintf(" %-5s | %-40s | %-20s\n", i, @components[i][:name], @components[i][:count]) ; rows = @components.size + 2 %><% end %>
+	<% text = '' ; @components.each_index do |i| %><% text += sprintf(" %-5s %-40s %-20s\n", i, @components[i][:name], @components[i][:count]) ; rows = @components.size + 2 %><% end %>
 <% end %>
 
 	<textarea name='raw' cols='80' rows='<%= rows %>'><%= text  %></textarea>

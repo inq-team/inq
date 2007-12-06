@@ -1,7 +1,5 @@
 <div class='shelves' id='<%= @shelves.name %>'>
 
-<% c12345 = Computer.find(12345) %> 
-
 <% @shelves.groups.each do |gr| %>
 <% name = "id='group_#{ gr.name.blank? ? gr.stacks.collect { |st| st.name }.join() : gr.full_name }'" %>
 <div class='group' <%= name %> ><% gr.stacks.each do |st| %>
@@ -10,7 +8,7 @@
 		<% name = !rw.full_name.blank? ? "id='row_#{ rw.full_name }'" : '' %>
 		<tr <%= name %> ><% rw.shelves.each do |sh| %>
 			<% 
-				computer = sh.kind == :testing ? c12345 : nil
+				computer = @byshelves[ sh.full_name ]
 				kind = "class='#{ computer ? :testing : sh.kind == :testing ? 'free' : sh.kind.to_s }'"
 				name = !sh.full_name.blank? ? "id='shelf_#{ sh.full_name }'" : ''
 			%>
