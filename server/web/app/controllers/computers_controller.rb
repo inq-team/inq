@@ -70,12 +70,29 @@ class ComputersController < ApplicationController
 		head :ok
 	end
 
+	def add_component
+		@computer = Computer.find(params[:id])
+		testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }.last
+		testing.components << Component.new(
+			:serial => params[:serial],
+			:model => ComponentModel.find_or_create_by_name_and_vendor_and_component_group_id(params[:model], params[:vendor], ComponentGroup.find_or_create_by_name(params[:type]).id)
+		)
+		if @computer.save
+			flash[:notice] = 'Components successfully updated.'
+			respond_to() do |format|
+				format.html { redirect_to(:action => 'show', :id => @computer) }
+				format.xml { render(:xml => testing.to_xml()) }
+			end
+		else
+			head(:status => 500)
+		end
+	end
+
 	def index	
 		config = Shelves::Config.new(params[:config]) if params[:config]
 		@computers = Computer.find_testing()
-		@byshelves = @computers.inject({}) { |h, c| h[config.by_ip(c.ip) || c.shelf] = c ; h }
 		@shelves = config || @@default_config 
-		
+		@byshelves = @computers.inject({}) { |h, c| h[config.by_ip(c.ip) || c.shelf] = c ; h }
 		render(:layout => 'computer_shelves', :template => 'computers/shelves')				
 	end
 
@@ -111,33 +128,23 @@ class ComputersController < ApplicationController
 		sticker()
 	end
 
+
 	def print_sticker
 		@computer = Computer.find(params[:id])
 		@testing_number = params[:testing].to_i()
 		@testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }[@testing_number]
-
+		components = @testing.components.collect { |c| c.model }.inject({}) { |h, m| h[m] = h[m] ? h[m] + 1 : 1 ; h }.collect { |k, v| { :name => k.short_name || k.name, :count => v, :model => k  } }.sort() { |q, w| a = q[:model] ; b = w[:model] ; (z = ((a.group ? a.group.name : '') <=> (b.group ? b.group.name : ''))) == 0 ? (a.short_name || a.name || 'NULL') <=> (b.short_name || b.name || 'NULL') : z }
+		conf = {}
+		conf[:computer] = @computer
+		conf[:components] = components
+		prn = '/root/tmp.tmp'
+		srv = 'tos'
+		
 		if params[:commit] == 'Print'
-			text = nil
-			prn = '/dev/usblp0'
-			if params[:raw]	
-				@testing.custom_sticker = params[:raw] 
-				@testing.save			
-				text = @testing.custom_sticker
-			else
-				text = 'Generated sticker' #TODO
-			end
-			#TODO:key => , "value"
-			#add some actual printing here
-			
-			result = rand > 0.5;
-			
-			if result
-				flash[:notice] = "TODO: Sent sticker to printer <strong class='printer'>#{ prn }</strong>"
-			else
-				flash[:error] = "TODO: Printer <strong class='printer'>#{ prn }</strong> reported errors."
-			end		
+			Sticker.new(conf, 1).send_to_printer(srv, prn)
+			flash[:notice] = "Sent sticker to printer <strong class='printer'>#{srv}:#{prn}</strong>"
 		end
-
+		
 		redirect_to(:action => 'sticker', :id => params[:id], :testing => @testing_number)
 	end
 
@@ -346,5 +353,20 @@ __EOF__
 	def destroy
 		Computer.find(params[:id]).destroy
 		redirect_to :action => 'list'
+	end
+	
+	def label_epassport
+		@computer = Computer.find(params[:id])
+		@testing_number = params[:testing].to_i()
+                @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
+		@current_testing = @sorted_testings[@testing_number]
+
+		t = `/srv/inq/script/printer-epassport/epassport #{params[:id]} #{@current_testing.id}`
+		puts t
+		`echo '#{t}' | ssh tos "sudo cat >/dev/ttyS0"`
+#		File.open('/dev/ttyS0', 'w') { |f|
+#			f.write()
+#		}
+		redirect_to :action => 'hw', :id => params[:id], :testing => @testing_number
 	end
 end
