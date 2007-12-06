@@ -29,8 +29,19 @@ def shelf_type_G()
 end
 
 def shelf_content(computer)
-	memo = render(:partial => 'memo', :locals => { :computer => computer })
-	progress = content_tag(:div, content_tag(:div, '&nbsp;', :style => 'width: 75%'), :class => 'progress', :title => '75%')
+	testing = computer.last_testing 
+	stage = testing.last_stage 
+	state = :before
+	if testing.testing_stages.size > 0
+		if stage
+			state = stage.result == 0 ? :running : :failed			 
+		else
+			state = :after
+		end
+	end
+	percent = { :running => '50%', :failed => '50%', :before => '0%', :after => '100%' }[state]
+	memo = render(:partial => 'memo', :locals => { :computer => computer, :testing => testing, :stage => stage, :state => state })
+	progress = content_tag(:div, content_tag(:div, '&nbsp;', :style => "width: #{ percent }"), :class => 'progress', :title => percent )
 	content_tag(:div, progress + link_to(computer.short_title, { :action => 'show', :id => computer.id}) + memo, :class => 'computer_on_shelf')
 end
 
