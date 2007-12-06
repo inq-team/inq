@@ -9,6 +9,17 @@ class Config
 	def [](shelf)
 		@shelves[shelf]
 	end
+
+	def by_ip(ip)
+		if ip =~ /(\d+)\.(\d+)\.(\d+)\.(\d+)/
+			ip = ($1.to_i() << 24) | ($2.to_i() << 16) | ($3.to_i() << 8) | ($4.to_i())
+			@shelves.values.find() do |v|
+ 			        if v.ipnet =~ /(\d+)\.(\d+)\.(\d+)\.(\d+)\/(\d+)/
+	                	        (($1.to_i() << 24) | ($2.to_i() << 16) | ($3.to_i() << 8) | ($4.to_i())) == ip & (0xffffffff - ((1 << (32 - $5.to_i())) - 1))
+				end
+			end
+		end
+	end
 	
 	def initialize(filename)
 		doc = REXML::Document.new(File.new(filename))
