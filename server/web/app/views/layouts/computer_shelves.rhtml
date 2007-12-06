@@ -10,7 +10,7 @@
 	<%= stylesheet_link_tag 'inq' %>
 	<%= stylesheet_link_tag 'shelves' %>
 
-	<% if Time.now().hour > 19 and Time.now().hour < 10 %><style type='text/css'> table.stack td.console { background-image: url('/images/night.png') ! important } </style>
+	<% if Time.now().hour > 19 or Time.now().hour < 10 %><style type='text/css'> table.stack td.console { background-image: url('/images/night.png') ! important } </style>
 	<% end %>
 </head>
 <body>
