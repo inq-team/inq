@@ -28,4 +28,8 @@ class Computer < ActiveRecord::Base
 		self.find_by_sql(["SELECT distinct computers.* FROM computers join testings on computers.id = testings.computer_id WHERE testings.test_start <= now() AND (testings.test_end IS NULL OR testings.test_end > now())"])
 	end
 
+	def last_testing
+		Testing.find_by_sql(["SELECT testings.* FROM `testings` where testings.computer_id = ? ORDER BY test_start DESC LIMIT 1", id]).first()
+	end
+
 end

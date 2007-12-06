@@ -5,11 +5,16 @@ module Shelves
 
 class Config
 	attr_reader :groups, :name
+
+	def [](shelf)
+		@shelves[shelf]
+	end
 	
 	def initialize(filename)
 		doc = REXML::Document.new(File.new(filename))
 		root = doc.root
 		@name = root.attributes['name']
+		@shelves = {} 
 		prefix = '';
 		@groups = root.elements.inject('group', []) { |a, e| 
 			ea = e.attributes
@@ -26,7 +31,8 @@ class Config
 					cl1 = rw.colour
 					rw.shelves = g.elements.inject('shelf', []) { |d, h|
 						ha = h.attributes
-						sh = Shelf.new(ha['name'], pf3 + (ha['name'] || ''), ha['prefix'], ha['colour'] || cl1, ha['kind'])
+						sh = Shelf.new(ha['name'], pf3 + (ha['name'] || ''), ha['prefix'], ha['colour'] || cl1, ha['kind'], ha['ipnet'])
+						@shelves[sh.full_name] = sh
 						pf4 = pf3 + sh.prefix
 						cl2 = sh.colour
 
@@ -52,7 +58,7 @@ class Config
 							st.rows.each do |rw|
 								stack.row('name' => rw.name, 'prefix' => rw.prefix, 'colour' => rw.colour) do |row|
 									rw.shelves.each do |sh|
-										row.shelf('name' => sh.name, 'prefix' => sh.prefix, 'colour' => sh.colour, 'kind' => sh.kind)
+										row.shelf('name' => sh.name, 'prefix' => sh.prefix, 'colour' => sh.colour, 'kind' => sh.kind, 'ipnet' => sh.ipnet)
 									end
 								end
 							end
@@ -100,13 +106,14 @@ class Row
 end
 
 class Shelf
-	attr_accessor :name, :full_name, :prefix, :colour, :kind
+	attr_accessor :name, :full_name, :prefix, :colour, :kind, :ipnet
 
-	def initialize(name, full_name, prefix, colour, kind)
+	def initialize(name, full_name, prefix, colour, kind, ipnet)
 		@name = name || ''
 		@full_name = full_name || ''
 		@prefix = prefix || ''
 		@colour = colour
+		@ipnet = ipnet || '' 
 		@kind = kind.to_sym()
 	end
 end

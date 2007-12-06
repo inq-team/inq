@@ -230,6 +230,7 @@ tr.testing_stage_running .testing_stage_name {
 
 .bad_username {
 	color: red;
+	font-weight: bold;
 }
 
 .hint {

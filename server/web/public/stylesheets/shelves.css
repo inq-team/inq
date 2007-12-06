@@ -9,9 +9,9 @@ table.stack {
 	float: left;
 	border-collapse: separate;
 	width: auto ! important;
-	border: 4px solid #dde0dd;
-	background-color: #dde0dd;
-	margin: 4px;
+	border: 4px solid #eef0ee;
+	background-color: #eef0ee; 
+	margin: 4px 12px;
 	margin-top: 1em;
 }
 
@@ -24,8 +24,8 @@ table.stack tr {
 
 table.stack td {
 	width: 86px;
-	height: 68px;
-	border: 3px solid;
+	height: 54px;
+	border: 1px solid #559F7D;
 	text-align: right;
 	vertical-align: bottom;
 }
@@ -47,19 +47,16 @@ table.stack td.nil {
 
 table.stack td .title {	
 	font-weight: bold;
-	font-size: 12px;
+	font-size: 16px;
 	font-family: serif;
-	letter-spacing: 2px;
-	color: #002514;
+	padding: 0px 4px;
 }
 
 /********************************/
 
 .computer_on_shelf {
 	text-align: left;
-	padding: 2px;
-	padding-top: 8px;
-	padding-bottom: 8px;
+	padding: 0px 2px;
 }
 
 .computer_on_shelf a {
@@ -70,19 +67,16 @@ table.stack td .title {
 
 .hidden_memo {
 	display: none;
-	background-color: white ! important;
-	padding: 0.3em;
+	background-color: #AACFBE ! important;
+	border: 1px solid #559F7D;
 	width: 25em;
-	height: 15em;
+	position: fixed;
+	padding: 0.5em;
+	background: url('/images/server/_server.png') 95% 95% no-repeat;
 }
 
 .computer_on_shelf a:hover .hidden_memo, td.testing:hover .hidden_memo {
 	display: block;
-	position: fixed;
-}
-
-td.testing:hover {
-	cursor: pointer;
 }
 
 .computer_on_shelf .progress {
@@ -95,6 +89,34 @@ td.testing:hover {
 .computer_on_shelf .progress div {
 	border-top: 3px solid #559F7D;
 	height: 3px;
+}
+
+.hidden_memo table {
+	width: 100%;
+	border: hidden;
+}
+
+.hidden_memo table td {
+	border: hidden;
+	text-align: left;
+	vertical-align: middle;
+	height: 2em;
+}
+
+.hidden_memo .text {
+	width: 100%;
+	text-indent: 1em;
+}
+
+.hidden_memo .img {
+	width: auto;
+}
+
+.hidden_memo table th {
+	text-align: center;
+	font-size: 1.1em;
+	height: 2em;
+	border-bottom: 1px dashed;
 }
 
 

@@ -1,14 +1,15 @@
 <div class='hidden_memo'>
 	<%= shadow %>
-	<p class='title'><%= computer.title %></p>
-<!--	<table> -->
-	<% testing = computer.testings.sort() { |a, b| a.test_start <=> b.test_start }.last() %>
-<!--	<tr><td><%= image_tag('testing_started', :title => 'Started testing on...') %></td><td><%= testing.test_start %></td></tr>
-	<tr><td><%= image_tag('testing_so_far', :title => 'Undergoing tests for...') %></td><td><%= Time.now - testing.test_start %></td></tr> -->
-	<% stage = testing.testing_stages.sort() { |a, b| a.start <=> b.start }.last() %>	
+	<table>
+	<tr><th colspan='2'><%= computer.title %></th></tr>
+	<% testing = computer.last_testing %>
+	<tr><td class='img' ><%= image_tag('testing_started.png', :title => 'Started testing on...') %></td><td class='text'><%= format_date(testing.test_start) %></td></tr>
+	<tr><td class='img' ><%= image_tag('testing_so_far.png', :title => 'Undergoing tests for...') %></td><td class='text'><%= format_delta(Time.now, testing.test_start) %></td></tr> 
+	<% stage = testing.last_stage %>	
 	<% if stage %>
-		<p><%= image_tag('stage_running') %><%= stage.stage %> since <%= stage.start %></p>	
+		<tr><td class='img' ><%= image_tag('stage_running.png', :title => 'Current stage') %></td><td class='text' ><strong><%= stage.stage %></strong> since <%= format_date(stage.start) %></td></tr>
 	<% end %>
-	<p><%= image_tag('assembler', :title => 'Assembler') %> <%= computer.assembler ? computer.assembler.name : content_tag(:span, 'John Doe', :class => 'bad_username') %> &nbsp; &nbsp; &nbsp; <%= image_tag('qa', :title => 'QA employee') %> <%= computer.tester ? computer.tester.name : content_tag(:span, 'John Doe', :class => 'bad_username') %></p>
-<!-- 	</table> -->
+	<tr><td class='img' ><%= image_tag('assembler.png', :title => 'Assembler') %></td><td class='text' ><%= computer.assembler ? computer.assembler.name : content_tag(:span, 'John Doe', :class => 'bad_username') %></td></tr>
+	<tr><td class='img' ><%= image_tag('qa.png', :title => 'QA employee') %></td><td class='text' ><%= computer.tester ? computer.tester.name : content_tag(:span, 'John Doe', :class => 'bad_username') %></td></tr>
+ 	</table> 
 </div>
