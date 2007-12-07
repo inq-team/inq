@@ -16,7 +16,7 @@ development:
   database: inq
   username: inq
   password: inq
-  host: inq
+  socket: /var/lib/mysql/mysql.sock
   encoding: utf8
 
 # Warning: The database defined as 'test' will be erased and

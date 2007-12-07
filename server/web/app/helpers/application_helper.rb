@@ -14,11 +14,11 @@ end
 
 def format_date(date)
 	now = Time.new()
-	if date.strftime("%W") == now.strftime("%W")
+	if date.strftime("%W") == now.strftime("%W") and now.day != date.day
 		fmt = "%A %H:%M"
 	elsif now.year == date.year 
 		if now.month == date.month 
-			if now.mday = date.mday
+			if now.mday == date.mday
 				fmt = "Today %H:%M"
 			else
 				fmt = "%B %d"

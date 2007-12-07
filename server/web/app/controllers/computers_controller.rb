@@ -116,11 +116,12 @@ class ComputersController < ApplicationController
 	
 	def sticker
 		@computer = Computer.find(params[:id])
-		@testing_number = params[:testing].to_i()
-                @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
+	        @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
+		@testing_number = params[:testing] ? params[:testing].to_i() : @sorted_testings.size - 1
 		@testing = @sorted_testings[@testing_number]
+
 		@count = params[:count] 
-		@components = @testing.components.collect { |c| c.model }.inject({}) { |h, m| h[m] = h[m] ? h[m] + 1 : 1 ; h }.collect { |k, v| { :name => k.short_name || k.name, :count => v, :model => k  } }.sort() { |q, w| a = q[:model] ; b = w[:model] ; (z = ((a.group ? a.group.name : '') <=> (b.group ? b.group.name : ''))) == 0 ? (a.short_name || a.name || 'NULL') <=> (b.short_name || b.name || 'NULL') : z }
+		@components = @testing.components.collect { |c| c.model }.inject({}) { |h, m| h[m] = h[m] ? h[m] + 1 : 1 ; h }.collect { |k, v| { :name => k.short_name, :count => v, :model => k  } }.sort() { |q, w| a = q[:model] ; b = w[:model] ; (z = ((a.group ? a.group.name : '') <=> (b.group ? b.group.name : ''))) == 0 ? (q[:name] || 'NULL') <=> (w[:name] || 'NULL') : z }
 
 		render(:layout => 'computer_tabs')
 	end
@@ -134,28 +135,31 @@ class ComputersController < ApplicationController
 		@testing_number = params[:testing].to_i()
                 @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
 		@testing = @sorted_testings[@testing_number]			
+		count = params[:count].to_i()
 	
-		prn = '/tmp/sticker.tmp'
+		prn = '/dev/ttyS0'
 		srv = 'tos'
 		
 		options = {}
 		options[:name] = @computer.model.dmi_name
-		options[:copies] = params[:count]
+		options[:copies] = count
 		options[:components] = []
+		options[:serial] = sprintf("%010d", @computer.id)
+		#HACK:
+		options[:date] = (@computer.computer_stages.sort() { |a, b| a.end <=> b.end }.last() || Time.new).strftime("%d.%m.%Y")
+		options[:docno] = @computer.doc_no
 
 		if params[:commit] == 'Print'
 			if params[:raw]
-				testing.custom_sticker = params[:raw] 
-				testing.save!
-				options[:components] = params[:ram]
+				@testing.custom_sticker = params[:raw] 
+				@testing.save!
+				options[:components] = @testing.custom_sticker.split("\n").collect() { |s| s.chomp }
 			else
-				components = @testing.components.collect { |c| c.model }.inject({}) { |h, m| h[m] = h[m] ? h[m] + 1 : 1 ; h }.collect { |k, v| { :name => k.short_name || k.name, :count => v, :model => k  } }.sort() { |q, w| a = q[:model] ; b = w[:model] ; (z = ((a.group ? a.group.name : '') <=> (b.group ? b.group.name : ''))) == 0 ? (a.short_name || a.name || 'NULL') <=> (b.short_name || b.name || 'NULL') : z }
-			 	components.each_with_index do |c, i|
-					options[:components] <<  sprintf(" %-5s %-40s %-20s\n", i, c[:name][0..34], c[:count] )
-				end
+				@testing.components.collect { |c| c.model }.inject({}) { |h, m| h[m] = h[m] ? h[m] + 1 : 1 unless m.short_name.blank? ; h }.collect { |k, v| { :name => k.short_name, :count => v, :model => k  } }.sort() { |q, w| a = q[:model] ; b = w[:model] ; (z = ((a.group ? a.group.name : '') <=> (b.group ? b.group.name : ''))) == 0 ? q[:name] <=> w[:name] : z }[0..14].inject(1) { |i, y| options[:components] << sprintf("%2s %-38s %s", i, y[:name][0..37], y[:count]) ; i + 1 }
 			end
 			
-			Sticker.new(options).send_to_printer(srv, prn)
+			sticker = Sticker.new(options)
+			sticker.send_to_printer(srv, prn)
 						
 			#if sticker.send_to_printer(srv, prn)
  				flash[:notice] = "Sent sticker to printer <strong class='printer'>#{srv}:#{prn}</strong>"
@@ -163,8 +167,7 @@ class ComputersController < ApplicationController
 			#	flash[:error] = "Printer <strong class='printer'>#{srv}:#{ prn }</strong> reported errors."
 			#end
 		end
-		redirect_to(:action => 'sticker', :id => params[:id], :testing => @testing_number)
-		#redirect_to(:action => 'sticker', :id => params[:id], :testing => @testing_number, :count => count)
+		redirect_to(:action => 'sticker', :id => params[:id], :count => count.to_s(), :testing => @testing_number)
 	end
 
 	def log

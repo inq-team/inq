@@ -27,7 +27,7 @@ CLS\r"
 		
 		@str << "TEXT 655,40,\"3\",90,1,2,\"#{name}\"\r
 BARCODE 666,400,\"128M\",58,0,90,2,2,\"!105#{serial}\"\r
-TEXT 610,355,\"3\",90,1,1,\"S/N:#{@serial}\"\r
+TEXT 610,355,\"3\",90,1,1,\"S/N:#{serial}\"\r
 BAR #{low},63,#{x+2*step-low},3\r
 BAR #{low},522,#{x+2*step-low},1\r
 BAR #{x+step},24,4,548\r

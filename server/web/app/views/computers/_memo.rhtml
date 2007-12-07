@@ -7,8 +7,8 @@
 		<tr><td class='img' ><%= image_tag('testing_so_far.png', :title => 'Running tests for...') %></td><td class='text'><%= format_delta(Time.now, testing.test_start) %></td></tr> 
 		<tr><td class='img' ><%= image_tag('stage_running.png', :title => 'Current stage') %></td><td class='text' ><strong><%= stage.stage %></strong> since <%= format_date(stage.start) %></td></tr>
 	<% elsif state == :after %>
-		<tr><td class='img' ><%= image_tag('testing_finished.png', :title => 'Finished testing on...') %></td><td class='text'><%= format_date(testing.test_end) %></td></tr>
-		<tr><td class='img' ><%= image_tag('testing_so_far.png', :title => 'Tests took...') %></td><td class='text'><%= format_delta(testing.test_end, testing.test_start) %></td></tr> 
+		<tr><td class='img' ><%= image_tag('testing_finished.png', :title => 'Finished testing on...') %></td><td class='text'><%= testing.test_end ? format_date(testing.test_end) : content_tag(:span, 'NULL', :class => 'bad_username')%></td></tr>
+		<tr><td class='img' ><%= image_tag('testing_so_far.png', :title => 'Tests took...') %></td><td class='text'><%= testing.test_end ? format_delta(testing.test_end, testing.test_start) :  content_tag(:span, 'NULL', :class => 'bad_username') %></td></tr> 
 	<% elsif state == :failed %>
 		<tr><td class='img' ><%= image_tag('testing_failed.png', :title => 'Failed test...') %></td><td class='text'><strong><%= stage.stage %></strong> on <%= format_date(stage.end) %></td></tr>
 	<% elsif state == :before %>
