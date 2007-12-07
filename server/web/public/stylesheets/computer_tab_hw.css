@@ -53,3 +53,12 @@ td#info_tabs table tr td#info_tab_hw a{
 	background-color: #f0f4f0;
 }
 
+#hint_type_e-passport {
+	background-color: #AACFBE ! important;
+}
+
+#hint_type_e-passport .hint_border {
+	background-image: url('/images/e-passport.png');
+	text-align: center;
+}
+

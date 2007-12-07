@@ -107,6 +107,20 @@ table.stack td .title {
 	height: 3px;
 }
 
+.computer_on_shelf .progress .running {
+}
+
+.computer_on_shelf .progress .failed {
+	border-top-color: #aa2222 ! important;
+}
+
+.computer_on_shelf .progress .before {
+}
+
+.computer_on_shelf .progress .after {
+}
+
+
 .hidden_memo table {
 	width: 100%;
 	border: hidden;

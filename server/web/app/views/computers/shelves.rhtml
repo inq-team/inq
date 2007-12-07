@@ -27,4 +27,18 @@
 
 </div>
 
+<%= javascript_tag(<<_EOF_      
+        Event.observe(window, 'load', function () {
+                $$('.progress .failed').each( function(c) {
+                        new Effect.Highlight(c.up().up().up(), { startcolor: '#ffffff', endcolor: '#AACFBE', restorecolor: '#AACFBE' });
+                }); 
+                $$('.progress .before, .progress .attention').each( function(c) {
+                        new Effect.Highlight(c.up().up().up(), { startcolor: '#ffffff', endcolor: '#F3D079', restorecolor: '#F3D079' });
+                }); 
+                $$('.progress .after').each( function(c) {
+                        new Effect.Highlight(c.up().up().up(), { startcolor: '#ffffff', endcolor: '#AACFBE', restorecolor: '#AACFBE' });
+                }); 
+        });
+_EOF_
+) %>
 
