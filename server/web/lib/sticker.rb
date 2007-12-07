@@ -65,8 +65,13 @@ PRINT #{count},1\r"
 	
 	def send_to_printer(host, dev)
 		if @str
-			File.open('/tmp/bar.tmp', 'w'){|f| f.puts(@str) }
+			File.open('/tmp/bar.tmp', 'w'){ |f| f.puts(@str) }
 			`</tmp/bar.tmp ssh #{host} "sudo  cat >#{dev}"`
 		end
+	end
+	
+	def self.send_custom_sticker_to_printer(host, dev, custom)
+		File.open('/tmp/bar.tmp', 'w'){ |f| f.puts(custom) }
+		`</tmp/bar.tmp ssh #{host} "sudo  cat >#{dev}"`
 	end
 end
