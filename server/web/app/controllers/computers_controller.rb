@@ -128,7 +128,6 @@ class ComputersController < ApplicationController
 		sticker()
 	end
 
-
 	def print_sticker
 		@computer = Computer.find(params[:id])
 		@testing_number = params[:testing].to_i()
@@ -137,11 +136,18 @@ class ComputersController < ApplicationController
 		conf = {}
 		conf[:computer] = @computer
 		conf[:components] = components
-		prn = '/root/tmp.tmp'
+
+		prn = '/tmp/sticker.tmp'
 		srv = 'tos'
 		
 		if params[:commit] == 'Print'
-			Sticker.new(conf, 1).send_to_printer(srv, prn)
+			if params[:raw]
+				@testing.custom_sticker = params[:raw]
+				@testing.save
+				Sticker.send_custom_sticker_to_printer(srv, prn, params[:raw])
+            		else
+				Sticker.new(conf, 1).send_to_printer(srv, prn)				
+			end
 			flash[:notice] = "Sent sticker to printer <strong class='printer'>#{srv}:#{prn}</strong>"
 		end
 		
