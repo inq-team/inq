@@ -44,3 +44,11 @@ watchdog()
 	done
 }
 
+publish_my_ip()
+{
+	local IP=`detect_dev`
+	IP=`subnet $IP`
+	IP=set_ip $IP
+}
+
+

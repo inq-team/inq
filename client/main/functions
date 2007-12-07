@@ -197,3 +197,26 @@ killbypid()
 		rm -f ~/$1.pid
 	fi
 }
+
+IP_SUITE='/sbin/ip'
+
+dev_for_route_to_server()
+{
+	dev=`$IP_SUITE -o -4 route get $SERVER | grep -o 'dev [^ ]*'`
+	echo ${dev#'dev '}
+}
+
+subnet_for_dev()
+{
+	local dev=$1
+	local ip=
+	local mask=
+	local addr='\([0-9]\+\)'
+	addr=$addr'\.'$addr'\.'$addr'\.'$addr
+	local pattern='ip=$(( ((\1 << 24) | (\2 << 16) | (\3 << 8) | (\4)) \& (((1 << (32 - \5)) - 1) ^ 0xffffffff) ));'
+	pattern=$pattern'mask=\5;'
+	pattern='s/^.*inet '$addr'\/\([0-9]\+\).*$/'$pattern'/'
+	eval `$IP_SUITE -o -4 address show $dev | sed "$pattern" `
+	echo "$(( ip >> 24 )).$(( (ip >> 16) & 255 )).$(( (ip >> 8) & 255 )).$(( ip & 255 ))/$mask"
+}
+
