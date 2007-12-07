@@ -129,39 +129,42 @@ class ComputersController < ApplicationController
 		sticker()
 	end
 
-	def print_sticker
+	def print_sticker		
 		@computer = Computer.find(params[:id])
 		@testing_number = params[:testing].to_i()
-		@testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }[@testing_number]
-		components = @testing.components.collect { |c| c.model }.inject({}) { |h, m| h[m] = h[m] ? h[m] + 1 : 1 ; h }.collect { |k, v| { :name => k.short_name || k.name, :count => v, :model => k  } }.sort() { |q, w| a = q[:model] ; b = w[:model] ; (z = ((a.group ? a.group.name : '') <=> (b.group ? b.group.name : ''))) == 0 ? (a.short_name || a.name || 'NULL') <=> (b.short_name || b.name || 'NULL') : z }
-
-		conf = {}
-		conf[:computer] = @computer
-		conf[:components] = components
-
+                @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
+		@testing = @sorted_testings[@testing_number]			
+	
 		prn = '/tmp/sticker.tmp'
 		srv = 'tos'
-		count = params[:count].to_i()
+		
+		options = {}
+		options[:name] = @computer.model.dmi_name
+		options[:copies] = params[:count]
+		options[:components] = []
 
 		if params[:commit] == 'Print'
 			if params[:raw]
-				@testing.custom_sticker = params[:raw] 
-				@testing.save!
-				#TODO: sticker = Sticker.custom_sticker(@testing.custom_sticker, count)
-				Sticker.send_custom_sticker_to_printer(srv, prn, params[:raw], count)
+				testing.custom_sticker = params[:raw] 
+				testing.save!
+				options[:components] = params[:ram]
 			else
-				sticker = Sticker.new(conf, count)
-				sticker.send_to_printer(srv, prn)
+				components = @testing.components.collect { |c| c.model }.inject({}) { |h, m| h[m] = h[m] ? h[m] + 1 : 1 ; h }.collect { |k, v| { :name => k.short_name || k.name, :count => v, :model => k  } }.sort() { |q, w| a = q[:model] ; b = w[:model] ; (z = ((a.group ? a.group.name : '') <=> (b.group ? b.group.name : ''))) == 0 ? (a.short_name || a.name || 'NULL') <=> (b.short_name || b.name || 'NULL') : z }
+			 	components.each_with_index do |c, i|
+					options[:components] <<  sprintf(" %-5s %-40s %-20s\n", i, c[:name][0..34], c[:count] )
+				end
 			end
-	
+			
+			Sticker.new(options).send_to_printer(srv, prn)
+						
 			#if sticker.send_to_printer(srv, prn)
  				flash[:notice] = "Sent sticker to printer <strong class='printer'>#{srv}:#{prn}</strong>"
 			#else
 			#	flash[:error] = "Printer <strong class='printer'>#{srv}:#{ prn }</strong> reported errors."
 			#end
 		end
-		
-		redirect_to(:action => 'sticker', :id => params[:id], :testing => @testing_number, :count => count)
+		redirect_to(:action => 'sticker', :id => params[:id], :testing => @testing_number)
+		#redirect_to(:action => 'sticker', :id => params[:id], :testing => @testing_number, :count => count)
 	end
 
 	def log
