@@ -74,4 +74,21 @@ PRINT #{count},1\r"
 		File.open('/tmp/bar.tmp', 'w'){ |f| f.puts(custom) }
 		`</tmp/bar.tmp ssh #{host} "sudo  cat >#{dev}"`
 	end
+
+	def smth(options)
+		@name = options[:name]
+		@date = options[:date]
+		@serial = options[:serial]
+		@docno = options[:docno]
+		@components = options[:components]
+		
+		#...	
+
+		@components.inject("") do |s, c| 
+			s + "BAR #{x},24,2,548\r
+TEXT #{tx},34,\"2\",90,1,1,\"#{c}\"\r"
+		end
+
+		#...
+	end
 end

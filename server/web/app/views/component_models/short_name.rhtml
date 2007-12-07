@@ -9,6 +9,12 @@
 Editing hardware piece <strong><%= "#{ @model.vendor } #{ @model.name }" %></strong><br/>
 </td></tr>
 <tr><td class='label'>
+<label>HW group</label>
+</td><td colspan='2' class='value'>
+<%= @model.group ? @model.group.name : 'Unknown' %>
+</td></tr>
+</td>
+<tr><td class='label'>
 <label for='short_name'>Short name</label>
 </td><td colspan='2' class='value'>
  <%= text_field_tag('short_name', @short_name) %>
