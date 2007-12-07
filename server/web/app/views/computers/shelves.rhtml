@@ -15,7 +15,8 @@
 			<td <%= kind %> <%= name %> >
 				<% if computer %> <%= shelf_content(computer) %><% end %>
 				<% if !sh.full_name.blank? && sh.kind == :testing %>
-					<span style='background-color: <%= sh.colour %>' class='title'><%= sh.full_name %></span>
+					<span class='title'><%= sh.full_name %></span>
+					<div class='colour_brick' style="background-color: <%= sh.colour %>">&nbsp;</div>
 				<% end %>
 			</td>
 		<% end %></tr>		

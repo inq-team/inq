@@ -92,7 +92,7 @@ class ComputersController < ApplicationController
 		config = Shelves::Config.new(params[:config]) if params[:config]
 		@computers = Computer.find_testing()
 		@shelves = config || @@default_config 
-		@byshelves = @computers.inject({}) { |h, c| h[@shelves.by_ip(c.ip) || c.shelf] = c ; h }
+		@byshelves = @computers.inject({}) { |h, c| h[@shelves.by_ipnet(c.ip) || c.shelf] = c ; h }
 		render(:layout => 'computer_shelves', :template => 'computers/shelves')				
 	end
 
@@ -119,6 +119,7 @@ class ComputersController < ApplicationController
 		@testing_number = params[:testing].to_i()
                 @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
 		@testing = @sorted_testings[@testing_number]
+		@count = params[:count] 
 		@components = @testing.components.collect { |c| c.model }.inject({}) { |h, m| h[m] = h[m] ? h[m] + 1 : 1 ; h }.collect { |k, v| { :name => k.short_name || k.name, :count => v, :model => k  } }.sort() { |q, w| a = q[:model] ; b = w[:model] ; (z = ((a.group ? a.group.name : '') <=> (b.group ? b.group.name : ''))) == 0 ? (a.short_name || a.name || 'NULL') <=> (b.short_name || b.name || 'NULL') : z }
 
 		render(:layout => 'computer_tabs')
@@ -133,25 +134,34 @@ class ComputersController < ApplicationController
 		@testing_number = params[:testing].to_i()
 		@testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }[@testing_number]
 		components = @testing.components.collect { |c| c.model }.inject({}) { |h, m| h[m] = h[m] ? h[m] + 1 : 1 ; h }.collect { |k, v| { :name => k.short_name || k.name, :count => v, :model => k  } }.sort() { |q, w| a = q[:model] ; b = w[:model] ; (z = ((a.group ? a.group.name : '') <=> (b.group ? b.group.name : ''))) == 0 ? (a.short_name || a.name || 'NULL') <=> (b.short_name || b.name || 'NULL') : z }
+
 		conf = {}
 		conf[:computer] = @computer
 		conf[:components] = components
 
 		prn = '/tmp/sticker.tmp'
 		srv = 'tos'
-		
+		count = params[:count].to_i()
+
 		if params[:commit] == 'Print'
 			if params[:raw]
-				@testing.custom_sticker = params[:raw]
-				@testing.save
-				Sticker.send_custom_sticker_to_printer(srv, prn, params[:raw])
-            		else
-				Sticker.new(conf, 1).send_to_printer(srv, prn)				
+				@testing.custom_sticker = params[:raw] 
+				@testing.save!
+				#TODO: sticker = Sticker.custom_sticker(@testing.custom_sticker, count)
+				Sticker.send_custom_sticker_to_printer(srv, prn, params[:raw], count)
+			else
+				sticker = Sticker.new(conf, count)
+				sticker.send_to_printer(srv, prn)
 			end
-			flash[:notice] = "Sent sticker to printer <strong class='printer'>#{srv}:#{prn}</strong>"
+	
+			#if sticker.send_to_printer(srv, prn)
+ 				flash[:notice] = "Sent sticker to printer <strong class='printer'>#{srv}:#{prn}</strong>"
+			#else
+			#	flash[:error] = "Printer <strong class='printer'>#{srv}:#{ prn }</strong> reported errors."
+			#end
 		end
 		
-		redirect_to(:action => 'sticker', :id => params[:id], :testing => @testing_number)
+		redirect_to(:action => 'sticker', :id => params[:id], :testing => @testing_number, :count => count)
 	end
 
 	def log
@@ -159,7 +169,6 @@ class ComputersController < ApplicationController
                 @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
 		@testing_number = params[:testing] ? params[:testing].to_i() : @sorted_testings.size - 1
 		@testing = @sorted_testings[@testing_number]
-		@components = @testing.components
 
 		@logs = File.open("/var/log/HOSTS/c#{ @computer.id }").readlines()
 
@@ -334,8 +343,7 @@ __EOF__
 	def set_ip
 		@computer = Computer.find(params[:id])
 		ip = params[:ip]
-		@computer.ip = ip
-		if @computer.save
+		if @computer.claim_ip(ip)
 			head(:ok)
 		else
 			head(:status => 500)

@@ -31,7 +31,8 @@
 </td>
 <td>
 	To <strong>print</strong> the sticker press the button below:
-	<% form_tag({ :action => 'print_sticker', :id => @computer.id, :testing => @testing_number }, :method => 'post') do %>
+	<% form_tag({ :action => 'print_sticker', :id => @computer.id, :testing => @testing_number }, :method => 'post', :onsubmit => "return confirm('Are you sure you need ' + $('count').value + ' copies?');") do %>
+	<%= text_field_tag('count', @count || '2') %>
 	<%= submit_tag('Print') %>
 	<% end %>
 </td>
@@ -50,6 +51,9 @@
 			new Effect.Highlight(c, { startcolor: '#ffffff', endcolor: '#FDDCD6', restorecolor: '#FDDCD6' });
 
 		}); 
+		z = $('count');
+		z.select();
+		z.focus();
 	});
 _EOF_
 ) %>

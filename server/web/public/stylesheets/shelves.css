@@ -1,3 +1,7 @@
+#title_bar {
+	display: none ! important;
+}
+
 #shelves {
 }
 
@@ -46,10 +50,9 @@ table.stack td.nil {
 }
 
 table.stack td .title {	
-	font-weight: bold;
-	font-size: 16px;
+	font-size: 13px;
 	font-family: serif;
-	padding: 0px 4px;
+	padding: 0px 2px;
 }
 
 /********************************/
@@ -63,6 +66,17 @@ table.stack td .title {
 	display: block;
 	text-align: center;
 	font-weight: bold;
+	font-size: 12px;
+	padding-bottom: 4px; 
+}
+
+.colour_brick {
+	position: relative;
+	left: 50%;
+	margin-left: -8px;
+	bottom: -2px;
+	height: 3px;	
+	width: 16px;
 }
 
 .hidden_memo {
@@ -74,6 +88,7 @@ table.stack td .title {
 	position: fixed;
 	padding: 0.5em;
 	background: url('/images/server/server.jpeg') 95% 95% no-repeat;
+	z-index: 100;
 }
 
 .computer_on_shelf a:hover .hidden_memo, td.testing:hover .hidden_memo {
@@ -119,6 +134,8 @@ table.stack td .title {
 	height: 2em;
 	border-bottom: 1px dashed;
 }
+
+
 
 
 

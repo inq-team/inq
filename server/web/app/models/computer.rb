@@ -32,4 +32,11 @@ class Computer < ActiveRecord::Base
 		Testing.find_by_sql(["SELECT testings.* FROM `testings` where testings.computer_id = ? ORDER BY test_start DESC LIMIT 1", id]).first()
 	end
 
+	def claim_ip(ip)
+		transaction do
+			Computer.update_all('shelf = NULL ip = NULL', ['ip = ?', ip])
+			self.ip = ip			
+		end	
+	end
+
 end

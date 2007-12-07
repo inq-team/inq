@@ -86,4 +86,7 @@ td.component_name:hover span.stub_a {
 	background: no-repeat 0.5em 50% url('/images/printer.png');
 }
 
-
+#count {
+	width: 2em;
+	text-align: right;
+}

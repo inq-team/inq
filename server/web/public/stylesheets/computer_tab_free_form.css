@@ -73,16 +73,10 @@ td.component_name:hover span.stub_a {
 	margin-right: 4em;
 }
 
-.confirm_border div {
+.hint_border div {
 	text-align: center;
 	padding-left: 3em ! important;
 	padding-right: 3em  ! important;
-}
-
-.confirm_border input[type=submit]
-{
-	margin-left: 1em;
-	margin-right: 1em;
 }
 
 textarea {
@@ -90,6 +84,10 @@ textarea {
 	font-size: 150%;
 	border: none;
 	border-bottom: 1px dotted #A28A50;
+}
+
+#count {
+	width: 2em;
 }
 
 

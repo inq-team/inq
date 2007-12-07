@@ -20,12 +20,17 @@ class Config
 			end
 		end
 	end
+
+	def by_ipnet(net)
+		@ipnets[net]
+	end
 	
 	def initialize(filename)
 		doc = REXML::Document.new(File.new(filename))
 		root = doc.root
 		@name = root.attributes['name']
 		@shelves = {} 
+		@ipnets = {}
 		prefix = '';
 		@groups = root.elements.inject('group', []) { |a, e| 
 			ea = e.attributes
@@ -44,6 +49,7 @@ class Config
 						ha = h.attributes
 						sh = Shelf.new(ha['name'], pf3 + (ha['name'] || ''), ha['prefix'], ha['colour'] || cl1, ha['kind'], ha['ipnet'])
 						@shelves[sh.full_name] = sh
+						@ipnets[sh.ipnet] = sh
 						pf4 = pf3 + sh.prefix
 						cl2 = sh.colour
 
