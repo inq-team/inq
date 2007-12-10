@@ -16,7 +16,8 @@ class Computer < ActiveRecord::Base
 	end
 
 	def short_title
-		model.name.split(' ')[1]
+		z = model.name.split(' ')
+		z[2] =~ /G\d+/ ? z[1] + z[2] : z[1]
 	end
 
 	def self.find_by_hw_serials(serials)
@@ -34,8 +35,9 @@ class Computer < ActiveRecord::Base
 
 	def claim_ip(ip)
 		transaction do
-			Computer.update_all('shelf = NULL ip = NULL', ['ip = ?', ip])
-			self.ip = ip			
+			Computer.update_all('shelf = NULL, ip = NULL', ['ip = ?', ip])
+			self.ip = ip		
+			save!	
 		end	
 	end
 
