@@ -81,13 +81,13 @@ table.stack td .title {
 
 .hidden_memo {
 	display: none;
-	background-color: #AACFBE ! important;
+	background-color: white ! important;
 	border: 1px solid #559F7D;
-	width: 30em;
+	width: 20em;
 	min-height: 16em;
 	position: fixed;
 	padding: 0.5em;
-	background: url('/images/server/server.jpeg') 95% 95% no-repeat;
+	padding-bottom: 0px;
 	z-index: 100;
 }
 
@@ -140,6 +140,11 @@ table.stack td .title {
 
 .hidden_memo .img {
 	width: auto;
+}
+
+.hidden_memo .img[colspan="2"] {
+	text-align: center;
+	padding: 0px ! important;	
 }
 
 .hidden_memo table th {
