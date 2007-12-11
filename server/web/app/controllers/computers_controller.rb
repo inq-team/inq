@@ -121,7 +121,7 @@ class ComputersController < ApplicationController
 		@testing = @sorted_testings[@testing_number]
 
 		@count = params[:count] 
-		@components = @testing.components.collect { |c| c.model }.inject({}) { |h, m| h[m] = h[m] ? h[m] + 1 : 1 ; h }.collect { |k, v| { :name => k.short_name, :count => v, :model => k  } }.sort() { |q, w| a = q[:model] ; b = w[:model] ; (z = ((a.group ? a.group.name : '') <=> (b.group ? b.group.name : ''))) == 0 ? (q[:name] || 'NULL') <=> (w[:name] || 'NULL') : z }
+		@components = @testing.components.collect { |c| c.model }.inject({}) { |h, m| h[m] = h[m] ? h[m] + 1 : 1 ; h }.collect { |k, v| { :name => k.short_name.blank? ? k.name : k.short_name, :count => v, :model => k  } }.sort() { |q, w| a = q[:model] ; b = w[:model] ; (z = ((a.group ? a.group.name : '') <=> (b.group ? b.group.name : ''))) == 0 ? (q[:name] || 'NULL') <=> (w[:name] || 'NULL') : z }
 
 		render(:layout => 'computer_tabs')
 	end
