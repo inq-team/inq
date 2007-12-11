@@ -13,26 +13,12 @@ def place_hint(id = 'hint', &block)
 end
 
 def format_date(date)
-	now = Time.new()
-	if date.strftime("%W") == now.strftime("%W") and now.day != date.day
-		fmt = "%A %H:%M"
-	elsif now.year == date.year 
-		if now.month == date.month 
-			if now.mday == date.mday
-				fmt = "Today %H:%M"
-			else
-				fmt = "%B %d"
-			end
-		else
-			fmt = "%B %d %Y"
-		end
-	end
-	date.strftime(fmt)
+	date.strftime("%d %b %Y %H:%M")
 end
 
 def format_delta(after, before)
 	delta = (after - before).to_i()
-	"#{ delta / 3600 }:#{ delta % 3600 / 60 }:#{ delta % 3600 % 60 }"
+	delta % 3600 / 60 > 0 ? sprintf("%02d:%02d", delta / 3600, delta % 3600 / 60) : "#{ delta % 3600 % 60 } sec"
 end
 
 end

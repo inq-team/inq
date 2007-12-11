@@ -83,8 +83,8 @@ table.stack td .title {
 	display: none;
 	background-color: white ! important;
 	border: 1px solid #559F7D;
-	width: 20em;
-	min-height: 16em;
+	width: 35em;
+	min-height: 12em;
 	position: fixed;
 	padding: 0.5em;
 	padding-bottom: 0px;
@@ -122,7 +122,6 @@ table.stack td .title {
 
 
 .hidden_memo table {
-	width: 100%;
 	border: hidden;
 }
 
@@ -131,15 +130,17 @@ table.stack td .title {
 	text-align: left;
 	vertical-align: middle;
 	height: 2em;
+	border-bottom: 1px dotted #ddd;
 }
 
 .hidden_memo .text {
-	width: 100%;
 	text-indent: 1em;
+	width: 27.5em;
 }
 
 .hidden_memo .img {
-	width: auto;
+	width: 7.5em;
+	font-style: oblique;
 }
 
 .hidden_memo .img[colspan="2"] {

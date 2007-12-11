@@ -380,9 +380,13 @@ __EOF__
 		@testing_number = params[:testing].to_i()
                 @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
 		@current_testing = @sorted_testings[@testing_number]
+		
+		t = if @computer.model.id == 67
+			`/srv/inq/script/printer-epassport/epassport-250g3 #{params[:id]} #{@current_testing.id}`
+		else
+			`/srv/inq/script/printer-epassport/epassport #{params[:id]} #{@current_testing.id}`
+		end
 
-		t = `/srv/inq/script/printer-epassport/epassport #{params[:id]} #{@current_testing.id}`
-		puts t
 		`echo '#{t}' | ssh tos "sudo cat >/dev/ttyS0"`
 #		File.open('/dev/ttyS0', 'w') { |f|
 #			f.write()
