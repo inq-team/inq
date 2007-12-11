@@ -11,6 +11,14 @@ class Computer < ActiveRecord::Base
 		sprintf "%010d", id
 	end
 
+	def assembler
+		Person.find_by_sql(["SELECT people.* from people join computer_stages on people.id = computer_stages.person_id join computers on computer_stages.computer_id = computers.id where computers.id = ? and computer_stages.stage = ? order by computer_stages.start desc limit 1", id, "assembling"]).first()
+	end
+
+	def tester
+		Person.find_by_sql(["SELECT people.* from people join computer_stages on people.id = computer_stages.person_id join computers on computer_stages.computer_id = computers.id where computers.id = ? and computer_stages.stage = ? order by computer_stages.start desc limit 1", id, "testing"]).first()
+	end
+
 	def title
 		model.name + ' ' + serial_no
 	end
@@ -39,6 +47,26 @@ class Computer < ActiveRecord::Base
 			self.ip = ip		
 			save!	
 		end	
+	end
+
+	def set_assembler(id)
+		transaction do			
+			computer_stages << ComputerStage.new(:start => Time.new(), :person => Person.find(id), :stage => 'assembling')
+			save!
+		end
+	end
+
+	def set_tester(id)
+		transaction do			
+			now = Time.new()
+			computer_stages << ComputerStage.new(:start => now, :person => Person.find(id), :stage => 'testing')
+			testings << Testing.new(:test_start => now)
+			save!
+		end
+	end
+
+	def manufacturing_date
+		computer_stages.find_all() { |s| s.stage == 'packaging' && s.stage.end }.sort() { |a, b| a.start <=> b.start }.last().end
 	end
 
 end

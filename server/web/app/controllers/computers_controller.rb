@@ -5,7 +5,6 @@ class ComputersController < ApplicationController
 
 	@@default_config = Shelves::Config.new(DEFAULT_SHELVES_CONFIG)
 
-
 	def archive
 		@computer_pages, @computers = paginate :computers, :per_page => 20
 		render :action => 'list'
@@ -50,16 +49,13 @@ class ComputersController < ApplicationController
 
 	def set_assembler
 		@computer = Computer.find(params[:id])
-		@computer.assembler_id = params[:assembler_id]
-		@computer.assembling_start = Time.now
-		@computer.save!
+		@computer.set_assembler(params[:assembler_id])
 		head :ok
 	end
 
 	def set_tester
-		@computer = Computer.find(params[:id])
-		@computer.tester_id = params[:tester_id]
-		@computer.save!
+		@computer = Computer.find(params[:id])		
+		@computer.set_tester(params[:tester_id])
 		head :ok
 	end
 
@@ -144,10 +140,9 @@ class ComputersController < ApplicationController
 		options[:name] = @computer.model.dmi_name
 		options[:copies] = count
 		options[:components] = []
-		options[:serial] = sprintf("%010d", @computer.id)
-		#HACK:
-		options[:date] = (@computer.computer_stages.sort() { |a, b| a.end <=> b.end }.last() || Time.new).strftime("%d.%m.%Y")
-		options[:docno] = @computer.doc_no
+		options[:serial] = @computer.serial_no
+		options[:date] = @computer.manufacturing_date.strftime("%d.%m.%Y")
+		options[:docno] = Order.buyer_order_num(@computer.id)
 
 		if params[:commit] == 'Print'
 			if params[:raw]
