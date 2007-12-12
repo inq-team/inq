@@ -88,7 +88,7 @@ class ComputersController < ApplicationController
 		config = Shelves::Config.new(params[:config]) if params[:config]
 		@computers = Computer.find_testing()
 		@shelves = config || @@default_config 
-		@byshelves = @computers.inject({}) { |h, c| h[@shelves.by_ipnet(c.ip) || c.shelf] = c ; h }
+		@byshelves = @computers.inject({}) { |h, c| sh = @shelves.by_ipnet(c.ip) ; h[!sh.blank? ? sh.full_name : c.shelf] = c ; h }
 		render(:layout => 'computer_shelves', :template => 'computers/shelves')				
 	end
 
