@@ -53,7 +53,7 @@ done
 [ -n "$COMPUTER_ID" ] || fatal_failure 'Self-identification'
 
 # Reporting IP-address to the server
-publish_my_ip() || fatal_failure 'IP-address update'
+publish_my_ip || fatal_failure 'IP-address update'
 
 # Start logging
 hostname c$COMPUTER_ID
@@ -98,13 +98,17 @@ $SHARE_DIR/bios_flash
 # Run all tests
 # ===========================================================================
 
-PLANNER=1 TEST_NAME=cpu CPU_TEST_TIME=1800 CPU_LOG_TIME=120 . $SHARE_DIR/test/cpu
-PLANNER=1 TEST_NAME=memory MEM_TEST_LOOPS=3 MEM_LOG_TIME=120 . $SHARE_DIR/test/memory
+PLANNER=1 TEST_NAME=odd_write-cd1 ODD_TEST_IMAGE=/usr/share/inquisitor/ets1.iso ODD_TEST_IMAGE_BLOCKS=298769 ODD_WRITE_SPEED=10 ODD_TEST_IMAGE_MD5=7a697766db19429bb8ee77a5cd9e0d9e ODD_WRITE_SPEED_FORCE=Y ODD_WRITE_MESSAGE="Writing first RS160G3 drivers disc" . $SHARE_DIR/test/odd_write
+PLANNER=1 TEST_NAME=odd_write-cd1 ODD_TEST_IMAGE=/usr/share/inquisitor/ets2.iso ODD_TEST_IMAGE_BLOCKS=145007 ODD_WRITE_SPEED=10 ODD_TEST_IMAGE_MD5=6ae4c0a3be679cac2c457b92f2f6b9c9 ODD_WRITE_SPEED_FORCE=Y ODD_WRITE_MESSAGE="Writing second RS160G3 drivers disc" . $SHARE_DIR/test/odd_write
+
+PLANNER=1 TEST_NAME=cpu CPU_TEST_TIME=900 CPU_LOG_TIME=100 . $SHARE_DIR/test/cpu
+PLANNER=1 TEST_NAME=memory MEM_TEST_LOOPS=1 MEM_LOG_TIME=120 . $SHARE_DIR/test/memory
 export COMPUTER_ID && export SHARE_DIR && PLANNER=1 TEST_NAME=hdd-passthrough $SHARE_DIR/test/hdd-passthrough
-PLANNER=1 TEST_NAME=hdd-array HDDARR_TIMEOUT=3600 HDDARR_LOGTIME=120 HDDARR_JOBS=16 . $SHARE_DIR/test/hdd-array
+PLANNER=1 TEST_NAME=hdd-array HDDARR_TIMEOUT=3600 HDDARR_LOGTIME=120 HDDARR_JOBS=32 . $SHARE_DIR/test/hdd-array
 PLANNER=1 TEST_NAME=fdd FDD_SIZE=1440 . $SHARE_DIR/test/fdd
 #PLANNER=1 TEST_NAME=flash FLASH_SIZE_LIMIT=2048 . $SHARE_DIR/test/flash
-PLANNER=1 TEST_NAME=odd_read ODD_TEST_IMAGE_HASH=8d2c1d814524b29723ebe55456a2ad33 ODD_TEST_IMAGE_BLOCKS=332800 ODD_MESH_POINTS=1024 . $SHARE_DIR/test/odd_read
-#PLANNER=1 TEST_NAME=odd_write ODD_TEST_IMAGE=/usr/share/inquisitor/testimage.iso ODD_TEST_IMAGE_BLOCKS=332800 ODD_WRITE_SPEED=10 . $SHARE_DIR/test/odd_write
+#PLANNER=1 TEST_NAME=odd_read ODD_TEST_IMAGE_HASH=8d2c1d814524b29723ebe55456a2ad33 ODD_TEST_IMAGE_BLOCKS=332800 ODD_MESH_POINTS=1024 . $SHARE_DIR/test/odd_read
+
+print_green_message "TESTING FINISHED"
 
 bash

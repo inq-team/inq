@@ -14,16 +14,15 @@
 echo "Detecting if we need to reflash BIOS"
 
 if grep -q "E-9722R" /home/fru.log; then
-	echo "!!! RS160G3 detected !!!"
+	print_green_message "RS160G3 detected"
 	version=`grep -A 8 "^BIOS Information" /home/dmi.log | grep Version | sed 's/.*Version: \(.*\)$/\1/'`
-	echo "BIOS Version: $version"
+	print_green_message "BIOS Version: $version"
 	if [ $version != "BIOS Version 1.94" ]; then
-		echo "No required BIOS version detected!"
-		echo "!!! NEED TO REFLASH BIOS !!!"
-		echo "!!! REBOOT AND PRESS f FOR REFLASHING !!!"
-		read foobar
+		print_red_message "An old BIOS version detected"
+		print_red_message "Need to reflash BIOS"
+		print_red_message "Reboot and press f for reflashing"
+		read tmp
 		#prepare_pxelinux rs160g3.bios
-		#read foobar
 		#reboot
 	fi
 fi

@@ -33,7 +33,14 @@ while true ; do
 			test_succeeded
 			break
 		else
-			test_failed
+			if grep -q "FAILURE: possible bad address line"; then
+				possible_bad=`grep "FAILURE: possible bad address line" $MEMORY_LOG | awk '{print $NF}'`
+				print_red_message "Possible bad address line: $possible_bad"
+				test_failed $possible_bad
+			else
+				test_failed
+			fi
+
 			break
 		fi
 	fi

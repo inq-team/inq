@@ -9,6 +9,8 @@
 # VAR=ODD_TEST_IMAGE_BLOCKS:int:332800:This images size in blocks (2048 bytes each)
 # VAR=ODD_TEST_IMAGE_MD5:str:ffffffffffffffffffffffffffffffff:Test image MD5 hash
 # VAR=ODD_WRITE_SPEED:int:10:Default write speed if it won't detect
+# VAR=ODD_WRITE_SPEED_FORCE:bool:Y:Force write speed using
+# VAR=ODD_WRITE_MESSAGE:str:Writing test disc:Message to print when test will start
 
 . /usr/share/inquisitor/functions-test
 
@@ -28,7 +30,7 @@ test_read()
 	local odd=$1
 	local hash
 
-	hash=`readcd -v dev=$odd f=- sectors=0-$ODD_TEST_IMAGE_BLOCKS | md5sum -b | awk '{print $1}'`
+	hash=`readcd -v dev=$odd f=- sectors=0-$ODD_TEST_IMAGE_BLOCKS retries=8 | md5sum -b | awk '{print $1}'`
 	[ -z "$hash" ] && {hash=`dd if=$odd bs=2048 count=$ODD_TEST_IMAGE_BLOCKS | md5sm -b | awk '{print $1}'`}
 
 	[ $hash = $ODD_TEST_IMAGE_MD5 ] && FLAG=1 || FLAG=0
@@ -42,10 +44,10 @@ test_write()
 	detect_maxspeed $odd
 	blank_if_needed $odd $SPEED
 
-	echo "Writing..."
-	cdrecord dev=$odd driveropts=burnfree speed=$SPEED \
-		-data $ODD_TEST_IMAGE >/dev/null && FLAG=1 || FLAG=0
-	echo "writing done"
+	print_green_message "Writing..."
+	cdrecord dev=$odd driveropts=burnfree speed=$SPEED -delay 2 -eject \
+		-data $ODD_TEST_IMAGE && FLAG=1 || FLAG=0
+	print_green_message "Writing done"
 }
 
 check_media_existence()
@@ -53,9 +55,9 @@ check_media_existence()
 	local odd=$1
 
 	if cdrecord dev=$odd -atip | grep -q 'Is erasable'; then
-		echo 'Rewritable media already inserted, not ejecting'
+		print_green_message "Rewritable media already inserted, not ejecting"
 	else
-		echo "Insert writable media..."
+		print_green_message "Insert writable media..."
 		eject
 	fi
 }
@@ -64,9 +66,14 @@ detect_maxspeed()
 {
 	local odd=$1
 
-	SPEED=`cdrecord dev=$odd -atip | \
-		sed -ne '/speed high/ s/^.*speed high: \(.*\)$/\1/ p' | head -n 1`
-	[ -z "$SPEED" ] && SPEED=$ODD_WRITE_SPEED || true
+	if [ "$ODD_WRITE_SPEED_FORCE" = "Y" ]; then
+		SPEED=$ODD_WRITE_SPEED
+	else
+		SPEED=`cdrecord dev=$odd -atip | \
+			sed -ne '/speed high/ s/^.*speed high: \(.*\)$/\1/ p' | head -n 1`
+		[ -z "$SPEED" ] && SPEED=$ODD_WRITE_SPEED || true
+	fi
+
 }
 
 blank_if_needed()
@@ -75,11 +82,11 @@ blank_if_needed()
 	local speed=$2
 
 	if cdrecord dev=$odd -atip | grep -q 'Is erasable'; then
-		echo "Blanking..."
+		print_green_message "Blanking..."
 		cdrecord dev=$odd speed=$speed blank=fast >/dev/null 2>&1
-		echo "done blanking"
+		print_green_message "Blanking done"
 	else
-		echo 'Non rewritable media. Skipping blanking...'
+		print_green_message "Non rewritable media. Skipping blanking..."
 	fi
 }
 
@@ -89,12 +96,11 @@ interactive()
 	local non_passed=1
 
 	while ( [ "$non_passed" -eq 1 ] ); do
-		echo ""
-		echo -n "Drive $[ $TESTED_QUANTITY + 1]:"
-		echo -n "Either press Y and insert media for testing, or N if you want to finish test: "
+		print_green_message "Drive $[ $TESTED_QUANTITY + 1]:"
+		print_green_message "Either press y and insert media for testing, or n if you want to finish test: "
 		read choice
 
-		if [ "$choice" = "N" ]; then
+		if [ "$choice" = "n" ]; then
 			test_failed
 			break
 		fi
@@ -103,21 +109,21 @@ interactive()
 		test_write $odd
 
 		if [ "$FLAG" -eq 1 ]; then
-			echo "Write stage passed, performing read test..."
+			print_green_message "Write stage passed, performing read test..."
 
 			FLAG=0
 			test_read $odd
 
 			if [ "$FLAG" -eq 1 ]; then
-				echo "Drive test passed"
+				print_green_message "Drive test passed"
 				TESTED_QUANTITY=$[ $TESTED_QUANTITY + 1 ]
 				test_progress $TESTED_QUANTITY $ODD_QUANTITY
 				non_passed=0
 			else
-				echo "Drive test failed!"
+				print_red_message "Drive test failed"
 			fi
 		else
-			echo "Write stage failed!"
+			print_red_message "Write stage failed"
 		fi
 	done
 }
@@ -127,6 +133,7 @@ detect_odd_quantity
 [ "$ODD_QUANTITY" -eq 0 ] && return
 TESTED_QUANTITY=0
 test_started $ODD_QUANTITY
+print_green_message "$ODD_WRITE_MESSAGE"
 
 for i in `hal-find-by-capability --capability storage.cdrom`; do
 	interactive `hal-device $i | grep access_control.file | \

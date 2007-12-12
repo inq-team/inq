@@ -133,6 +133,7 @@ test_started()
 {
 	TOTAL=$1
 
+	echo ""
 	echo -n Test $TEST_NAME
 	echo_running
 	test_stage_advance $TEST_NAME start
@@ -198,6 +199,24 @@ killbypid()
 	fi
 }
 
+print_green_message()
+{
+	echo ""
+	SETCOLOR_SUCCESS
+	echo "$1"
+	SETCOLOR_NORMAL
+	echo ""
+}
+
+print_red_message()
+{
+	echo ""
+	SETCOLOR_FAILURE
+	echo "$1"
+	SETCOLOR_NORMAL
+	echo ""
+}
+
 IP_SUITE='/sbin/ip'
 
 dev_for_route_to_server()
@@ -219,4 +238,3 @@ subnet_for_dev()
 	eval `$IP_SUITE -o -4 address show $dev | sed "$pattern" `
 	echo "$(( ip >> 24 )).$(( (ip >> 16) & 255 )).$(( (ip >> 8) & 255 )).$(( ip & 255 ))/$mask"
 }
-
