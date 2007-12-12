@@ -48,7 +48,7 @@ class DiscTest
 			        STDERR.reopen(pr[1])
 			        pr[1].close
 
-			        exec(BADBLOCKS_COMMAND + " /dev/#{hdd}")
+			        exec(BADBLOCKS_COMMAND + " #{hdd}")
 			}
 
 			pw[0].close

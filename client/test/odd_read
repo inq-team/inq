@@ -81,9 +81,8 @@ detect_odd_quantity
 TESTED_QUANTITY=0
 test_started $ODD_QUANTITY
 
-for i in `hal-find-by-capability --capability storage.cdrom`; do
-	interactive `hal-device $i | grep access_control.file | 
-		awk '{print $3}' | sed "s/'//g"`
+for i in `get_odds_list`; do
+	interactive $i
 done
 
 remove_test_image

@@ -238,3 +238,20 @@ subnet_for_dev()
 	eval `$IP_SUITE -o -4 address show $dev | sed "$pattern" `
 	echo "$(( ip >> 24 )).$(( (ip >> 16) & 255 )).$(( (ip >> 8) & 255 )).$(( ip & 255 ))/$mask"
 }
+
+get_harddrives_list()
+{
+	for i in `hal-find-by-property --key=storage.drive_type --string disk`
+	do
+		hal-device $i | grep block.device | \
+		awk '{print $3}' | sed "s/'//g"
+	done
+}
+
+get_odds_list()
+{
+	for i in `hal-find-by-capability --capability storage.cdrom`; do
+		hal-device $i | grep access_control.file | \
+		awk '{print $3}' | sed "s/'//g"
+	done
+}

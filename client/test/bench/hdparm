@@ -9,11 +9,6 @@
 
 RESULT_FILE=`mktemp`
 
-get_drives_list()
-{
-	DRIVES_LIST=`ls -1 /sys/block/ | grep -v '[0-9]$'`
-}
-
 perform_benchmark()
 {
 	DRIVE=$1
@@ -45,7 +40,7 @@ get_drives_list
 test_started 1
 
 BENCHED_DRIVES=0
-for i in "$DRIVES_LIST"; do
+for i in `get_odds_list`; do
 	perform_benchmark $i $BENCHED_DRIVES
 	BENCHED_DRIVES=$[ $BENCHED_DRIVES + 1 ]
 done

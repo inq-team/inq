@@ -117,9 +117,8 @@ temporary_hddarr_jobs_check
 TOTAL_START=`date "+%s"`
 test_started $HDDARR_TIMEOUT
 
-for i in `hal-find-by-property --key=storage.drive_type --string disk`; do
-	array_stress_check `hal-device $i | grep block.device | \
-				awk '{print $3}' | sed "s/'//g"`
+for i in `get_harddrives_list`; do
+	array_stress_check $i
 done
 
 test_succeeded
