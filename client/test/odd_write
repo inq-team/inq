@@ -45,7 +45,7 @@ test_write()
 	blank_if_needed $odd $SPEED
 
 	print_green_message "Writing..."
-	cdrecord dev=$odd driveropts=burnfree speed=$SPEED -delay 2 -eject \
+	cdrecord dev=$odd driveropts=burnfree speed=$SPEED -delay 2 -\
 		-data $ODD_TEST_IMAGE && FLAG=1 || FLAG=0
 	print_green_message "Writing done"
 }
@@ -96,6 +96,7 @@ interactive()
 	local non_passed=1
 
 	while ( [ "$non_passed" -eq 1 ] ); do
+		eject $odd
 		print_green_message "Drive $[ $TESTED_QUANTITY + 1]:"
 		print_green_message "Either press y and insert media for testing, or n if you want to finish test: "
 		read choice
