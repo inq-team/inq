@@ -39,11 +39,11 @@ interactive()
 
 	while ( [ "$non_passed" -eq 1 ] ); do
 		eject $odd
-		echo ""
-		echo -n "Drive $[ $TESTED_QUANTITY + 1]:Either press Y and insert media for testing, or N if you want to finish test: "
+		print_green_message "Drive $[ $TESTED_QUANTITY + 1]:"
+		print_green_message "Either press Y and insert media for testing, or n if you want to finish test: "
 		read choice
 
-		if [ "$choice" = "N" ]; then
+		if [ "$choice" = "n" ]; then
 			test_failed
 			break
 		fi
@@ -52,14 +52,14 @@ interactive()
 		test_odd $odd
 
 		if [ "$FLAG" -eq 1 ]; then
-			echo "Drive test passed"
+			print_green_message "Drive test passed"
 			TESTED_QUANTITY=$[ $TESTED_QUANTITY + 1 ]
 			test_progress $TESTED_QUANTITY $ODD_QUANTITY
 			non_passed=0
 
 			generate_speed_results
 		else
-			echo "Drive test failed!"
+			print_red_message "Drive test failed!"
 		fi
 	done
 }

@@ -47,7 +47,7 @@ interactive()
 	NON_PASSED=1
 
 	while ( [ $NON_PASSED ] ); do
-		echo -n "Drive ${FDD}:Either press Y and insert floppy for testing, or N if you want to finish test: "
+		print_green_message "Drive ${FDD}:Either press Y and insert floppy for testing, or N if you want to finish test: "
 		read choice
 
 		if [ "$choice" = "N" ]; then
@@ -58,11 +58,11 @@ interactive()
 		test_fdd $[$FDD - 1]
 
 		if (( $? == 0 )); then
-			echo "Drive test passed"
+			print_green_message "Drive test passed"
 			test_progress $FDD $FDD_QUANTITY
 			NON_PASSED=0
 		else
-			echo "Drive test failed!"
+			print_red_message "Drive test failed!"
 		fi
 	done
 }
