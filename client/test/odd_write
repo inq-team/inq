@@ -58,7 +58,7 @@ check_media_existence()
 		print_green_message "Rewritable media already inserted, not ejecting"
 	else
 		print_green_message "Insert writable media..."
-		eject
+		eject $odd || true
 	fi
 }
 
@@ -96,7 +96,7 @@ interactive()
 	local non_passed=1
 
 	while ( [ "$non_passed" -eq 1 ] ); do
-		eject $odd
+		eject $odd || true
 		print_green_message "Drive $[ $TESTED_QUANTITY + 1]:"
 		print_green_message "Either press y and insert media for testing, or n if you want to finish test: "
 		read choice
@@ -120,6 +120,7 @@ interactive()
 				TESTED_QUANTITY=$[ $TESTED_QUANTITY + 1 ]
 				test_progress $TESTED_QUANTITY $ODD_QUANTITY
 				non_passed=0
+				eject $odd || true
 			else
 				print_red_message "Drive test failed"
 			fi

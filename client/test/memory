@@ -10,16 +10,37 @@
 
 . /usr/share/inquisitor/functions-test
 
-TOTAL_MEMORY=$[(`grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024)-64]
+#Temporary disabled because of broken oom_killer
+#TOTAL_MEMORY=$[`grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024]
+
+TOTAL_MEMORY=$[(`grep MemTotal /proc/meminfo | awk '{print $2}'`) / 1024 - 256]
 TOTAL_SUBSTAGES=$((16 * MEM_TEST_LOOPS))
 COMPLETED_SUBSTAGES=0
 MEMORY_LOG=`mktemp`
 
-test_started $TOTAL_SUBSTAGES
+turnoff_oom_killer()
+{
+	sysctl vm.overcommit_memory=2
+	sysctl vm.overcommit_ratio=1
+}
 
-memtester $TOTAL_MEMORY $MEM_TEST_LOOPS > $MEMORY_LOG &
-MEMTESTER_PID=`ps -ewf | grep 'memtester' | head -n1 | \
-		sed 's/^[^0-9]*\([0-9]\+\)[^0-9].*$/\1/'`
+turnon_oom_killer()
+{
+	sysctl vm.overcommit_memory=0
+	sysctl vm.overcommit_ratio=50
+}
+
+run_memtester()
+{
+	memtester $TOTAL_MEMORY $MEM_TEST_LOOPS > $MEMORY_LOG &
+
+	MEMTESTER_PID=`ps -ewf | grep 'memtester' | head -n1 | \
+			sed 's/^[^0-9]*\([0-9]\+\)[^0-9].*$/\1/'`
+}
+
+#turnoff_oom_killer
+test_started $TOTAL_SUBSTAGES
+run_memtester
 
 while true ; do
 	sleep $MEM_LOG_TIME
@@ -31,14 +52,17 @@ while true ; do
 	else
 		if [ "$COMPLETED_SUBSTAGES" -eq "$TOTAL_SUBSTAGES" ] ; then
 			test_succeeded
+			#turnon_oom_killer
 			break
 		else
 			if grep -q "FAILURE: possible bad address line"; then
 				possible_bad=`grep "FAILURE: possible bad address line" $MEMORY_LOG | awk '{print $NF}'`
 				print_red_message "Possible bad address line: $possible_bad"
 				test_failed $possible_bad
+				#turnon_oom_killer
 			else
 				test_failed
+				#turnon_oom_killer
 			fi
 
 			break

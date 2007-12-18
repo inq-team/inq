@@ -38,7 +38,7 @@ interactive()
 	non_passed=1
 
 	while ( [ "$non_passed" -eq 1 ] ); do
-		eject $odd
+		eject $odd || true
 		print_green_message "Drive $[ $TESTED_QUANTITY + 1]:"
 		print_green_message "Either press Y and insert media for testing, or n if you want to finish test: "
 		read choice
@@ -58,6 +58,7 @@ interactive()
 			non_passed=0
 
 			generate_speed_results
+			eject $odd || true
 		else
 			print_red_message "Drive test failed!"
 		fi
