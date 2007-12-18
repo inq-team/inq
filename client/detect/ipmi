@@ -46,8 +46,15 @@ if FRU_INFO=`cat $HOME/fru.log | grep -A13 'Builtin FRU Device'`; then
 	PLATFORM_PRODUCT=`echo "$FRU_INFO" | sed -n 's/ Product Name *: //p'`
 	PLATFORM_PART_NUM=`echo "$FRU_INFO" | sed -n 's/ Product Part Number *: //p'`
 	PLATFORM_SERIAL=`echo "$FRU_INFO" | sed -n 's/ Product Serial *: //p'`
-	PLATFORM_MODEL="$PLATFORM_PRODUCT / $PLATFORM_PART_NUM"
-	$SHARE_DIR/add-component Platform "$PLATFORM_VENDOR" "$PLATFORM_MODEL" "$PLATFORM_SERIAL"
+	if [ -z "$PLATFORM_PRODUCT" ] || [ -z "$PLATFORM_PART_NUM" ]; then
+		SEP=''
+	else
+		SEP=' / '
+	fi
+	PLATFORM_MODEL="$PLATFORM_PRODUCT$SEP$PLATFORM_PART_NUM"
+	if [ -n "$PLATFORM_PRODUCT" ] || [ -n "$PLATFORM_PART_NUM" ]; then
+		$SHARE_DIR/add-component Platform "$PLATFORM_VENDOR" "$PLATFORM_MODEL" "$PLATFORM_SERIAL"
+	fi
 fi
 
 # ===========================================================================
