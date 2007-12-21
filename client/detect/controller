@@ -13,7 +13,7 @@ echo "$TYPES" | while read TYPE; do
 			CTRL_INFO=`cat $HOME/lshw.log 2>/dev/null | grep -i -B3 "$BUS"$`
 			CTRL_VENDOR=`echo "$CTRL_INFO" | sed -n 's/ *vendor: //p'`
 			CTRL_MODEL=`echo "$CTRL_INFO" | sed -n 's/ *product: //p'`
-			if [ -z "`echo "$CTRL_VENDOR" | grep -i 'lsi'`" ] && [ -z "`echo "$CTRL_VENDOR" | grep -i 'areca'`" ] && [ -z "`echo "$CTRL_VENDOR" | grep -i 'adaptec'`" ] || [ -n "`echo "$CTRL_MODEL" | grep -i 'SAS1064ET'`" ]; then
+			if [ -z "`echo "$CTRL_VENDOR" | grep -i 'lsi'`" ] && [ -z "`echo "$CTRL_VENDOR" | grep -i 'areca'`" ] && [ -z "`echo "$CTRL_VENDOR" | grep -i 'adaptec'`" ] || [ -n "`echo "$CTRL_MODEL" | grep -i 'SAS1064ET'`" ] || [ -n "`echo "$CTRL_VENDOR" | grep -i 'mpt'`" ]; then
 				$SHARE_DIR/add-component 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" ''
 			fi
 		fi	
