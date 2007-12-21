@@ -16,7 +16,9 @@ if FRU_INFO=`cat $HOME/fru.log | grep -A13 'Builtin FRU Device'`; then
 		SEP=' / '
 	fi
 	CHASSIS_MODEL="$CHASSIS_TYPE$SEP$CHASSIS_PART_NUM"
-	$SHARE_DIR/add-component Chassis "$CHASSIS_VENDOR" "$CHASSIS_MODEL" "$CHASSIS_SERIAL"
+	if [ -n "$CHASSIS_TYPE" ] || [ -n "$CHASSIS_PART_NUM" ]; then
+		$SHARE_DIR/add-component Chassis "$CHASSIS_VENDOR" "$CHASSIS_MODEL" "$CHASSIS_SERIAL"
+	fi
 	
 	#detecting mainboard
 	MB_VENDOR=`echo "$FRU_INFO" | sed -n 's/ Board Mfg *: //p'`
