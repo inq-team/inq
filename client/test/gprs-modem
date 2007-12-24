@@ -1,0 +1,32 @@
+#!/bin/sh -ef
+# NAME=USB GPRS modem
+# DESCRIPTION=Test GPRS modem, connected using USB
+# DESTROYS_HDD=N
+# IS_INTERACTIVE=N
+# POWEROFF_DURING_TEST=N
+# VERSION=0.1
+# VAR=DEV:string:/dev/ttyUSB0:Name of device to test
+# VAR=ANSWER_ATI:string:SIMCOM_Ltd:String to get after ATI
+# VAR=CHAT_TIMEOUT:int:10:Timeout for waiting for answer
+
+. /usr/share/inquisitor/functions-test
+
+# Try to set modem speed to 57600 (if it's at 9600). We'll fail if it's
+# already at 57600, so ignore it - we'll check for the final state at
+# next step.
+echo '=== Transition from 9600 to 57600'
+stty 9600 -F $DEV
+chat -t $CHAT_TIMEOUT -Vs '' AT OK-AT-OK AT+IPR=57600 OK <$DEV >$DEV || {
+	echo 'WARNING: Failed to set modem from 9600 to 57600'
+	true
+}
+
+sleep 1
+
+echo '=== Check for proper answer from modem'
+stty 57600 -F $DEV
+sleep 1
+chat -t $CHAT_TIMEOUT -Vs '' AT OK-AT-OK ATI $ANSWER_ATI <$DEV >$DEV
+
+echo '=== Getting IMEI'
+chat -t $CHAT_TIMEOUT -Vs '' AT OK-AT-OK AT+GSN '' AT OK <$DEV >$DEV

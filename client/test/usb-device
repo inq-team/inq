@@ -1,0 +1,19 @@
+#!/bin/sh -ef
+# NAME=USB device presence
+# DESCRIPTION=Tests presence of designated USB device
+# DESTROYS_HDD=N
+# IS_INTERACTIVE=N
+# POWEROFF_DURING_TEST=N
+# VERSION=0.1
+# VAR=VENDOR_ID:hex:0403:Search for device with this vendor ID
+# VAR=PRODUCT_ID:hex:aa48:Search for device with this product ID
+# VAR=COUNT:int:1:There should be this many devices
+
+. /usr/share/inquisitor/functions-test
+
+FOUND_COUNT=`lsusb -d $VENDOR_ID:$PRODUCT_ID || :`
+if [ "$FOUND_COUNT" == "$COUNT" ]; then
+	test_succeeded
+else
+	test_failed "Found $FOUND_COUNT devices instead of $COUNT"
+fi
