@@ -11,20 +11,20 @@
 
 . /usr/share/inquisitor/functions-test
 
-# Try to set modem speed to 57600 (if it's at 9600). We'll fail if it's
-# already at 57600, so ignore it - we'll check for the final state at
+# Try to set modem speed to 115200 (if it's at 9600). We'll fail if it's
+# already at 115200, so ignore it - we'll check for the final state at
 # next step.
-echo '=== Transition from 9600 to 57600'
+echo '=== Transition from 9600 to 115200'
 stty 9600 -F $DEV
-chat -t $CHAT_TIMEOUT -Vs '' AT OK-AT-OK AT+IPR=57600 OK <$DEV >$DEV || {
-	echo 'WARNING: Failed to set modem from 9600 to 57600'
+chat -t $CHAT_TIMEOUT -Vs '' AT OK-AT-OK AT+IPR=115200 OK <$DEV >$DEV || {
+	echo 'WARNING: Failed to set modem from 9600 to 115200'
 	true
 }
 
 sleep 1
 
 echo '=== Check for proper answer from modem'
-stty 57600 -F $DEV
+stty 115200 -F $DEV
 sleep 1
 chat -t $CHAT_TIMEOUT -Vs '' AT OK-AT-OK ATI $ANSWER_ATI <$DEV >$DEV
 
