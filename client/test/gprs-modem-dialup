@@ -7,21 +7,50 @@
 # VERSION=0.1
 # VAR=DEV:string:/dev/ttyUSB0:Name of device to test
 # VAR=APN:string:internet.mts.ru:Cell service provider's Internet APN
-# VAR=PPPD_TRIES:int:3:Number of tries to bring pppd up
+# VAR=PPPD_TRIES:int:4:Number of tries to bring pppd up
 # VAR=URL:string:img-fotki.yandex.ru/getx/10/photoface.359/sevastopol-foto_34661_L:URL to download (without http)
 # VAR=MD5:string:ca530886183b06d0047e0655537327aa:MD5 of downloaded file
 # VAR=DOWNLOAD_TRIES:int:3:Number of tries to download the file
-# VAR=DOWNLOAD_MAX_TIME:int:120:Timeout for the whole download, seconds
+# VAR=DOWNLOAD_MAX_TIME:int:60:Timeout for the whole download, seconds
 
 . /usr/share/inquisitor/functions-test
+
+# Cleanup
+exit_handler()
+{
+	local rc=$?
+	trap - EXIT
+
+	if [ -r "$TMP_DIR/pppd.lock" ]; then
+		echo -n 'Stopping pppd'
+		killall pppd
+		sleep 5
+		if pgrep pppd; then
+			echo_failure
+			echo -n 'Killing pppd'
+			killall -KILL pppd
+			sleep 1
+			echo_success
+		else
+			echo_success
+		fi
+	fi
+
+	rm -f "$TMP_DIR/download" "$TMP_DIR/checkfile" "$TMP_DIR/pppd.lock"
+	[ -d "$TMP_DIR" ] && rmdir "$TMP_DIR"
+	exit $rc
+}
+trap exit_handler HUP PIPE INT QUIT TERM EXIT
 
 SPEED=115200
 MODEM_INIT='AT+CGDCONT=1,\"IP\",\"internet.mts.ru\" OK'
 PHONE="*99***1#"
+					
+# Create temporary directory
+TMP_DIR=`mktemp -d`
 
 TRIES=0
 while [ "$TRIES" -lt "$PPPD_TRIES" ]; do
-	TRIES=$(($TRIES+1))
 	if pppd \
 		connect 'chat -v ABORT "NO DIALTONE" ABORT "NO CARRIER" ABORT BUSY "" '"$MODEM_INIT"' ATDP'$PHONE' "CONNECT" ;' \
 		crtscts \
@@ -42,28 +71,24 @@ while [ "$TRIES" -lt "$PPPD_TRIES" ]; do
 		nopcomp \
 		noaccomp \
 		$DEV $SPEED; then
-		echo "exit status=$?"
-		PPPD_PID=$!
+		touch $TMP_DIR/pppd.lock
 		break
 	else
-		echo "PPP connect failed, try $TRIES"
+		TRIES=$(($TRIES+1))
+		echo "PPP connect failed after try $TRIES"
 	fi
 done
 
-echo Tries: $TRIES
-echo PPPD PID=$PPPD_PID
-TMP_DIR=`mktemp -d`
+if [ ! -r "$TMP_DIR/pppd.lock" ]; then
+	test_failed 'PPP connect'
+	exit 1
+fi
 
 # Downloading
-echo -n "Downloading file $DOWNLOAD_TRIES"
+echo -n "Downloading file"
 curl --retry "$DOWNLOAD_TRIES" --max-time "$DOWNLOAD_MAX_TIME" http://$URL -o $TMP_DIR/download && echo_success || test_failed 'Downloading file'
 
 # MD5 check
 echo -n 'Checking MD5 sum'
 echo "$MD5  $TMP_DIR/download" >$TMP_DIR/checkfile
 md5sum -c $TMP_DIR/checkfile && echo_success || test_failed 'Checking MD5 sum'
-
-# Cleanup
-rm -f $TMP_DIR/download $TMP_DIR/checkfile
-rmdir $TMP_DIR
-kill $PPPD_PID
