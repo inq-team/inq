@@ -1,17 +1,67 @@
+
+
+<table>
+<tr>
+
+<td>
 <div id="progress_bar">
 <table><tr>
 <% @order.order_stages.each { |s| %>
 <td class="computer_stage_<%= s.end ? 'finished' : 'running' %>">
 <%=h s.stage.capitalize %><br/>
 <span style="font-size: 40%">Start: <%=h s.start %><br/>
-End: <%=h s.end %></span>
-</td>
+End: <%=h s.end %></span></td>
 <% } %>
-</tr></table>
+</tr>
+</table>
 </div>
+</td>
+
+<td>
+
+<div id="progress_bar">
+<table>
+<th>Assembling</th>
+<th>Testing</th>
+<th>Packing</th>
+
+<% @st_comp_qty.to_a.select{|x| x[1] != 0}.each do |sq| %>
+<tr>
+
+<%
+case sq[0]
+when :assembling %>
+<td class='computer_stage_running'><%= sq[1] %>/<%= @qty %></td>
+<td class='computer_stage_planned'></td>
+<td class='computer_stage_planned'></td>
+
+<% when :testing %>
+<td class='computer_stage_finished'></td>
+<td class='computer_stage_running'><%= sq[1] %>/<%= @qty %></td>
+<td class='computer_stage_planned'></td>
+
+<% when :packing %>
+<td class='computer_stage_finished'></td>
+<td class='computer_stage_finished'></td>
+<td class='computer_stage_running'><%= sq[1] %>/<%= @qty %></td>
+
+<% end %>
+</tr>
+
+<% end %>
+
+</table>
+
+</div>
+</td>
+
+
+</tr>
+</table>
 
 <h1>Details</h1>
 <table>
+
 <tr><td>Title:</td><td><%=h @order.title %></td></tr>
 <tr><td>Customer:</td><td><%=h @order.customer %></td></tr>
 <tr><td>Buyer order #:</td><td><%=h @order.buyer_order_number %></td></tr>
