@@ -38,63 +38,77 @@ end
 init
 
 puts 'Entering main operational loop'
+trap("SIGTERM") { exit!( 0 ) } 
 
 id_timeout = nil
 t = nil
-ids = []
+
 while true do
-	puts 'Waiting for new numbers'
-	activated = select($scanners_dev, nil, nil, id_timeout)
+	begin 	    
+		puts 'Waiting for new numbers'
+		activated = select($scanners_dev, nil, nil, id_timeout)
 
-	puts 'After select'
-	if activated.nil? then
-		puts 'Timeout exceeded. Saving abort.'
-		id_timeout = nil
-		next
-	end
-
-	activated[0].each { |dev|
-		# Find out scanner
-#		scanner_id = nil
-#		$scanners.each_index { |i| scanner_id = i if $scanners[i].dev == dev }
-#		raise 'Got message from unknown scanner!' if scanner_id.nil?
-		scanner_id = $scanners_dev.index(dev)
-		scanner = $scanners[scanner_id]
-
-		# Get line from device
-		# GREYFIX: somehow scanner produces \r instead of normal EOL
-		line = dev.gets
-		
-		if line.nil? then
-			puts 'PANIC: Null line entered. Check the devices! Sleeping for 5 seconds'
-			sleep 5
+		if activated.nil? then
+			puts 'Timeout exceeded. Saving abort.'
+			id_timeout = nil
 			next
 		end
 
-		line.chomp!
-		puts "Got from scanner #{scanner_id}: #{line}"
+		activated[0].each { |dev|
+			# Find out scanner
+#			scanner_id = nil
+#			$scanners.each_index { |i| scanner_id = i if $scanners[i].dev == dev }
+#			raise 'Got message from unknown scanner!' if scanner_id.nil?
+			scanner_id = $scanners_dev.index(dev)
+			scanner = $scanners[scanner_id]
 
-		if id_timeout.nil? then 
-			scanner.scan_vals.clear
-			puts "Set timeout #{$TIMEOUT_LIMIT} sec for waiting paired ID"
-			id_timeout = $TIMEOUT_LIMIT
-			t = Time.now
-		end
+			# Get line from device
+			# GREYFIX: somehow scanner produces \r instead of normal EOL
+			line = dev.gets
+		
+			if line.nil? then
+				puts 'PANIC: Null line entered. Check the devices! Sleeping for 5 seconds'
+				sleep 5
+				next
+			end
 
-		scanner.scan_vals.push(line)
-		r = scanner.process_vals()
-		if r == 0 then
-			puts "Processing OK"
-			id_timeout = nil
-		elsif r == 1
-			puts 'Waiting for next number'
-			id_timeout = $TIMEOUT_LIMIT - (Time.now - t)
-			id_timeout = nil if id_timeout < 0
-			puts "Timeout is set to #{id_timeout}"
-		else
-			puts 'Error - incompatible types of bars'
-			id_timeout = nil
-		end
+			line.chomp!
+			puts "Got from scanner #{scanner_id}: #{line}"
+		
+			if line == $SCANNERD_RESET_SEQ then
+				puts "Reset-barcode entered"
+				scanner.svals.clear
+				id_timeout = nil
+				next
+			end
 
-	}
+			if id_timeout.nil? then 
+				puts "Reseting scannerd by timeout or reset-barcode"
+				scanner.svals.clear
+				puts "Set timeout #{$TIMEOUT_LIMIT} sec for waiting paired ID"
+				id_timeout = $TIMEOUT_LIMIT
+				t = Time.now
+			end
+
+			scanner.svals = line
+		
+			r = scanner.process_vals()
+			if r == 0 then
+				puts "Processing OK"
+				id_timeout = nil
+			elsif r == 1
+				puts 'Waiting for next number'
+				id_timeout = $TIMEOUT_LIMIT - (Time.now - t)
+				id_timeout = nil if id_timeout < 0
+				puts "Timeout is set to #{id_timeout}"
+			else
+				puts 'Error - incompatible types of bars'
+				id_timeout = nil
+			end
+
+		}
+	rescue Exception => ex
+	    puts ex
+	    id_timeout = nil
+	end
 end

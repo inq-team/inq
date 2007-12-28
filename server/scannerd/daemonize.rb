@@ -12,6 +12,7 @@ def go_daemon
 	File.umask 077
 	trap "SIGCHLD", "IGNORE"
 
+
 	if $DEBUG
 		$stderr.puts "DEBUG enabled, running in foreground"
 	else

@@ -2,67 +2,74 @@
 
 require 'net/http'
 require 'rexml/document'
+require 'open-uri'
 
 class Scanner
-	attr_accessor :dev, :scan_vals
+	attr_accessor :dev
 
+	def svals=(sv)
+	    @svals[sv[/./]] = sv
+	end
+	
+	def svals
+	    @svals
+	end
+	
 	def initialize(devname)
 		puts 'Initialize Scanner'
-		@scan_vals=[]
+		@svals = Hash.new
 		@dev = File.open(devname)
 		$scanners_dev << @dev
 		p @dev
 	end
 
+	def preprocess_vals()
+	    @svals.keys.each {|k| @svals[k].sub!(/^\w0*/, '') if ['S', 'A', 'T', 'I', 'P'].index(k) != nil }
+	end
+	
 	def process_vals()
-		return -1 if @scan_vals.size > 4
+		return -1 if @svals.size > 5
 		$PAIRED_SCANS.each { |ps|    
-			if @scan_vals.sort!.map{|i| i[/./]} == ps.sort! then
+			if @svals.keys.sort! == ps.sort! then
 				puts "Scanned values:"
-				puts @scan_vals
+				puts @svals
+				preprocess_vals()
+				case ps
+				    when ['C', 'S'] then
+					open("http://#{$SERVER_ADDR}/computers/add_component/#{@svals['S']}.xml?type=Power+Supply&vendor=ColdWatt&model=CWA2-0650-10-IV01&serial=#{@svals['C']}")
+				    when ['A', 'P', 'S', 'T'], ['A', 'I', 'P', 'S', 'T'] then 
+					addrs=nil
+					
+					if @svals['I'] == nil then
+					    begin 
+						puts 'Trying get IP addresses range for place from web-server'
+						addrs = open("http://#{$SERVER_ADDR}/shelves/addresses/#{svals['P']}").readlines.collect { |s| s.chomp }
+					    rescue Exception => ex
+						puts ex
+						puts 'Can\'t get IP addresses range from WEB server. Try to wait it from scanner'
+					    end
 
-				r = check_vals(ps)
-				return r if r != 0
-
-				system_id = @scan_vals[ps.index('S')][1..-1]
-				ps.each { |actn|
-					scanned_id = @scan_vals[ps.index(actn)][1..-1]
-					case actn
-					when 'P'
-						process_ip(scanned_id, system_id)
-					when 'T'
-						process_it(scanned_id, system_id)
-					when 'I'
-						process_ii(scanned_id, system_id)
+					    return 1 if addrs == nil
+					else
+					    addrs = Array.new.push(@svals['I'])
+					    puts 'IP address got from scanner'
+					    puts addrs
+					    open("http://#{$SERVER_ADDR}/computers/set_shelf/#{@svals['S']}.xml?shelf=#{@svals['P']}")
 					end
-				}
+
+					open("http://#{$SERVER_ADDR}/computers/set_tester/#{@svals['S']}.xml?tester_id=#{@svals['T']}")
+					open("http://#{$SERVER_ADDR}/computers/set_assembler/#{@svals['S']}.xml?assembler_id=#{@svals['A']}")
+					
+					addrs.each{ |a| Thread.new(a) { |la| send2ip_addr(la, @svals['S']) } }
+					    
+				end
+
 				return 0
 			end
 		}
 		return 1
 	end
 
-	def check_vals(exp_vals)
-		puts @scan_vals.size
-		return -1 if @scan_vals.size > 4
-		return 1 if exp_vals.index('I')==nil && $IP_BY_PLACE[@scan_vals[exp_vals.index('P')][1..-1]]==nil
-		return 0
-	end
-
-	def send2place(ip_range, system_id)
-		host1 = nil
-		host2 = nil
-		subnet = nil
-
-		ip_range.scan(/^(\d+\.\d+\.\d+\.)(\d+)\s\d+\.\d+\.\d+\.(\d+)/){|subnet, host1, host2|}
-		puts "Trying to send to #{host1} .. #{host2}"
-		host1.to_i.step(host2.to_i, 1) { |h|
-			Thread.new(h) { |lh|
-				send2ip_addr(subnet+"#{lh}", system_id)
-			}
-		}
-	end
-	
 	def send2ip_addr(ip_addr, system_id)
 		begin
 			puts "Trying to send ID(#{system_id}) to #{ip_addr}:#{$CLIENT_PORT}"
@@ -72,30 +79,4 @@ class Scanner
 			puts "Error: can not connect to client on #{ip_addr}:#{$CLIENT_PORT}"
 		end
 	end    
-	
-	def process_ii(ip_id, system_id)
-		send2ip_addr(ip_id, system_id)
-	end
-	
-	def process_ip(place_id, system_id)
-		puts "Match to place (#{place_id})"
-		puts "Send shelf"
-		puts "curl \"http://#{$SERVER_ADDR}/computers/set_shelf/#{system_id}.xml?shelf=#{place_id}\""
-		system("curl \"http://#{$SERVER_ADDR}/computers/set_shelf/#{system_id}.xml?shelf=#{place_id}\"")
-
-		ip_range = $IP_BY_PLACE[place_id]
-		send2place(ip_range, system_id) if ip_range!=nil
-	end
-	
-	def process_it(tid, id)
-		puts "Send tester ID"
-		puts "curl \"http://#{$SERVER_ADDR}/computers/set_tester/#{id}.xml?tester_id=#{tid}\""
-		system("curl \"http://#{$SERVER_ADDR}/computers/set_tester/#{id}.xml?tester_id=#{tid}\"")
-	end
-	
-	def process_ia(aid, id)
-		puts "Send assembler ID to server ..."
-		puts "curl -i \"http://#{$SERVER_ADDR}/computers/set_assembler/#{id}.xml?assembler_id=#{aid}\""
-#		system("curl -i \"http://#{$SERVER_ADDR}/computers/set_assembler/#{id}.xml?assembler_id=#{aid}\"")
-	end
 end
