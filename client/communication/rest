@@ -31,6 +31,12 @@ submit_components()
 	curl -f --data list=\""`cat $FILENAME `"\" -X POST "$REST_SERVER/computers/submit_components/$COMPUTER_ID.xml"
 }
 
+submit_additional_components()
+{
+	FILENAME=$1
+	curl -f --data list=\""`cat $FILENAME `"\" -X POST "$REST_SERVER/computers/submit_additional_components/$COMPUTER_ID.xml"
+}
+
 set_ip()
 {
 	curl -sf "$REST_SERVER/computers/set_ip/$COMPUTER_ID?ip=$1"

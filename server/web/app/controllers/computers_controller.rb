@@ -95,9 +95,12 @@ class ComputersController < ApplicationController
 	def show
 		@computer = Computer.find(params[:id])
                 @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
-		@testing_number = params[:testing] ? params[:testing].to_i() : @sorted_testings.size - 1
-		
-		redirect_to(:action => 'hw', :id => params[:id], :testing => @testing_number)
+		if @sorted_testings
+			@testing_number = params[:testing] ? params[:testing].to_i() : @sorted_testings.size - 1
+			redirect_to(:action => 'hw', :id => params[:id], :testing => @testing_number)
+		else
+			redirect_to(:action => 'hw', :id => params[:id])
+		end
 	end
 
 	def hw
@@ -211,6 +214,42 @@ class ComputersController < ApplicationController
 			@computer.testings << testing
 		end
 
+		if @computer.save
+			flash[:notice] = 'Components successfully updated.'
+			respond_to() do |format|
+				format.html { redirect_to(:action => 'show', :id => @computer) }
+				format.xml { render(:xml => testing.to_xml()) }
+			end
+		else
+			head(:status => 500)
+		end
+	end
+
+	def submit_additional_components
+		@computer = Computer.find_by_id(params[:id])
+
+		d = REXML::Document.new(params[:list])
+		components = []
+		d.root.each_element { |c|
+			components << {
+				:type => c.elements['type'] ? c.elements['type'].text : '',
+				:vendor => c.elements['vendor'] ? c.elements['vendor'].text : '',
+				:model => c.elements['model'] ? c.elements['model'].text : '',
+				:serial => c.elements['serial'] ? c.elements['serial'].text : ''
+			}
+		}
+
+		t = @computer.last_testing
+		components.each { |h|
+			t.components << Component.new(
+				:serial => h[:serial],
+				:model => ComponentModel.find_or_create_by_name_and_vendor_and_component_group_id(
+					h[:model],
+					h[:vendor],
+					ComponentGroup.find_or_create_by_name(h[:type]).id
+				)
+			)
+		}
 		if @computer.save
 			flash[:notice] = 'Components successfully updated.'
 			respond_to() do |format|
