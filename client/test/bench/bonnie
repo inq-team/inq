@@ -47,7 +47,7 @@ test_started 1
 BENCHED_DRIVES=0
 for i in "$DRIVES_LIST"; do
 	perform_benchmark $i $BENCHED_DRIVES
-	BENCHED_DRIVES=$[ $BENCHED_DRIVES + 1 ]
+	BENCHED_DRIVES=$(( $BENCHED_DRIVES + 1 ))
 done
 
 test_succeeded `cat $RESULT_FILE`

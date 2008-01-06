@@ -55,7 +55,7 @@ interactive()
 			break
 		fi
 
-		test_fdd $[$FDD - 1]
+		test_fdd $(( $FDD - 1 ))
 
 		if (( $? == 0 )); then
 			print_green_message "Drive test passed"

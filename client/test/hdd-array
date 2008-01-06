@@ -44,15 +44,15 @@ detect_hdd_quantity()
 	sleep 5
 	HDD_QUANTITY=`hal-find-by-property --key=storage.drive_type --string=disk | wc -l`
 	if [ "$HDD_QUANTITY" -gt 0 ]; then
-		TIME_PER_ARRAY=$[ $HDDARR_TIMEOUT / $HDD_QUANTITY ]
+		TIME_PER_ARRAY=$(( $HDDARR_TIMEOUT / $HDD_QUANTITY ))
 	else
-		TIME_PER_ARRAY=$[ $HDDARR_TIMEOUT / 2 ]
+		TIME_PER_ARRAY=$(( $HDDARR_TIMEOUT / 2 ))
 	fi
 }
 
 temporary_hddarr_jobs_check()
 {
-	TOTAL_MEMORY=$[`grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024]
+	TOTAL_MEMORY=$(( `grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024 ))
 
 	[ "$TOTAL_MEMORY" -lt 512 ] && HDDARR_JOBS=4 || true
 }
@@ -95,15 +95,15 @@ array_stress_check()
 
 	while true; do
 		TIME=`date "+%s"`
-		if (( TIME - START > TIME_PER_ARRAY )); then
+		if $(( $TIME - $START > $TIME_PER_ARRAY )); then
 			clear_testing_environment $MOUNTPOINT
 			break
 		else
 			test_command_itself
 		fi
 
-		if (( TIME - LAST_LOG_TIME > HDDARR_LOGTIME )); then
-			test_progress $[$TIME - $TOTAL_START] $HDDARR_TIMEOUT
+		if $(( $TIME - $LAST_LOG_TIME > $HDDARR_LOGTIME )); then
+			test_progress $(( $TIME - $TOTAL_START )) $HDDARR_TIMEOUT
 			LAST_LOG_TIME=$TIME
 		fi
 	done

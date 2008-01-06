@@ -52,9 +52,9 @@ while true; do
 	ALIVE=0
 	for i in `seq 1 $CPU_QUANTITY`; do
 		(( `ps \`cat ~/dhrystone$i.pid\` | wc -l` == 2 )) && \
-			$[$ALIVE=$ALIVE + 1]
+			ALIVE=$(( $ALIVE + 1 ))
 	done
-	if (( ALIVE == 0 )); then
+	if [ $ALIVE -eq 0 ]; then
 		parse_results
 		break
 	fi

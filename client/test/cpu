@@ -61,11 +61,11 @@ while true; do
 	sleep $CPU_LOG_TIME
 	TIME=`date "+%s"`
 	check_alive_burners
-	if (( TIME - START > CPU_TEST_TIME )); then
+	if $(( $TIME - $START > $CPU_TEST_TIME )); then
 		stop_burn
 		test_succeeded
 		break
 	else
-		test_progress $[$TIME - $START] $CPU_TEST_TIME
+		test_progress $(( $TIME - $START )) $CPU_TEST_TIME
 	fi
 done

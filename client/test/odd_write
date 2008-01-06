@@ -97,7 +97,7 @@ interactive()
 
 	while ( [ "$non_passed" -eq 1 ] ); do
 		eject $odd || true
-		print_green_message "Drive $[ $TESTED_QUANTITY + 1]:"
+		print_green_message "Drive $(( $TESTED_QUANTITY + 1)):"
 		print_green_message "Either press y and insert media for testing, or n if you want to finish test: "
 		read choice
 
@@ -117,7 +117,7 @@ interactive()
 
 			if [ "$FLAG" -eq 1 ]; then
 				print_green_message "Drive test passed"
-				TESTED_QUANTITY=$[ $TESTED_QUANTITY + 1 ]
+				TESTED_QUANTITY=$(( $TESTED_QUANTITY + 1 ))
 				test_progress $TESTED_QUANTITY $ODD_QUANTITY
 				non_passed=0
 				eject $odd || true
