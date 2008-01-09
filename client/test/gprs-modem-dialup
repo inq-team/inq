@@ -1,15 +1,16 @@
 #!/bin/sh -ef
-# NAME=usb_gprs_modem_dialup
+# NAME=USB GPRS Modem Dialup
 # DESCRIPTION=Test GPRS modem, connected using USB
 # DESTROYS_HDD=N
 # IS_INTERACTIVE=N
 # POWEROFF_DURING_TEST=N
 # VERSION=0.1
-# VAR=DEV:str:/dev/ttyUSB0:Name of device to test
-# VAR=APN:str:internet.mts.ru:Cell service provider's Internet APN
+# TAGS=usb, gprs
+# VAR=DEV:string:/dev/ttyUSB0:Name of device to test
+# VAR=APN:string:internet.mts.ru:Cell service provider's Internet APN
 # VAR=PPPD_TRIES:int:4:Number of tries to bring pppd up
-# VAR=URL:str:img-fotki.yandex.ru/getx/10/photoface.359/sevastopol-foto_34661_L:URL to download (without http)
-# VAR=MD5:str:ca530886183b06d0047e0655537327aa:MD5 of downloaded file
+# VAR=URL:string:img-fotki.yandex.ru/getx/10/photoface.359/sevastopol-foto_34661_L:URL to download (without http)
+# VAR=MD5:string:ca530886183b06d0047e0655537327aa:MD5 of downloaded file
 # VAR=DOWNLOAD_TRIES:int:3:Number of tries to download the file
 # VAR=DOWNLOAD_MAX_TIME:int:60:Timeout for the whole download, seconds
 

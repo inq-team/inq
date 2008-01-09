@@ -5,8 +5,9 @@
 # IS_INTERACTIVE=N
 # POWEROFF_DURING_TEST=N
 # VERSION=0.1
-# VAR=DEV:str:/dev/ttyUSB0:Name of device to test
-# VAR=ANSWER_ATI:str:OK:String to get after ATI
+# TAGS=usb, gprs
+# VAR=DEV:string:/dev/ttyUSB0:Name of device to test
+# VAR=ANSWER_ATI:string:OK:String to get after ATI
 # VAR=CHAT_TIMEOUT:int:5:Timeout for waiting for answer
 
 . /usr/share/inquisitor/functions-test

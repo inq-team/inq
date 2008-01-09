@@ -1,16 +1,16 @@
-#!/bin/sh
+#!/bin/sh -ef
 # NAME=odd_write
 # DESCRIPTION=Optical Disc Drive write test
 # DESTROYS_HDD=N
 # IS_INTERACTIVE=Y
 # POWEROFF_DURING_TEST=N
 # VERSION=0.1
-# VAR=ODD_TEST_IMAGE:str:/usr/share/inquisitor/testimage.iso:Default image for comparison
-# VAR=ODD_TEST_IMAGE_BLOCKS:int:332800:This images size in blocks (2048 bytes each)
-# VAR=ODD_TEST_IMAGE_MD5:str:ffffffffffffffffffffffffffffffff:Test image MD5 hash
-# VAR=ODD_WRITE_SPEED:int:10:Default write speed if it won't detect
-# VAR=ODD_WRITE_SPEED_FORCE:bool:Y:Force write speed using
-# VAR=ODD_WRITE_MESSAGE:str:Writing test disc:Message to print when test will start
+# VAR=TEST_IMAGE:string:/usr/share/inquisitor/testimage.iso:Default image for comparison
+# VAR=TEST_IMAGE_BLOCKS:int:332800:This images size in blocks (2048 bytes each)
+# VAR=TEST_IMAGE_MD5:string:ffffffffffffffffffffffffffffffff:Test image MD5 hash
+# VAR=WRITE_SPEED:int:10:Default write speed if it won't detect
+# VAR=WRITE_SPEED_FORCE:boolean:true:Force write speed using
+# VAR=WRITE_MESSAGE:string:Writing test disc:Message to print when test will start
 
 . /usr/share/inquisitor/functions-test
 
@@ -135,7 +135,7 @@ detect_odd_quantity
 [ "$ODD_QUANTITY" -eq 0 ] && return
 TESTED_QUANTITY=0
 test_started $ODD_QUANTITY
-print_green_message "$ODD_WRITE_MESSAGE"
+print_green_message "$WRITE_MESSAGE"
 
 for i in `get_odds_list`; do
 	interactive $i

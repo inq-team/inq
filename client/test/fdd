@@ -1,11 +1,12 @@
-#!/bin/sh
-# NAME=fdd
-# DESCRIPTION=Floppy drive test
+#!/bin/sh -ef
+# NAME=FDD read/write
+# DESCRIPTION=Floppy drive read/write test
 # DESTROYS_HDD=N
 # IS_INTERACTIVE=Y
 # POWEROFF_DURING_TEST=N
 # VERSION=0.1
-# VAR=FDD_SIZE:int:1440:Size of testing floppy, KiB
+# TAGS=fdd
+# VAR=FLOPPY_SIZE:int:1440:Size of testing floppy, KiB
 
 . /usr/share/inquisitor/functions-test
 
@@ -18,7 +19,7 @@ detect_fdd_quantity()
 
 generate_test_image()
 {
-	if dd if=/dev/urandom of=$FDD_TEST_IMAGE bs=1024 count=$FDD_SIZE; then
+	if dd if=/dev/urandom of=$FDD_TEST_IMAGE bs=1024 count=$FLOPPY_SIZE; then
 		true
 	else
 		test_failed
@@ -36,7 +37,7 @@ test_fdd()
 {
 	dd if=$FDD_TEST_IMAGE of=/dev/fd$1 >/dev/null 2>&1
 	floppycontrol -f -d /dev/fd$1 >/dev/null 2>&1
-	dd if=/dev/fd$1 of="$FDD_TEST_IMAGE"_fd bs=1024 count=$FDD_SIZE >/dev/null 2>&1
+	dd if=/dev/fd$1 of="$FDD_TEST_IMAGE"_fd bs=1024 count=$FLOPPY_SIZE >/dev/null 2>&1
 	diff "$FDD_TEST_IMAGE"_fd $FDD_TEST_IMAGE >/dev/null 2>&1 || return 1
 	return 0
 }

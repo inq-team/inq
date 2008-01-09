@@ -1,14 +1,15 @@
-#!/bin/sh -e
-# NAME=hdd_array
+#!/bin/sh -ef
+# NAME=HDD array stress
 # DESCRIPTION=HDD array stress test
 # DESTROYS_HDD=Y
 # IS_INTERACTIVE=N
 # POWEROFF_DURING_TEST=N
 # VERSION=0.1
-# VAR=HDDARR_TIMEOUT:int:3600:Total time of HDD array testing
-# VAR=HDDARR_LOGTIME:int:120:Time between progress updates
-# VAR=HDDARR_JOBS:int:16:Number of parallely running jobs during compile
-# VAR=HDDARR_STRESS_TREE:str:/usr/share/inquisitor/linux-2.6.22.5-31-stress.tar.gz:Tarball file containing stress test tree
+# TAGS=hdd, stress
+# VAR=TIMEOUT:int:3600:Total time of HDD array testing
+# VAR=LOGTIME:int:120:Time between progress updates
+# VAR=JOBS:int:16:Number of parallely running jobs during compile
+# VAR=STRESS_TREE:string:/usr/share/inquisitor/linux-2.6.22.5-31-stress.tar.gz:Tarball file containing stress test tree
 
 . /usr/share/inquisitor/functions-test
 
@@ -28,8 +29,8 @@ prepare_source_tree()
 	local tree_root=$1
 
 	cd $tree_root
-	tar xzf "$HDDARR_STRESS_TREE" >/dev/null 2>&1 || test_failed
-	tree_name=`basename "$HDDARR_STRESS_TREE" .tar.gz`
+	tar xzf "$STRESS_TREE" >/dev/null 2>&1 || test_failed
+	tree_name=`basename "$STRESS_TREE" .tar.gz`
 	cd "$tree_name"
 
 	#is it linux source?
@@ -44,9 +45,9 @@ detect_hdd_quantity()
 	sleep 5
 	HDD_QUANTITY=`hal-find-by-property --key=storage.drive_type --string=disk | wc -l`
 	if [ "$HDD_QUANTITY" -gt 0 ]; then
-		TIME_PER_ARRAY=$(( $HDDARR_TIMEOUT / $HDD_QUANTITY ))
+		TIME_PER_ARRAY=$(( $TIMEOUT / $HDD_QUANTITY ))
 	else
-		TIME_PER_ARRAY=$(( $HDDARR_TIMEOUT / 2 ))
+		TIME_PER_ARRAY=$(( $TIMEOUT / 2 ))
 	fi
 }
 
@@ -54,7 +55,7 @@ temporary_hddarr_jobs_check()
 {
 	TOTAL_MEMORY=$(( `grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024 ))
 
-	[ "$TOTAL_MEMORY" -lt 512 ] && HDDARR_JOBS=4 || true
+	[ "$TOTAL_MEMORY" -lt 512 ] && JOBS=4 || true
 }
 
 prepare_array_for_test()
@@ -70,7 +71,7 @@ prepare_array_for_test()
 test_command_itself()
 {
 	make clean >/dev/null 2>&1 && \
-	make -j $HDDARR_JOBS fs >/dev/null 2>&1 || test_failed
+	make -j $JOBS fs >/dev/null 2>&1 || test_failed
 }
 
 clear_testing_environment()
@@ -102,8 +103,8 @@ array_stress_check()
 			test_command_itself
 		fi
 
-		if $(( $TIME - $LAST_LOG_TIME > $HDDARR_LOGTIME )); then
-			test_progress $(( $TIME - $TOTAL_START )) $HDDARR_TIMEOUT
+		if $(( $TIME - $LAST_LOG_TIME > $LOGTIME )); then
+			test_progress $(( $TIME - $TOTAL_START )) $TIMEOUT
 			LAST_LOG_TIME=$TIME
 		fi
 	done
@@ -114,7 +115,7 @@ make_arrays
 temporary_hddarr_jobs_check
 
 TOTAL_START=`date "+%s"`
-test_started $HDDARR_TIMEOUT
+test_started $TIMEOUT
 
 for i in `get_harddrives_list`; do
 	array_stress_check $i

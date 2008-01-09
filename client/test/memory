@@ -1,12 +1,13 @@
-#!/bin/sh
-# NAME=memory
+#!/bin/sh -ef
+# NAME=Memory
 # DESCRIPTION=Memory test
 # DESTROYS_HDD=N
 # IS_INTERACTIVE=N
 # POWEROFF_DURING_TEST=N
 # VERSION=0.1
-# VAR=MEM_TEST_LOOPS:int:3:Testing loops
-# VAR=MEM_LOG_TIME:int:120:Time between progress updates
+# TAGS=ram, memory
+# VAR=TEST_LOOPS:int:3:Testing loops
+# VAR=LOG_TIME:int:120:Time between progress updates
 
 . /usr/share/inquisitor/functions-test
 
@@ -14,7 +15,7 @@
 #TOTAL_MEMORY=$(( `grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024 ))
 
 TOTAL_MEMORY=$(( (`grep MemTotal /proc/meminfo | awk '{print $2}'`) / 1024 - 256 ))
-TOTAL_SUBSTAGES=$(( 16 * $MEM_TEST_LOOPS ))
+TOTAL_SUBSTAGES=$(( 16 * $TEST_LOOPS ))
 COMPLETED_SUBSTAGES=0
 MEMORY_LOG=`mktemp`
 
@@ -32,7 +33,7 @@ turnon_oom_killer()
 
 run_memtester()
 {
-	memtester $TOTAL_MEMORY $MEM_TEST_LOOPS > $MEMORY_LOG &
+	memtester $TOTAL_MEMORY $TEST_LOOPS > $MEMORY_LOG &
 
 	MEMTESTER_PID=`ps -ewf | grep 'memtester' | head -n1 | \
 			sed 's/^[^0-9]*\([0-9]\+\)[^0-9].*$/\1/'`
@@ -43,7 +44,7 @@ test_started $TOTAL_SUBSTAGES
 run_memtester
 
 while true ; do
-	sleep $MEM_LOG_TIME
+	sleep $LOG_TIME
 	COMPLETED_SUBSTAGES=`sed '{:loop g; n; s/^Loop\|Done/\0/; T loop; g; \
 		b nloop; :nloop n; s/^Loop\|Done/\0/; T nloop; g; b nloop; }' \
 		< $MEMORY_LOG | grep -v '^$' | wc -l`

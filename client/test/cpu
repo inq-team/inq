@@ -1,12 +1,13 @@
 #!/bin/sh -ef
-# NAME=cpu
+# NAME=CPU burning
 # DESCRIPTION=CPU burn-in testing
 # DESTROYS_HDD=N
 # IS_INTERACTIVE=N
 # POWEROFF_DURING_TEST=N
 # VERSION=0.1
-# VAR=CPU_TEST_TIME:int:1800:Total time of CPU testing
-# VAR=CPU_LOG_TIME:int:120:Time between progress updates
+# TAGS=cpu, stress
+# VAR=TEST_TIME:int:1800:Total time of CPU testing
+# VAR=LOG_TIME:int:120:Time between progress updates
 
 . /usr/share/inquisitor/functions-test
 
@@ -54,18 +55,18 @@ check_alive_burners()
 detect_burn_program
 detect_cpu_quantity
 start_burn
-test_started $CPU_TEST_TIME
+test_started $TEST_TIME
 
 START=`date "+%s"`
 while true; do
-	sleep $CPU_LOG_TIME
+	sleep $LOG_TIME
 	TIME=`date "+%s"`
 	check_alive_burners
-	if $(( $TIME - $START > $CPU_TEST_TIME )); then
+	if $(( $TIME - $START > $TEST_TIME )); then
 		stop_burn
 		test_succeeded
 		break
 	else
-		test_progress $(( $TIME - $START )) $CPU_TEST_TIME
+		test_progress $(( $TIME - $START )) $TEST_TIME
 	fi
 done

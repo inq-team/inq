@@ -1,17 +1,18 @@
-#!/bin/sh
-# NAME=odd_read
+#!/bin/sh -ef
+# NAME=ODD read
 # DESCRIPTION=Optical Disc Drive read test
 # DESTROYS_HDD=N
 # IS_INTERACTIVE=Y
 # POWEROFF_DURING_TEST=N
 # VERSION=0.1
-# VAR=ODD_TEST_IMAGE_HASH:str:6fa7786eef2e11d36e8bc1663679f161:Default image for comparison hash
-# VAR=ODD_TEST_IMAGE_BLOCKS:int:332800:This images size in blocks (2048 bytes each)
-# VAR=ODD_MESH_POINTS:int:1024:Points for meshes for monitoring drive's speed
+# TAGS=odd
+# VAR=TEST_IMAGE_HASH:string:6fa7786eef2e11d36e8bc1663679f161:Default image for comparison hash
+# VAR=TEST_IMAGE_BLOCKS:int:332800:This images size in blocks (2048 bytes each)
+# VAR=MESH_POINTS:int:1024:Points for meshes for monitoring drive's speed
 
 . /usr/share/inquisitor/functions-test
 
-ODD_IMAGE=`mktemp`
+IMAGE=`mktemp`
 RESULT_FILE=`mktemp`
 
 detect_odd_quantity()
@@ -23,12 +24,12 @@ test_odd()
 {
 	local odd=$1
 
-	readcd -v dev=$odd f=$ODD_IMAGE sectors=0-$ODD_TEST_IMAGE_BLOCKS \
-		meshpoints=$ODD_MESH_POINTS >$RESULT_FILE || true
-	[ ! -s "$ODD_IMAGE" ] && dd if=$odd of=$ODD_IMAGE bs=2048 \
-				count=$ODD_TEST_IMAGE_BLOCKS >/dev/null 2>&1
+	readcd -v dev=$odd f=$IMAGE sectors=0-$TEST_IMAGE_BLOCKS \
+		meshpoints=$MESH_POINTS >$RESULT_FILE || true
+	[ ! -s "$IMAGE" ] && dd if=$odd of=$IMAGE bs=2048 \
+				count=$TEST_IMAGE_BLOCKS >/dev/null 2>&1
 
-	[ `md5sum -b < $ODD_IMAGE | awk '{print $1}'` = $ODD_TEST_IMAGE_HASH ] && \
+	[ `md5sum -b < $IMAGE | awk '{print $1}'` = $TEST_IMAGE_HASH ] && \
 		FLAG=1 || FLAG=0
 }
 
@@ -67,7 +68,7 @@ interactive()
 
 remove_test_image()
 {
-	rm -f $ODD_IMAGE
+	rm -f $IMAGE
 }
 
 generate_speed_results()
