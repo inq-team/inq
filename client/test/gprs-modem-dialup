@@ -5,13 +5,13 @@
 # IS_INTERACTIVE=N
 # POWEROFF_DURING_TEST=N
 # VERSION=0.1
-# VAR=GPRS_DIALUP_DEV:str:/dev/ttyUSB0:Name of device to test
-# VAR=GPRS_DIALUP_APN:str:internet.mts.ru:Cell service provider's Internet APN
-# VAR=GPRS_DIALUP_PPPD_TRIES:int:4:Number of tries to bring pppd up
-# VAR=GPRS_DIALUP_URL:str:img-fotki.yandex.ru/getx/10/photoface.359/sevastopol-foto_34661_L:URL to download (without http)
-# VAR=GPRS_DIALUP_MD5:str:ca530886183b06d0047e0655537327aa:MD5 of downloaded file
-# VAR=GPRS_DIALUP_DOWNLOAD_TRIES:int:3:Number of tries to download the file
-# VAR=GPRS_DIALUP_DOWNLOAD_MAX_TIME:int:60:Timeout for the whole download, seconds
+# VAR=DEV:str:/dev/ttyUSB0:Name of device to test
+# VAR=APN:str:internet.mts.ru:Cell service provider's Internet APN
+# VAR=PPPD_TRIES:int:4:Number of tries to bring pppd up
+# VAR=URL:str:img-fotki.yandex.ru/getx/10/photoface.359/sevastopol-foto_34661_L:URL to download (without http)
+# VAR=MD5:str:ca530886183b06d0047e0655537327aa:MD5 of downloaded file
+# VAR=DOWNLOAD_TRIES:int:3:Number of tries to download the file
+# VAR=DOWNLOAD_MAX_TIME:int:60:Timeout for the whole download, seconds
 
 . /usr/share/inquisitor/functions-test
 
@@ -92,3 +92,7 @@ curl --retry "$DOWNLOAD_TRIES" --max-time "$DOWNLOAD_MAX_TIME" http://$URL -o $T
 echo -n 'Checking MD5 sum'
 echo "$MD5  $TMP_DIR/download" >$TMP_DIR/checkfile
 md5sum -c $TMP_DIR/checkfile && echo_success || test_failed 'Checking MD5 sum'
+
+exit_handler
+
+test_succeeded
