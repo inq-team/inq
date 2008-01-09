@@ -5,7 +5,7 @@
 # IS_INTERACTIVE=false
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
-# TAGS=hdd, flash
+# TAGS=hdd,flash
 # VAR=SIZE_LIMIT:int:2048:Everything that is less than this amount (MiB) is an IDE flash
 
 . /usr/share/inquisitor/functions-test

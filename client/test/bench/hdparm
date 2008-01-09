@@ -1,9 +1,10 @@
-#!/bin/sh -f
-# NAME=hdparm
+#!/bin/sh -ef
+# NAME=Hdparm
 # DESCRIPTION=Hdparm HDD speed benchmark
 # DESTROYS_HDD=false
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
+# TAGS=benchmark,hdd
 
 . /usr/share/inquisitor/functions-test
 

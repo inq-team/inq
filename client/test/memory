@@ -5,7 +5,7 @@
 # IS_INTERACTIVE=false
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
-# TAGS=ram, memory
+# TAGS=ram,memory
 # VAR=TEST_LOOPS:int:3:Testing loops
 # VAR=LOG_TIME:int:120:Time between progress updates
 

@@ -5,7 +5,7 @@
 # IS_INTERACTIVE=false
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
-# TAGS=usb, gprs
+# TAGS=usb,gprs
 # VAR=DEV:string:/dev/ttyUSB0:Name of device to test
 # VAR=ANSWER_ATI:string:OK:String to get after ATI
 # VAR=CHAT_TIMEOUT:int:5:Timeout for waiting for answer

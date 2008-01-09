@@ -1,10 +1,11 @@
-#!/bin/sh -f
-# NAME=bonnie
+#!/bin/sh -ef
+# NAME=Bonnie
 # DESCRIPTION=Bonnie HDD performance benchmark
 # DESTROYS_HDD=true
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
-# VAR=BONNIE_SIZE:int:100:Testing file size in MiB
+# TAGS=benchmark,hdd
+# VAR=SIZE:int:100:Testing file size in MiB
 
 . /usr/share/inquisitor/functions-test
 
@@ -26,7 +27,7 @@ perform_benchmark()
 	mke2fs -m0 -F /dev/$DRIVE >/dev/null 2>&1
 	mount /dev/$DRIVE $SCRATCH_DIRECTORY
 
-	bonnie++ -u root -d $SCRATCH_DIRECTORY -s $BONNIE_SIZE \
+	bonnie++ -u root -d $SCRATCH_DIRECTORY -s $SIZE \
 		-n 1 -m benchmark > ${RESULT_FILE}_tmp 2>&1
 	echo -n "hdd"${DRIVE_NUMBER}"="`sed -n '$p' < ${RESULT_FILE}_tmp | \
 		sed 's/^benchmark,//;s/+//g;s/,,//g'`\& >> $RESULT_FILE

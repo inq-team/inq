@@ -1,11 +1,12 @@
-#!/bin/sh -f
-# NAME=dhrystone
+#!/bin/sh -ef
+# NAME=Dhrystone
 # DESCRIPTION=Dhrystone integer calculations benchmark
 # DESTROYS_HDD=false
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
-# VAR=DHRYSTONE_DURATION:int:30:Benchmark duration (sec)
-# VAR=DHRYSTONE_CHECKTIME:int:50:Time between checks of alive benchmarks
+# TAGS=benchmark,cpu
+# VAR=DURATION:int:30:Benchmark duration (sec)
+# VAR=CHECKTIME:int:50:Time between checks of alive benchmarks
 
 . /usr/share/inquisitor/functions-test
 
@@ -19,7 +20,7 @@ detect_cpu_quantity()
 start_benchmarking()
 {
 	for i in `seq 1 $CPU_QUANTITY`; do
-		dhrystone $DHRYSTONE_DURATION 2>&1 | awk '{print $1}' > \
+		dhrystone $DURATION 2>&1 | awk '{print $1}' > \
 			${RESULT_FILE}${i} &
 		echo $$ > ~/dhrystone$i.pid
 	done
@@ -47,7 +48,7 @@ start_benchmarking
 test_started 1
 
 while true; do
-	sleep $DHRYSTONE_CHECKTIME
+	sleep $CHECKTIME
 	
 	ALIVE=0
 	for i in `seq 1 $CPU_QUANTITY`; do

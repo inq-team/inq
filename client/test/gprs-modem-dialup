@@ -5,7 +5,7 @@
 # IS_INTERACTIVE=false
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
-# TAGS=usb, gprs
+# TAGS=usb,gprs
 # VAR=DEV:string:/dev/ttyUSB0:Name of device to test
 # VAR=APN:string:internet.mts.ru:Cell service provider's Internet APN
 # VAR=PPPD_TRIES:int:4:Number of tries to bring pppd up
