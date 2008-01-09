@@ -1,13 +1,13 @@
 #!/bin/sh -ef
-# NAME=usb_gprs_modem
+# NAME=USB GPRS modem
 # DESCRIPTION=Test GPRS modem, connected using USB
 # DESTROYS_HDD=N
 # IS_INTERACTIVE=N
 # POWEROFF_DURING_TEST=N
 # VERSION=0.1
-# VAR=GPRS_DEV:str:/dev/ttyUSB0:Name of device to test
-# VAR=GPRS_ANSWER_ATI:str:SIMCOM_Ltd:String to get after ATI
-# VAR=GPRS_CHAT_TIMEOUT:int:10:Timeout for waiting for answer
+# VAR=DEV:str:/dev/ttyUSB0:Name of device to test
+# VAR=ANSWER_ATI:str:OK:String to get after ATI
+# VAR=CHAT_TIMEOUT:int:5:Timeout for waiting for answer
 
 . /usr/share/inquisitor/functions-test
 
@@ -26,7 +26,19 @@ sleep 1
 echo '=== Check for proper answer from modem'
 stty 115200 -F $DEV
 sleep 1
-chat -t $CHAT_TIMEOUT -Vs '' AT OK-AT-OK ATI $ANSWER_ATI <$DEV >$DEV
+chat -t $CHAT_TIMEOUT -Vs '' AT OK-AT-OK ATI $ANSWER_ATI <$DEV >$DEV || test_failed 'Proper answer from modem'
+
+sleep 1
 
 echo '=== Getting IMEI'
-chat -t $CHAT_TIMEOUT -Vs '' AT OK-AT-OK AT+GSN '' AT OK <$DEV >$DEV
+TMP_DIR=`mktemp -d`
+chat -t $CHAT_TIMEOUT -Vs '' AT OK-AT-OK AT+GSN OK <$DEV >$DEV 2>$TMP_DIR/imei || test_failed 'Getting IMEI'
+IMEI=`sed -ne '/^[0-9][0-9]*$/ p' <$TMP_DIR/imei`
+echo "IMEI: $IMEI"
+
+$SHARE_DIR/add-component 'GPRS Modem' 'SIMCOM_Ltd' 'SIMCOM_SIM100S' "$IMEI"
+
+rm -f $TMP_DIR/imei
+rmdir $TMP_DIR
+
+test_succeeded
