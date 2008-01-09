@@ -1,12 +1,13 @@
-#!/bin/sh -e
-# NAME=usb_presence
+#!/bin/sh -ef
+# NAME=USB presence
 # DESCRIPTION=Tests presence of designated USB device
 # DESTROYS_HDD=N
 # IS_INTERACTIVE=N
 # POWEROFF_DURING_TEST=N
 # VERSION=0.1
-# VAR=IDVENDOR:str:0403:Filter in only devices with this idVendor (match all if empty)
-# VAR=IDPRODUCT:str:6001:Filter in only devices with this idProduct (match all if empty)
+# TAGS=usb
+# VAR=IDVENDOR:string:0403:Filter in only devices with this idVendor (match all if empty)
+# VAR=IDPRODUCT:string:6001:Filter in only devices with this idProduct (match all if empty)
 # VAR=COUNT:int:1:There should be this many devices
 
 . /usr/share/inquisitor/functions-test
