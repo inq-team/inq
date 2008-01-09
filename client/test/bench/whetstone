@@ -1,8 +1,8 @@
 #!/bin/sh -f
 # NAME=whetstone
 # DESCRIPTION=Whetstone floating-point calculations benchmark
-# DESTROYS_HDD=N
-# POWEROFF_DURING_TEST=N
+# DESTROYS_HDD=false
+# POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # VAR=WHETSTONE_LOOPS:int:20000:Loop count
 # VAR=WHETSTONE_CHECKTIME:int:60:Time between checks of alive benchmarks

@@ -27,8 +27,8 @@ __EOF__
 			printf '  %-20s  %s (%s)\n' "`echo $L | cut -f1 -d:`" "`echo $L | cut -f4 -d:`" "`echo $L | cut -f3 -d:`"
 		done
 		echo
-		grep -q "^# *DESTROYS_HDD=Y" $0 && echo 'WARNING! This test would destroy the contents of all your hard drives!'
-		grep -q "^# *POWEROFF_DURING_TEST=Y" $0 && echo 'WARNING! This test would end in a poweroff of system under test!'
+		grep -q "^# *DESTROYS_HDD=true" $0 && echo 'WARNING! This test would destroy the contents of all your hard drives!'
+		grep -q "^# *POWEROFF_DURING_TEST=true" $0 && echo 'WARNING! This test would end in a poweroff of system under test!'
 		exit 0
 	}
 
@@ -76,6 +76,9 @@ __EOF__
 		eval `sed -ne '/^# *VAR=/ s/^# *VAR=\(.*\):\(.*\):\(.*\):\(.*\)$/\1=\3/p' <$TEST_FILENAME`
 	fi
 else
-	# Planner has supplied us all variables
-	true
+	. /etc/inquisitor/global
+	. $SHARE_DIR/functions
+	. $SHARE_DIR/communication
+
+	test_started
 fi

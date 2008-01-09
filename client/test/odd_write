@@ -1,9 +1,9 @@
 #!/bin/sh -ef
 # NAME=odd_write
 # DESCRIPTION=Optical Disc Drive write test
-# DESTROYS_HDD=N
-# IS_INTERACTIVE=Y
-# POWEROFF_DURING_TEST=N
+# DESTROYS_HDD=false
+# IS_INTERACTIVE=true
+# POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # VAR=TEST_IMAGE:string:/usr/share/inquisitor/testimage.iso:Default image for comparison
 # VAR=TEST_IMAGE_BLOCKS:int:332800:This images size in blocks (2048 bytes each)

@@ -1,8 +1,8 @@
 #!/bin/sh -f
 # NAME=bonnie
 # DESCRIPTION=Bonnie HDD performance benchmark
-# DESTROYS_HDD=Y
-# POWEROFF_DURING_TEST=N
+# DESTROYS_HDD=true
+# POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # VAR=BONNIE_SIZE:int:100:Testing file size in MiB
 

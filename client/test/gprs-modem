@@ -1,9 +1,9 @@
 #!/bin/sh -ef
 # NAME=USB GPRS modem
 # DESCRIPTION=Test GPRS modem, connected using USB
-# DESTROYS_HDD=N
-# IS_INTERACTIVE=N
-# POWEROFF_DURING_TEST=N
+# DESTROYS_HDD=false
+# IS_INTERACTIVE=false
+# POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=usb, gprs
 # VAR=DEV:string:/dev/ttyUSB0:Name of device to test

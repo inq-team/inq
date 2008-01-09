@@ -1,9 +1,9 @@
 #!/bin/sh -ef
 # NAME=FDD read/write
 # DESCRIPTION=Floppy drive read/write test
-# DESTROYS_HDD=N
-# IS_INTERACTIVE=Y
-# POWEROFF_DURING_TEST=N
+# DESTROYS_HDD=false
+# IS_INTERACTIVE=true
+# POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=fdd
 # VAR=FLOPPY_SIZE:int:1440:Size of testing floppy, KiB

@@ -1,8 +1,8 @@
 #!/bin/sh -f
 # NAME=dhrystone
 # DESCRIPTION=Dhrystone integer calculations benchmark
-# DESTROYS_HDD=N
-# POWEROFF_DURING_TEST=N
+# DESTROYS_HDD=false
+# POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # VAR=DHRYSTONE_DURATION:int:30:Benchmark duration (sec)
 # VAR=DHRYSTONE_CHECKTIME:int:50:Time between checks of alive benchmarks

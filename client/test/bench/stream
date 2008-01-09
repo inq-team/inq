@@ -1,8 +1,8 @@
 #!/bin/sh -f
 # NAME=stream
 # DESCRIPTION=STREAM memory throughput benchmark
-# DESTROYS_HDD=N
-# POWEROFF_DURING_TEST=N
+# DESTROYS_HDD=false
+# POWEROFF_DURING_TEST=false
 # VERSION=0.1
 
 . /usr/share/inquisitor/functions-test

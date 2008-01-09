@@ -1,8 +1,8 @@
 #!/bin/sh -f
 # NAME=mencoder
 # DESCRIPTION=Mencoder encoding time benchmark
-# DESTROYS_HDD=N
-# POWEROFF_DURING_TEST=N
+# DESTROYS_HDD=false
+# POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # VAR=MENCODER_ENCODE_OPTIONS:str:-ovc lavc -lavcopts vcodec=mpeg4 -oac mp3lame -lameopts vbr=3:Encoding options
 # VAR=MENCODER_FILE_TO_ENCODE:str:/usr/share/inquisitor/movie.avi:Path to file need to be encoded

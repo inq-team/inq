@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 # NAME=HDD passthrough disk
 # DESCRIPTION=HDD passthrough disks test
-# DESTROYS_HDD=Y
-# IS_INTERACTIVE=N
-# POWEROFF_DURING_TEST=N
+# DESTROYS_HDD=true
+# IS_INTERACTIVE=false
+# POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=hdd
 
