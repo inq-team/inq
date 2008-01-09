@@ -22,8 +22,7 @@ echo_success()
 	SETCOLOR_SUCCESS
 	echo -n 'DONE'
 	SETCOLOR_NORMAL
-	echo -ne ' ]\r'
-	echo
+	echo ' ]'
 }
 
 echo_failure()
@@ -33,8 +32,7 @@ echo_failure()
 	SETCOLOR_FAILURE
 	echo -n 'FAILED'
 	SETCOLOR_NORMAL
-	echo -ne ']\r'
-	echo
+	echo ']'
 }
 
 echo_skipped()
@@ -44,8 +42,7 @@ echo_skipped()
 	SETCOLOR_WARNING
 	echo -n ' SKIP '
 	SETCOLOR_NORMAL
-	echo -ne ']\r'
-	echo
+	echo ']'
 }
 
 echo_passed()
@@ -55,8 +52,7 @@ echo_passed()
 	SETCOLOR_WARNING
 	echo -n 'PASSED'
 	SETCOLOR_NORMAL
-	echo -ne ']\r'
-	echo
+	echo ']'
 }
 
 echo_running()
@@ -66,8 +62,7 @@ echo_running()
 	SETCOLOR_WARNING
 	echo -n 'CALLED'
 	SETCOLOR_NORMAL
-	echo -ne ']\r'
-	echo
+	echo ']'
 }
 
 # Log that something succeeded
@@ -133,11 +128,12 @@ test_started()
 {
 	TOTAL=$1
 
-	echo ""
 	echo -n Test $TEST_NAME
 	echo_running
 	test_stage_advance $TEST_NAME start
-	test_progress 0 $TOTAL
+	if [ -n "$TOTAL" ]; then
+		test_progress 0 $TOTAL
+	fi
 }
 
 test_succeeded()
@@ -147,7 +143,6 @@ test_succeeded()
 		RESULT=`echo $1 | sed 's/\&$//'`
 	fi
 
-	echo
 	echo -n Test $TEST_NAME
 	echo_success
 	test_stage_advance $TEST_NAME finish $RESULT
@@ -157,10 +152,10 @@ test_failed()
 {
 	COMMENT=$1
 
-	echo
 	echo -n Test $TEST_NAME
 	echo_failure
 	test_stage_advance $TEST_NAME fail $COMMENT
+	return 1
 }
 
 refresh_console()
