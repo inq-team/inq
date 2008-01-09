@@ -1,0 +1,32 @@
+#!/bin/sh -e
+
+for I in /sys/bus/usb/devices/*; do
+	if [ -r "$I/manufacturer" ]; then
+		MANUFACTURER=`cat "$I/manufacturer"`
+	elif [ -r "$I/idVendor" ]; then
+		MANUFACTURER=`cat "$I/idVendor"`
+	else
+		continue
+	fi
+
+	if [ -r "$I/product" ]; then
+		PRODUCT=`cat $I/product`
+	elif [ -r "$I/idProduct" ]; then
+		PRODUCT=`cat $I/idProduct`
+	else
+		continue
+	fi
+
+	if [ -r "$I/serial" ]; then
+		SERIAL=`cat $I/serial`
+	else
+		SERIAL=
+	fi
+
+	# Strip out unnecessary devices
+	if echo "$MANUFACTURER" | grep -q "^`uname -sr`"; then
+		continue
+	fi
+
+	$SHARE_DIR/add-component USB "$MANUFACTURER" "$PRODUCT" "$SERIAL"
+done
