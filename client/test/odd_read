@@ -36,7 +36,7 @@ test_odd()
 interactive()
 {
 	local odd=$1
-	non_passed=1
+	local non_passed=1
 
 	while ( [ "$non_passed" -eq 1 ] ); do
 		eject $odd || true

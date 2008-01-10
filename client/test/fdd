@@ -58,7 +58,7 @@ interactive()
 
 		test_fdd $(( $FDD - 1 ))
 
-		if (( $? == 0 )); then
+		if $(( $? == 0 )); then
 			print_green_message "Drive test passed"
 			test_progress $FDD $FDD_QUANTITY
 			NON_PASSED=0

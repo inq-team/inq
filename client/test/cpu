@@ -48,13 +48,24 @@ stop_burn()
 check_alive_burners()
 {
 	for i in `seq 1 $CPU_QUANTITY`; do
-		(( `ps \`cat ~/cpuburn$i.pid\` | wc -l` == 2 )) || test_failed
+		$(( `ps \`cat ~/cpuburn$i.pid\` | wc -l` == 2 )) || test_failed
+	done
+}
+
+affinite_burners()
+{
+	[ "$CPU_QUANTITY" -eq 1 ] && return
+
+	cpu_affinity `cat ~cpuburn1.pid` 1
+	for i in `seq 2 2 $CPU_QUANTITY`; do
+		cpu_affinity `cat ~/cpuburn$i.pid` $i
 	done
 }
 
 detect_burn_program
 detect_cpu_quantity
 start_burn
+#affinite_burners #as it is cirrently untested
 test_started $TEST_TIME
 
 START=`date "+%s"`
