@@ -1,2 +1,23 @@
-echo 'destination udp_dst { udp("10.254.254.1"); };' >> /etc/syslog-ng.conf
-echo 'log{source(sys); destination(udp_dst); };' >> /etc/syslog-ng.conf
+cat >/etc/syslog-ng.conf <<__EOF__
+options {
+	sync (0);
+	time_reopen (10);
+	log_fifo_size (1000);
+	long_hostnames (off);
+	use_dns (no);
+	use_fqdn (no);
+	create_dirs (no);
+	keep_hostname (yes);
+};
+
+source sys { unix-dgram ("/dev/log"); unix-dgram ("/var/lib/klogd/dev/log"); file("/proc/kmsg"); };
+source inq { pipe("/dev/inqlog"); };
+
+destination udp_dst { udp("10.254.254.1"); };
+destination ttyall { file("/dev/tty3"); };
+
+log { source(sys); destination(udp_dst); };
+log { source(inq); destination(udp_dst); };
+log { source(sys); destination(ttyall); };
+
+__EOF__

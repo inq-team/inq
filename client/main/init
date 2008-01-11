@@ -55,4 +55,7 @@ $SHARE_DIR/inq-sensors-detect >/dev/null 2>/dev/null && echo_success || echo_fai
 #echo 'root:x:0:root' >/etc/group || fatal_failure 'Preparing /etc/group'
 #echo -n >/etc/fstab || fatal_failure 'Make null /etc/fstab'
 
+echo -n 'Creating Inquisitor logging pipe'
+mkfifo /dev/inqlog && echo_success || echo_failure
+
 setterm -powersave off
