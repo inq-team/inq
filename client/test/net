@@ -52,6 +52,7 @@ if [ "$FIRST_NIC" -ne $i ]; then
 	ip route del default
 	test_nic $i
 	if [ "$FLAG" -eq 0 ]; then
+		true # ?
 	fi
 fi
 done
