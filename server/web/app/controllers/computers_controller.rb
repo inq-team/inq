@@ -308,13 +308,43 @@ class ComputersController < ApplicationController
 
 	def progress
 		@computer = Computer.find(params[:id])
-                testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }.last
+		testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }.last
 		progress = params[:complete].to_f() || 0
 		total = params[:total].to_f()
 		testing.progress_complete = progress
 		testing.progress_total = total 
 		if testing.save
 			flash[:notice] = 'Progress of current stage set successfully to #{ progress }/#{ total }.'
+			respond_to() do |format|
+				format.html { redirect_to(:action => 'show', :id => @computer) }
+				format.xml { render(:xml => testing.to_xml()) }
+			end
+		else
+			head(:status => 500)
+		end
+	end
+
+	def testing_finished
+		@computer = Computer.find(params[:id])
+		testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }.last
+		testing.test_end = Time.now
+		if testing.save
+			flash[:notice] = 'Testing finished'
+			respond_to() do |format|
+				format.html { redirect_to(:action => 'show', :id => @computer) }
+				format.xml { render(:xml => testing.to_xml()) }
+			end
+		else
+			head(:status => 500)
+		end
+	end
+
+	def test_promise_time
+		@computer = Computer.find(params[:id])
+		testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }.last
+		testing.progress_promised_time = params[:sec].to_f()
+		if testing.save
+			flash[:notice] = 'Set promised time'
 			respond_to() do |format|
 				format.html { redirect_to(:action => 'show', :id => @computer) }
 				format.xml { render(:xml => testing.to_xml()) }

@@ -25,6 +25,11 @@ test_stage_progress()
 	curl -sf "$REST_SERVER/computers/progress/$COMPUTER_ID.xml?complete=$COMPLETE&total=$TOTAL" >/dev/null
 }
 
+test_promise_time()
+{
+	curl -sf "$REST_SERVER/computers/test_promise_time/$COMPUTER_ID.xml?sec=$1"
+}
+
 submit_components()
 {
 	FILENAME=$1
@@ -35,6 +40,12 @@ submit_additional_components()
 {
 	FILENAME=$1
 	curl -f --data list=\""`cat $FILENAME `"\" -X POST "$REST_SERVER/computers/submit_additional_components/$COMPUTER_ID.xml"
+}
+
+# Mark current testing as finished
+testing_finished()
+{
+	curl -sf "$REST_SERVER/computers/testing_finished/$COMPUTER_ID"
 }
 
 set_ip()
@@ -56,5 +67,4 @@ publish_my_ip()
 	IP=`subnet $IP`
 	IP=set_ip $IP
 }
-
 
