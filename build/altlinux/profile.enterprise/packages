@@ -93,3 +93,4 @@ curl
 bonnie++
 ipmitool
 readcd
+schedutils
