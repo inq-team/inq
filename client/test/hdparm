@@ -1,50 +1,30 @@
-#!/bin/sh -ef
+#!/bin/sh -e
 # NAME=Hdparm
 # DESCRIPTION=Hdparm HDD speed benchmark
-# DESTROYS_HDD=false
-# POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=benchmark,hdd
+# VAR=AVG_SAMPLES:int:5:Number of tests per disc to average for result
 
 . /usr/share/inquisitor/functions-test
 
-RESULT_FILE=`mktemp`
+for UDI in `hal-find-by-property --key=storage.drive_type --string disk`; do
+	BLOCK_DEV=`hal-get-property --udi "$UDI" --key block.device`
 
-perform_benchmark()
-{
-	DRIVE=$1
-	DRIVE_NUMBER=$2
+	echo -n "HDD $BLOCK_DEV "
 
-	for i in `seq 1 10`; do
-		echo "hdd"${DRIVE_NUMBER}"="`hdparm -t /dev/$DRIVE | \
-			grep '^ Timing'`\& >> ${RESULT_FILE}_tmp
+	# Perform AVG_SAMPLES tests, calculate sum
+	for i in `seq 1 $AVG_SAMPLES`; do
+		BUFFERED=`hdparm -t $BLOCK_DEV | sed -ne '/Timing/ { s/^.*= *//; s, MB/sec,,; s/\.//; p }'`
+		CACHED=`hdparm -T $BLOCK_DEV | sed -ne '/Timing/ { s/^.*= *//; s, MB/sec,,; s/\.//; p }'`
+		BUFFERED_SUM=$(($BUFFERED_SUM + $BUFFERED))
+		CACHED_SUM=$(($CACHED_SUM + $BUFFERED))
+		echo -n '.'
 	done
-	perform_averaging $DRIVE_NUMBER
-}
 
-perform_averaging()
-{
-	DRIVE_NUMBER=$1
+	# Convert to KB/s, calculate average
+	BUFFERED_AVG=$(($BUFFERED_SUM * 10 / $AVG_SAMPLES))
+	CACHED_AVG=$(($CACHED_SUM * 10 / $AVG_SAMPLES))
 
-	CACHED=`perl -e '@l=map{@d=split;@d[$#d-1] if /cache/}<>;for(@l){$s+=$_;$i++ if $_};print $s/$i' < ${RESULT_FILE}_tmp`
-	BUFFERED=`perl -e '@l=map{@d=split;@d[$#d-1] if /buffer/}<>;for(@l){$s+=$_;$i++ if $_};print $s/$i' < ${RESULT_FILE}_tmp`
-
-	echo -n "hdd"${DRIVE_NUMBER}"="${CACHED}","${BUFFERED}\& >> $RESULT_FILE
-}
-
-clean_up_after_benchmark()
-{
-	rm -f $RESULT_FILE
-}
-
-get_drives_list
-test_started 1
-
-BENCHED_DRIVES=0
-for i in `get_odds_list`; do
-	perform_benchmark $i $BENCHED_DRIVES
-	BENCHED_DRIVES=$[ $BENCHED_DRIVES + 1 ]
+	# Report result
+	echo " $BUFFERED_AVG / $CACHED_AVG KB/s"
 done
-
-test_succeeded `cat $RESULT_FILE`
-clean_up_after_benchmark
