@@ -11,6 +11,20 @@
 
 . /usr/share/inquisitor/functions-test
 
+# Cleanup
+exit_handler()
+{
+	local rc=$?
+	trap - EXIT
+
+	rm -f "$TMP_DIR/download" "$TMP_DIR/checkfile" "$TMP_DIR/pppd.lock"
+	[ -d "$TMP_DIR" ] && rmdir "$TMP_DIR"
+	exit $rc
+}
+trap exit_handler HUP PIPE INT QUIT TERM EXIT
+
+TMP_DIR=`mktemp -d`
+
 detect_burn_program()
 {
 	CPU_VENDOR=`grep vendor_id /proc/cpuinfo | awk '{print $3}' | sed '2,$d'`
@@ -25,10 +39,7 @@ detect_burn_program()
 	esac
 }
 
-detect_cpu_quantity()
-{
-	CPU_QUANTITY=`grep processor /proc/cpuinfo | wc -l`
-}
+CPU_QUANTITY=`grep '^processor' /proc/cpuinfo | wc -l`
 
 start_burn()
 {
