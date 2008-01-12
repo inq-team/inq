@@ -434,6 +434,19 @@ __EOF__
 		end
 	end
 
+	def benchmark_submit_float
+		stage = Computer.find(params[:id]).last_testing.last_stage
+		stage.marks << Mark.new(
+			:key => params[:key],
+			:value_float => params[:value]
+		)
+		if stage.save!
+			head(:status => 200)
+		else
+			head(:status => 500)
+		end
+	end
+
 	def destroy
 		Computer.find(params[:id]).destroy
 		redirect_to :action => 'list'

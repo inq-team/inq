@@ -1,0 +1,12 @@
+<h1>Editing mark</h1>
+
+<%= error_messages_for :mark %>
+
+<% form_for(@mark) do |f| %>
+  <p>
+    <%= f.submit "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @mark %> |
+<%= link_to 'Back', marks_path %>
