@@ -179,6 +179,17 @@ class ComputersController < ApplicationController
 		render(:layout => 'computer_tabs')
 	end
 
+	def mark
+		@computer = Computer.find(params[:id])
+                @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
+		@testing_number = params[:testing] ? params[:testing].to_i() : @sorted_testings.size - 1
+		@testing = @sorted_testings[@testing_number]
+
+		@marks = Mark.by_testing(@testing)
+
+		render(:layout => 'computer_tabs')
+	end
+
 	def update
 		@computer = Computer.find(params[:id])
 		if @computer.update_attributes(params[:computer])
