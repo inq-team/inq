@@ -1,4 +1,4 @@
-#!/bin/sh -ef
+#!/bin/sh -e
 # NAME=CPU burning
 # DESCRIPTION=CPU burn-in testing
 # DESTROYS_HDD=false
@@ -7,7 +7,6 @@
 # VERSION=0.1
 # TAGS=cpu,stress
 # VAR=TEST_TIME:int:1800:Total time of CPU testing
-# VAR=LOG_TIME:int:120:Time between progress updates
 
 . /usr/share/inquisitor/functions-test
 
@@ -17,78 +16,53 @@ exit_handler()
 	local rc=$?
 	trap - EXIT
 
-	rm -f "$TMP_DIR/download" "$TMP_DIR/checkfile" "$TMP_DIR/pppd.lock"
-	[ -d "$TMP_DIR" ] && rmdir "$TMP_DIR"
+	if [ -f "$TMP_DIR/*.pid" ]; then
+		for I in "$TMP_DIR/*.pid"; do
+			stop_background "$I"
+		done
+	fi
+	if [ -d "$TMP_DIR" ]; then
+		rmdir "$TMP_DIR"
+	fi
 	exit $rc
 }
 trap exit_handler HUP PIPE INT QUIT TERM EXIT
 
 TMP_DIR=`mktemp -d`
 
-detect_burn_program()
-{
-	CPU_VENDOR=`grep vendor_id /proc/cpuinfo | awk '{print $3}' | sed '2,$d'`
+test_promise_time $TEST_TIME
 
-	case $CPU_VENDOR in
-	AuthenticAMD)
-		BURN_PROGRAM="burnK7"
-		;;
-	*)
-		BURN_PROGRAM="burnP6"
-		;;
-	esac
-}
+# Detecting burn program
+echo -n 'Detecting burners... '
+if grep -q '^vendor_id.*:.*AuthenticAMD' /proc/cpuinfo; then
+	BURN_PROGRAM=burnK7
+else
+	BURN_PROGRAM=burnP6
+fi
+echo -n $BURN_PROGRAM
+echo_success
 
+# Detect CPU cores quantity
 CPU_QUANTITY=`grep '^processor' /proc/cpuinfo | wc -l`
 
-start_burn()
-{
-	for i in `seq 1 $CPU_QUANTITY`; do
-		$BURN_PROGRAM &
-		echo $! >~/cpuburn$i.pid
-	done
-}
+# Start
+for i in `seq 0 $(($CPU_QUANTITY - 1))`; do
+	echo -n "Starting burn on core $i"
+	start_background "$TMP_DIR/cpuburn$i.pid" "$i" "$BURN_PROGRAM"
+	echo_success
+done
 
-stop_burn()
-{
-	for i in `seq 1 $CPU_QUANTITY`; do
-		killbypid cpuburn$i
-	done
-}
+echo -n "Burning for $TEST_TIME..."
+sleep $TEST_TIME
+echo_success
 
-check_alive_burners()
-{
-	for i in `seq 1 $CPU_QUANTITY`; do
-		$(( `ps \`cat ~/cpuburn$i.pid\` | wc -l` == 2 )) || test_failed
-	done
-}
-
-affinite_burners()
-{
-	[ "$CPU_QUANTITY" -eq 1 ] && return
-
-	cpu_affinity `cat ~cpuburn1.pid` 1
-	for i in `seq 2 2 $CPU_QUANTITY`; do
-		cpu_affinity `cat ~/cpuburn$i.pid` $i
-	done
-}
-
-detect_burn_program
-detect_cpu_quantity
-start_burn
-#affinite_burners #as it is cirrently untested
-test_started $TEST_TIME
-
-START=`date "+%s"`
-while true; do
-	sleep $LOG_TIME
-	TIME=`date "+%s"`
-	check_alive_burners
-	if $(( $TIME - $START > $TEST_TIME )); then
-		stop_burn
-		test_succeeded
-		break
+# Stop everything; fail if something is already dead
+for i in `seq 0 $(($CPU_QUANTITY - 1))`; do
+	echo -n "Stopping burn on core $i"
+	if stop_background "$TMP_DIR/cpuburn$i.pid"; then
+		echo_success
 	else
-		test_progress $(( $TIME - $START )) $TEST_TIME
+		echo_failed
+		test_failed "Burner $i died prematurely"
 	fi
 done
