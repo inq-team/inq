@@ -21,9 +21,11 @@ End: <%=h s.end %></span></td>
 
 <div id="progress_bar">
 <table>
+<% if @st_comp_qty.to_a.inject(0){ |s, x| s+=x[1] } > 0  %>
 <th>Assembling</th>
 <th>Testing</th>
 <th>Packing</th>
+<% end %>
 
 <% @st_comp_qty.to_a.select{|x| x[1] != 0}.each do |sq| %>
 <tr>
@@ -80,6 +82,7 @@ when :assembling %>
 </table>
 </td>
 <td style="vertical-align: top">
+
 <h1>Computers</h1>
 <table>
 <% @computers.each { |c| %>
@@ -91,8 +94,26 @@ when :assembling %>
 </td>
 </tr>
 </table>
+
+<% if @computers.size == 0%>
+
+<% form_tag :action => 'create_computers', :id => @order do %>
+
+  <p><label for="new_computers_qty">Quantity</label><br/>
+  <%= text_field 'new_computers', 'qty' %></p>
+  
+  <p><label for="new_computers_model">Model</label><br/>
+  <%= select :model, :name, @models %></p>
+  
+  <%= submit_tag 'Create' %>
+<% end %>
+
+<% end %>
+
 </td>
 </tr>
 </table>
+
+
 
 <%= link_to 'Back', orders_path %>
