@@ -19,16 +19,30 @@ class OrdersController < ApplicationController
 		@order = Order.find(params[:id])
 		@computers = Computer.find_all_by_order_id(params[:id])
 		@st_comp_qty = {}
-		@st_comp_qty[:assembling] = @computers.select{ |c| (c.computer_stages.select{ |s| s.end == nil }[0]).stage == 'assembling' }.size
-		@st_comp_qty[:testing] = @computers.select{ |c| (c.computer_stages.select{ |s| s.end == nil }[0]).stage == 'testing' }.size
-		@st_comp_qty[:packing] = @computers.select{ |c| (c.computer_stages.select{ |s| s.end == nil }[0]).stage == 'packing' }.size
+		@st_comp_qty[:assembling] = @computers.select{ |c| (c.computer_stages.select{ |s| s.end == nil }[0]).stage == 'assembling' if c.computer_stages.size > 0 }.size
+		@st_comp_qty[:testing] = @computers.select{ |c| (c.computer_stages.select{ |s| s.end == nil }[0]).stage == 'testing' if c.computer_stages.size > 0 }.size
+		@st_comp_qty[:packing] = @computers.select{ |c| (c.computer_stages.select{ |s| s.end == nil }[0]).stage == 'packing' if c.computer_stages.size > 0 }.size
 		@qty = @computers.size
+		@models = Model.find_all.map{ |x| x.name }
 
 #		@computers = []
 		respond_to do |format|
 			format.html # show.rhtml
 			format.xml  { render :xml => @order.to_xml(:include => [:order_lines, :manager]) }
 		end
+	end
+	
+	
+	def create_computers
+		qty = params[:new_computers][:qty].to_i
+		model = params[:model][:name]
+		qty.times do
+			c = Computer.new
+			c.model = Model.find_by_name(model)
+			c.order_id = params[:id]
+			c.save!
+		end
+		redirect_to :action => 'show'				
 	end
 
   # GET /orders/new
