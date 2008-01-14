@@ -22,7 +22,7 @@ exit_handler()
 		done
 	fi
 	if [ -d "$TMP_DIR" ]; then
-		rmdir "$TMP_DIR"
+		rm -fr "$TMP_DIR"
 	fi
 	exit $rc
 }

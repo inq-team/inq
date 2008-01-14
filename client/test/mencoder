@@ -12,12 +12,24 @@
 
 RESULT_FILE=`mktemp`
 
-test_started 1
+# Cleanup
+exit_handler()
+{
+	local rc=$?
+	trap - EXIT
+
+	if [ -f "$RESULT_FILE" ]; then
+		rm -fr "$RESULT_FILE"
+	fi
+	exit $rc
+}
+trap exit_handler HUP PIPE INT QUIT TERM EXIT
 
 time -o $RESULT_FILE mencoder $ENCODE_OPTIONS \
 	-o /dev/null $FILE_TO_ENCODE
 
-RESULT=`awk '{print $1,$2}' < $RESULT_FILE | \
-	sed -n 's/user//;s/system//;s/ /,/;1p'`
+benchmark_submit_float "User time" \
+`sed -n "s/user//;1p" < $RESULT_FILE | awk '{print $1}'`
 
-test_succeeded "result=${RESULT}"
+benchmark_submit_float "System time" \
+`sed -n "s/system//;1p" < $RESULT_FILE | awk '{print $1}'`

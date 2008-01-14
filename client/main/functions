@@ -234,17 +234,15 @@ subnet_for_dev()
 
 get_harddrives_list()
 {
-	for i in `hal-find-by-property --key=storage.drive_type --string disk`
+	for UDI in `hal-find-by-property --key=storage.drive_type --string disk`
 	do
-		hal-device $i | grep block.device | \
-		awk '{print $3}' | sed "s/'//g"
+		hal-get-property --udi "$UDI" --key block.device
 	done
 }
 
 get_odds_list()
 {
-	for i in `hal-find-by-capability --capability storage.cdrom`; do
-		hal-device $i | grep access_control.file | \
-		awk '{print $3}' | sed "s/'//g"
+	for UDI in `hal-find-by-capability --capability storage.cdrom`; do
+		hal-get-property --udi "$UDI" --key access_control.file
 	done
 }

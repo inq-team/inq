@@ -5,51 +5,70 @@
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=benchmark,hdd
-# VAR=SIZE:int:100:Testing file size in MiB
 
 . /usr/share/inquisitor/functions-test
 
 RESULT_FILE=`mktemp`
-SCRATCH_DIRECTORY="${RESULT_FILE}_scratch"
-mkdir -p $SCRATCH_DIRECTORY
+SCRATCH_DIRECTORY=`mktemp -d`
 
-get_drives_list()
+# Cleanup
+exit_handler()
 {
-	DRIVES_LIST=`ls -1 /sys/block/ | grep -v '[0-9]$'`
-	DRIVES_QUANTITY=`ls -1 /sys/block/ | grep -v '[0-9]$' | wc -l`
+	local rc=$?
+	trap - EXIT
+
+	if [ -f "$RESULT_FILE" ]; then
+		rm -fr "$RESULT_FILE"
+	fi
+	if [ -d "$SCRATCH_DIRECTORY" ]; then
+		umount -f $SCRATCH_DIRECTORY
+		rmdir $SCRATCH_DIRECTORY
+	fi
+	exit $rc
 }
+trap exit_handler HUP PIPE INT QUIT TERM EXIT
 
 perform_benchmark()
 {
 	DRIVE=$1
-	DRIVE_NUMBER=$2
 
-	mke2fs -m0 -F /dev/$DRIVE >/dev/null 2>&1
-	mount /dev/$DRIVE $SCRATCH_DIRECTORY
+	mke2fs -m0 -F $DRIVE >/dev/null 2>&1
+	mount $DRIVE $SCRATCH_DIRECTORY
 
-	bonnie++ -u root -d $SCRATCH_DIRECTORY -s $SIZE \
-		-n 1 -m benchmark > ${RESULT_FILE}_tmp 2>&1
-	echo -n "hdd"${DRIVE_NUMBER}"="`sed -n '$p' < ${RESULT_FILE}_tmp | \
-		sed 's/^benchmark,//;s/+//g;s/,,//g'`\& >> $RESULT_FILE
+	bonnie++ -u root -d $SCRATCH_DIRECTORY -s $TEST_FILE_SIZE \
+		-n 1 -m benchmark > ${RESULT_FILE} 2>&1
+	
+	benchmark_submit_float "HDD $DRIVE output char speed" \
+	`sed -n '$p' < ${RESULT_FILE} | awk -F, '{print $3}'`
+
+	benchmark_submit_float "HDD $DRIVE output char CPU load" \
+	`sed -n '$p' < ${RESULT_FILE} | awk -F, '{print $4}'`
+
+	benchmark_submit_float "HDD $DRIVE output block speed" \
+	`sed -n '$p' < ${RESULT_FILE} | awk -F, '{print $5}'`
+
+	benchmark_submit_float "HDD $DRIVE output block CPU load" \
+	`sed -n '$p' < ${RESULT_FILE} | awk -F, '{print $6}'`
+
+	benchmark_submit_float "HDD $DRIVE rewrite speed" \
+	`sed -n '$p' < ${RESULT_FILE} | awk -F, '{print $7}'`
+
+	benchmark_submit_float "HDD $DRIVE rewrite CPU load" \
+	`sed -n '$p' < ${RESULT_FILE} | awk -F, '{print $8}'`
+
+	benchmark_submit_float "HDD $DRIVE input char speed" \
+	`sed -n '$p' < ${RESULT_FILE} | awk -F, '{print $9}'`
+
+	benchmark_submit_float "HDD $DRIVE input char CPU load" \
+	`sed -n '$p' < ${RESULT_FILE} | awk -F, '{print $10}'`
 
 	umount $SCRATCH_DIRECTORY
 }
 
-clean_up_after_benchmark()
-{
-	rm -f $RESULT_FILE
-	rm -f ${RESULT_FILE}_tmp
-	rmdir $SCRATCH_DIRECTORY
-}
+TOTAL_MEMORY=$(( `grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024 ))
+TEST_FILE_SIZE=$(($TOTAL_MEMORY * 2))
 
-get_drives_list
-test_started 1
-
-BENCHED_DRIVES=0
-for i in "$DRIVES_LIST"; do
-	perform_benchmark $i $BENCHED_DRIVES
-	BENCHED_DRIVES=$(( $BENCHED_DRIVES + 1 ))
+for BLOCK_DEV in `get_harddrives_list`; do
+	echo "HDD $BLOCK_DEV"
+	perform_benchmark $BLOCK_DEV
 done
-
-test_succeeded `cat $RESULT_FILE`
-clean_up_after_benchmark

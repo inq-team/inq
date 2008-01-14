@@ -1,15 +1,15 @@
 #!/bin/sh -e
 # NAME=Hdparm
 # DESCRIPTION=Hdparm HDD speed benchmark
+# DESTROYS_HDD=false
+# POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=benchmark,hdd
 # VAR=AVG_SAMPLES:int:5:Number of tests per disc to average for result
 
 . /usr/share/inquisitor/functions-test
 
-for UDI in `hal-find-by-property --key=storage.drive_type --string disk`; do
-	BLOCK_DEV=`hal-get-property --udi "$UDI" --key block.device`
-
+for BLOCK_DEV in `get_harddrives_list`; do
 	echo -n "HDD $BLOCK_DEV "
 
 	# Perform AVG_SAMPLES tests, calculate sum
