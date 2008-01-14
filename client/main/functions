@@ -168,12 +168,28 @@ watchdog_stop()
 	fi
 }
 
-killbypid()
+# start_background(PIDFILE, CPULIST, CMDLINE)
+# Starts a process CMDLINE in background, setting CPU affinity to
+# CPU_LIST (if not empty). Saves PID of the program in PIDFILE.
+start_background()
 {
-	if [ -f ~/$1.pid ]; then
-		kill `cat ~/$1.pid` >/dev/null 2>/dev/null
-		rm -f ~/$1.pid
+	local PIDFILE=$1
+	shift
+	local CPULIST=$1
+	shift
+	if [ -n "$CPULIST" ]; then
+		taskset	-c "$CPULIST" $@ &
+		echo $! >$PIDFILE
+	else
+		$@ &
+		echo $! >$PIDFILE
 	fi
+}
+
+stop_background()
+{
+	kill `cat "$1"`
+	rm -f "$1"
 }
 
 print_green_message()
