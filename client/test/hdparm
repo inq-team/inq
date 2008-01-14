@@ -17,7 +17,7 @@ for UDI in `hal-find-by-property --key=storage.drive_type --string disk`; do
 		BUFFERED=`hdparm -t $BLOCK_DEV | sed -ne '/Timing/ { s/^.*= *//; s, MB/sec,,; s/\.//; p }'`
 		CACHED=`hdparm -T $BLOCK_DEV | sed -ne '/Timing/ { s/^.*= *//; s, MB/sec,,; s/\.//; p }'`
 		BUFFERED_SUM=$(($BUFFERED_SUM + $BUFFERED))
-		CACHED_SUM=$(($CACHED_SUM + $BUFFERED))
+		CACHED_SUM=$(($CACHED_SUM + $CACHED))
 		echo -n '.'
 	done
 
@@ -27,4 +27,6 @@ for UDI in `hal-find-by-property --key=storage.drive_type --string disk`; do
 
 	# Report result
 	echo " $BUFFERED_AVG / $CACHED_AVG KB/s"
+	benchmark_submit_float "HDD $BLOCK_DEV buffered speed" $BUFFERED_AVG
+	benchmark_submit_float "HDD $BLOCK_DEV cached speed" $CACHED_AVG
 done
