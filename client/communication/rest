@@ -56,7 +56,7 @@ set_ip()
 watchdog()
 {
 	while true; do
-		curl -f "$REST_SERVER/computers/watchdog/$COMPUTER_ID" || echo 'Watchdog ping failed!'
+		curl -sf "$REST_SERVER/computers/watchdog/$COMPUTER_ID" || echo 'Watchdog ping failed!'
 		sleep $[45 + $RANDOM % 15]
 	done
 }
@@ -68,3 +68,26 @@ publish_my_ip()
 	IP=set_ip $IP
 }
 
+benchmark_submit_float()
+{
+	local key=`echo "$1" | ruby -e 'require "cgi"; print CGI::escape($stdin.read)'`
+	local value=$2
+	if curl -sf "$REST_SERVER/computers/benchmark_submit_float/$COMPUTER_ID?key=$key&value=$value"; then
+		return 0
+	else
+		echo 'benchmark_submit_float: failed to submit'
+		return 1
+	fi
+}
+
+benchmark_submit_string()
+{
+	local key=`echo "$1" | ruby -e 'require "cgi"; print CGI::escape($stdin.read)'`
+	local value=`echo "$2" | ruby -e 'require "cgi"; print CGI::escape($stdin.read)'`
+	if curl -sf "$REST_SERVER/computers/benchmark_submit_string/$COMPUTER_ID?key=$key&value=$value"; then
+		return 0
+	else
+		echo 'benchmark_submit_string: failed to submit'
+		return 1
+	fi
+}
