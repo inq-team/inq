@@ -108,7 +108,7 @@ class ComputersController < ApplicationController
                 @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
 		@testing_number = params[:testing] ? params[:testing].to_i() : @sorted_testings.size - 1
 		@testing = @sorted_testings[@testing_number]
-		@components = @testing.components
+		@testing ? @components = @testing.components : @components = []
 		
 		render(:layout => 'computer_tabs')
 	end
