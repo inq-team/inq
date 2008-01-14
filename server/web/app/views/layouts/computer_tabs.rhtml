@@ -88,6 +88,7 @@
 		<td id='testing_plan'><div class='testing_border'>
 			<table>
 				<tr><th class='testing_stage_name'>Stage</th><th class='testing_stage_span'>Elapsed</th></tr>
+			<% unless @computer.testings %>	
 			<% @computer.testings[@testing_number].testing_stages.sort { |a, b| (a.end || Time.new()) <=> (b.end || Time.new()) }.each do |stage| %>
 				<% 
 					span = ((stage.end || Time.new()) - stage.start).round ; 
@@ -98,7 +99,9 @@
 					<td class='testing_stage_name'><%= stage.stage %></td>
 					<td class='testing_stage_span'><%= span_txt %></td>
 				</tr>
-			<% end %></table>
+			<% end %>
+			<% end %>
+			</table>
 			&nbsp;
 		</div></td> 
 
