@@ -6,6 +6,7 @@ class Computer < ActiveRecord::Base
 	belongs_to :order
 	has_many :testings
 	has_many :computer_stages
+	belongs_to :profile
 
 	def serial_no
 		sprintf "%010d", id

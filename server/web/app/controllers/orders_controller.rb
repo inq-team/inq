@@ -24,6 +24,10 @@ class OrdersController < ApplicationController
 		@st_comp_qty[:packing] = @computers.select{ |c| (c.computer_stages.select{ |s| s.end == nil }[0]).stage == 'packing' if c.computer_stages.size > 0 }.size
 		@qty = @computers.size
 		@models = Model.find_all.map{ |x| x.name }
+		@default_qty = @order.order_lines.map{ |x| x.qty }.min
+		@profiles = Profile.find_all.map{ |x| x.id }
+		@start_id = Computer.find_by_sql('SELECT MAX(id)+1 FROM computers')[0]['MAX(id)+1'].to_i
+		@end_id = @start_id + @default_qty - 1
 
 #		@computers = []
 		respond_to do |format|
@@ -36,10 +40,12 @@ class OrdersController < ApplicationController
 	def create_computers
 		qty = params[:new_computers][:qty].to_i
 		model = params[:model][:name]
+		profile_id = params[:profile][:id]
 		qty.times do
 			c = Computer.new
 			c.model = Model.find_by_name(model)
 			c.order_id = params[:id]
+			c.profile = Profile.find_by_id(profile_id)
 			c.save!
 		end
 		redirect_to :action => 'show'				

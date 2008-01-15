@@ -99,12 +99,21 @@ when :assembling %>
 
 <% form_tag :action => 'create_computers', :id => @order do %>
 
-  <p><label for="new_computers_qty">Quantity</label><br/>
-  <%= text_field 'new_computers', 'qty' %></p>
+  <p><label for="new_computers_qty">Quantity:</label><br/>
+  <%= text_field 'new_computers', 'qty', :value => @default_qty %></p>
   
-  <p><label for="new_computers_model">Model</label><br/>
+  <p><label for="new_computers_qty">Start ID:</label><br/>
+  <%= text_field 'new_computers', 'start_id', :value => @start_id %></p>
+  
+  <p><label for="new_computers_qty">End ID:</label><br/>
+  <%= text_field 'new_computers', 'end_id', :value => @end_id %></p>
+
+  <p><label for="new_computers_model">Model:</label><br/>
   <%= select :model, :name, @models %></p>
   
+  <p><label for="new_computers_qty">Profile:</label><br/>
+  <%= select :profile, :id, @profiles %></p>  
+
   <%= submit_tag 'Create' %>
 <% end %>
 
