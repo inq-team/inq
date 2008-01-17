@@ -38,11 +38,20 @@ class OrdersController < ApplicationController
 	
 	
 	def create_computers
-		qty = params[:new_computers][:qty].to_i
 		model = params[:model][:name]
 		profile_id = params[:profile][:id]
-		qty.times do
+		start_id = params[:new_computers][:start_id].to_i
+		end_id = params[:new_computers][:end_id].to_i
+		
+		if (start_id > end_id) || ((start_id..end_id).to_a.map{ |i| Computer.find_by_id(i) }.compact.size > 0)
+			flash[:notice] = 'Incorrect ids'
+			redirect_to :action => 'show'
+			return
+		end		
+		
+		(start_id..end_id).to_a.each do |id|
 			c = Computer.new
+			c.id = id
 			c.model = Model.find_by_name(model)
 			c.order_id = params[:id]
 			c.profile = Profile.find_by_id(profile_id)
