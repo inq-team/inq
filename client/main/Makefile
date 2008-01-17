@@ -12,9 +12,7 @@ install:
 	if [ -n "$(INIT)" ]; then install -m644 init $(DESTDIR)$(SHARE_DIR); fi
 	install -m644 global overlaytab remounttab $(DESTDIR)$(ETC_DIR)
 	install -m755 add-component $(DESTDIR)$(SHARE_DIR)
-	install -m755 inq-detect $(DESTDIR)$(BIN_DIR)
-	install -m755 inq-planner $(DESTDIR)$(BIN_DIR)
-	install -m755 get-macs $(DESTDIR)$(BIN_DIR)
+	install -m755 inq-detect inq-planner get-macs inq-wrapper $(DESTDIR)$(BIN_DIR)
 	install -m755 inq-sensors-detect $(DESTDIR)$(SHARE_DIR)
 
 clean:

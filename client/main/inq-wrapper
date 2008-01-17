@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# A trivial wrapper script to be used in place of init(1) if Inquisitor
+# is booting from the net. Wraps /usr/bin/inquisitor to protect system
+# from kernel panic in case of death of /usr/bin/inquisitor.
+
+if /usr/bin/inquisitor; then
+	echo
+	echo 'All done'
+	bash
+else
+	echo
+	echo '=============================================='
+	echo "FATAL ERROR ENCOUNTERED; INQUISITOR TERMINATED"
+	echo '=============================================='
+	bash
+fi
