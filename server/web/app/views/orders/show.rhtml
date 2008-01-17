@@ -100,13 +100,13 @@ when :assembling %>
 <% form_tag :action => 'create_computers', :id => @order do %>
 
   <p><label for="new_computers_qty">Quantity:</label><br/>
-  <%= text_field 'new_computers', 'qty', :value => @default_qty %></p>
+  <input id="new_computers_qty" name="new_computers[qty]" size="30" type="text" onKeyPress="return isNumberKey(event)" onKeyUp="qtyEdited() " value="<%= @default_qty %>" /></p>
   
   <p><label for="new_computers_qty">Start ID:</label><br/>
-  <%= text_field 'new_computers', 'start_id', :value => @start_id %></p>
+  <input id="new_computers_start_id" name="new_computers[start_id]" size="30" type="text" onKeyPress="return isNumberKey(event)" onKeyUp="someIdEdited()" value="<%= @start_id %>" /></p>
   
   <p><label for="new_computers_qty">End ID:</label><br/>
-  <%= text_field 'new_computers', 'end_id', :value => @end_id %></p>
+  <input id="new_computers_end_id" name="new_computers[end_id]" size="30" type="text" onKeyPress="return isNumberKey(event)" onKeyUp="someIdEdited()" value="<%= @end_id %>" /></p>
 
   <p><label for="new_computers_model">Model:</label><br/>
   <%= select :model, :name, @models %></p>
@@ -123,6 +123,42 @@ when :assembling %>
 </tr>
 </table>
 
+<%= javascript_tag(
+'function isNumberKey(evt)
+{	
+  var charCode = (evt.which) ? evt.which : event.keyCode
+  if (charCode > 31 && (charCode < 48 || charCode > 57))
+    return false;
+  
+  return true;
+}
 
+function qtyEdited()
+{
+	var txtStartId = document.getElementById("new_computers_start_id");
+	var txtEndId = document.getElementById("new_computers_end_id");
+	var txtQty = document.getElementById("new_computers_qty");
+	
+	var numStartId = txtStartId.value ? parseInt(txtStartId.value) : 0;
+	var numQty = txtQty.value ? parseInt(txtQty.value) : 1;
+	
+	txtEndId.value = numStartId + numQty - 1;
+	
+	return true;
+}
+
+function someIdEdited()
+{
+	var txtStartId = document.getElementById("new_computers_start_id");
+	var txtEndId = document.getElementById("new_computers_end_id");
+	var txtQty = document.getElementById("new_computers_qty");
+	
+	var numStartId = txtStartId.value ? parseInt(txtStartId.value) : 0;
+	var numEndId = txtEndId.value ? parseInt(txtEndId.value) : 0;
+	
+	txtQty.value = numEndId - numStartId + 1;
+	
+	return true;	
+}')%>
 
 <%= link_to 'Back', orders_path %>
