@@ -6,32 +6,84 @@
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=hdd,stress
-# VAR=TIMEOUT:int:3600:Total time of HDD array testing
+# VAR=TESTTIME:int:3600:Total time of HDD array testing
 # VAR=LOGTIME:int:120:Time between progress updates
 # VAR=JOBS:int:16:Number of parallely running jobs during compile
 # VAR=STRESS_TREE:string:/usr/share/inquisitor/linux-2.6.22.5-31-stress.tar.gz:Tarball file containing stress test tree
 
 . /usr/share/inquisitor/functions-test
 
-make_arrays()
+MOUNTPOINT=`mktemp -d`
+
+# Cleanup
+exit_handler()
 {
-	if raid-wizard-optimal; then
-		detect_hdd_quantity
-		true
-	else
-		HDD_QUANTITY=0 #not to start testing cycles
-		test_failed
+	local rc=$?
+	trap - EXIT
+
+	if [ -d "$MOUNTPOINT" ]; then
+		clear_testing_environment
 	fi
+	exit $rc
+}
+trap exit_handler HUP PIPE INT QUIT TERM EXIT
+
+detect_hdd_quantity()
+{
+	sleep 5
+	HDD_QUANTITY=`hal-find-by-property --key=storage.drive_type --string=disk | wc -l`
+#	if [ "$HDD_QUANTITY" -gt 0 ]; then
+		TIME_PER_ARRAY=$(( $TESTTIME / $HDD_QUANTITY ))
+#	else
+#		TIME_PER_ARRAY=$(( $TESTTIME / 2 ))
+#	fi
 }
 
-prepare_source_tree()
+clear_testing_environment()
 {
-	local tree_root=$1
+	cd /
+	umount -f $tree_root
+	rm -rf $tree_root
+}
 
-	cd $tree_root
-	tar xzf "$STRESS_TREE" >/dev/null 2>&1 || test_failed
+array_stress_check()
+{
+	local array=$1
+
+	prepare_array_for_test $array
+
+	START=`date "+%s"`
+	LAST_LOG_TIME=$TOTAL_START
+
+	while true; do
+		TIME=`date "+%s"`
+		if $(( $TIME - $START > $TIME_PER_ARRAY )); then
+			clear_testing_environment
+			break
+		else
+			make clean >/dev/null 2>&1 && \
+			make -j $JOBS fs >/dev/null 2>&1 || test_failed "Make error"
+		fi
+
+		if $(( $TIME - $LAST_LOG_TIME > $LOGTIME )); then
+			test_progress $(( $TIME - $TOTAL_START )) $TESTTIME
+			LAST_LOG_TIME=$TIME
+		fi
+	done
+}
+
+prepare_array_for_test()
+{
+	local array=$1
+
+	mke2fs -m0 -F $array >/dev/null 2>&1 || test_failed "Disk write error"
+	mount -t ext2 $array $MOUNTPOINT
+
+	cd $MOUNTPOINT
+	tar xzf "$STRESS_TREE" >/dev/null 2>&1 || test_failed "Untaring error"
+
 	tree_name=`basename "$STRESS_TREE" .tar.gz`
-	cd "$tree_name"
+	cd $tree_name
 
 	#is it linux source?
 	if echo "$tree_name" | grep '^linux' ; then
@@ -40,85 +92,22 @@ prepare_source_tree()
 	fi
 }
 
-detect_hdd_quantity()
-{
-	sleep 5
-	HDD_QUANTITY=`hal-find-by-property --key=storage.drive_type --string=disk | wc -l`
-	if [ "$HDD_QUANTITY" -gt 0 ]; then
-		TIME_PER_ARRAY=$(( $TIMEOUT / $HDD_QUANTITY ))
-	else
-		TIME_PER_ARRAY=$(( $TIMEOUT / 2 ))
-	fi
-}
+#Making arrays
+if raid-wizard-optimal; then
+	detect_hdd_quantity
+	true
+else
+	test_failed "No HDDs"
+	return
+fi
 
-temporary_hddarr_jobs_check()
-{
-	TOTAL_MEMORY=$(( `grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024 ))
-
-	[ "$TOTAL_MEMORY" -lt 512 ] && JOBS=4 || true
-}
-
-prepare_array_for_test()
-{
-	local array=$1
-	local mountpoint=$2
-
-	mke2fs -m0 -F $array >/dev/null 2>&1 || test_failed
-	mount -t ext2 $array $mountpoint
-	prepare_source_tree $mountpoint
-}
-
-test_command_itself()
-{
-	make clean >/dev/null 2>&1 && \
-	make -j $JOBS fs >/dev/null 2>&1 || test_failed
-}
-
-clear_testing_environment()
-{
-	local tree_root=$1
-
-	cd /
-	rm -rf $tree_root/*
-	umount $tree_root
-	rmdir $tree_root
-}
-
-array_stress_check()
-{
-	local array=$1
-	local mountpoint=`mktemp -d`
-
-	prepare_array_for_test $array $mountpoint
-
-	START=`date "+%s"`
-	LAST_LOG_TIME=$TOTAL_START
-
-	while true; do
-		TIME=`date "+%s"`
-		if $(( $TIME - $START > $TIME_PER_ARRAY )); then
-			clear_testing_environment $MOUNTPOINT
-			break
-		else
-			test_command_itself
-		fi
-
-		if $(( $TIME - $LAST_LOG_TIME > $LOGTIME )); then
-			test_progress $(( $TIME - $TOTAL_START )) $TIMEOUT
-			LAST_LOG_TIME=$TIME
-		fi
-	done
-}
-
-make_arrays
-[ "$HDD_QUANTITY" -eq 0 ] && return
-temporary_hddarr_jobs_check
+#TEMPORARY checking for correct number of JOBS
+TOTAL_MEMORY=$(( `grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024 ))
+[ "$TOTAL_MEMORY" -lt 512 ] && JOBS=4 || true
 
 TOTAL_START=`date "+%s"`
-test_started $TIMEOUT
+test_promise_time $TESTTIME
 
 for i in `get_harddrives_list`; do
 	array_stress_check $i
 done
-
-test_succeeded

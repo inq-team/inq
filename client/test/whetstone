@@ -6,60 +6,32 @@
 # VERSION=0.1
 # TAGS=benchmark,cpu
 # VAR=LOOPS:int:20000:Loop count
-# VAR=CHECKTIME:int:60:Time between checks of alive benchmarks
 
 . /usr/share/inquisitor/functions-test
 
 RESULT_FILE=`mktemp`
 
-detect_cpu_quantity()
+print_red_message '!!! THIS IS DEVELOPMENT TEST !!!'
+
+# Cleanup
+exit_handler()
 {
-	CPU_QUANTITY=`grep processor /proc/cpuinfo | wc -l`
-}
+	local rc=$?
+	trap - EXIT
 
-start_benchmarking()
-{
-	for i in `seq 1 $CPU_QUANTITY`; do
-		whetstone $LOOPS | grep Whetstones | \
-			awk '{print $6}' > ${RESULT_FILE}${i} &
-		echo $$ > ~/whetstone$i.pid
-	done
-}
-
-parse_results()
-{
-	for i in `seq 1 $CPU_QUANTITY`; do
-		echo -n "cpu"${i}"="`cat ${RESULT_FILE}${i}`\& >> \
-			${RESULT_FILE}_parsed
-	done
-}
-
-clean_up_after_benchmark()
-{
-	for i in `seq 1 $CPU_QUANTITY`; do
-		rm -f ${RESULT_FILE}${i}
-	done
-	rm -f ${RESULT_FILE}_parsed
-}
-
-detect_cpu_quantity
-start_benchmarking
-
-test_started 1
-
-while true; do
-	sleep $CHECKTIME
-	
-	ALIVE=0
-	for i in `seq 1 $CPU_QUANTITY`; do
-		(( `ps \`cat ~/whetstone$i.pid\` | wc -l` == 2 )) && \
-			ALIVE=$(( $ALIVE + 1 ))
-	done
-	if [ $ALIVE -eq 0 ]; then
-		parse_results
-		break
+	if [ -f "$RESULT_FILE" ]; then
+		rm -f $RESULT_FILE
 	fi
-done
 
-test_succeeded `cat ${RESULT_FILE}_parsed`
-clean_up_after_benchmark
+	exit $rc
+}
+trap exit_handler HUP PIPE INT QUIT TERM EXIT
+
+CPU_QUANTITY=`grep processor /proc/cpuinfo | wc -l`
+
+for i in `seq 0 $(($CPU_QUANTITY - 1))`; do
+	echo -n "Whetstone on core $i"
+	taskset -c $i whetstone $LOOPS > $RESULT_FILE
+	echo_success
+	benchmark_submit_float "Core $i MIPS" `grep Whetstones $RESULT_FILE | awk '{print $6}'`
+done

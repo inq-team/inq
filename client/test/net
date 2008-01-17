@@ -12,17 +12,30 @@
 
 . /usr/share/inquisitor/functions-test
 
-print_read_message '!!! THIS IS DEVELOPMENT TEST !!!'
+print_red_message '!!! THIS IS DEVELOPMENT TEST !!!'
 
-detect_nic_quantity()
+# Cleanup
+exit_handler()
 {
-	NIC_QUANTITY=`cat /proc/net/dev | grep eth | wc -l`
-}
+	local rc=$?
+	trap - EXIT
 
-detect_first_nic()
-{
-	FIRST_NIC=`ip route | grep default | awk '{print $NF}' | sed 's/eth//'`
+	ip route del default
+	ip link set eth${FIRST_NIC} up
+	ip neigh flush
+	ip route add default via $SERVER dev eth${FIRST_NIC}
+	ip neigh flush
+	sleep 5
+
+	for i in `seq 0 $(( $NIC_QUANTITY - 1 ))`; do
+		if [ $i -ne "$FIRST_NIC" ]; then
+			ip link set eth${i} down
+		fi
+	done
+
+	exit $rc
 }
+trap exit_handler HUP PIPE INT QUIT TERM EXIT
 
 test_nic()
 {
@@ -36,24 +49,22 @@ test_nic()
 	sleep 5
 
 	for i in `seq 0 $(( $NIC_QUANTITY - 1 ))`; do
-		if [ "nic_number" -ne $i ]; then
-			ip link set eth${nic_number} down
+		if [ "$nic_number" -ne $i ]; then
+			ip link set eth${i} down
 		fi
 	done
 
-	[ `wget -T $TIMEOUT --quiet -O - http://${SERVER}/test_file | md5sum -b | awk '{print $1}'` = $MD5 ] && FLAG=1 || FLAG=0
+	[ `wget -T $TIMEOUT --quiet -O - http://${SERVER}/test_file | md5sum -b | awk '{print $1}'` = $MD5 ] || test_failed "NIC eth${i} test failed"
 }
 
-detect_nic_quantity
+NIC_QUANTITY=`cat /proc/net/dev | grep eth | wc -l`
 [ "$NIC_QUANTITY" -eq 0 ] && return
+FIRST_NIC=`ip route | grep default | awk '{print $NF}' | sed 's/eth//'`
 
 for i in `seq 0 $(( $NIC_QUANTITY - 1 ))`; do
 if [ "$FIRST_NIC" -ne $i ]; then
 	ip route del default
 	test_nic $i
-	if [ "$FLAG" -eq 0 ]; then
-		true # ?
-	fi
 fi
 done
 

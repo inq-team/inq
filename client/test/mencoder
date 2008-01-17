@@ -19,7 +19,7 @@ exit_handler()
 	trap - EXIT
 
 	if [ -f "$RESULT_FILE" ]; then
-		rm -fr "$RESULT_FILE"
+		rm -f "$RESULT_FILE"
 	fi
 	exit $rc
 }
