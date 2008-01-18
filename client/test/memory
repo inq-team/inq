@@ -40,7 +40,6 @@ run_memtester()
 }
 
 #turnoff_oom_killer
-test_started $TOTAL_SUBSTAGES
 run_memtester
 
 while true ; do

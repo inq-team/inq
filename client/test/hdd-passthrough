@@ -31,7 +31,7 @@ RAID::BaseRaid::query_adapters.each { |ad|
 	a.adapter_restart
 }
 
-temporary_workaround("test_started 100")
+#temporary_workaround("test_started 100")
 
 test_available == 0 && temporary_workaround("test_failed")
 

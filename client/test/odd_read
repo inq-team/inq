@@ -81,7 +81,6 @@ generate_speed_results()
 detect_odd_quantity
 [ "$ODD_QUANTITY" -eq 0 ] && return
 TESTED_QUANTITY=0
-test_started $ODD_QUANTITY
 
 for i in `get_odds_list`; do
 	interactive $i
