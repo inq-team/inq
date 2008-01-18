@@ -15,9 +15,26 @@
 IMAGE=`mktemp`
 RESULT_FILE=`mktemp`
 
-detect_odd_quantity()
+# Cleanup
+exit_handler()
 {
-	ODD_QUANTITY=`hal-find-by-capability --capability storage.cdrom | wc -l`
+	local rc=$?
+	trap - EXIT
+
+	if [ -f "$IMAGE" ]; then
+		rm -f $IMAGE
+	fi
+	if [ -f "$RESULT_FILE" ]; then
+		rm -f $RESULT_FILE
+	fi
+	exit $rc
+}
+trap exit_handler HUP PIPE INT QUIT TERM EXIT
+
+load_kernel_modules()
+{
+	modprobe ide-cd || true
+	sleep 5
 }
 
 test_odd()
@@ -39,13 +56,13 @@ interactive()
 	local non_passed=1
 
 	while ( [ "$non_passed" -eq 1 ] ); do
-		eject $odd || true
+		#eject $odd || true
 		print_green_message "Drive $(( $TESTED_QUANTITY + 1)):"
-		print_green_message "Either press Y and insert media for testing, or n if you want to finish test: "
+		print_green_message "Either press y and insert media for testing, or n if you want to finish test: "
 		read choice
 
 		if [ "$choice" = "n" ]; then
-			test_failed
+			test_failed "User cancelled test for $odd"
 			break
 		fi
 
@@ -59,16 +76,11 @@ interactive()
 			non_passed=0
 
 			generate_speed_results
-			eject $odd || true
+			#eject $odd || true
 		else
 			print_red_message "Drive test failed!"
 		fi
 	done
-}
-
-remove_test_image()
-{
-	rm -f $IMAGE
 }
 
 generate_speed_results()
@@ -78,13 +90,15 @@ generate_speed_results()
 	#here will be call to publish this monitoring results
 }
 
-detect_odd_quantity
+load_kernel_modules
+
+ODD_QUANTITY=`hal-find-by-capability --capability storage.cdrom | wc -l`
 [ "$ODD_QUANTITY" -eq 0 ] && return
+
 TESTED_QUANTITY=0
 
 for i in `get_odds_list`; do
 	interactive $i
 done
 
-remove_test_image
 test_succeeded

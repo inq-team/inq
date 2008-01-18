@@ -20,20 +20,15 @@ load_kernel_modules()
 	sleep 5
 }
 
-detect_odd_quantity()
-{
-	ODD_QUANTITY=`hal-find-by-capability --capability storage.cdrom | wc -l`
-}
-
 test_read()
 {
 	local odd=$1
 	local hash
 
-	hash=`readcd -v dev=$odd f=- sectors=0-$ODD_TEST_IMAGE_BLOCKS retries=8 | md5sum -b | awk '{print $1}'`
-	[ -z "$hash" ] && {hash=`dd if=$odd bs=2048 count=$ODD_TEST_IMAGE_BLOCKS | md5sm -b | awk '{print $1}'`}
+	hash=`readcd -v dev=$odd f=- sectors=0-$TEST_IMAGE_BLOCKS retries=8 | md5sum -b | awk '{print $1}'`
+	[ -z "$hash" ] && {hash=`dd if=$odd bs=2048 count=$TEST_IMAGE_BLOCKS | md5sum -b | awk '{print $1}'`}
 
-	[ $hash = $ODD_TEST_IMAGE_MD5 ] && FLAG=1 || FLAG=0
+	[ $hash = $TEST_IMAGE_MD5 ] && FLAG=1 || FLAG=0
 }
 
 test_write()
@@ -46,7 +41,7 @@ test_write()
 
 	print_green_message "Writing..."
 	cdrecord dev=$odd driveropts=burnfree speed=$SPEED -delay 2 -\
-		-data $ODD_TEST_IMAGE && FLAG=1 || FLAG=0
+		-data $TEST_IMAGE && FLAG=1 || FLAG=0
 	print_green_message "Writing done"
 }
 
@@ -66,12 +61,12 @@ detect_maxspeed()
 {
 	local odd=$1
 
-	if [ "$ODD_WRITE_SPEED_FORCE" = "Y" ]; then
-		SPEED=$ODD_WRITE_SPEED
+	if [ "$WRITE_SPEED_FORCE" = "Y" ]; then
+		SPEED=$WRITE_SPEED
 	else
 		SPEED=`cdrecord dev=$odd -atip | \
 			sed -ne '/speed high/ s/^.*speed high: \(.*\)$/\1/ p' | head -n 1`
-		[ -z "$SPEED" ] && SPEED=$ODD_WRITE_SPEED || true
+		[ -z "$SPEED" ] && SPEED=$WRITE_SPEED || true
 	fi
 
 }
@@ -102,7 +97,7 @@ interactive()
 		read choice
 
 		if [ "$choice" = "n" ]; then
-			test_failed
+			test_failed "User cancelled test for $odd"
 			break
 		fi
 
@@ -131,10 +126,11 @@ interactive()
 }
 
 load_kernel_modules
-detect_odd_quantity
+
+ODD_QUANTITY=`hal-find-by-capability --capability storage.cdrom | wc -l`
 [ "$ODD_QUANTITY" -eq 0 ] && return
+
 TESTED_QUANTITY=0
-test_started $ODD_QUANTITY
 print_green_message "$WRITE_MESSAGE"
 
 for i in `get_odds_list`; do

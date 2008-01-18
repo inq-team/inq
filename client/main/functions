@@ -243,6 +243,6 @@ get_harddrives_list()
 get_odds_list()
 {
 	for UDI in `hal-find-by-capability --capability storage.cdrom`; do
-		hal-get-property --udi "$UDI" --key access_control.file
+		hal-get-property --udi "$UDI" --key block.device
 	done
 }
