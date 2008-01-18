@@ -98,14 +98,48 @@ $SHARE_DIR/bios_flash
 # Run all tests
 # ===========================================================================
 
-PLANNER=1 TEST_NAME=odd_write-cd1 TEST_IMAGE=/usr/share/inquisitor/ets1.iso TEST_IMAGE_BLOCKS=298769 WRITE_SPEED=10 TEST_IMAGE_MD5=7a697766db19429bb8ee77a5cd9e0d9e WRITE_SPEED_FORCE=Y WRITE_MESSAGE="Writing first RS160G3 drivers disc" . $SHARE_DIR/test/odd_write
-PLANNER=1 TEST_NAME=odd_write-cd1 TEST_IMAGE=/usr/share/inquisitor/ets2.iso TEST_IMAGE_BLOCKS=145007 WRITE_SPEED=10 TEST_IMAGE_MD5=6ae4c0a3be679cac2c457b92f2f6b9c9 WRITE_SPEED_FORCE=Y WRITE_MESSAGE="Writing second RS160G3 drivers disc" . $SHARE_DIR/test/odd_write
+TEST_NAME=odd_write-cd1 PLANNER=1\
+	TEST_IMAGE=/usr/share/inquisitor/ets1.iso \
+	TEST_IMAGE_BLOCKS=298769 \
+	WRITE_SPEED=10 \
+	TEST_IMAGE_MD5=7a697766db19429bb8ee77a5cd9e0d9e \
+	WRITE_SPEED_FORCE=true \
+	WRITE_MESSAGE="Writing first RS160G3 drivers disc" \
+	run_test odd_write
 
-PLANNER=1 TEST_NAME=cpu TEST_TIME=900 LOG_TIME=100 . $SHARE_DIR/test/cpu
-PLANNER=1 TEST_NAME=memory TEST_LOOPS=1 LOG_TIME=120 . $SHARE_DIR/test/memory
-export COMPUTER_ID && export SHARE_DIR && PLANNER=1 TEST_NAME=hdd-passthrough $SHARE_DIR/test/hdd-passthrough
-PLANNER=1 TEST_NAME=hdd-array TIMEOUT=3600 LOGTIME=120 JOBS=32 STRESS_TREE=/usr/share/inquisitor/linux-2.6.22.5-31-stress.tar.gz . $SHARE_DIR/test/hdd-array
-PLANNER=1 TEST_NAME=fdd FLOPPY_SIZE=1440 . $SHARE_DIR/test/fdd
+TEST_NAME=odd_write-cd2 PLANNER=1 \
+	TEST_IMAGE=/usr/share/inquisitor/ets2.iso \
+	TEST_IMAGE_BLOCKS=145007 \
+	WRITE_SPEED=10 \
+	TEST_IMAGE_MD5=6ae4c0a3be679cac2c457b92f2f6b9c9 \
+	WRITE_SPEED_FORCE=true \
+	WRITE_MESSAGE="Writing second RS160G3 drivers disc" \
+	run_test odd_write
+
+TEST_NAME=cpu PLANNER=1 \
+	TEST_TIME=900 \
+	run_test cpu
+
+TEST_NAME=memory PLANNER=1 \
+	TEST_LOOPS=1 \
+	LOG_TIME=120 \
+	run_test memory
+
+export COMPUTER_ID && export SHARE_DIR && \
+TEST_NAME=hdd-passthrough PLANNER=1 \
+	run_test hdd-passthrough
+
+TEST_NAME=hdd-array PLANNER=1 \
+	TESTTIME=3600 \
+	LOGTIME=120 \
+	JOBS=32 \
+	STRESS_TREE=/usr/share/inquisitor/linux-2.6.22.5-31-stress.tar.gz \
+	run_test hdd-array
+
+TEST_NAME=fdd PLANNER=1 \
+	FLOPPY_SIZE=1440 \
+	run_test fdd
+
 #PLANNER=1 TEST_NAME=flash SIZE_LIMIT=2048 . $SHARE_DIR/test/flash
 #PLANNER=1 TEST_NAME=odd_read TEST_IMAGE_HASH=2e8744dfd11bf425001aad57976d42cc TEST_IMAGE_BLOCKS=50000 MESH_POINTS=1024 . $SHARE_DIR/test/odd_read
 

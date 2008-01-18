@@ -61,7 +61,7 @@ detect_maxspeed()
 {
 	local odd=$1
 
-	if [ "$WRITE_SPEED_FORCE" = "Y" ]; then
+	if [ "$WRITE_SPEED_FORCE" = "true" ]; then
 		SPEED=$WRITE_SPEED
 	else
 		SPEED=`cdrecord dev=$odd -atip | \
