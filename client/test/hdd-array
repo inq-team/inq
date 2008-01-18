@@ -42,7 +42,7 @@ detect_hdd_quantity()
 clear_testing_environment()
 {
 	cd /
-	umount -f $MOUNTPOINT
+	umount -f $MOUNTPOINT || true
 	rm -rf $MOUNTPOINT
 }
 

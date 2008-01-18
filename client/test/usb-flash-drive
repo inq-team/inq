@@ -16,8 +16,6 @@ TESTFILE=`mktemp`
 
 STORAGE_QUANTITY=0
 
-print_red_message '!!! THIS IS DEVELOPMENT TEST !!!'
-
 # Cleanup
 exit_handler()
 {
@@ -29,7 +27,7 @@ exit_handler()
 	fi
 	if [ -d "$MOUNTPOINT" ]; then
 		cd /
-		umount -f $MOUNTPOINT
+		umount -f $MOUNTPOINT || true
 		rm -rf $MOUNTPOINT
 	fi
 	exit $rc
@@ -52,7 +50,7 @@ for UDI in `hal-find-by-property --key storage.bus --string usb`; do
 	block_dev=`hal-get-property --udi "$UDI" --key block.device`
 	echo -n "Drive $block_dev..."
 	
-	dd if=/dev/urandom of=$TESTFILE bs=1024k count=$SIZE
+	dd if=/dev/urandom of=$TESTFILE bs=1024k count=$SIZE >/dev/null 2>&1
 
 	#create filesystem and write testfile
 	mke2fs -m0 -F $block_dev >/dev/null 2>&1 || test_failed "Drive $block_dev writing error"
