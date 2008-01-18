@@ -42,22 +42,25 @@ detect_hdd_quantity()
 clear_testing_environment()
 {
 	cd /
-	umount -f $tree_root
-	rm -rf $tree_root
+	umount -f $MOUNTPOINT
+	rm -rf $MOUNTPOINT
 }
 
 array_stress_check()
 {
 	local array=$1
 
+	echo -n "Preparing array $array..."
 	prepare_array_for_test $array
+	echo_success
 
+	echo "Testing $array..."
 	START=`date "+%s"`
 	LAST_LOG_TIME=$TOTAL_START
 
 	while true; do
 		TIME=`date "+%s"`
-		if $(( $TIME - $START > $TIME_PER_ARRAY )); then
+		if [ $(($TIME - $START)) -gt $TIME_PER_ARRAY ]; then
 			clear_testing_environment
 			break
 		else
@@ -65,8 +68,8 @@ array_stress_check()
 			make -j $JOBS fs >/dev/null 2>&1 || test_failed "Make error"
 		fi
 
-		if $(( $TIME - $LAST_LOG_TIME > $LOGTIME )); then
-			test_progress $(( $TIME - $TOTAL_START )) $TESTTIME
+		if [ $(($TIME - $LAST_LOG_TIME)) -gt $LOGTIME ]; then
+			test_progress $(( $TIME - $START )) $TESTTIME
 			LAST_LOG_TIME=$TIME
 		fi
 	done
@@ -87,8 +90,8 @@ prepare_array_for_test()
 
 	#is it linux source?
 	if echo "$tree_name" | grep '^linux' ; then
-		find . -print | xargs touch
-		touch .config include/linux/autoconf.h
+		find . -print | xargs touch >/dev/null 2>&1 || true
+		touch .config include/linux/autoconf.h >/dev/null 2>&1 || true
 	fi
 }
 
