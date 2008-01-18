@@ -85,7 +85,7 @@ when :assembling %>
 
 <h1>Computers</h1>
 <table>
-<% @computers.each { |c| %>
+<% @computers.sort{ |a, b| a.id <=> b.id }.each { |c| %>
 <tr>
 <td><%= link_to c.serial_no, :controller => 'computers', :action => 'show', :id => c.id %></td>
 <td><%=h c.model.name %></td>
@@ -109,7 +109,7 @@ when :assembling %>
   <input id="new_computers_end_id" name="new_computers[end_id]" size="30" type="text" onKeyPress="return isNumberKey(event)" onKeyUp="someIdEdited()" value="<%= @end_id %>" /></p>
 
   <p><label for="new_computers_model">Model:</label><br/>
-  <%= select :model, :name, @models %></p>
+  <%= select :model, :name, @models.sort, {:selected=>@default_model} %></p>
   
   <p><label for="new_computers_qty">Profile:</label><br/>
   <%= select :profile, :id, @profiles %></p>  

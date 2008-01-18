@@ -28,7 +28,9 @@ class OrdersController < ApplicationController
 		@profiles = Profile.find_all.map{ |x| x.id }
 		@start_id = Computer.find_by_sql('SELECT MAX(id)+1 FROM computers')[0]['MAX(id)+1'].to_i
 		@end_id = @start_id + @default_qty - 1
-
+		model_names = Model.find_by_sql("SELECT name FROM models WHERE MATCH(name) AGAINST('#{@order.title}');").sort{ |a,b| a.name <=> b.name }
+		(model_names.size > 0) ? @default_model = model_names[0].name : ''
+		
 #		@computers = []
 		respond_to do |format|
 			format.html # show.rhtml
@@ -44,7 +46,7 @@ class OrdersController < ApplicationController
 		end_id = params[:new_computers][:end_id].to_i
 		
 		if (start_id > end_id) || ((start_id..end_id).to_a.map{ |i| Computer.find_by_id(i) }.compact.size > 0)
-			flash[:notice] = 'Incorrect ids'
+			flash[:notice] = 'Incorrect indexes'
 			redirect_to :action => 'show'
 			return
 		end		
