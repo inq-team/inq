@@ -18,6 +18,24 @@ TOTAL_MEMORY=$(( (`grep MemTotal /proc/meminfo | awk '{print $2}'`) / 1024 - 256
 TOTAL_SUBSTAGES=$(( 16 * $TEST_LOOPS ))
 COMPLETED_SUBSTAGES=0
 MEMORY_LOG=`mktemp`
+MEMTEST_PID=`mktemp`
+
+# Cleanup
+exit_handler()
+{
+	local rc=$?
+	trap - EXIT
+
+	if [ -f "$MEMTEST_PID" ]; then
+		kill `cat $MEMTEST_PID`
+		rm $MEMTEST_PID
+	fi
+	if [ -f "$MEMORY_LOG" ]; then
+		rm $MEMORY_LOG
+	fi
+	exit $rc
+}
+trap exit_handler HUP PIPE INT QUIT TERM EXIT
 
 turnoff_oom_killer()
 {
@@ -31,16 +49,10 @@ turnon_oom_killer()
 	sysctl vm.overcommit_ratio=50
 }
 
-run_memtester()
-{
-	memtester $TOTAL_MEMORY $TEST_LOOPS > $MEMORY_LOG &
-
-	MEMTESTER_PID=`ps -ewf | grep 'memtester' | head -n1 | \
-			sed 's/^[^0-9]*\([0-9]\+\)[^0-9].*$/\1/'`
-}
-
 #turnoff_oom_killer
-run_memtester
+
+memtester $TOTAL_MEMORY $TEST_LOOPS > $MEMORY_LOG &
+echo $! > $MEMTEST_PID
 
 while true ; do
 	sleep $LOG_TIME
