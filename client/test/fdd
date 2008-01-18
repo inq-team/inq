@@ -10,72 +10,76 @@
 
 . /usr/share/inquisitor/functions-test
 
-FDD_TEST_IMAGE=`mktemp`
+TEST_IMAGE=`mktemp`
 
-detect_fdd_quantity()
+# Cleanup
+exit_handler()
 {
-	FDD_QUANTITY=`ls /dev/* | sed 's/\/dev\///g' | grep '^fd[0-9]*$' | wc -l`
+	local rc=$?
+	trap - EXIT
+
+	if [ -f "$TEST_IMAGE" ]; then
+		rm -f $TEST_IMAGE
+	fi
+	if [ -f "$TEST_IMAGE"_fd ]; then
+		rm -f "$TEST_IMAGE"_fd
+	fi
+	exit $rc
 }
+trap exit_handler HUP PIPE INT QUIT TERM EXIT
 
 generate_test_image()
 {
-	if dd if=/dev/urandom of=$FDD_TEST_IMAGE bs=1024 count=$FLOPPY_SIZE; then
+	if dd if=/dev/urandom of=$TEST_IMAGE bs=1024 count=$FLOPPY_SIZE; then
 		true
 	else
-		test_failed
+		test_failed "Unable to create test image"
 		FDD_QUANTITY=0 #to not to start interactive cycles
 	fi
 }
 
-remove_test_image()
-{
-	rm -f $FDD_TEST_IMAGE
-	rm -f "$FDD_TEST_IMAGE"_fd
-}
-
 test_fdd()
 {
-	dd if=$FDD_TEST_IMAGE of=/dev/fd$1 >/dev/null 2>&1
+	dd if=$TEST_IMAGE of=/dev/fd$1 >/dev/null 2>&1
 	floppycontrol -f -d /dev/fd$1 >/dev/null 2>&1
-	dd if=/dev/fd$1 of="$FDD_TEST_IMAGE"_fd bs=1024 count=$FLOPPY_SIZE >/dev/null 2>&1
-	diff "$FDD_TEST_IMAGE"_fd $FDD_TEST_IMAGE >/dev/null 2>&1 || return 1
+	dd if=/dev/fd$1 of="$TEST_IMAGE"_fd bs=1024 count=$FLOPPY_SIZE >/dev/null 2>&1
+	diff "$TEST_IMAGE"_fd $TEST_IMAGE >/dev/null 2>&1 || return 1
 	return 0
 }
 
 interactive()
 {
-	FDD=$1
-	NON_PASSED=1
+	local fdd=$1
+	local non_passed=1
 
-	while ( [ $NON_PASSED ] ); do
-		print_green_message "Drive ${FDD}:Either press Y and insert floppy for testing, or N if you want to finish test: "
+	while ( [ "$non_passed" -eq 1 ] ); do
+		print_green_message "Drive /dev/fd${fdd}:"
+		print_green_message "Either press y and insert floppy for testing, or n if you want to finish test: "
 		read choice
 
-		if [ "$choice" = "N" ]; then
-			test_failed
+		if [ "$choice" = "n" ]; then
+			test_failed "User cancelled test for $fdd"
 			break
 		fi
 
-		test_fdd $(( $FDD - 1 ))
+		test_fdd $(( $fdd - 1 ))
 
 		if $(( $? == 0 )); then
 			print_green_message "Drive test passed"
-			test_progress $FDD $FDD_QUANTITY
-			NON_PASSED=0
+			test_progress $fdd $FDD_QUANTITY
+			non_passed=0
 		else
 			print_red_message "Drive test failed!"
 		fi
 	done
 }
 
-detect_fdd_quantity
+FDD_QUANTITY=`ls /dev/* | sed 's/\/dev\///g' | grep '^fd[0-9]*$' | wc -l`
 [ "$FDD_QUANTITY" -eq 0 ] && return
 generate_test_image
 
-test_started $FDD_QUANTITY
 for i in `seq 1 $FDD_QUANTITY`; do
 	interactive $i
 done
 
-remove_test_image
 test_succeeded
