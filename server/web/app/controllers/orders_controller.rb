@@ -28,7 +28,8 @@ class OrdersController < ApplicationController
 		@profiles = Profile.find_all.map{ |x| x.id }
 		@start_id = Computer.find_by_sql('SELECT MAX(id)+1 FROM computers')[0]['MAX(id)+1'].to_i
 		@end_id = @start_id + @default_qty - 1
-		model_names = Model.find_by_sql("SELECT name FROM models WHERE MATCH(name) AGAINST('#{@order.title}');").sort{ |a,b| a.name <=> b.name }
+		@order_title = @order.title.gsub(/(\d)(G(2|3))/){$1 + ' ' + $2}
+		model_names = Model.find_by_sql("SELECT name FROM models WHERE MATCH(name) AGAINST('#{@order_title}');").sort{ |a,b| a.name <=> b.name }
 		(model_names.size > 0) ? @default_model = model_names[0].name : ''
 		
 #		@computers = []
