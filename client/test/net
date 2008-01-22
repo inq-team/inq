@@ -7,12 +7,10 @@
 # VERSION=0.1
 # TAGS=net
 # VAR=TIMEOUT:int:15:Wait timeout while test file retrieving
-# VAR=URL:string:192.168.0.1:URL to be fetched and checked
-# VAR=MD5:string:ffffffffffffffffffffffffffffffff:MD5 checksum for checking
+# VAR=URL:string:test_file:Relative to server URL to be fetched and checked
+# VAR=MD5:string:805414334eb1d3ff4fdca507ec82098f:MD5 checksum for checking
 
 . /usr/share/inquisitor/functions-test
-
-print_red_message '!!! THIS IS DEVELOPMENT TEST !!!'
 
 # Cleanup
 exit_handler()
@@ -20,11 +18,8 @@ exit_handler()
 	local rc=$?
 	trap - EXIT
 
-	ip route del default
-	ip link set eth${FIRST_NIC} up
-	ip neigh flush
-	ip route add default via $SERVER dev eth${FIRST_NIC}
-	ip neigh flush
+	ifconfig eth${FIRST_NIC} up
+	ip route replace default via $SERVER dev eth${FIRST_NIC}
 	sleep 5
 
 	for i in `seq 0 $(( $NIC_QUANTITY - 1 ))`; do
@@ -42,10 +37,8 @@ test_nic()
 	local nic_number=$1
 	local md5
 
-	ip link set eth${nic_muber} up
-	ip neigh flush
-	ip route add default via $SERVER dev eth${nic_number}
-	ip neigh flush
+	ifconfig eth${nic_number} up
+	ip route replace default via $SERVER dev eth${nic_number}
 	sleep 5
 
 	for i in `seq 0 $(( $NIC_QUANTITY - 1 ))`; do
@@ -54,7 +47,7 @@ test_nic()
 		fi
 	done
 
-	[ `wget -T $TIMEOUT --quiet -O - http://${SERVER}/test_file | md5sum -b | awk '{print $1}'` = $MD5 ] || test_failed "NIC eth${i} test failed"
+	[ `curl --connect-timeout $TIMEOUT http://${SERVER}/${URL} | md5sum -b | awk '{print $1}'` = $MD5 ] || test_failed "NIC eth${i} test failed"
 }
 
 NIC_QUANTITY=`cat /proc/net/dev | grep eth | wc -l`
@@ -63,10 +56,9 @@ FIRST_NIC=`ip route | grep default | awk '{print $NF}' | sed 's/eth//'`
 
 for i in `seq 0 $(( $NIC_QUANTITY - 1 ))`; do
 if [ "$FIRST_NIC" -ne $i ]; then
-	ip route del default
+	echo "Testing NIC eth{$i}..."
 	test_nic $i
 fi
 done
 
-ip route del default
 test_nic $FIRST_NIC #to restore startup parameters
