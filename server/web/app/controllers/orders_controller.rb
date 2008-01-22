@@ -1,3 +1,5 @@
+require 'mykit/lexer'
+
 class OrdersController < ApplicationController
 	# GET /orders
 	# GET /orders.xml
@@ -135,4 +137,10 @@ class OrdersController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+	def items
+		@order = Order.find(params[:id])
+		lines = @order.order_lines
+		@items = lines.collect { |l| MyKit::Item.new(l.name) }
+	end
 end
