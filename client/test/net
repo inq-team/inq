@@ -12,6 +12,8 @@
 
 . /usr/share/inquisitor/functions-test
 
+TESTFILE=`mktemp`
+
 # Cleanup
 exit_handler()
 {
@@ -34,6 +36,10 @@ exit_handler()
 		done
 	else
 		true
+	fi
+
+	if [ -f "$TESTFILE" ]; then
+		rm $TESTFILE
 	fi
 
 	exit $rc
@@ -59,7 +65,11 @@ test_nic()
 		fi
 	done
 
-	[ `curl --connect-timeout $TIMEOUT http://${SERVER}:${URL} | md5sum -b | awk '{print $1}'` = $MD5 ] || test_failed "NIC eth${i} test failed"
+	speed=`curl -s -w "%{speed_download}" -o $TESTFILE --connect-timeout $TIMEOUT http://${SERVER}:${URL} | sed 's/\D//g'` \
+		|| test_failed "NIC eth${i} test failed"
+	[ `md5sum -b < $TESTFILE | awk '{print $1}'` = $MD5 ] || test_failed "NIC eth${i} test failed"
+
+	benchmark_submit_float "NIC eth${nic_number} download speed" $speed
 }
 
 NIC_QUANTITY=`cat /proc/net/dev | grep eth | wc -l`
