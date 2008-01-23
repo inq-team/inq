@@ -12,7 +12,7 @@
 # VAR=URL:string:img-fotki.yandex.ru/getx/10/photoface.359/sevastopol-foto_34661_L:URL to download (without http)
 # VAR=MD5:string:ca530886183b06d0047e0655537327aa:MD5 of downloaded file
 # VAR=DOWNLOAD_TRIES:int:3:Number of tries to download the file
-# VAR=DOWNLOAD_MAX_TIME:int:60:Timeout for the whole download, seconds
+# VAR=DOWNLOAD_MAX_TIME:int:60:Timeout for the whole download, sec
 
 . /usr/share/inquisitor/functions-test
 

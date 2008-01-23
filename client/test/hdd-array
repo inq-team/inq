@@ -6,8 +6,8 @@
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=hdd,stress
-# VAR=TESTTIME:int:3600:Total time of HDD array testing
-# VAR=LOGTIME:int:120:Time between progress updates
+# VAR=TESTTIME:int:3600:Total time of HDD array testing, sec
+# VAR=LOGTIME:int:120:Time between progress updates, sec
 # VAR=JOBS:int:16:Number of parallely running jobs during compile
 # VAR=STRESS_TREE:string:/usr/share/inquisitor/linux-2.6.22.5-31-stress.tar.gz:Tarball file containing stress test tree
 

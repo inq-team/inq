@@ -6,7 +6,7 @@
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=net
-# VAR=TIMEOUT:int:15:Wait timeout while test file retrieving
+# VAR=TIMEOUT:int:15:Wait timeout while test file retrieving, sec
 # VAR=URL:string:3000/test_file:Relative to server PORT:URL to be fetched and checked
 # VAR=MD5:string:805414334eb1d3ff4fdca507ec82098f:MD5 checksum for checking
 

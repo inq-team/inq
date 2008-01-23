@@ -6,8 +6,8 @@
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=ram,memory
-# VAR=TEST_LOOPS:int:3:Testing loops
-# VAR=LOG_TIME:int:120:Time between progress updates
+# VAR=TEST_LOOPS:int:3:Number of testing loops
+# VAR=LOG_TIME:int:120:Time between progress updates, sec
 
 . /usr/share/inquisitor/functions-test
 
