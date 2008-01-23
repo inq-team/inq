@@ -11,6 +11,7 @@
 # VAR=WRITE_SPEED:int:10:Default write speed if it won't detect
 # VAR=WRITE_SPEED_FORCE:boolean:true:Force write speed using
 # VAR=WRITE_MESSAGE:string:Writing test disc:Message to print when test will start
+# VAR=FORCE_NON_INTERACTIVE:boolean:false:Force non-interactive mode for already prepared system
 
 . /usr/share/inquisitor/functions-test
 
@@ -35,7 +36,9 @@ test_write()
 {
 	local odd=$1
 
-	check_media_existence $odd
+	if [ "$FORCE_NON_INTERACTIVE" != "true" ]; then
+		check_media_existence $odd
+	fi
 	detect_maxspeed $odd
 	blank_if_needed $odd $SPEED
 
@@ -134,7 +137,22 @@ TESTED_QUANTITY=0
 print_green_message "$WRITE_MESSAGE"
 
 for i in `get_odds_list`; do
-	interactive $i
+	if [ "$FORCE_NON_INTERACTIVE" == "true" ]; then
+		test_write $i
+		if [ "$FLAG" -eq 1 ]; then
+			test_read $i
+			if [ "$FLAG" -eq 1 ]; then
+				test_progress $TESTED_QUANTITY $ODD_QUANTITY
+				eject $i || true
+			else
+				test_failed "Read stage for $i failed"
+			fi
+		else
+			test_failed "Write stage for $i failed"
+		fi
+	else
+		interactive $i
+	fi
 done
 
 test_succeeded

@@ -9,6 +9,7 @@
 # VAR=TEST_IMAGE_HASH:string:6fa7786eef2e11d36e8bc1663679f161:Default image for comparison hash
 # VAR=TEST_IMAGE_BLOCKS:int:332800:This images size in blocks (2048 bytes each)
 # VAR=MESH_POINTS:int:1024:Points for meshes for monitoring drive's speed
+# VAR=FORCE_NON_INTERACTIVE:boolean:false:Force non-interactive mode for already prepared system
 
 . /usr/share/inquisitor/functions-test
 
@@ -56,7 +57,7 @@ interactive()
 	local non_passed=1
 
 	while ( [ "$non_passed" -eq 1 ] ); do
-		#eject $odd || true
+		eject $odd || true
 		print_green_message "Drive $(( $TESTED_QUANTITY + 1)):"
 		print_green_message "Either press y and insert media for testing, or n if you want to finish test: "
 		read choice
@@ -76,7 +77,7 @@ interactive()
 			non_passed=0
 
 			generate_speed_results
-			#eject $odd || true
+			eject $odd || true
 		else
 			print_red_message "Drive test failed!"
 		fi
@@ -98,7 +99,18 @@ ODD_QUANTITY=`hal-find-by-capability --capability storage.cdrom | wc -l`
 TESTED_QUANTITY=0
 
 for i in `get_odds_list`; do
-	interactive $i
+	if [ "$FORCE_NON_INTERACTIVE" == "true" ]; then
+		test_odd $i
+		if [ "$FLAG" -eq 1 ]; then
+			test_progress $TESTED_QUANTITY $ODD_QUANTITY
+			generate_speed_results
+			eject $i || true
+		else
+			test_failed "Bad ODD $i"
+		fi
+	else
+		interactive $i
+	fi
 done
 
 test_succeeded
