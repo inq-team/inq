@@ -18,7 +18,6 @@ TOTAL_MEMORY=$(( (`grep MemTotal /proc/meminfo | awk '{print $2}'`) / 1024 - 256
 TOTAL_SUBSTAGES=$(( 16 * $TEST_LOOPS ))
 COMPLETED_SUBSTAGES=0
 MEMORY_LOG=`mktemp`
-MEMTEST_PID=`mktemp`
 
 # Cleanup
 exit_handler()
@@ -26,10 +25,8 @@ exit_handler()
 	local rc=$?
 	trap - EXIT
 
-	if [ -f "$MEMTEST_PID" ]; then
-		kill `cat $MEMTEST_PID`
-		rm $MEMTEST_PID
-	fi
+	kill $MEMTEST_PID
+
 	if [ -f "$MEMORY_LOG" ]; then
 		rm $MEMORY_LOG
 	fi
@@ -52,14 +49,14 @@ turnon_oom_killer()
 #turnoff_oom_killer
 
 memtester $TOTAL_MEMORY $TEST_LOOPS > $MEMORY_LOG &
-echo $! > $MEMTEST_PID
+MEMTEST_PID=$!
 
 while true ; do
 	sleep $LOG_TIME
 	COMPLETED_SUBSTAGES=`sed '{:loop g; n; s/^Loop\|Done/\0/; T loop; g; \
 		b nloop; :nloop n; s/^Loop\|Done/\0/; T nloop; g; b nloop; }' \
 		< $MEMORY_LOG | grep -v '^$' | wc -l`
-	if [ -d /proc/$MEMTESTER_PID ] ; then
+	if [ -d /proc/$MEMTEST_PID ] ; then
 		test_progress $COMPLETED_SUBSTAGES $TOTAL_SUBSTAGES
 	else
 		if [ "$COMPLETED_SUBSTAGES" -eq "$TOTAL_SUBSTAGES" ] ; then

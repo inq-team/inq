@@ -98,24 +98,6 @@ $SHARE_DIR/bios_flash
 # Run all tests
 # ===========================================================================
 
-TEST_NAME=odd_write-cd1 PLANNER=1\
-	TEST_IMAGE=/usr/share/inquisitor/ets1.iso \
-	TEST_IMAGE_BLOCKS=298769 \
-	WRITE_SPEED=10 \
-	TEST_IMAGE_MD5=7a697766db19429bb8ee77a5cd9e0d9e \
-	WRITE_SPEED_FORCE=true \
-	WRITE_MESSAGE="Writing first RS160G3 drivers disc" \
-	run_test odd_write
-
-TEST_NAME=odd_write-cd2 PLANNER=1 \
-	TEST_IMAGE=/usr/share/inquisitor/ets2.iso \
-	TEST_IMAGE_BLOCKS=145007 \
-	WRITE_SPEED=10 \
-	TEST_IMAGE_MD5=6ae4c0a3be679cac2c457b92f2f6b9c9 \
-	WRITE_SPEED_FORCE=true \
-	WRITE_MESSAGE="Writing second RS160G3 drivers disc" \
-	run_test odd_write
-
 TEST_NAME=cpu PLANNER=1 \
 	TEST_TIME=900 \
 	run_test cpu
@@ -140,9 +122,19 @@ TEST_NAME=fdd PLANNER=1 \
 	FLOPPY_SIZE=1440 \
 	run_test fdd
 
-#PLANNER=1 TEST_NAME=flash SIZE_LIMIT=2048 . $SHARE_DIR/test/flash
-#PLANNER=1 TEST_NAME=odd_read TEST_IMAGE_HASH=2e8744dfd11bf425001aad57976d42cc TEST_IMAGE_BLOCKS=50000 MESH_POINTS=1024 . $SHARE_DIR/test/odd_read
+TEST_NAME=net PLANNER=1 \
+	MD5=ca658fd4159bc35698edf9a1cdd70876 \
+	URL=3000/test_file.html \
+	run_test net
 
-print_green_message "TESTING FINISHED"
+TEST_NAME=odd_read PLANNER=1 \
+	TEST_IMAGE_HASH=2e8744dfd11bf425001aad57976d42cc \
+	TEST_IMAGE_BLOCKS=50000 \
+	MESH_POINTS=1024 \
+	run_test odd_read
+
+print_green_message "===================="
+print_green_message "= TESTING FINISHED ="
+print_green_message "===================="
 
 bash
