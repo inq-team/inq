@@ -125,6 +125,7 @@ TEST_NAME=fdd PLANNER=1 \
 TEST_NAME=net PLANNER=1 \
 	MD5=ca658fd4159bc35698edf9a1cdd70876 \
 	URL=3000/test_file.html \
+	TIMEOUT=30 \
 	run_test net
 
 TEST_NAME=odd_read PLANNER=1 \
@@ -133,8 +134,16 @@ TEST_NAME=odd_read PLANNER=1 \
 	MESH_POINTS=1024 \
 	run_test odd_read
 
-print_green_message "===================="
-print_green_message "= TESTING FINISHED ="
-print_green_message "===================="
+TEST_NAME=usb-flash-drive PLANNER=1 \
+	BLOCKSIZE=1024 \
+	SIZE=20 \
+	run_test usb-flash-drive
+
+#We completed all tests
+print_green_message "================"
+print_green_message "TESTING FINISHED"
+print_green_message "================"
+
+testing_finished
 
 bash

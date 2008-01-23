@@ -246,3 +246,8 @@ get_odds_list()
 		hal-get-property --udi "$UDI" --key block.device
 	done
 }
+
+get_interface_ipaddr()
+{
+	/sbin/ifconfig eth$1 | grep 'inet addr:' | sed 's/^.*:\(.*\)  Bcast.*$/\1/;'
+}

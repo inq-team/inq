@@ -18,15 +18,23 @@ exit_handler()
 	local rc=$?
 	trap - EXIT
 
-	ifconfig eth${FIRST_NIC} up
-	ip route replace default via $SERVER dev eth${FIRST_NIC}
-	sleep 5
+	if [ -n "$FIRST_NIC" -a -n "$LOCAL_IP" -a -n "$GATEWAY" ]; then
+		ifconfig eth${FIRST_NIC} up
+		sleep 5
+		ifconfig eth${FIRST_NIC} inet $LOCAL_IP
+		ip route replace default via $GATEWAY dev eth${FIRST_NIC}
+		sleep 5
 
-	for i in `seq 0 $(( $NIC_QUANTITY - 1 ))`; do
-		if [ $i -ne "$FIRST_NIC" ]; then
-			ip link set eth${i} down
-		fi
-	done
+		for i in `seq 0 $(( $NIC_QUANTITY - 1 ))`; do
+			if [ $i -ne "$FIRST_NIC" ]; then
+				ip link set eth${i} down
+			else
+				true
+			fi
+		done
+	else
+		true
+	fi
 
 	exit $rc
 }
@@ -38,12 +46,16 @@ test_nic()
 	local md5
 
 	ifconfig eth${nic_number} up
-	ip route replace default via $SERVER dev eth${nic_number}
+	sleep 5
+	ifconfig eth${nic_number} inet $LOCAL_IP
+	ip route replace default via $GATEWAY dev eth${nic_number}
 	sleep 5
 
 	for i in `seq 0 $(( $NIC_QUANTITY - 1 ))`; do
 		if [ "$nic_number" -ne $i ]; then
 			ip link set eth${i} down
+		else
+			true
 		fi
 	done
 
@@ -53,10 +65,12 @@ test_nic()
 NIC_QUANTITY=`cat /proc/net/dev | grep eth | wc -l`
 [ "$NIC_QUANTITY" -eq 0 ] && return
 FIRST_NIC=`ip route | grep default | awk '{print $NF}' | sed 's/eth//'`
+GATEWAY=`ip route | grep default | awk '{print $(NF-2)}'`
+LOCAL_IP=`get_interface_ipaddr $FIRST_NIC`
 
 for i in `seq 0 $(( $NIC_QUANTITY - 1 ))`; do
 if [ "$FIRST_NIC" -ne $i ]; then
-	echo "Testing NIC eth{$i}..."
+	echo "Testing NIC eth${i}..."
 	test_nic $i
 fi
 done
