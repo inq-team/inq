@@ -5,7 +5,7 @@
 # IS_INTERACTIVE=true
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
-# VAR=TEST_IMAGE:string:/usr/share/inquisitor/testimage.iso:Default image for comparison
+# VAR=TEST_IMAGE:string:iso/testimage.iso:ISO image path (absolute or relative)
 # VAR=TEST_IMAGE_BLOCKS:int:332800:This images size in blocks (2048 bytes each)
 # VAR=TEST_IMAGE_MD5:string:ffffffffffffffffffffffffffffffff:Test image MD5 hash
 # VAR=WRITE_SPEED:int:10:Default write speed if it won't detect
@@ -129,6 +129,13 @@ load_kernel_modules
 
 ODD_QUANTITY=`get_odds_list | wc -l`
 [ "$ODD_QUANTITY" -eq 0 ] && return
+
+#Replace relative path with absolute
+if echo "$TEST_IMAGE" | grep -q "^\/"; then
+	true #already absolute path
+else
+	TEST_IMAGE=${SHARE_DIR}${TEST_IMAGE}
+fi
 
 TESTED_QUANTITY=0
 print_green_message "$WRITE_MESSAGE"

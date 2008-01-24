@@ -11,7 +11,7 @@ fi
 # Detects
 # ===========================================================================
 
-#saving logs
+# Save detection logs
 dmidecode > $HOME/dmi.log
 decode-dimms.pl > $HOME/spd.log
 ipmitool fru 2>/dev/null > $HOME/fru.log || true
@@ -25,13 +25,6 @@ for I in $SHARE_DIR/detect/*; do
 	echo_success
 done
 echo 'Detects finished'
-
-#removing logs
-#rm -f $HOME/dmi.log
-#rm -f $HOME/spd.log
-#rm -f $HOME/fru.log
-#rm -f $HOME/lspci.log
-#rm -f $HOME/lshw.log
 
 # ===========================================================================
 # Self-identification
@@ -59,7 +52,7 @@ publish_my_ip || fatal_failure 'IP-address update'
 hostname c$COMPUTER_ID
 /sbin/service syslog-ng start
 
-#Set time
+# Set time
 echo -n 'Trying set local time '
 if [ -n "$NTP_SERVER" ]; then
 	if /usr/sbin/ntpdate $NTP_SERVER $1>/dev/null && /sbin/hwclock --systohc; then
@@ -82,17 +75,6 @@ watchdog_start
 submit_components $HOME/components.xml
 
 $SHARE_DIR/bios_flash
-
-#ifdef WATCHDOG
-# ===========================================================================
-# Set up watchdog
-# ===========================================================================
-
-#watchdog &
-#IP_ADDRESS=`/sbin/ifconfig eth0 | grep 'inet addr:' | sed 's/^.*:\(.*\)  Bcast.*$/\1/;'`
-#ssh $TESTER watchdog-command.rb --add "$MANUFACTURER" "$PRODUCT_NAME" "$SERIAL" "$IP_ADDRESS"
-#success "Watchdog of $IP_ADDRESS started"
-#endif
 
 # ===========================================================================
 # Run all tests
@@ -118,15 +100,15 @@ TEST_NAME=hdd-array PLANNER=1 \
 	STRESS_TREE=/usr/share/inquisitor/linux-2.6.22.5-31-stress.tar.gz \
 	run_test hdd-array
 
-TEST_NAME=fdd PLANNER=1 \
-	FLOPPY_SIZE=1440 \
-	run_test fdd
-
 TEST_NAME=net PLANNER=1 \
 	MD5=ca658fd4159bc35698edf9a1cdd70876 \
 	URL=3000/test_file.html \
 	TIMEOUT=30 \
 	run_test net
+
+TEST_NAME=fdd PLANNER=1 \
+	FLOPPY_SIZE=1440 \
+	run_test fdd
 
 TEST_NAME=odd_read PLANNER=1 \
 	TEST_IMAGE_HASH=2e8744dfd11bf425001aad57976d42cc \
@@ -140,7 +122,7 @@ TEST_NAME=usb-flash-drive PLANNER=1 \
 	SIZE=20 \
 	run_test usb-flash-drive
 
-#We completed all tests
+# We completed all tests
 print_green_message "================"
 print_green_message "TESTING FINISHED"
 print_green_message "================"
