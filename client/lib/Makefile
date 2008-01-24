@@ -6,7 +6,7 @@ SUBDIRS=watchdog wait-string einarc stream-mem whetstone dhrystone
 include ../../Makefile.config
 
 all:
-	cd einarc && ./configure --module=$(EINARC_MODULES) && cd ..
+	cd einarc && ./configure --modules=$(EINARC_MODULES) && cd ..
 	for I in $(SUBDIRS); do $(MAKE) -C $$I all; done
 
 install:
