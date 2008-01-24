@@ -36,9 +36,7 @@ test_write()
 {
 	local odd=$1
 
-	if [ "$FORCE_NON_INTERACTIVE" != "true" ]; then
-		check_media_existence $odd
-	fi
+	check_writeable_disc $odd
 	detect_maxspeed $odd
 	blank_if_needed $odd $SPEED
 
@@ -48,7 +46,7 @@ test_write()
 	print_green_message "Writing done"
 }
 
-check_media_existence()
+check_writeable_disc()
 {
 	local odd=$1
 
@@ -95,7 +93,6 @@ interactive()
 
 	while ( [ "$non_passed" -eq 1 ] ); do
 		eject $odd || true
-		print_green_message "Drive $(( $TESTED_QUANTITY + 1)):"
 		print_green_message "Either press y and insert media for testing, or n if you want to finish test: "
 		read choice
 
@@ -130,28 +127,53 @@ interactive()
 
 load_kernel_modules
 
-ODD_QUANTITY=`hal-find-by-capability --capability storage.cdrom | wc -l`
+ODD_QUANTITY=`get_odds_list | wc -l`
 [ "$ODD_QUANTITY" -eq 0 ] && return
 
 TESTED_QUANTITY=0
 print_green_message "$WRITE_MESSAGE"
 
-for i in `get_odds_list`; do
+for odd in `get_odds_list`; do
+	print_green_message "Testing drive ${odd}..."
+
+	#Forced non-interactive mode, no user actions allowed here
 	if [ "$FORCE_NON_INTERACTIVE" == "true" ]; then
-		test_write $i
+		test_write $odd
 		if [ "$FLAG" -eq 1 ]; then
-			test_read $i
+			test_read $odd
 			if [ "$FLAG" -eq 1 ]; then
+				TESTED_QUANTITY=$(( $TESTED_QUANTITY + 1 ))
 				test_progress $TESTED_QUANTITY $ODD_QUANTITY
-				eject $i || true
+				eject $odd || true
 			else
-				test_failed "Read stage for $i failed"
+				test_failed "Read stage for $odd failed"
 			fi
 		else
-			test_failed "Write stage for $i failed"
+			test_failed "Write stage for $odd failed"
+		fi
+	fi
+
+	#Default mode, try to test drive if media present
+	if [ `check_odd_media_existence $odd` == "true" ];then
+		print_green_message "Found inserted media. Trying to test..."
+		test_write $odd
+		if [ "$FLAG" -eq 1 ]; then
+			test_read $odd
+			if [ "$FLAG" -eq 1 ]; then
+				print_green_message "Drive test passed"
+				TESTED_QUANTITY=$(( $TESTED_QUANTITY + 1 ))
+				test_progress $TESTED_QUANTITY $ODD_QUANTITY
+				eject $odd || true
+			else
+				print_red_message "Read stage for $odd failed, going to interactive mode"
+				interactive $odd
+			fi
+		else
+			print_red_message "Write stage for $odd failed, going to interactive mode"
+			interactive $odd
 		fi
 	else
-		interactive $i
+		interactive $odd
 	fi
 done
 

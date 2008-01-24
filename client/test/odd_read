@@ -58,7 +58,6 @@ interactive()
 
 	while ( [ "$non_passed" -eq 1 ] ); do
 		eject $odd || true
-		print_green_message "Drive $(( $TESTED_QUANTITY + 1)):"
 		print_green_message "Either press y and insert media for testing, or n if you want to finish test: "
 		read choice
 
@@ -79,7 +78,7 @@ interactive()
 			generate_speed_results
 			eject $odd || true
 		else
-			print_red_message "Drive test failed!"
+			print_red_message "Drive test failed"
 		fi
 	done
 }
@@ -93,23 +92,42 @@ generate_speed_results()
 
 load_kernel_modules
 
-ODD_QUANTITY=`hal-find-by-capability --capability storage.cdrom | wc -l`
+ODD_QUANTITY=`get_odds_list | wc -l`
 [ "$ODD_QUANTITY" -eq 0 ] && return
 
 TESTED_QUANTITY=0
 
-for i in `get_odds_list`; do
+for odd in `get_odds_list`; do
+	print_green_message "Testing drive ${odd}..."
+
 	if [ "$FORCE_NON_INTERACTIVE" == "true" ]; then
-		test_odd $i
+		#Forced non-interactive mode, no user actions allowed here
+		test_odd $odd
 		if [ "$FLAG" -eq 1 ]; then
+			TESTED_QUANTITY=$(( $TESTED_QUANTITY + 1 ))
 			test_progress $TESTED_QUANTITY $ODD_QUANTITY
 			generate_speed_results
-			eject $i || true
+			eject $odd || true
 		else
-			test_failed "Bad ODD $i"
+			test_failed "Bad ODD $odd"
 		fi
 	else
-		interactive $i
+		#Default mode, try to test drive if media present
+		if [ `check_odd_media_existence $odd` == "true" ];then
+			print_green_message "Found inserted media. Trying to test..."
+			test_odd $odd
+			if [ "$FLAG" -eq 1 ]; then
+				print_green_message "Drive test passed"
+				TESTED_QUANTITY=$(( $TESTED_QUANTITY + 1 ))
+				test_progress $TESTED_QUANTITY $ODD_QUANTITY
+				eject $odd || true
+			else
+				print_red_message "Drive test failed, going to interactive mode"
+				interactive $odd
+			fi
+		else
+			interactive $odd
+		fi
 	fi
 done
 

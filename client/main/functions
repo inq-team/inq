@@ -251,3 +251,12 @@ get_interface_ipaddr()
 {
 	/sbin/ifconfig eth$1 | grep 'inet addr:' | sed 's/^.*:\(.*\)  Bcast.*$/\1/;'
 }
+
+check_odd_media_existence()
+{
+	if cdrecord dev=$1 -atip | grep -q 'ATIP info from disk'; then
+		echo "true"
+	else
+		echo "false"
+	fi
+}
