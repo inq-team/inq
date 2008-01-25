@@ -30,10 +30,11 @@ class OrdersController < ApplicationController
 		@profiles = Profile.find_all.map{ |x| x.id }
 		@start_id = Computer.find_by_sql('SELECT MAX(id)+1 FROM computers')[0]['MAX(id)+1'].to_i
 		@end_id = @start_id + @default_qty - 1
+
 		@order_title = @order.title.gsub(/(\d)(S(A|C))/){$1}.gsub(/(\d)(G(2|3))/){$1 + ' ' + $2}
-		model_names =  Model.find_by_sql("SELECT name FROM models WHERE MATCH(name) AGAINST('#{@order_title}');").sort{ |a,b| a.name <=> b.name }.map{ |x| x.name }
+		model_names = Model.find_by_sql(['SELECT name FROM models WHERE MATCH(name) AGAINST(?);', @order_title]).sort{ |a,b| a.name <=> b.name }.map{ |x| x.name }
 		@default_model = nil
-				
+
 		if model_names.size > 0
 			[/G2/, /G3/].each do |g|
 				if @order_title =~ g
@@ -46,19 +47,18 @@ class OrdersController < ApplicationController
 				end
 			end
 		end
-		
+
 		if (@default_model == nil) && (model_names.size > 0)
 			@default_model = model_names[0]
 		end
-		
+
 #		@computers = []
 		respond_to do |format|
 			format.html # show.rhtml
 			format.xml  { render :xml => @order.to_xml(:include => [:order_lines, :manager]) }
 		end
 	end
-	
-	
+
 	def create_computers
 		model = params[:model][:name]
 		profile_id = params[:profile][:id]
