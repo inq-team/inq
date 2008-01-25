@@ -247,6 +247,13 @@ get_odds_list()
 	done
 }
 
+get_fdds_list()
+{
+	for UDI in `hal-find-by-property --key=storage.drive_type --string floppy`; do
+		hal-get-property --udi "$UDI" --key block.device
+	done
+}
+
 get_interface_ipaddr()
 {
 	/sbin/ifconfig eth$1 | grep 'inet addr:' | sed 's/^.*:\(.*\)  Bcast.*$/\1/;'

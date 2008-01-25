@@ -56,7 +56,7 @@ array_stress_check()
 
 	echo "Testing $array..."
 	START=`date "+%s"`
-	LAST_LOG_TIME=$TOTAL_START
+	LAST_LOGTIME=$TOTAL_START
 
 	while true; do
 		TIME=`date "+%s"`
@@ -68,9 +68,9 @@ array_stress_check()
 			make -j $JOBS fs >/dev/null 2>&1 || test_failed "Make error"
 		fi
 
-		if [ $(($TIME - $LAST_LOG_TIME)) -gt $LOGTIME ]; then
+		if [ $(($TIME - $LAST_LOGTIME)) -gt $LOGTIME ]; then
 			test_progress $(( $TIME - $START )) $TESTTIME
-			LAST_LOG_TIME=$TIME
+			LAST_LOGTIME=$TIME
 		fi
 	done
 }
@@ -101,7 +101,7 @@ if raid-wizard-optimal; then
 	true
 else
 	test_failed "No HDDs"
-	return
+	exit 1
 fi
 
 #TEMPORARY checking for correct number of JOBS

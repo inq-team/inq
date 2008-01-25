@@ -48,11 +48,17 @@ done
 # Reporting IP-address to the server
 publish_my_ip || fatal_failure 'IP-address update'
 
+# ===========================================================================
 # Start logging
+# ===========================================================================
+
 hostname c$COMPUTER_ID
 /sbin/service syslog-ng start
 
+# ===========================================================================
 # Set time
+# ===========================================================================
+
 echo -n 'Trying set local time '
 if [ -n "$NTP_SERVER" ]; then
 	if /usr/sbin/ntpdate $NTP_SERVER $1>/dev/null && /sbin/hwclock --systohc; then
@@ -65,7 +71,10 @@ else
 	echo_skipped
 fi
 
+# ===========================================================================
 # Start watchdog, if available
+# ===========================================================================
+
 watchdog_start
 
 # ===========================================================================
@@ -73,8 +82,6 @@ watchdog_start
 # ===========================================================================
 
 submit_components $HOME/components.xml
-
-$SHARE_DIR/bios_flash
 
 # ===========================================================================
 # Run all tests
@@ -120,6 +127,7 @@ TEST_NAME=odd_read PLANNER=1 \
 TEST_NAME=usb-flash-drive PLANNER=1 \
 	BLOCKSIZE=1024 \
 	SIZE=20 \
+	COUNT=2 \
 	run_test usb-flash-drive
 
 # We completed all tests

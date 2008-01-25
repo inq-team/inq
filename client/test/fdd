@@ -30,20 +30,32 @@ trap exit_handler HUP PIPE INT QUIT TERM EXIT
 
 generate_test_image()
 {
-	if dd if=/dev/urandom of=$TEST_IMAGE bs=1024 count=$FLOPPY_SIZE; then
+	if dd if=/dev/urandom of=$TEST_IMAGE bs=1024 count=$FLOPPY_SIZE >/dev/null 2>&1; then
 		true
 	else
 		test_failed "Unable to create test image"
-		FDD_QUANTITY=0 #to not to start interactive cycles
+		exit 1
 	fi
 }
 
 test_fdd()
 {
-	dd if=$TEST_IMAGE of=/dev/fd$1 >/dev/null 2>&1
-	floppycontrol -f -d /dev/fd$1 >/dev/null 2>&1
-	dd if=/dev/fd$1 of="$TEST_IMAGE"_fd bs=1024 count=$FLOPPY_SIZE >/dev/null 2>&1
+	local fdd=$1
+
+	echo -n "Writing..."
+	dd if=$TEST_IMAGE of=$fdd >/dev/null 2>&1
+	echo_success
+
+	# Clear all caches
+	sync;sync;sync
+	floppycontrol -f -d $fdd >/dev/null 2>&1 || true
+	echo 3 > /proc/sys/vm/drop_caches
+
+	echo -n "Reading and comparing..."
+	dd if=$fdd of="$TEST_IMAGE"_fd bs=1024 count=$FLOPPY_SIZE >/dev/null 2>&1
 	diff "$TEST_IMAGE"_fd $TEST_IMAGE >/dev/null 2>&1 || return 1
+	echo_success
+
 	return 0
 }
 
@@ -53,7 +65,7 @@ interactive()
 	local non_passed=1
 
 	while ( [ "$non_passed" -eq 1 ] ); do
-		print_green_message "Drive /dev/fd${fdd}:"
+		print_green_message "Drive ${fdd}:"
 		print_green_message "Either press y and insert floppy for testing, or n if you want to finish test: "
 		read choice
 
@@ -62,11 +74,12 @@ interactive()
 			break
 		fi
 
-		test_fdd $(( $fdd - 1 ))
+		test_fdd $fdd
 
-		if $(( $? == 0 )); then
+		if [ $? -eq 0 ]; then
 			print_green_message "Drive test passed"
-			test_progress $fdd $FDD_QUANTITY
+			TESTED_QUANTITY=$(( $TESTED_QUANTITY + 1 ))
+			test_progress $TESTED_QUANTITY $FDD_QUANTITY
 			non_passed=0
 		else
 			print_red_message "Drive test failed!"
@@ -74,12 +87,13 @@ interactive()
 	done
 }
 
-FDD_QUANTITY=`ls /dev/* | sed 's/\/dev\///g' | grep '^fd[0-9]*$' | wc -l`
-[ "$FDD_QUANTITY" -eq 0 ] && return
+FDD_QUANTITY=`get_fdds_list | wc -l`
+[ "$FDD_QUANTITY" -eq 0 ] && exit 1
 generate_test_image
+TESTED_QUANTITY=0
 
-for i in `seq 1 $FDD_QUANTITY`; do
-	interactive $i
+for fdd in `get_fdds_list`; do
+	interactive $fdd
 done
 
 test_succeeded

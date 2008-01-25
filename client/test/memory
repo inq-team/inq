@@ -7,7 +7,7 @@
 # VERSION=0.1
 # TAGS=ram,memory
 # VAR=TEST_LOOPS:int:3:Number of testing loops
-# VAR=LOG_TIME:int:120:Time between progress updates, sec
+# VAR=LOGTIME:int:120:Time between progress updates, sec
 
 . /usr/share/inquisitor/functions-test
 
@@ -51,7 +51,7 @@ memtester $TOTAL_MEMORY $TEST_LOOPS > $MEMORY_LOG &
 MEMTEST_PID=$!
 
 while true ; do
-	sleep $LOG_TIME
+	sleep $LOGTIME
 	COMPLETED_SUBSTAGES=`sed '{:loop g; n; s/^Loop\|Done/\0/; T loop; g; \
 		b nloop; :nloop n; s/^Loop\|Done/\0/; T nloop; g; b nloop; }' \
 		< $MEMORY_LOG | grep -v '^$' | wc -l`
