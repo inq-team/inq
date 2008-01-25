@@ -43,7 +43,7 @@ detect_hdd_quantity()
 clear_testing_environment()
 {
 	cd /
-	umount -f $MOUNTPOINT || true
+	umount -f $MOUNTPOINT >/dev/null 2>&1 || true
 }
 
 array_stress_check()
