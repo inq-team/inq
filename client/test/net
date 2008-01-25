@@ -73,7 +73,10 @@ test_nic()
 }
 
 NIC_QUANTITY=`cat /proc/net/dev | grep eth | wc -l`
-[ "$NIC_QUANTITY" -eq 0 ] && exit 1
+if [ "$NIC_QUANTITY" -eq 0 ]; then
+	test_succeeded "No NICs found"
+	exit 0
+fi
 FIRST_NIC=`ip route | grep default | awk '{print $NF}' | sed 's/eth//'`
 GATEWAY=`ip route | grep default | awk '{print $(NF-2)}'`
 LOCAL_IP=`get_interface_ipaddr $FIRST_NIC`

@@ -88,7 +88,10 @@ interactive()
 }
 
 FDD_QUANTITY=`get_fdds_list | wc -l`
-[ "$FDD_QUANTITY" -eq 0 ] && exit 1
+if [ "$FDD_QUANTITY" -eq 0 ]; then
+	test_succeeded "No FDDs found"
+	exit 0
+fi
 generate_test_image
 TESTED_QUANTITY=0
 

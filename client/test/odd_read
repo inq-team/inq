@@ -93,7 +93,10 @@ generate_speed_results()
 load_kernel_modules
 
 ODD_QUANTITY=`get_odds_list | wc -l`
-[ "$ODD_QUANTITY" -eq 0 ] && exit 1
+if [ "$ODD_QUANTITY" -eq 0 ]; then
+	test_succeeded "No ODDs found"
+	exit 0
+fi
 
 TESTED_QUANTITY=0
 
