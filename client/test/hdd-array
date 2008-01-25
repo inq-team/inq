@@ -21,8 +21,9 @@ exit_handler()
 	local rc=$?
 	trap - EXIT
 
+	clear_testing_environment
 	if [ -d "$MOUNTPOINT" ]; then
-		clear_testing_environment
+		rm -fr $MOUNTPOINT
 	fi
 	exit $rc
 }
@@ -43,7 +44,6 @@ clear_testing_environment()
 {
 	cd /
 	umount -f $MOUNTPOINT || true
-	rm -rf $MOUNTPOINT
 }
 
 array_stress_check()
