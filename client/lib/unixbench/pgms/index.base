@@ -22,23 +22,23 @@ shell1|60|lpm|42.4|42.4|1
 # common modern adaptor with 3D.  The baseline scores here are then
 # 1/66.6 of the values from that run, to bring them roughly in line with
 # George.  (The HP has an index score of 666.6 single-process.)
-2d-rects|3|score|15|15|1
+#2d-rects|3|score|15|15|1
 #2d-lines|3|score|15|15|1
 #2d-circle|3|score|15|15|1
-2d-ellipse|3|score|15|15|1
+#2d-ellipse|3|score|15|15|1
 #2d-shapes|3|score|15|15|1
-2d-aashapes|3|score|15|15|1
+#2d-aashapes|3|score|15|15|1
 #2d-polys|3|score|15|15|1
-2d-text|3|score|15|15|1
-2d-blit|3|score|15|15|1
-2d-window|3|score|15|15|1
+#2d-text|3|score|15|15|1
+#2d-blit|3|score|15|15|1
+#2d-window|3|score|15|15|1
 
 # The gears test score is derived from a test run on an HP Compaq nc8430
 # with an ATI Mobility Radeon X1600 Video (256MB) — this is a fairly
 # common modern adaptor with 3D.  The baseline scores here are then
 # 1/66.6 of the values from that run, to bring them roughly in line with
 # George.
-ubgears|20|fps|33.4|33.4|3
+#ubgears|20|fps|33.4|33.4|3
 
 # The grep and sysexec tests were added in 5.1.1; they are not index tests,
 # but these baseline scores were added for convenience.
