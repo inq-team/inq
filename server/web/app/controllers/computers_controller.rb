@@ -1,3 +1,5 @@
+require 'planner'
+
 class ComputersController < ApplicationController
 	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
 #	verify :method => :post, :only => [ :destroy, :create, :update ],
@@ -367,53 +369,10 @@ class ComputersController < ApplicationController
 
 	def plan
 		@computer = Computer.find(params[:id])
-                testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }.last
-		if testing.profile_id.blank? 
-			respond_to() do |format|
-				format.html { redirect_to(:action => 'show', :id => @computer) }
-				format.xml do
-					output = ""
-					build = Builder::XmlMarkup.new(:target => output)
-					build.instruct! 
-					build.testing_plan do |plan|
-						plan.script do |s| 
-							s.cdata! <<__EOF__
-#!/bin/sh -ef
-
-PLANNED_TESTS=cpu memory hdd
-
-for TEST in $PLANNED_TESTS; do
-	if [ -x $TEST ] ; then
-		case "$TEST" in
-		cpu)
-			CPU_NO_SCALE=0 
-			CPU_WAIT_USERSPACE=20 
-			CPU_WAIT_MAX_FREQ=60 
-			CPU_WAIT_MIN_FREQ=60 
-			CPU_WAIT_FREQ_STEP=60 
-			CPU_RANDOM_TIMES=50 
-			CPU_WAIT_RANDOM=3 
-			;;
-		memory)
-			;
-			;;
-		hdd)
-			;
-			;;
-		esac			
-		run_test $TEST
-	fi
-done
-
-__EOF__
-						end
-					end
-					render(:xml => output) 
-				end
-			end
-		else
-			head(:status => 404)
-		end
+#		testing = @computer.last_testing
+		pl = Planner.new(@computer.profile.xml)
+		pl.calculate
+		render :text => pl.script
 	end
 
 	def ip
