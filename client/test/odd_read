@@ -45,7 +45,7 @@ test_odd()
 	readcd -v dev=$odd f=$IMAGE sectors=0-$TEST_IMAGE_BLOCKS \
 		meshpoints=$MESH_POINTS >$RESULT_FILE || true
 	[ ! -s "$IMAGE" ] && dd if=$odd of=$IMAGE bs=2048 \
-				count=$TEST_IMAGE_BLOCKS >/dev/null 2>&1
+				count=$TEST_IMAGE_BLOCKS >$DEBUG_TTY 2>&1
 
 	[ `md5sum -b < $IMAGE | awk '{print $1}'` = $TEST_IMAGE_HASH ] && \
 		FLAG=1 || FLAG=0

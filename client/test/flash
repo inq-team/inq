@@ -45,7 +45,7 @@ flash_test()
 {
 	TESTED_DEVICES=1
 	for i in `cat $DEVICE_LIST_FILE`; do
-		$BADBLOCKS_COMMAND /dev/$i >/dev/null 2>&1 || test_failed
+		$BADBLOCKS_COMMAND /dev/$i >$DEBUG_TTY 2>&1 || test_failed
 		test_progress $TESTED_DEVICES $FLASH_QUANTITY
 		TESTED_DEVICES=$[ $TESTED_DEVICES + 1 ]
 	done

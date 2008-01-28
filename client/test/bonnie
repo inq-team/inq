@@ -32,7 +32,7 @@ perform_benchmark()
 {
 	DRIVE=$1
 
-	mke2fs -m0 -F $DRIVE >/dev/null 2>&1
+	mke2fs -m0 -F $DRIVE >$DEBUG_TTY 2>&1
 	mount $DRIVE $SCRATCH_DIRECTORY
 
 	bonnie++ -u root -d $SCRATCH_DIRECTORY -s $TEST_FILE_SIZE \

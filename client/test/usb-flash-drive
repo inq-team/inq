@@ -66,10 +66,10 @@ for UDI in `hal-find-by-property --key storage.bus --string usb`; do
 	block_dev=`hal-get-property --udi "$UDI" --key block.device`
 	echo -n "Drive $block_dev..."
 	
-	dd if=/dev/urandom of=$TESTFILE bs=1024k count=$SIZE >/dev/null 2>&1
+	dd if=/dev/urandom of=$TESTFILE bs=1024k count=$SIZE >$DEBUG_TTY 2>&1
 
 	# Create filesystem and write testfile
-	mke2fs -m0 -F $block_dev >/dev/null 2>&1 || test_failed "Drive $block_dev writing error"
+	mke2fs -m0 -F $block_dev >$DEBUG_TTY 2>&1 || test_failed "Drive $block_dev writing error"
 	mount -t ext2 $block_dev $MOUNTPOINT
 
 	echo -n "writing..."

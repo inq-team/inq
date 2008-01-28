@@ -26,7 +26,7 @@ exit_handler()
 trap exit_handler HUP PIPE INT QUIT TERM EXIT
 
 time -o $RESULT_FILE mencoder $ENCODE_OPTIONS \
-	-o /dev/null $FILE_TO_ENCODE
+	-o $DEBUG_TTY $FILE_TO_ENCODE
 
 benchmark_submit_float "User time" \
 `sed -n "s/user//;1p" < $RESULT_FILE | awk '{print $1}'`

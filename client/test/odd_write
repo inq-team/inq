@@ -79,7 +79,7 @@ blank_if_needed()
 
 	if cdrecord dev=$odd -atip | grep -q 'Is erasable'; then
 		print_green_message "Blanking..."
-		cdrecord dev=$odd speed=$speed blank=fast >/dev/null 2>&1
+		cdrecord dev=$odd speed=$speed blank=fast >$DEBUG_TTY 2>&1
 		print_green_message "Blanking done"
 	else
 		print_green_message "Non rewritable media. Skipping blanking..."
