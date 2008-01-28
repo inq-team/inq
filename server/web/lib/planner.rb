@@ -1,7 +1,6 @@
 require 'rexml/document'
 
 class Planner
-	attr_reader :plan
 	attr_reader :start_new
 
 	class Task
@@ -14,10 +13,19 @@ class Planner
 		end
 	end
 
-	def initialize(profile)
+	def initialize(profile, stages_prev, stages_now, comp_prev, comp_now, force_continue = false)
 		@profile = REXML::Document.new(profile)	
 		@plan = nil
-		@start_new = true
+		@stages_prev = stages_prev
+		@stages_now = stages_now
+		@comp_prev = comp_prev
+		@comp_now = comp_now
+		@start_new = !force_continue
+	end
+
+	def plan
+		calculate unless @plan
+		@plan
 	end
 
 	def calculate

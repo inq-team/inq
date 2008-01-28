@@ -106,24 +106,15 @@ class ComputersController < ApplicationController
 	end
 
 	def hw
-		@computer = Computer.find(params[:id])
-                @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
-		@testing_number = params[:testing] ? params[:testing].to_i() : @sorted_testings.size - 1
-		@testing = @sorted_testings[@testing_number]
-		@testing ? @components = @testing.components : @components = []
-		
+		prepare_computer_tabs
+		@components = @testing ? @testing.components : []
 		render(:layout => 'computer_tabs')
 	end
 	
 	def sticker
-		@computer = Computer.find(params[:id])
-	        @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
-		@testing_number = params[:testing] ? params[:testing].to_i() : @sorted_testings.size - 1
-		@testing = @sorted_testings[@testing_number]
-
+		prepare_computer_tabs
 		@count = params[:count] 
 		@components = @testing.components.collect { |c| c.model }.inject({}) { |h, m| h[m] = h[m] ? h[m] + 1 : 1 ; h }.collect { |k, v| { :name => k.short_name.blank? ? k.name : k.short_name, :count => v, :model => k  } }.sort() { |q, w| a = q[:model] ; b = w[:model] ; (z = ((a.group ? a.group.name : '') <=> (b.group ? b.group.name : ''))) == 0 ? (q[:name] || 'NULL') <=> (w[:name] || 'NULL') : z }
-
 		render(:layout => 'computer_tabs')
 	end
 
@@ -171,13 +162,8 @@ class ComputersController < ApplicationController
 	end
 
 	def log
-		@computer = Computer.find(params[:id])
-                @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
-		@testing_number = params[:testing] ? params[:testing].to_i() : @sorted_testings.size - 1
-		@testing = @sorted_testings[@testing_number]
-
+		prepare_computer_tabs
 		@logs = File.open("/var/log/HOSTS/c#{ @computer.id }").readlines()
-
 		render(:layout => 'computer_tabs')
 	end
 
@@ -452,5 +438,32 @@ class ComputersController < ApplicationController
 #			f.write()
 #		}
 		redirect_to :action => 'hw', :id => params[:id], :testing => @testing_number
+	end
+
+	private
+	def prepare_computer_tabs
+		@computer = Computer.find(params[:id])
+                @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
+		@testing_number = params[:testing] ? params[:testing].to_i() : @sorted_testings.size - 1
+		@testing = @sorted_testings[@testing_number]
+		prev_testing = @sorted_testings[@testing_number - 1]
+
+		# Completed or running stages
+		@stages = @testing.testing_stages.sort { |a, b| a.start <=> b.start }.collect { |stage|
+			{
+				:id => stage.stage,
+				:elapsed => ((stage.end || Time.new()) - stage.start).round,
+				:result => stage.end ? stage.result == 1 ? 'finished' : stage.result == 2 ? 'failed' : 'unknown' : 'running',
+			}
+		}
+
+		# Planned stages
+		pl = Planner.new(@computer.profile.xml, @testing.testing_stages, prev_testing.testing_stages, @testing.components, prev_testing.components)
+		pl.plan.each { |stage|
+			@stages << {
+				:id => stage.id,
+				:result => 'planned'
+			}
+		}
 	end
 end

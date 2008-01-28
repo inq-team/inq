@@ -88,18 +88,13 @@
 		<td id='testing_plan'><div class='testing_border'>
 			<table>
 				<tr><th class='testing_stage_name'>Stage</th><th class='testing_stage_span'>Elapsed</th></tr>
-			<% if @computer.testings[@testing_number] %>	
-			<% @computer.testings[@testing_number].testing_stages.sort { |a, b| (a.end || Time.new()) <=> (b.end || Time.new()) }.each do |stage| %>
-				<% 
-					span = ((stage.end || Time.new()) - stage.start).round ; 
-					span_txt = sprintf("%02i:%02i:%02i", span/3600, span%3600/60, span%3600%60)
-					classname = stage.end ? stage.result == 1 ? 'finished' : stage.result == 2 ? 'failed' : 'unknown' : 'running'
-				%>
-				<tr class='testing_stage_<%= classname %>'>
-					<td class='testing_stage_name'><%= stage.stage %></td>
-					<td class='testing_stage_span'><%= span_txt %></td>
+			<% if @stages %>
+				<% @stages.each { |stage| %>
+				<tr class='testing_stage_<%= stage[:result] %>'>
+					<td class='testing_stage_name'><%= stage[:id] %></td>
+					<td class='testing_stage_span'><%= sprintf("%02i:%02i:%02i", stage[:elapsed]/3600, stage[:elapsed]%3600/60, stage[:elapsed]%3600%60) if stage[:elapsed] %></td>
 				</tr>
-			<% end %>
+			<% } %>
 			<% end %>
 			</table>
 			&nbsp;
