@@ -260,9 +260,18 @@ get_interface_ipaddr()
 	/sbin/ifconfig eth$1 | grep 'inet addr:' | sed 's/^.*:\(.*\)  Bcast.*$/\1/;'
 }
 
-check_odd_media_existence()
+check_writeable_odd()
 {
-	if cdrecord dev=$1 -atip | grep -q 'ATIP info from disk'; then
+	if cdrecord dev=$1 -atip | grep -q 'ATIP info from disk' >$DEBUG_TTY 2>&1; then
+		echo "true"
+	else
+		echo "false"
+	fi
+}
+
+check_readable_odd()
+{
+	if readcd dev=$1 -fulltoc | grep -q 'TOC len' >$DEBUG_TTY 2>&1; then
 		echo "true"
 	else
 		echo "false"

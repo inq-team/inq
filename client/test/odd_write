@@ -27,9 +27,9 @@ test_read()
 	local hash
 
 	hash=`readcd -v dev=$odd f=- sectors=0-$TEST_IMAGE_BLOCKS retries=8 | md5sum -b | awk '{print $1}'`
-	[ -z "$hash" ] && {hash=`dd if=$odd bs=2048 count=$TEST_IMAGE_BLOCKS | md5sum -b | awk '{print $1}'`}
+	[ -z "$hash" ] && {hash=`dd if=$odd bs=2048 count=$TEST_IMAGE_BLOCKS | md5sum -b | awk '{print $1}'` || true}
 
-	[ $hash = $TEST_IMAGE_MD5 ] && FLAG=1 || FLAG=0
+	[ $hash = $TEST_IMAGE_MD5 ] && return 0 || return 1
 }
 
 test_write()
@@ -42,7 +42,7 @@ test_write()
 
 	print_green_message "Writing..."
 	cdrecord dev=$odd driveropts=burnfree speed=$SPEED -delay 2 -\
-		-data $TEST_IMAGE && FLAG=1 || FLAG=0
+		-data $TEST_IMAGE && return 0 || return 1
 	print_green_message "Writing done"
 }
 
@@ -101,16 +101,10 @@ interactive()
 			break
 		fi
 
-		FLAG=0
-		test_write $odd
-
-		if [ "$FLAG" -eq 1 ]; then
+		if test_write $odd; then
 			print_green_message "Write stage passed, performing read test..."
 
-			FLAG=0
-			test_read $odd
-
-			if [ "$FLAG" -eq 1 ]; then
+			if test_read $odd; then
 				print_green_message "Drive test passed"
 				TESTED_QUANTITY=$(( $TESTED_QUANTITY + 1 ))
 				test_progress $TESTED_QUANTITY $ODD_QUANTITY
@@ -148,10 +142,8 @@ for odd in `get_odds_list`; do
 
 	# Forced non-interactive mode, no user actions allowed here
 	if [ "$FORCE_NON_INTERACTIVE" == "true" ]; then
-		test_write $odd
-		if [ "$FLAG" -eq 1 ]; then
-			test_read $odd
-			if [ "$FLAG" -eq 1 ]; then
+		if test_write $odd; then
+			if test_read $odd; then
 				TESTED_QUANTITY=$(( $TESTED_QUANTITY + 1 ))
 				test_progress $TESTED_QUANTITY $ODD_QUANTITY
 				eject $odd || true
@@ -164,12 +156,10 @@ for odd in `get_odds_list`; do
 	fi
 
 	# Default mode, try to test drive if media present
-	if [ `check_odd_media_existence $odd` == "true" ];then
+	if [ `check_writeable_odd $odd` == "true" ];then
 		print_green_message "Found inserted media. Trying to test..."
-		test_write $odd
-		if [ "$FLAG" -eq 1 ]; then
-			test_read $odd
-			if [ "$FLAG" -eq 1 ]; then
+		if test_write $odd; then
+			if test_read $odd; then
 				print_green_message "Drive test passed"
 				TESTED_QUANTITY=$(( $TESTED_QUANTITY + 1 ))
 				test_progress $TESTED_QUANTITY $ODD_QUANTITY
