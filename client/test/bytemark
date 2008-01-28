@@ -44,4 +44,5 @@ benchmark_submit_float "Integer Index" `grep "INTEGER INDEX" < result | awk '{pr
 benchmark_submit_float "Floating-poing Index" `grep "FLOATING-POINT INDEX" < result | awk '{print $3}' | sed -n '2p'`
 benchmark_submit_float "Memory Index" `grep "MEMORY INDEX" < result | awk '{print $4}'`
 
+cd $HOME
 echo_success

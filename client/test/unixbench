@@ -1,0 +1,38 @@
+#!/bin/sh -ef
+# NAME=Unixbench
+# DESCRIPTION=UNIX Bench Multi-CPU benchmark
+# DESTROYS_HDD=false
+# POWEROFF_DURING_TEST=false
+# VERSION=0.1
+# TAGS=benchmark,cpu,stress,memory,ram
+
+. /usr/share/inquisitor/functions-test
+
+WORKING_DIR=`mktemp -d`
+
+# Cleanup
+exit_handler()
+{
+	local rc=$?
+	trap - EXIT
+
+	if [ -d "$WORKING_DIR" ]; then
+		rm -rf "$WORKING_DIR"
+	fi
+	exit $rc
+}
+trap exit_handler HUP PIPE INT QUIT TERM EXIT
+
+print_red_message "Untested version!"
+
+echo -n "Running UNIX Bench Multi-CPU benchmark..."
+cd $WORKING_DIR
+cp -r $LIB_DIR/unixbench/pgms .
+cp -r $LIB_DIR/unixbench/results .
+cp -r $LIB_DIR/unixbench/tmp .
+cp -r $LIB_DIR/unixbench/testdir .
+cp $LIB_DIR/unixbench/Makefile .
+benchmark_submit_float "All CPUs score" `unixbench | tee $DEBUG_TTY | grep "Index Score" | sed -n "$ p" | awk '{print $NF}'`
+
+cd $HOME
+echo_success
