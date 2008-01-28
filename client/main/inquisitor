@@ -87,48 +87,8 @@ submit_components $HOME/components.xml
 # Run all tests
 # ===========================================================================
 
-TEST_NAME=cpu PLANNER=1 \
-	TEST_TIME=900 \
-	run_test cpu
-
-TEST_NAME=memory PLANNER=1 \
-	TEST_LOOPS=1 \
-	LOGTIME=120 \
-	run_test memory
-
-export COMPUTER_ID && export SHARE_DIR && \
-TEST_NAME=hdd-passthrough PLANNER=1 \
-	run_test hdd-passthrough
-
-TEST_NAME=hdd-array PLANNER=1 \
-	TESTTIME=3600 \
-	LOGTIME=120 \
-	JOBS=32 \
-	STRESS_TREE=/usr/share/inquisitor/linux-2.6.22.5-31-stress.tar.gz \
-	run_test hdd-array
-
-TEST_NAME=net PLANNER=1 \
-	MD5=ca658fd4159bc35698edf9a1cdd70876 \
-	URL=3000/test_file.html \
-	TIMEOUT=30 \
-	run_test net
-
-TEST_NAME=fdd PLANNER=1 \
-	FLOPPY_SIZE=1440 \
-	run_test fdd
-
-TEST_NAME=odd_read PLANNER=1 \
-	TEST_IMAGE_HASH=2e8744dfd11bf425001aad57976d42cc \
-	TEST_IMAGE_BLOCKS=50000 \
-	MESH_POINTS=1024 \
-	FORCE_NON_INTERACTIVE=false \
-	run_test odd_read
-
-TEST_NAME=usb-flash-drive PLANNER=1 \
-	BLOCKSIZE=1024 \
-	SIZE=20 \
-	COUNT=2 \
-	run_test usb-flash-drive
+plan_test_script
+. $HOME/test_script
 
 # We completed all tests
 print_green_message "================"

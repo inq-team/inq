@@ -10,6 +10,14 @@ get_id_by_macs()
 	fi
 }
 
+plan_test_script()
+{
+	if ! curl -sf "$REST_SERVER/computers/plan/$COMPUTER_ID" >$HOME/test_script; then
+		echo 'Unable to get testing plan'
+		return 1
+	fi
+}
+
 test_stage_advance()
 {
 	STAGE=$1
