@@ -70,7 +70,7 @@ publish_my_ip()
 
 benchmark_submit_float()
 {
-	local key=`echo "$1" | ruby -e 'require "cgi"; print CGI::escape($stdin.read)'`
+	local key=`echo -n "$1" | ruby -e 'require "cgi"; print CGI::escape($stdin.read)'`
 	local value=$2
 	if curl -sf "$REST_SERVER/computers/benchmark_submit_float/$COMPUTER_ID?key=$key&value=$value"; then
 		return 0
@@ -82,8 +82,8 @@ benchmark_submit_float()
 
 benchmark_submit_string()
 {
-	local key=`echo "$1" | ruby -e 'require "cgi"; print CGI::escape($stdin.read)'`
-	local value=`echo "$2" | ruby -e 'require "cgi"; print CGI::escape($stdin.read)'`
+	local key=`echo -n "$1" | ruby -e 'require "cgi"; print CGI::escape($stdin.read)'`
+	local value=`echo -n "$2" | ruby -e 'require "cgi"; print CGI::escape($stdin.read)'`
 	if curl -sf "$REST_SERVER/computers/benchmark_submit_string/$COMPUTER_ID?key=$key&value=$value"; then
 		return 0
 	else
