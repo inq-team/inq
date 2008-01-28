@@ -12,18 +12,13 @@
 
 . /usr/share/inquisitor/functions-test
 
-MOUNTPOINT=`mktemp -d`
-TESTFILE=`mktemp`
-
 # Cleanup
 exit_handler()
 {
 	local rc=$?
 	trap - EXIT
 
-	if [ -f "$TESTFILE" ]; then
-		rm $TESTFILE
-	fi
+	[ -f "$TESTFILE" ] && rm $TESTFILE
 	if [ -d "$MOUNTPOINT" ]; then
 		cd /
 		umount -f $MOUNTPOINT >/dev/null 2>&1 || true
@@ -32,6 +27,9 @@ exit_handler()
 	exit $rc
 }
 trap exit_handler HUP PIPE INT QUIT TERM EXIT
+
+MOUNTPOINT=`mktemp -d`
+TESTFILE=`mktemp`
 
 # Check for ready for testing drives
 STORAGE_QUANTITY=0
@@ -97,3 +95,5 @@ for UDI in `hal-find-by-property --key storage.bus --string usb`; do
 	benchmark_submit_float "Drive $block_dev reading speed" $read_time
 done
 fi
+
+test_succeeded

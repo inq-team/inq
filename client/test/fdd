@@ -10,23 +10,20 @@
 
 . /usr/share/inquisitor/functions-test
 
-TEST_IMAGE=`mktemp`
-
 # Cleanup
 exit_handler()
 {
 	local rc=$?
 	trap - EXIT
 
-	if [ -f "$TEST_IMAGE" ]; then
-		rm -f $TEST_IMAGE
-	fi
-	if [ -f "$TEST_IMAGE"_fd ]; then
-		rm -f "$TEST_IMAGE"_fd
-	fi
+	[ -f "$TEST_IMAGE" ] && rm -f $TEST_IMAGE
+	[ -f "$TEST_IMAGE"_fd ] && rm -f "$TEST_IMAGE"_fd
+
 	exit $rc
 }
 trap exit_handler HUP PIPE INT QUIT TERM EXIT
+
+TEST_IMAGE=`mktemp`
 
 generate_test_image()
 {

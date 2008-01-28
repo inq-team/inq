@@ -21,16 +21,13 @@ exit_handler()
 			stop_background "$I"
 		done
 	fi
-	if [ -d "$TMP_DIR" ]; then
-		rm -fr "$TMP_DIR"
-	fi
+	[ -d "$TMP_DIR" ] && rm -fr "$TMP_DIR"
+
 	exit $rc
 }
 trap exit_handler HUP PIPE INT QUIT TERM EXIT
 
 TMP_DIR=`mktemp -d`
-
-test_promise_time $TEST_TIME
 
 # Detecting burn program
 echo -n 'Detecting burners... '
@@ -52,6 +49,8 @@ for i in `seq 0 $(($CPU_QUANTITY - 1))`; do
 	echo_success
 done
 
+test_promise_time $TEST_TIME
+
 echo -n "Burning for $TEST_TIME..."
 sleep $TEST_TIME
 echo_success
@@ -66,3 +65,5 @@ for i in `seq 0 $(($CPU_QUANTITY - 1))`; do
 		test_failed "Burner $i died prematurely"
 	fi
 done
+
+test_succeeded

@@ -8,22 +8,19 @@
 
 . /usr/share/inquisitor/functions-test
 
-WORKING_DIR=`mktemp -d`
-
 # Cleanup
 exit_handler()
 {
 	local rc=$?
 	trap - EXIT
 
-	if [ -d "$WORKING_DIR" ]; then
-		rm -rf "$WORKING_DIR"
-	fi
+	[ -d "$WORKING_DIR" ] && rm -rf "$WORKING_DIR"
+
 	exit $rc
 }
 trap exit_handler HUP PIPE INT QUIT TERM EXIT
 
-print_red_message "Untested version!"
+WORKING_DIR=`mktemp -d`
 
 echo -n "Running UNIX Bench Multi-CPU benchmark..."
 cd $WORKING_DIR
@@ -36,3 +33,5 @@ benchmark_submit_float "All CPUs score" `unixbench | tee $DEBUG_TTY | grep "Inde
 
 cd $HOME
 echo_success
+
+test_succeeded

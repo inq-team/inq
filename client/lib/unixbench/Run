@@ -56,6 +56,9 @@ use IO::Handle;
 # 2007.10.14    IS      Set and report LANG.  Added "grep" and "sysexec".
 # 2007.12.22    IS      Tiny fixes; see README.
 
+# Everything related to language settings and graphics tests are
+# commented out for Inquisitor by Sergey Matveev at 2008-01-28
+
 
 ############################################################################
 # CONFIGURATION
@@ -135,10 +138,10 @@ my $index = [
    "dhry2reg", "whetstone-double", @$oldsystem, "shell1", "shell8"
 ];
 
-my $graphics = [
-    "2d-rects", "2d-ellipse", "2d-aashapes", "2d-text", "2d-blit",
-    "2d-window", "ubgears"
-];
+#my $graphics = [
+#    "2d-rects", "2d-ellipse", "2d-aashapes", "2d-text", "2d-blit",
+#    "2d-window", "ubgears"
+#];
 
 
 # List of all supported test names.
@@ -201,14 +204,14 @@ my $testList = {
     "system"        => $system,
     "fs"            => $fs,
     "shell"         => [ "shell1", "shell8", "shell16" ],
-    "graphics"      => $graphics,
+#    "graphics"      => $graphics,
 
     # The tests which constitute the official index.
     "index"         => $index,
 
     # The tests which constitute the official index plus the graphics
     # index.
-    "gindex"         => [ @$index, @$graphics ],
+#    "gindex"         => [ @$index, @$graphics ],
 };
 
 
@@ -348,81 +351,81 @@ my $testParams = {
     ## Graphics Benchmarks  ##
     ##########################
 
-    "2d-rects" => {
-        "logmsg" => "2D graphics: rectangles",
-        "cat"    => '2d',
-        "prog" => "${BINDIR}/gfx-x11",
-        "options" => "rects 3 2",
-    },
-
-    "2d-lines" => {
-        "logmsg" => "2D graphics: lines",
-        "cat"    => '2d',
-        "prog" => "${BINDIR}/gfx-x11",
-        "options" => "lines 3 2",
-    },
-
-    "2d-circle" => {
-        "logmsg" => "2D graphics: circles",
-        "cat"    => '2d',
-        "prog" => "${BINDIR}/gfx-x11",
-        "options" => "circle 3 2",
-    },
-
-    "2d-ellipse" => {
-        "logmsg" => "2D graphics: ellipses",
-        "cat"    => '2d',
-        "prog" => "${BINDIR}/gfx-x11",
-        "options" => "ellipse 3 2",
-    },
-
-    "2d-shapes" => {
-        "logmsg" => "2D graphics: polygons",
-        "cat"    => '2d',
-        "prog" => "${BINDIR}/gfx-x11",
-        "options" => "shapes 3 2",
-    },
-
-    "2d-aashapes" => {
-        "logmsg" => "2D graphics: aa polygons",
-        "cat"    => '2d',
-        "prog" => "${BINDIR}/gfx-x11",
-        "options" => "aashapes 3 2",
-    },
-
-    "2d-polys" => {
-        "logmsg" => "2D graphics: complex polygons",
-        "cat"    => '2d',
-        "prog" => "${BINDIR}/gfx-x11",
-        "options" => "polys 3 2",
-    },
-
-    "2d-text" => {
-        "logmsg" => "2D graphics: text",
-        "cat"    => '2d',
-        "prog" => "${BINDIR}/gfx-x11",
-        "options" => "text 3 2",
-    },
-
-    "2d-blit" => {
-        "logmsg" => "2D graphics: images and blits",
-        "cat"    => '2d',
-        "prog" => "${BINDIR}/gfx-x11",
-        "options" => "blit 3 2",
-    },
-
-    "2d-window" => {
-        "logmsg" => "2D graphics: windows",
-        "cat"    => '2d',
-        "prog" => "${BINDIR}/gfx-x11",
-        "options" => "window 3 2",
-    },
-
-    "ubgears" => {
-        "logmsg" => "3D graphics: gears",
-        "cat"    => '3d',
-        "options" => "-time 20 -v",
-    },
+#    "2d-rects" => {
+#        "logmsg" => "2D graphics: rectangles",
+#        "cat"    => '2d',
+#        "prog" => "${BINDIR}/gfx-x11",
+#        "options" => "rects 3 2",
+#    },
+#
+#    "2d-lines" => {
+#        "logmsg" => "2D graphics: lines",
+#        "cat"    => '2d',
+#        "prog" => "${BINDIR}/gfx-x11",
+#        "options" => "lines 3 2",
+#    },
+#
+#    "2d-circle" => {
+#        "logmsg" => "2D graphics: circles",
+#        "cat"    => '2d',
+#        "prog" => "${BINDIR}/gfx-x11",
+#        "options" => "circle 3 2",
+#    },
+#
+#    "2d-ellipse" => {
+#        "logmsg" => "2D graphics: ellipses",
+#        "cat"    => '2d',
+#        "prog" => "${BINDIR}/gfx-x11",
+#        "options" => "ellipse 3 2",
+#    },
+#
+#    "2d-shapes" => {
+#        "logmsg" => "2D graphics: polygons",
+#        "cat"    => '2d',
+#        "prog" => "${BINDIR}/gfx-x11",
+#        "options" => "shapes 3 2",
+#    },
+#
+#    "2d-aashapes" => {
+#        "logmsg" => "2D graphics: aa polygons",
+#        "cat"    => '2d',
+#        "prog" => "${BINDIR}/gfx-x11",
+#        "options" => "aashapes 3 2",
+#    },
+#
+#    "2d-polys" => {
+#        "logmsg" => "2D graphics: complex polygons",
+#        "cat"    => '2d',
+#        "prog" => "${BINDIR}/gfx-x11",
+#        "options" => "polys 3 2",
+#    },
+#
+#    "2d-text" => {
+#        "logmsg" => "2D graphics: text",
+#        "cat"    => '2d',
+#        "prog" => "${BINDIR}/gfx-x11",
+#        "options" => "text 3 2",
+#    },
+#
+#    "2d-blit" => {
+#        "logmsg" => "2D graphics: images and blits",
+#        "cat"    => '2d',
+#        "prog" => "${BINDIR}/gfx-x11",
+#        "options" => "blit 3 2",
+#    },
+#
+#    "2d-window" => {
+#        "logmsg" => "2D graphics: windows",
+#        "cat"    => '2d',
+#        "prog" => "${BINDIR}/gfx-x11",
+#        "options" => "window 3 2",
+#    },
+#
+#    "ubgears" => {
+#        "logmsg" => "3D graphics: gears",
+#        "cat"    => '3d',
+#        "options" => "-time 20 -v",
+#    },
 
 
     ##########################
@@ -733,13 +736,14 @@ sub getSystemInfo {
     }
 
     # Get the language info.
-    my $lang = getCmdOutput("printenv LANG");
-    my $map = getCmdOutput("locale -k LC_CTYPE | grep charmap");
-    $map =~ s/.*=//;
-    my $coll = getCmdOutput("locale -k LC_COLLATE | grep collate-codeset");
-    $coll =~ s/.*=//;
-    $info->{'language'} = sprintf "%s (charmap=%s, collate=%s)",
-                                   $lang, $map, $coll;
+    
+    #my $lang = getCmdOutput("printenv LANG");
+    #my $map = getCmdOutput("locale -k LC_CTYPE | grep charmap");
+    #$map =~ s/.*=//;
+    #my $coll = getCmdOutput("locale -k LC_COLLATE | grep collate-codeset");
+    #$coll =~ s/.*=//;
+    #$info->{'language'} = sprintf "%s (charmap=%s, collate=%s)",
+    #                               $lang, $map, $coll;
 
     # Get details on the CPUs, if possible.
     my $cpus = getCpuInfo();
@@ -749,7 +753,7 @@ sub getSystemInfo {
     }
 
     # Get graphics hardware info.
-    $info->{'graphics'} = getCmdOutput("3dinfo | cut -f1 -d\'(\'");
+    #$info->{'graphics'} = getCmdOutput("3dinfo | cut -f1 -d\'(\'");
 
     # Get system run state, load and usage info.
     $info->{'runlevel'} = getCmdOutput("runlevel | cut -f2 -d\" \"");
@@ -1366,7 +1370,7 @@ sub displaySystem {
     printf $fd "   OS: %s -- %s -- %s\n",
                         $info->{'os'}, $info->{'osRel'}, $info->{'osVer'};
     printf $fd "   Machine: %s (%s)\n", $info->{'mach'}, $info->{'platform'};
-    printf $fd "   Language: %s\n", $info->{'language'};
+    #printf $fd "   Language: %s\n", $info->{'language'};
 
     # Get and display details on the CPUs, if possible.
     my $cpus = $info->{'cpus'};
@@ -1380,9 +1384,9 @@ sub displaySystem {
         }
     }
 
-    if ($info->{'graphics'}) {
-        printf $fd "   Graphics: %s\n", $info->{'graphics'};
-    }
+    #if ($info->{'graphics'}) {
+    #    printf $fd "   Graphics: %s\n", $info->{'graphics'};
+    #}
 
     # Display system load and usage info.
     printf $fd "   %s; runlevel %s\n\n", $info->{'load'}, $info->{'runlevel'};
@@ -1567,7 +1571,7 @@ sub displaySystemHtml {
                $info->{'mach'}, $info->{'platform'};
     printf $fd "</tr><tr>\n";
     printf $fd "   <td><b>Language:</b></td>\n";
-    printf $fd "   <td colspan=2>%s</td>\n", $info->{'language'};
+    #printf $fd "   <td colspan=2>%s</td>\n", $info->{'language'};
     printf $fd "</tr>\n";
 
     # Get and display details on the CPUs, if possible.
@@ -1592,12 +1596,12 @@ sub displaySystemHtml {
     }
 
     # Display graphics hardware info.
-    if ($info->{'graphics'}) {
-        printf $fd "<tr>\n";
-        printf $fd "   <td><b>Graphics:</b></td>\n";
-        printf $fd "   <td colspan=2>%s</td>\n", $info->{'graphics'};
-        printf $fd "</tr>\n";
-    }
+    #if ($info->{'graphics'}) {
+    #    printf $fd "<tr>\n";
+    #    printf $fd "   <td><b>Graphics:</b></td>\n";
+    #    printf $fd "   <td colspan=2>%s</td>\n", $info->{'graphics'};
+    #    printf $fd "</tr>\n";
+    #}
 
     # Display system runlevel, load and usage info.
     printf $fd "<tr>\n";

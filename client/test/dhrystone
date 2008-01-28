@@ -15,9 +15,7 @@ exit_handler()
 	local rc=$?
 	trap - EXIT
 
-	if [ -f "$RESULT_FILE" ]; then
-		rm -f $RESULT_FILE
-	fi
+	[ -f "$RESULT_FILE" ] && rm -f $RESULT_FILE
 
 	exit $rc
 }
@@ -31,3 +29,5 @@ for i in `seq 0 $(($CPU_QUANTITY - 1))`; do
 	echo_success
 	benchmark_submit_float "Core $i loops" "$result"
 done
+
+test_succeeded

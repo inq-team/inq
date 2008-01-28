@@ -30,3 +30,5 @@ for BLOCK_DEV in `get_harddrives_list`; do
 	benchmark_submit_float "HDD $BLOCK_DEV buffered speed" $BUFFERED_AVG
 	benchmark_submit_float "HDD $BLOCK_DEV cached speed" $CACHED_AVG
 done
+
+test_succeeded

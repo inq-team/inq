@@ -8,18 +8,14 @@
 
 . /usr/share/inquisitor/functions-test
 
-RESULT_FILE=`mktemp`
-SCRATCH_DIRECTORY=`mktemp -d`
-
 # Cleanup
 exit_handler()
 {
 	local rc=$?
 	trap - EXIT
 
-	if [ -f "$RESULT_FILE" ]; then
-		rm -fr "$RESULT_FILE"
-	fi
+	[ -f "$RESULT_FILE" ] && rm -fr "$RESULT_FILE"
+
 	if [ -d "$SCRATCH_DIRECTORY" ]; then
 		umount -f $SCRATCH_DIRECTORY
 		rmdir $SCRATCH_DIRECTORY
@@ -27,6 +23,9 @@ exit_handler()
 	exit $rc
 }
 trap exit_handler HUP PIPE INT QUIT TERM EXIT
+
+RESULT_FILE=`mktemp`
+SCRATCH_DIRECTORY=`mktemp -d`
 
 perform_benchmark()
 {
@@ -73,3 +72,5 @@ for BLOCK_DEV in `get_harddrives_list`; do
 	perform_benchmark $BLOCK_DEV
 	echo_success
 done
+
+test_succeeded

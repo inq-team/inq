@@ -13,11 +13,9 @@
 
 . /usr/share/inquisitor/functions-test
 
-MOUNTPOINT=`mktemp -d`
-
 clear_testing_environment()
 {
-	cd /
+	cd $HOME
 	umount -f $MOUNTPOINT >$DEBUG_TTY 2>&1 || true
 }
 
@@ -28,22 +26,19 @@ exit_handler()
 	trap - EXIT
 
 	clear_testing_environment
-	if [ -d "$MOUNTPOINT" ]; then
-		rm -fr $MOUNTPOINT
-	fi
+	[ -d "$MOUNTPOINT" ] && rm -fr $MOUNTPOINT
+
 	exit $rc
 }
 trap exit_handler HUP PIPE INT QUIT TERM EXIT
+
+MOUNTPOINT=`mktemp -d`
 
 detect_hdd_quantity()
 {
 	sleep 5
 	HDD_QUANTITY=`hal-find-by-property --key=storage.drive_type --string=disk | wc -l`
-#	if [ "$HDD_QUANTITY" -gt 0 ]; then
-		TIME_PER_ARRAY=$(( $TESTTIME / $HDD_QUANTITY ))
-#	else
-#		TIME_PER_ARRAY=$(( $TESTTIME / 2 ))
-#	fi
+	TIME_PER_ARRAY=$(( $TESTTIME / $HDD_QUANTITY ))
 }
 
 array_stress_check()
@@ -88,14 +83,14 @@ prepare_array_for_test()
 	tree_name=`basename "$STRESS_TREE" .tar.gz`
 	cd $tree_name
 
-	#is it linux source?
+	# Is it linux source?
 	if echo "$tree_name" | grep '^linux' ; then
 		find . -print | xargs touch >/dev/null 2>&1 || true
 		touch .config include/linux/autoconf.h >/dev/null 2>&1 || true
 	fi
 }
 
-#Making arrays
+# Making arrays
 if raid-wizard-optimal; then
 	detect_hdd_quantity
 	true
@@ -104,7 +99,7 @@ else
 	exit 1
 fi
 
-#TEMPORARY checking for correct number of JOBS
+# TEMPORARY checking for correct number of JOBS
 TOTAL_MEMORY=$(( `grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024 ))
 [ "$TOTAL_MEMORY" -lt 512 ] && JOBS=4 || true
 
@@ -114,3 +109,5 @@ test_promise_time $TESTTIME
 for i in `get_harddrives_list`; do
 	array_stress_check $i
 done
+
+test_succeeded

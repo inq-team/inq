@@ -10,20 +10,19 @@
 
 . /usr/share/inquisitor/functions-test
 
-RESULT_FILE=`mktemp`
-
 # Cleanup
 exit_handler()
 {
 	local rc=$?
 	trap - EXIT
 
-	if [ -f "$RESULT_FILE" ]; then
-		rm -f "$RESULT_FILE"
-	fi
+	[ -f "$RESULT_FILE" ] && rm -f "$RESULT_FILE"
+
 	exit $rc
 }
 trap exit_handler HUP PIPE INT QUIT TERM EXIT
+
+RESULT_FILE=`mktemp`
 
 time -o $RESULT_FILE mencoder $ENCODE_OPTIONS \
 	-o $DEBUG_TTY $FILE_TO_ENCODE
@@ -33,3 +32,5 @@ benchmark_submit_float "User time" \
 
 benchmark_submit_float "System time" \
 `sed -n "s/system//;1p" < $RESULT_FILE | awk '{print $1}'`
+
+test_succeeded

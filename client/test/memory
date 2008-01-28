@@ -11,13 +11,11 @@
 
 . /usr/share/inquisitor/functions-test
 
-#Temporary disabled because of broken oom_killer
+# Temporary disabled because of broken oom_killer
 #TOTAL_MEMORY=$(( `grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024 ))
-
 TOTAL_MEMORY=$(( (`grep MemTotal /proc/meminfo | awk '{print $2}'`) / 1024 - 256 ))
 TOTAL_SUBSTAGES=$(( 16 * $TEST_LOOPS ))
 COMPLETED_SUBSTAGES=0
-MEMORY_LOG=`mktemp`
 
 # Cleanup
 exit_handler()
@@ -25,13 +23,14 @@ exit_handler()
 	local rc=$?
 	trap - EXIT
 
-	if [ -d /proc/$MEMTEST_PID ] ; then
-		kill $MEMTEST_PID
-	fi
+	[ -d "/proc/$MEMTEST_PID" ] && kill $MEMTEST_PID
+	[ -f  "$MEMORY_LOG" ] && rm $MEMORY_LOG
 
 	exit $rc
 }
 trap exit_handler HUP PIPE INT QUIT TERM EXIT
+
+MEMORY_LOG=`mktemp`
 
 turnoff_oom_killer()
 {

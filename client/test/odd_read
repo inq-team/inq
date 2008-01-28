@@ -13,24 +13,21 @@
 
 . /usr/share/inquisitor/functions-test
 
-IMAGE=`mktemp`
-RESULT_FILE=`mktemp`
-
 # Cleanup
 exit_handler()
 {
 	local rc=$?
 	trap - EXIT
 
-	if [ -f "$IMAGE" ]; then
-		rm -f $IMAGE
-	fi
-	if [ -f "$RESULT_FILE" ]; then
-		rm -f $RESULT_FILE
-	fi
+	[ -f "$IMAGE" ] && rm -f $IMAGE
+	[ -f "$RESULT_FILE" ] && rm -f $RESULT_FILE
+
 	exit $rc
 }
 trap exit_handler HUP PIPE INT QUIT TERM EXIT
+
+IMAGE=`mktemp`
+RESULT_FILE=`mktemp`
 
 load_kernel_modules()
 {
@@ -104,7 +101,7 @@ for odd in `get_odds_list`; do
 	print_green_message "Testing drive ${odd}..."
 
 	if [ "$FORCE_NON_INTERACTIVE" == "true" ]; then
-		#Forced non-interactive mode, no user actions allowed here
+		# Forced non-interactive mode, no user actions allowed here
 		test_odd $odd
 		if [ "$FLAG" -eq 1 ]; then
 			TESTED_QUANTITY=$(( $TESTED_QUANTITY + 1 ))
@@ -115,7 +112,7 @@ for odd in `get_odds_list`; do
 			test_failed "Bad ODD $odd"
 		fi
 	else
-		#Default mode, try to test drive if media present
+		# Default mode, try to test drive if media present
 		if [ `check_odd_media_existence $odd` == "true" ];then
 			print_green_message "Found inserted media. Trying to test..."
 			test_odd $odd

@@ -133,7 +133,7 @@ if [ "$ODD_QUANTITY" -eq 0 ]; then
 	exit 0
 fi
 
-#Replace relative path with absolute
+# Replace relative path with an absolute one
 if echo "$TEST_IMAGE" | grep -q "^\/"; then
 	true #already absolute path
 else
@@ -146,7 +146,7 @@ print_green_message "$WRITE_MESSAGE"
 for odd in `get_odds_list`; do
 	print_green_message "Testing drive ${odd}..."
 
-	#Forced non-interactive mode, no user actions allowed here
+	# Forced non-interactive mode, no user actions allowed here
 	if [ "$FORCE_NON_INTERACTIVE" == "true" ]; then
 		test_write $odd
 		if [ "$FLAG" -eq 1 ]; then
@@ -163,7 +163,7 @@ for odd in `get_odds_list`; do
 		fi
 	fi
 
-	#Default mode, try to test drive if media present
+	# Default mode, try to test drive if media present
 	if [ `check_odd_media_existence $odd` == "true" ];then
 		print_green_message "Found inserted media. Trying to test..."
 		test_write $odd

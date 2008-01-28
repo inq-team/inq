@@ -38,8 +38,4 @@ get_usb_devices()
 
 FOUND=`get_usb_devices | wc -l`
 
-if [ "$FOUND" = "$COUNT" ]; then
-	test_succeeded
-else
-	test_failed "Found $FOUND devices instead of $COUNT"
-fi
+[ "$FOUND" -eq "$COUNT" ] && test_succeeded || test_failed "Found $FOUND devices instead of $COUNT"

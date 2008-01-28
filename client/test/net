@@ -12,8 +12,6 @@
 
 . /usr/share/inquisitor/functions-test
 
-TESTFILE=`mktemp`
-
 # Cleanup
 exit_handler()
 {
@@ -38,13 +36,13 @@ exit_handler()
 		true
 	fi
 
-	if [ -f "$TESTFILE" ]; then
-		rm $TESTFILE
-	fi
+	[ -f "$TESTFILE" ] && rm $TESTFILE
 
 	exit $rc
 }
 trap exit_handler HUP PIPE INT QUIT TERM EXIT
+
+TESTFILE=`mktemp`
 
 test_nic()
 {
@@ -89,3 +87,5 @@ fi
 done
 
 test_nic $FIRST_NIC #to restore startup parameters
+
+test_succeeded

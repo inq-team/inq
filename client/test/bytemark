@@ -8,20 +8,19 @@
 
 . /usr/share/inquisitor/functions-test
 
-WORKING_DIR=`mktemp -d`
-
 # Cleanup
 exit_handler()
 {
 	local rc=$?
 	trap - EXIT
 
-	if [ -d "$WORKING_DIR" ]; then
-		rm -rf "$WORKING_DIR"
-	fi
+	[ -d "$WORKING_DIR" ] && rm -rf "$WORKING_DIR"
+
 	exit $rc
 }
 trap exit_handler HUP PIPE INT QUIT TERM EXIT
+
+WORKING_DIR=`mktemp -d`
 
 echo -n "Running BYTEmark benchmark..."
 cd $WORKING_DIR
@@ -46,3 +45,5 @@ benchmark_submit_float "Memory Index" `grep "MEMORY INDEX" < result | awk '{prin
 
 cd $HOME
 echo_success
+
+test_succeeded
