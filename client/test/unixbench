@@ -1,4 +1,4 @@
-#!/bin/sh -ef
+#!/bin/sh -e
 # NAME=Unixbench
 # DESCRIPTION=UNIX Bench Multi-CPU benchmark
 # DESTROYS_HDD=false
@@ -15,6 +15,7 @@ exit_handler()
 	trap - EXIT
 
 	[ -d "$WORKING_DIR" ] && rm -rf "$WORKING_DIR"
+	cd $HOME
 
 	exit $rc
 }
@@ -24,14 +25,11 @@ WORKING_DIR=`mktemp -d`
 
 echo -n "Running UNIX Bench Multi-CPU benchmark..."
 cd $WORKING_DIR
-cp -r $LIB_DIR/unixbench/pgms .
-cp -r $LIB_DIR/unixbench/results .
-cp -r $LIB_DIR/unixbench/tmp .
-cp -r $LIB_DIR/unixbench/testdir .
-cp $LIB_DIR/unixbench/Makefile .
+mkdir pgms testdir results tmp
+cp $LIB_DIR/unixbench/* pgms/
+mv pgms/dc.dat testdir/
+mv pgms/sort.src testdir/
+
 benchmark_submit_float "All CPUs score" `unixbench | tee $DEBUG_TTY | grep "Index Score" | sed -n "$ p" | awk '{print $NF}'`
-
-cd $HOME
 echo_success
-
 test_succeeded

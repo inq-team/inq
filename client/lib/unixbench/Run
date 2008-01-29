@@ -24,41 +24,6 @@ use IO::Handle;
 #       perl Time::HiRes IO::Handlecat cc chmod comm cp date dc df echo
 #       kill ls make mkdir rm sed test time touch tty umask who
 ###############################################################################
-#  Modification Log:
-# $Header: run,v 5.2 88/01/12 06:23:43 kenj Exp $
-#     Ken McDonell, Computer Science, Monash University
-#     August 1, 1983
-# 3/89 - Ben Smith - BYTE: globalized many variables, modernized syntax
-# 5/89 - commented and modernized. Removed workload items till they
-#        have been modernized. Added database server test.
-# 11/14/89 - Made modifications to reflect new version of fstime
-#        and elimination of mem tests.
-# 10/22/90 - Many tests have been flipped so that they run for
-#        a specified length of time and loops are counted.
-# 4/3/91 - Cleaned up and debugged several test parameters - Ben
-# 4/9/91 - Added structure for creating index and determing flavor of UNIX
-# 4/26/91 - Made changes and corrections suggested by Tin Le of Sony
-# 5/15/91 - Removed db from distribution
-# 4/4/92    Jon Tombs <jon@robots.ox.ac.uk> fixed for GNU time to look like
-#               BSD (don't know the format of sysV!)
-# 12/95   - Massive changes for portability, speed, and more meaningful index
-#               DCN     David C Niemi <niemi@tux.org>
-# 1997.06.20    DCN     Fixed overflow condition in fstime.c on fast machines
-# 1997.08.24    DCN     Modified "system", replaced double with
-#                       whetstone-double in "index"
-# 1997.09.10    DCN     Added perlbench as an Exhibition benchmark
-# 1997.09.23    DCN     Added rgooch's select as an Exhibition benchmark
-# 1999.07.28    DCN     "select" not compiled or run by default, because it
-#                       does not compile on many platforms.  PerlBench also
-#                       not run by default.
-# 2007.09.26    IS      Huge rewrite -- see release notes in README.
-# 2007.10.12    IS      Added graphics tests, categories feature.
-# 2007.10.14    IS      Set and report LANG.  Added "grep" and "sysexec".
-# 2007.12.22    IS      Tiny fixes; see README.
-
-# Everything related to language settings and graphics tests are
-# commented out for Inquisitor by Sergey Matveev at 2008-01-28
-
 
 ############################################################################
 # CONFIGURATION
@@ -138,12 +103,6 @@ my $index = [
    "dhry2reg", "whetstone-double", @$oldsystem, "shell1", "shell8"
 ];
 
-#my $graphics = [
-#    "2d-rects", "2d-ellipse", "2d-aashapes", "2d-text", "2d-blit",
-#    "2d-window", "ubgears"
-#];
-
-
 # List of all supported test names.
 my $testList = {
     # Individual tests.
@@ -172,24 +131,9 @@ my $testList = {
     "float"         => undef,
     "double"        => undef,
     "arithoh"       => undef,
-    "C"             => undef,
     "dc"            => undef,
     "hanoi"         => undef,
-    "grep"          => undef,
     "sysexec"       => undef,
-
-    "2d-rects"      => undef,
-    "2d-lines"      => undef,
-    "2d-circle"     => undef,
-    "2d-ellipse"    => undef,
-    "2d-shapes"     => undef,
-    "2d-aashapes"   => undef,
-    "2d-polys"      => undef,
-    "2d-text"       => undef,
-    "2d-blit"       => undef,
-    "2d-window"     => undef,
-
-    "ubgears"       => undef,
 
     # Named combos and shorthands.
     "arithmetic"    => $arithmetic,
@@ -204,14 +148,9 @@ my $testList = {
     "system"        => $system,
     "fs"            => $fs,
     "shell"         => [ "shell1", "shell8", "shell16" ],
-#    "graphics"      => $graphics,
 
     # The tests which constitute the official index.
     "index"         => $index,
-
-    # The tests which constitute the official index plus the graphics
-    # index.
-#    "gindex"         => [ @$index, @$graphics ],
 };
 
 
@@ -348,96 +287,9 @@ my $testParams = {
     },
 
     ##########################
-    ## Graphics Benchmarks  ##
-    ##########################
-
-#    "2d-rects" => {
-#        "logmsg" => "2D graphics: rectangles",
-#        "cat"    => '2d',
-#        "prog" => "${BINDIR}/gfx-x11",
-#        "options" => "rects 3 2",
-#    },
-#
-#    "2d-lines" => {
-#        "logmsg" => "2D graphics: lines",
-#        "cat"    => '2d',
-#        "prog" => "${BINDIR}/gfx-x11",
-#        "options" => "lines 3 2",
-#    },
-#
-#    "2d-circle" => {
-#        "logmsg" => "2D graphics: circles",
-#        "cat"    => '2d',
-#        "prog" => "${BINDIR}/gfx-x11",
-#        "options" => "circle 3 2",
-#    },
-#
-#    "2d-ellipse" => {
-#        "logmsg" => "2D graphics: ellipses",
-#        "cat"    => '2d',
-#        "prog" => "${BINDIR}/gfx-x11",
-#        "options" => "ellipse 3 2",
-#    },
-#
-#    "2d-shapes" => {
-#        "logmsg" => "2D graphics: polygons",
-#        "cat"    => '2d',
-#        "prog" => "${BINDIR}/gfx-x11",
-#        "options" => "shapes 3 2",
-#    },
-#
-#    "2d-aashapes" => {
-#        "logmsg" => "2D graphics: aa polygons",
-#        "cat"    => '2d',
-#        "prog" => "${BINDIR}/gfx-x11",
-#        "options" => "aashapes 3 2",
-#    },
-#
-#    "2d-polys" => {
-#        "logmsg" => "2D graphics: complex polygons",
-#        "cat"    => '2d',
-#        "prog" => "${BINDIR}/gfx-x11",
-#        "options" => "polys 3 2",
-#    },
-#
-#    "2d-text" => {
-#        "logmsg" => "2D graphics: text",
-#        "cat"    => '2d',
-#        "prog" => "${BINDIR}/gfx-x11",
-#        "options" => "text 3 2",
-#    },
-#
-#    "2d-blit" => {
-#        "logmsg" => "2D graphics: images and blits",
-#        "cat"    => '2d',
-#        "prog" => "${BINDIR}/gfx-x11",
-#        "options" => "blit 3 2",
-#    },
-#
-#    "2d-window" => {
-#        "logmsg" => "2D graphics: windows",
-#        "cat"    => '2d',
-#        "prog" => "${BINDIR}/gfx-x11",
-#        "options" => "window 3 2",
-#    },
-#
-#    "ubgears" => {
-#        "logmsg" => "3D graphics: gears",
-#        "cat"    => '3d',
-#        "options" => "-time 20 -v",
-#    },
-
-
-    ##########################
     ## Non-Index Benchmarks ##
     ##########################
 
-    "C" => {
-        "logmsg" => "C Compiler Throughput ($cCompiler)",
-        "cat"    => 'misc',
-        "prog" => "${BINDIR}/looper",
-        "options" => "60 $cCompiler cctest.c",
-    },
     "arithoh" => {
         "logmsg" => "Arithoh",
         "cat"    => 'misc',
@@ -479,12 +331,6 @@ my $testParams = {
         "logmsg" => "Recursion Test -- Tower of Hanoi",
         "cat"    => 'misc',
         "options" => "20",
-    },
-    "grep" => {
-        "logmsg" => "Grep a large file (system's grep)",
-        "cat"    => 'misc',
-        "prog" => "${BINDIR}/looper",
-        "options" => "30 grep -c gimp large.txt",
     },
     "sysexec" => {
         "logmsg" => "Exec System Call Overhead",
@@ -735,25 +581,12 @@ sub getSystemInfo {
         $info->{'system'} = getCmdOutput("cat /etc/release");
     }
 
-    # Get the language info.
-    
-    #my $lang = getCmdOutput("printenv LANG");
-    #my $map = getCmdOutput("locale -k LC_CTYPE | grep charmap");
-    #$map =~ s/.*=//;
-    #my $coll = getCmdOutput("locale -k LC_COLLATE | grep collate-codeset");
-    #$coll =~ s/.*=//;
-    #$info->{'language'} = sprintf "%s (charmap=%s, collate=%s)",
-    #                               $lang, $map, $coll;
-
     # Get details on the CPUs, if possible.
     my $cpus = getCpuInfo();
     if (defined($cpus)) {
         $info->{'cpus'} = $cpus;
         $info->{'numCpus'} = scalar(@$cpus);
     }
-
-    # Get graphics hardware info.
-    #$info->{'graphics'} = getCmdOutput("3dinfo | cut -f1 -d\'(\'");
 
     # Get system run state, load and usage info.
     $info->{'runlevel'} = getCmdOutput("runlevel | cut -f2 -d\" \"");
@@ -786,15 +619,6 @@ sub abortRun {
 sub preChecks {
     # Set the language.
     $ENV{'LANG'} = $language;
-
-    # Check that the required files are in the proper places.
-    system("make check");
-    if ($? != 0) {
-        system("make all");
-        if ($? != 0) {
-            abortRun("\"make all\" failed");
-        }
-    }
 
     # Create a script to kill this run.
     system("echo \"kill -9 $$\" > \"${TMPDIR}/kill_run\"");
@@ -1277,6 +1101,7 @@ sub runBenchmark {
 
         # make an attempt to flush buffers
         system("sync; sleep 1; sync; sleep 2");
+	system("echo 3 > /proc/sys/vm/drop_caches");
         # display heartbeat
         if ($verbose > 0) {
             printf " %d", $i;
@@ -1370,7 +1195,6 @@ sub displaySystem {
     printf $fd "   OS: %s -- %s -- %s\n",
                         $info->{'os'}, $info->{'osRel'}, $info->{'osVer'};
     printf $fd "   Machine: %s (%s)\n", $info->{'mach'}, $info->{'platform'};
-    #printf $fd "   Language: %s\n", $info->{'language'};
 
     # Get and display details on the CPUs, if possible.
     my $cpus = $info->{'cpus'};
@@ -1383,10 +1207,6 @@ sub displaySystem {
             printf $fd "          %s\n", $cpus->[$i]{'flags'};
         }
     }
-
-    #if ($info->{'graphics'}) {
-    #    printf $fd "   Graphics: %s\n", $info->{'graphics'};
-    #}
 
     # Display system load and usage info.
     printf $fd "   %s; runlevel %s\n\n", $info->{'load'}, $info->{'runlevel'};
@@ -1497,255 +1317,6 @@ sub summarizeRun {
     logIndex($results, $reportFd);
 }
 
-
-############################################################################
-# HTML REPORTS
-############################################################################
-
-# Dump the given run results into the given report file.
-sub runHeaderHtml {
-    my ( $systemInfo, $reportFd ) = @_;
-
-    # Display information about this test run.
-    my $title = sprintf "Benchmark of %s / %s on %s",
-                     $systemInfo->{'name'}, $systemInfo->{'system'},
-                     strftime("%a %b %d %Y", localtime());
-
-    print $reportFd <<EOF;
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta name="keywords" content="linux, benchmarks, benchmarking">
-  <title>$title</title>
-  <style type="text/css">
-    table {
-      margin: 1em 1em 1em 0;
-      background: #f9f9f9;
-      border: 1px #aaaaaa solid;
-      border-collapse: collapse;
-    }
-
-    table th, table td {
-      border: 1px #aaaaaa solid;
-      padding: 0.2em;
-    }
-
-    table th {
-      background: #f2f2f2;
-      text-align: center;
-    }
-  </style>
-</head>
-<body>
-EOF
-
-    # Display information about this test run.
-    printf $reportFd "<h2>%s</h2>\n", $title;
-    printf $reportFd "<p><b>BYTE UNIX Benchmarks (Version %s)</b></p>\n\n",
-                     $version;
-}
-
-
-# Display a banner indicating the configuration of the system under test
-# to the given file desc.
-sub displaySystemHtml {
-    my ( $info, $fd ) = @_;
-
-    printf $fd "<h3>Test System Information</h3>\n";
-    printf $fd "<p><table>\n";
-
-    # Display basic system info.
-    printf $fd "<tr>\n";
-    printf $fd "   <td><b>System:</b></td>\n";
-    printf $fd "   <td colspan=2>%s: %s</td>\n",
-               $info->{'name'}, $info->{'system'};
-    printf $fd "</tr><tr>\n";
-    printf $fd "   <td><b>OS:</b></td>\n";
-    printf $fd "   <td colspan=2>%s -- %s -- %s</td>\n",
-               $info->{'os'}, $info->{'osRel'}, $info->{'osVer'};
-    printf $fd "</tr><tr>\n";
-    printf $fd "   <td><b>Machine:</b></td>\n";
-    printf $fd "   <td colspan=2>%s: %s</td>\n",
-               $info->{'mach'}, $info->{'platform'};
-    printf $fd "</tr><tr>\n";
-    printf $fd "   <td><b>Language:</b></td>\n";
-    #printf $fd "   <td colspan=2>%s</td>\n", $info->{'language'};
-    printf $fd "</tr>\n";
-
-    # Get and display details on the CPUs, if possible.
-    my $cpus = $info->{'cpus'};
-    if (!defined($cpus)) {
-        printf $fd "<tr>\n";
-        printf $fd "   <td><b>CPUs:</b></td>\n";
-        printf $fd "   <td colspan=2>no details available</td>\n";
-        printf $fd "</tr>\n";
-    } else {
-        for (my $i = 0; $i <= $#$cpus; ++$i) {
-            printf $fd "<tr>\n";
-            if ($i == 0) {
-                printf $fd "   <td rowspan=%d><b>CPUs:</b></td>\n", $#$cpus + 1;
-            }
-            printf $fd "   <td><b>%d:</b></td>\n", $i;
-            printf $fd "   <td>%s (%.1f bogomips)<br/>\n",
-                        $cpus->[$i]{'model'}, $cpus->[$i]{'bogo'};
-            printf $fd "       %s</td>\n", $cpus->[$i]{'flags'};
-            printf $fd "</tr>\n";
-        }
-    }
-
-    # Display graphics hardware info.
-    #if ($info->{'graphics'}) {
-    #    printf $fd "<tr>\n";
-    #    printf $fd "   <td><b>Graphics:</b></td>\n";
-    #    printf $fd "   <td colspan=2>%s</td>\n", $info->{'graphics'};
-    #    printf $fd "</tr>\n";
-    #}
-
-    # Display system runlevel, load and usage info.
-    printf $fd "<tr>\n";
-    printf $fd "   <td><b>Uptime:</b></td>\n";
-    printf $fd "   <td colspan=2>%s; runlevel %s</td>\n",
-                   $info->{'load'}, $info->{'runlevel'};
-    printf $fd "</tr>\n";
-
-    printf $fd "</table></p>\n\n";
-}
-
-
-# Display the test scores from the given set of test results
-# for a given category of tests.
-sub logCatResultsHtml {
-    my ( $results, $cat, $fd ) = @_;
-
-    my $numIndex = $results->{'numIndex'}{$cat};
-    my $indexed = $results->{'indexed'}{$cat};
-    my $iscore = $results->{'index'}{$cat};
-    my $full = defined($indexed) && $indexed == $numIndex;
-
-    # If there are no results in this category, just ignore it.
-    if (!defined($results->{'numCat'}{$cat}) ||
-                            $results->{'numCat'}{$cat} == 0) {
-        return;
-    }
-
-    # Say the category.  If there are no indexed scores, just say so.
-    my $warn = "";
-    if (!defined($indexed) || $indexed == 0) {
-        $warn = " — no index results available";
-    } elsif (!$full) {
-        $warn = " — not all index tests were run;" .
-                " only a partial index score is available";
-    }
-    printf $fd "<h4>%s%s</h4>\n", $testCats->{$cat}{'name'}, $warn;
-
-    printf $fd "<p><table width=\"100%%\">\n";
-
-    printf $fd "<tr>\n";
-    printf $fd "   <th align=left>Test</th>\n";
-    printf $fd "   <th align=right>Score</th>\n";
-    printf $fd "   <th align=left>Unit</th>\n";
-    printf $fd "   <th align=right>Time</th>\n";
-    printf $fd "   <th align=right>Iters.</th>\n";
-    printf $fd "   <th align=right>Baseline</th>\n";
-    printf $fd "   <th align=right>Index</th>\n";
-    printf $fd "</tr>\n";
-
-    # Display the individual test scores.
-    foreach my $bench (@{$results->{'list'}}) {
-        my $bresult = $results->{$bench};
-        next if $bresult->{'cat'} ne $cat;
-
-        printf $fd "<tr>\n";
-        printf $fd "   <td><b>%s</b></td>\n", $bresult->{'msg'};
-        printf $fd "   <td align=right><tt>%.1f</tt></td>\n",
-                   $bresult->{'score'};
-        printf $fd "   <td align=left><tt>%s</tt></td>\n",
-                   $bresult->{'scorelabel'};
-        printf $fd "   <td align=right><tt>%.1f s</tt></td>\n",
-                   $bresult->{'time'};
-        printf $fd "   <td align=right><tt>%d</tt></td>\n",
-                   $bresult->{'iterations'};
-
-        if (defined($bresult->{'index'})) {
-            printf $fd "   <td align=right><tt>%.1f</tt></td>\n",
-                       $bresult->{'iscore'};
-            printf $fd "   <td align=right><tt>%.1f</tt></td>\n",
-                       $bresult->{'index'};
-        }
-        printf $fd "</tr>\n";
-    }
-
-    # Display the overall score.
-    if (defined($indexed) && $indexed > 0) {
-        my $title = $testCats->{$cat}{'name'} . " Index Score";
-        if (!$full) {
-            $title .= " (Partial Only)";
-        }
-        printf $fd "<tr>\n";
-        printf $fd "   <td colspan=6><b>%s:</b></td>\n", $title;
-        printf $fd "   <td align=right><b><tt>%.1f</tt></b></td>\n", $iscore;
-        printf $fd "</tr>\n";
-    }
-
-    printf $fd "</table></p>\n\n";
-}
-
-
-# Display index scores, if any, for the given run results.
-sub logResultsHtml {
-    my ( $results, $fd ) = @_;
-
-    foreach my $cat (keys(%$testCats)) {
-        logCatResultsHtml($results, $cat, $fd);
-    }
-}
-
-
-# Dump the given run results into the given report file.
-sub summarizeRunHtml {
-    my ( $systemInfo, $results, $verbose, $reportFd ) = @_;
-
-    # Display information about this test run.
-    my $time = $results->{'end'} - $results->{'start'};
-    printf $reportFd "<p><hr/></p>\n";
-    printf $reportFd "<h3>Benchmark Run: %s; %s</h3>\n",
-           number($systemInfo->{'numCpus'}, "CPU"),
-           number($results->{'copies'}, "parallel process", "parallel processes");
-    printf $reportFd "<p>Time: %s - %s; %dm %02ds</p>\n",
-                     strftime("%H:%M:%S", localtime($results->{'start'})),
-                     strftime("%H:%M:%S", localtime($results->{'end'})),
-                     int($time / 60), $time % 60;
-    printf $reportFd "\n";
-
-    # Display the run scores.
-    logResultsHtml($results, $reportFd);
-}
-
-
-sub runFooterHtml {
-    my ( $reportFd ) = @_;
-
-    print $reportFd <<EOF;
-<p><hr/></p>
-<div><b>No Warranties:</b> This information is provided free of charge and "as
-is" without any warranty, condition, or representation of any kind,
-either express or implied, including but not limited to, any warranty
-respecting non-infringement, and the implied warranties of conditions
-of merchantability and fitness for a particular purpose. All logos or
-trademarks on this site are the property of their respective owner. In
-no event shall the author be liable for any
-direct, indirect, special, incidental, consequential or other damages
-howsoever caused whether arising in contract, tort, or otherwise,
-arising out of or in connection with the use or performance of the
-information contained on this web site.</div>
-</body>
-</html>
-EOF
-}
-
-
 ############################################################################
 # MAIN
 ############################################################################
@@ -1780,9 +1351,6 @@ sub main {
         }
     }
 
-    # Display the program banner.
-    system("cat \"${BINDIR}/unixbench.logo\"");
-
     if ($verbose > 1) {
         printf "\n", join(", ", @$tests);
         printf "Tests to run: %s\n", join(", ", @$tests);
@@ -1790,20 +1358,15 @@ sub main {
 
     # Generate unique file names for the report and log file.
     my $reportFile = logFile($systemInfo);
-    my $reportHtml = $reportFile . ".html";
     my $logFile = $reportFile . ".log";
 
     # Open the log file for writing.
     open(my $reportFd, ">", $reportFile) ||
                             die("Run: can't write to $reportFile\n");
-    open(my $reportFd2, ">", $reportHtml) ||
-                            die("Run: can't write to $reportHtml\n");
     printf $reportFd "   BYTE UNIX Benchmarks (Version %s)\n\n", $version;
-    runHeaderHtml($systemInfo, $reportFd2);
 
     # Dump information about the system under test.
     displaySystem($systemInfo, $reportFd);
-    displaySystemHtml($systemInfo, $reportFd2);
 
     # Run the tests!  Do a test run once for each desired number of copies;
     # for example, on a 2-CPU system, we may do a single-processing run
@@ -1815,14 +1378,10 @@ sub main {
         my $results = runTests($tests, $verbose, $logFile, $c);
 
         summarizeRun($systemInfo, $results, $verbose, $reportFd);
-        summarizeRunHtml($systemInfo, $results, $verbose, $reportFd2);
     }
-
-    runFooterHtml($reportFd2);
 
     # Finish the report.
     close($reportFd);
-    close($reportFd2);
 
     # Display the report, if not in quiet mode.
     if ($verbose > 0) {

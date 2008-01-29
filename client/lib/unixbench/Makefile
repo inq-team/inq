@@ -7,35 +7,22 @@ include ../../../Makefile.config
 #
 ##############################################################################
 SHELL = /bin/sh
-#GRAPHIC_TESTS = defined
-#GL_LIBS = -lGL -lXext -lX11
 CC=gcc
-OPTON = -O3 -fomit-frame-pointer -fforce-addr -ffast-math -Wall -lm
+OPTON = -O3 -fomit-frame-pointer -fforce-addr -ffast-math -Wall
 CFLAGS = -DTIME -Wall -pedantic -ansi
 
 # local directories
 PROGDIR = ./pgms
 SRCDIR = ./src
-TESTDIR = ./testdir
-RESULTDIR = ./results
-TMPDIR = ./tmp
 # other directories
 INCLDIR = /usr/include
 LIBDIR = /lib
-SCRIPTS = unixbench.logo multi.sh tst.sh index.base
 SOURCES = arith.c big.c context1.c \
 	dummy.c execl.c \
 	fstime.c hanoi.c \
 	pipe.c spawn.c \
 	syscall.c looper.c timeit.c time-polling.c \
-	dhry_1.c dhry_2.c dhry.h whets.c ubgears.c
-TESTS = sort.src cctest.c dc.dat large.txt
-
-ifdef GRAPHIC_TESTS
-GRAPHIC_BINS = $(PROGDIR)/ubgears
-else
-GRAPHIC_BINS =
-endif
+	dhry_1.c dhry_2.c dhry.h whets.c
 
 # Program binaries.
 BINS = $(PROGDIR)/arithoh $(PROGDIR)/register $(PROGDIR)/short \
@@ -43,67 +30,16 @@ BINS = $(PROGDIR)/arithoh $(PROGDIR)/register $(PROGDIR)/short \
 	$(PROGDIR)/hanoi $(PROGDIR)/syscall $(PROGDIR)/context1 \
 	$(PROGDIR)/pipe $(PROGDIR)/spawn $(PROGDIR)/execl \
 	$(PROGDIR)/dhry2 $(PROGDIR)/dhry2reg  $(PROGDIR)/looper \
-	$(PROGDIR)/fstime $(PROGDIR)/whetstone-double $(GRAPHIC_BINS)
+	$(PROGDIR)/fstime $(PROGDIR)/whetstone-double
 ## These compile only on some platforms...
 # $(PROGDIR)/poll $(PROGDIR)/poll2 $(PROGDIR)/select
 
 # Required non-binary files.
-REQD = $(BINS) $(PROGDIR)/unixbench.logo \
-	$(PROGDIR)/multi.sh $(PROGDIR)/tst.sh $(PROGDIR)/index.base \
-	$(PROGDIR)/gfx-x11 \
-	$(TESTDIR)/sort.src $(TESTDIR)/cctest.c $(TESTDIR)/dc.dat \
-	$(TESTDIR)/large.txt
+REQD = sort.src dc.dat $(PROGDIR)/multi.sh \
+	$(PROGDIR)/tst.sh $(PROGDIR)/index.base
 
 # ######################### the big ALL ############################
-all: distr programs
-## Ick!!!  What is this about???  How about let's not chmod everything bogusly.
-#	@chmod 744 * $(SRCDIR)/* $(PROGDIR)/* $(TESTDIR)/* $(DOCDIR)/*
-
-# ####################### a check for Run ######################
-# Dummy check as it is performed by Run script and is not necessary
-check: .
-# ##############################################################
-# distribute the files out to subdirectories if they are in this one
-distr:
-	@echo "Checking distribution of files"
-# scripts
-	@if  test ! -d  $(PROGDIR) \
-        ; then  \
-           mkdir $(PROGDIR) \
-           ; mv $(SCRIPTS) $(PROGDIR) \
-        ; else \
-           echo "$(PROGDIR)  exists" \
-        ; fi
-# C sources
-	@if  test ! -d  $(SRCDIR) \
-        ; then  \
-           mkdir $(SRCDIR) \
-           ; mv $(SOURCES) $(SRCDIR) \
-        ; else \
-           echo "$(SRCDIR)  exists" \
-        ; fi
-# test data
-	@if  test ! -d  $(TESTDIR) \
-        ; then  \
-           mkdir $(TESTDIR) \
-           ; mv $(TESTS) $(TESTDIR) \
-        ; else \
-           echo "$(TESTDIR)  exists" \
-        ; fi
-# temporary work directory
-	@if  test ! -d  $(TMPDIR) \
-        ; then  \
-           mkdir $(TMPDIR) \
-        ; else \
-           echo "$(TMPDIR)  exists" \
-        ; fi
-# directory for results
-	@if  test ! -d  $(RESULTDIR) \
-        ; then  \
-           mkdir $(RESULTDIR) \
-        ; else \
-           echo "$(RESULTDIR)  exists" \
-        ; fi
+all: programs $(REQD)
 
 programs: $(BINS)
 
@@ -164,25 +100,12 @@ $(PROGDIR)/dhry2reg: $(SRCDIR)/dhry_1.c $(SRCDIR)/dhry_2.c $(SRCDIR)/dhry.h
 $(PROGDIR)/looper: $(SRCDIR)/looper.c
 	$(CC) -o $(PROGDIR)/looper ${CFLAGS} ${OPTON} $(SRCDIR)/looper.c
 
-$(PROGDIR)/ubgears: $(SRCDIR)/ubgears.c
-	$(CC) -o $(PROGDIR)/ubgears ${CFLAGS} ${OPTON} $(SRCDIR)/ubgears.c $(GL_LIBS)
-
-# Run the benchmarks and create the reports
 clean:
 	rm -f $(BINS) core *~ */*~
 
-spotless:	clean
-	rm -f $(RESULTDIR)/* $(TMPDIR)/*
-
-## END ##
-
-## Added for Inquisitor ##
 install:
 	mkdir -p $(DESTDIR)$(BIN_DIR) $(DESTDIR)$(LIB_DIR)/unixbench
-	cp -r pgms $(DESTDIR)$(LIB_DIR)/unixbench/
-	cp -r results $(DESTDIR)$(LIB_DIR)/unixbench/
-	cp -r tmp $(DESTDIR)$(LIB_DIR)/unixbench/
-	cp -r testdir $(DESTDIR)$(LIB_DIR)/unixbench/
-	# Remove Inquisitors Makefile.config as there is no need in it later
-	sed '1,2d' < Makefile > $(DESTDIR)$(LIB_DIR)/unixbench/Makefile
+	cp pgms/* $(DESTDIR)$(LIB_DIR)/unixbench/
+	cp dc.dat $(DESTDIR)$(LIB_DIR)/unixbench/
+	cp sort.src $(DESTDIR)$(LIB_DIR)/unixbench/
 	install -m755 Run $(DESTDIR)$(BIN_DIR)/unixbench

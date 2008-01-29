@@ -215,16 +215,6 @@ paramlist=${blocks-"512 1024 2048 8192"}
 parammsg='File Size: $param blocks'
 cleanopt="-f $tmp"
 ;;
-C)   need=cctest.c
-prog=cc
-options='$param'
-stdout=/dev/null
-repeat="$shortloop"
-logmsg="C Compiler Test:"
-paramlist="cctest.c"
-parammsg='cc $param'
-rm -f a.out
-;;
 dbmscli)
 repeat="$shortloop"
 need="db.dat"
