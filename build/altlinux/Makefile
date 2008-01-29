@@ -4,18 +4,18 @@ PACKAGE_RELEASE=alt1
 PACKAGE_RPM=$(PACKAGE_NAME)-$(PACKAGE_VERSION)-$(PACKAGE_RELEASE).$(TARGET).rpm
 
 # Local build paths
-RPM_BUILD_DIR=$(HOME)
+RPM_BUILD_DIR := $(shell rpm --eval %_topdir)
 WORKDIR=$(PWD)/work
 REPO=$(PWD)/repo
 ROOTDIR=chroot
 
 build-package: 
-	mkdir -p $(RPM_BUILD_DIR)/RPM/SOURCES $(RPM_BUILD_DIR)/RPM/SPECS $(REPO)/$(TARGET)/RPMS.hasher
-	cp build/altlinux/$(PACKAGE_NAME)-$(FLAVOUR).spec $(RPM_BUILD_DIR)/RPM/SPECS/$(PACKAGE_NAME).spec
-	rm -f $(RPM_BUILD_DIR)/RPM/SOURCES/$(PACKAGE_NAME).tar
-	tar -cf $(RPM_BUILD_DIR)/RPM/SOURCES/$(PACKAGE_NAME).tar client flavour Makefile.config
-	rpmbuild -bb --target=$(TARGET) $(RPM_BUILD_DIR)/RPM/SPECS/$(PACKAGE_NAME).spec
-	mv -f $(RPM_BUILD_DIR)/RPM/RPMS/$(TARGET)/$(PACKAGE_RPM) $(REPO)/$(TARGET)/RPMS.hasher/
+	mkdir -p $(RPM_BUILD_DIR)/SOURCES $(RPM_BUILD_DIR)/SPECS $(REPO)/$(TARGET)/RPMS.hasher
+	cp build/altlinux/$(PACKAGE_NAME)-$(FLAVOUR).spec $(RPM_BUILD_DIR)/SPECS/$(PACKAGE_NAME).spec
+	rm -f $(RPM_BUILD_DIR)/SOURCES/$(PACKAGE_NAME).tar
+	tar -cf $(RPM_BUILD_DIR)/SOURCES/$(PACKAGE_NAME).tar client flavour Makefile.config
+	rpmbuild -bb --target=$(TARGET) $(RPM_BUILD_DIR)/SPECS/$(PACKAGE_NAME).spec
+	mv -f $(RPM_BUILD_DIR)/RPMS/$(TARGET)/$(PACKAGE_RPM) $(REPO)/$(TARGET)/RPMS.hasher/
 	genbasedir --create --topdir $(REPO) $(TARGET) hasher
 
 build-root:
