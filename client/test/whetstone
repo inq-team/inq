@@ -9,17 +9,10 @@
 
 . /usr/share/inquisitor/functions-test
 
-# Cleanup
 exit_handler()
 {
-	local rc=$?
-	trap - EXIT
-
 	[ -f "$RESULT_FILE" ] && rm -f $RESULT_FILE
-
-	exit $rc
 }
-trap exit_handler HUP PIPE INT QUIT TERM EXIT
 
 CPU_QUANTITY=`grep processor /proc/cpuinfo | wc -l`
 

@@ -12,21 +12,15 @@
 
 . /usr/share/inquisitor/functions-test
 
-# Cleanup
 exit_handler()
 {
-	local rc=$?
-	trap - EXIT
-
 	[ -f "$TESTFILE" ] && rm $TESTFILE
 	if [ -d "$MOUNTPOINT" ]; then
 		cd /
 		umount -f $MOUNTPOINT >/dev/null 2>&1 || true
 		rm -rf $MOUNTPOINT
 	fi
-	exit $rc
 }
-trap exit_handler HUP PIPE INT QUIT TERM EXIT
 
 MOUNTPOINT=`mktemp -d`
 TESTFILE=`mktemp`

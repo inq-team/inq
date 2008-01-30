@@ -39,7 +39,7 @@ __EOF__
 		cat <<__EOF__
 A part of Inquisitor platform, version ${INQ_VERSION}
 
-Copyright (C) 2004-2007 by Inquisitor team
+Copyright (C) 2004-2008 by Inquisitor team
 This is free software.  You may redistribute copies of it under the terms of
 the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.
 There is NO WARRANTY, to the extent permitted by law.
@@ -91,3 +91,12 @@ test_failed()
 	fi
 	exit 1
 }
+
+_exit_handler()
+{
+       local rc=$?
+       trap - EXIT
+       type exit_handler 2>&1 | grep -q "is a function" && exit_handler
+       exit $rc
+}
+trap _exit_handler HUP PIPE INT QUIT TERM EXIT

@@ -8,18 +8,11 @@
 
 . /usr/share/inquisitor/functions-test
 
-# Cleanup
 exit_handler()
 {
-	local rc=$?
-	trap - EXIT
-
 	[ -d "$WORKING_DIR" ] && rm -rf "$WORKING_DIR"
 	cd $HOME
-
-	exit $rc
 }
-trap exit_handler HUP PIPE INT QUIT TERM EXIT
 
 WORKING_DIR=`mktemp -d`
 

@@ -11,16 +11,11 @@
 
 . /usr/share/inquisitor/functions-test
 
-# Cleanup
 exit_handler()
 {
-	local rc=$?
-	trap - EXIT
 	[ -f "$TMP_DIR/level" ] && rm -f "$TMP_DIR/level"
 	[ -d "$TMP_DIR" ] && rmdir "$TMP_DIR"
-	exit $rc
 }
-trap exit_handler HUP PIPE INT QUIT TERM EXIT
 
 echo -n 'Resetting modem'
 stty 115200 -F $DEV

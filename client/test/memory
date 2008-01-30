@@ -17,18 +17,11 @@ TOTAL_MEMORY=$(( (`grep MemTotal /proc/meminfo | awk '{print $2}'`) / 1024 - 256
 TOTAL_SUBSTAGES=$(( 16 * $TEST_LOOPS ))
 COMPLETED_SUBSTAGES=0
 
-# Cleanup
 exit_handler()
 {
-	local rc=$?
-	trap - EXIT
-
 	[ -d "/proc/$MEMTEST_PID" ] && kill $MEMTEST_PID
 	[ -f  "$MEMORY_LOG" ] && rm $MEMORY_LOG
-
-	exit $rc
 }
-trap exit_handler HUP PIPE INT QUIT TERM EXIT
 
 MEMORY_LOG=`mktemp`
 

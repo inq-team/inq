@@ -10,18 +10,11 @@
 
 . /usr/share/inquisitor/functions-test
 
-# Cleanup
 exit_handler()
 {
-	local rc=$?
-	trap - EXIT
-
 	[ -f "$TEST_IMAGE" ] && rm -f $TEST_IMAGE
 	[ -f "$TEST_IMAGE"_fd ] && rm -f "$TEST_IMAGE"_fd
-
-	exit $rc
 }
-trap exit_handler HUP PIPE INT QUIT TERM EXIT
 
 TEST_IMAGE=`mktemp`
 

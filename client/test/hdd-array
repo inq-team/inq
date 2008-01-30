@@ -19,18 +19,11 @@ clear_testing_environment()
 	umount -f $MOUNTPOINT >$DEBUG_TTY 2>&1 || true
 }
 
-# Cleanup
 exit_handler()
 {
-	local rc=$?
-	trap - EXIT
-
 	clear_testing_environment
 	[ -d "$MOUNTPOINT" ] && rm -fr $MOUNTPOINT
-
-	exit $rc
 }
-trap exit_handler HUP PIPE INT QUIT TERM EXIT
 
 MOUNTPOINT=`mktemp -d`
 

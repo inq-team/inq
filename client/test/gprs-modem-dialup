@@ -17,12 +17,8 @@
 
 . /usr/share/inquisitor/functions-test
 
-# Cleanup
 exit_handler()
 {
-	local rc=$?
-	trap - EXIT
-
 	if [ -r "$TMP_DIR/pppd.lock" ]; then
 		echo -n 'Stopping pppd'
 		killall pppd
@@ -37,11 +33,8 @@ exit_handler()
 			echo_success
 		fi
 	fi
-
 	[ -d "$TMP_DIR" ] && rm -rf "$TMP_DIR"
-	exit $rc
 }
-trap exit_handler HUP PIPE INT QUIT TERM EXIT
 
 MODEM_INIT='AT+CGDCONT=1,\"IP\",\"internet.mts.ru\" OK'
 PHONE="*99***1#"

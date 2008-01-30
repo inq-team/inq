@@ -8,21 +8,14 @@
 
 . /usr/share/inquisitor/functions-test
 
-# Cleanup
 exit_handler()
 {
-	local rc=$?
-	trap - EXIT
-
 	[ -f "$RESULT_FILE" ] && rm -fr "$RESULT_FILE"
-
 	if [ -d "$SCRATCH_DIRECTORY" ]; then
 		umount -f $SCRATCH_DIRECTORY
 		rmdir $SCRATCH_DIRECTORY
 	fi
-	exit $rc
 }
-trap exit_handler HUP PIPE INT QUIT TERM EXIT
 
 RESULT_FILE=`mktemp`
 SCRATCH_DIRECTORY=`mktemp -d`

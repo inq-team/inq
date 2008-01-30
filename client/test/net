@@ -12,12 +12,8 @@
 
 . /usr/share/inquisitor/functions-test
 
-# Cleanup
 exit_handler()
 {
-	local rc=$?
-	trap - EXIT
-
 	if [ -n "$FIRST_NIC" -a -n "$LOCAL_IP" -a -n "$GATEWAY" ]; then
 		ifconfig eth${FIRST_NIC} up
 		sleep 5
@@ -35,12 +31,8 @@ exit_handler()
 	else
 		true
 	fi
-
 	[ -f "$TESTFILE" ] && rm $TESTFILE
-
-	exit $rc
 }
-trap exit_handler HUP PIPE INT QUIT TERM EXIT
 
 TESTFILE=`mktemp`
 
