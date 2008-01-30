@@ -16,8 +16,6 @@ get_usb_devices()
 {
 	for I in /sys/bus/usb/devices/*; do
 
-		echo -n "$I - `cat $I/idVendor`:`cat $I/idProduct`"
-
 		# Check that it's readable
 		[ -r "$I/idVendor" ] || continue
 		[ -r "$I/idProduct" ] || continue
@@ -39,8 +37,5 @@ get_usb_devices()
 }
 
 FOUND=`get_usb_devices | wc -l`
-
-echo "FOUND=\"$FOUND\""
-echo "COUNT=\"$COUNT\""
 
 [ "$FOUND" -eq "$COUNT" ] && test_succeeded || test_failed "Found $FOUND devices instead of $COUNT"
