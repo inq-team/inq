@@ -1,4 +1,4 @@
-#!/bin/sh -ef
+#!/bin/sh -e
 # NAME=USB presence
 # DESCRIPTION=Tests presence of designated USB device
 # DESTROYS_HDD=false
@@ -15,6 +15,8 @@
 get_usb_devices()
 {
 	for I in /sys/bus/usb/devices/*; do
+
+		echo -n "$I - `cat $I/idVendor`:`cat $I/idProduct`"
 
 		# Check that it's readable
 		[ -r "$I/idVendor" ] || continue
@@ -37,5 +39,8 @@ get_usb_devices()
 }
 
 FOUND=`get_usb_devices | wc -l`
+
+echo "FOUND=\"$FOUND\""
+echo "COUNT=\"$COUNT\""
 
 [ "$FOUND" -eq "$COUNT" ] && test_succeeded || test_failed "Found $FOUND devices instead of $COUNT"
