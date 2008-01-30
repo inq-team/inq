@@ -20,10 +20,10 @@ plan_test_script()
 
 test_stage_advance()
 {
-	STAGE=$1
-	EVENT=$2
-	COMMENT=$3
-	curl -sf "$REST_SERVER/computers/advance/$COMPUTER_ID.xml?stage=$STAGE&event=$EVENT&comment=$COMMENT" >/dev/null
+	local stage=$1
+	local event=$2
+	local comment=`echo -n "$3" | ruby -e 'require "cgi"; print CGI::escape($stdin.read)'`
+	curl -sf "$REST_SERVER/computers/advance/$COMPUTER_ID.xml?stage=$stage&event=$event&comment=$comment" >/dev/null
 }
 
 test_stage_progress()
