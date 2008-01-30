@@ -23,14 +23,16 @@ test_stage_advance()
 	local stage=$1
 	local event=$2
 	local comment=`echo -n "$3" | ruby -e 'require "cgi"; print CGI::escape($stdin.read)'`
+
 	curl -sf "$REST_SERVER/computers/advance/$COMPUTER_ID.xml?stage=$stage&event=$event&comment=$comment" >/dev/null
 }
 
 test_stage_progress()
 {
-	COMPLETE=$1
-	TOTAL=$2
-	curl -sf "$REST_SERVER/computers/progress/$COMPUTER_ID.xml?complete=$COMPLETE&total=$TOTAL" >/dev/null
+	local complete=$1
+	local total=$2
+
+	curl -sf "$REST_SERVER/computers/progress/$COMPUTER_ID.xml?complete=$complete&total=$total" >/dev/null
 }
 
 test_promise_time()
@@ -80,9 +82,8 @@ benchmark_submit_float()
 {
 	local key=`echo -n "$1" | ruby -e 'require "cgi"; print CGI::escape($stdin.read)'`
 	local value=$2
-	if curl -sf "$REST_SERVER/computers/benchmark_submit_float/$COMPUTER_ID?key=$key&value=$value"; then
-		return 0
-	else
+
+	if ! curl -sf "$REST_SERVER/computers/benchmark_submit_float/$COMPUTER_ID?key=$key&value=$value"; then
 		echo 'benchmark_submit_float: failed to submit'
 		return 1
 	fi
@@ -92,9 +93,8 @@ benchmark_submit_string()
 {
 	local key=`echo -n "$1" | ruby -e 'require "cgi"; print CGI::escape($stdin.read)'`
 	local value=`echo -n "$2" | ruby -e 'require "cgi"; print CGI::escape($stdin.read)'`
-	if curl -sf "$REST_SERVER/computers/benchmark_submit_string/$COMPUTER_ID?key=$key&value=$value"; then
-		return 0
-	else
+
+	if ! curl -sf "$REST_SERVER/computers/benchmark_submit_string/$COMPUTER_ID?key=$key&value=$value"; then
 		echo 'benchmark_submit_string: failed to submit'
 		return 1
 	fi
