@@ -36,5 +36,4 @@ echo_success
 
 benchmark_submit_float 'GPRS level' "$LEVEL"
 
-exit_handler
 test_succeeded
