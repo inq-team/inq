@@ -70,6 +70,12 @@ __EOF__
 		TEST_FILENAME="$SHARE_DIR/test/"`basename $0`
 		eval `sed -ne '/^# *VAR=/ s/^# *VAR=\(.*\):\(.*\):\(.*\):\(.*\)$/\1=\3/p' <$TEST_FILENAME`
 	fi
+
+	# Override communications functions with empty ones
+	test_promise_time() { return 0; }
+	test_stage_progress() { return 0; }
+	benchmark_submit_float() { return 0; }
+	benchmark_submit_string() { return 0; }
 else
 	. /etc/inquisitor/global
 	. $SHARE_DIR/functions
@@ -94,9 +100,11 @@ test_failed()
 
 _exit_handler()
 {
-       local rc=$?
-       trap - EXIT
-       type exit_handler 2>&1 | grep -q "is a function" && exit_handler
-       exit $rc
+	local rc=$?
+	trap - EXIT
+	if type exit_handler 2>&1 | grep -q 'function'; then
+		exit_handler
+	fi
+	exit $rc
 }
 trap _exit_handler HUP PIPE INT QUIT TERM EXIT

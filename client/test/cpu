@@ -12,12 +12,12 @@
 
 exit_handler()
 {
-	if [ -f "$TMP_DIR/*.pid" ]; then
-		for I in "$TMP_DIR/*.pid"; do
+	for I in $TMP_DIR/*.pid; do
+		if [ -f "$I" ]; then
 			stop_background "$I"
-		done
-	fi
-	[ -d "$TMP_DIR" ] && rm -fr "$TMP_DIR"
+		fi
+	done
+	[ -d "$TMP_DIR" ] && rmdir "$TMP_DIR"
 }
 
 TMP_DIR=`mktemp -d`
