@@ -355,8 +355,11 @@ class ComputersController < ApplicationController
 
 	def plan
 		@computer = Computer.find(params[:id])
-#		testing = @computer.last_testing
-		pl = Planner.new(@computer.profile.xml)
+                @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
+		@testing_number = params[:testing] ? params[:testing].to_i() : @sorted_testings.size - 1
+		@testing = @sorted_testings[@testing_number]
+		prev_testing = @sorted_testings[@testing_number - 1]
+		pl = Planner.new(@computer.profile.xml, @testing.testing_stages, prev_testing.testing_stages, @testing.components, prev_testing.components)
 		pl.calculate
 		render :text => pl.script
 	end
