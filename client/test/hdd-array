@@ -22,7 +22,7 @@ clear_testing_environment()
 exit_handler()
 {
 	clear_testing_environment
-	[ -d "$MOUNTPOINT" ] && rm -fr $MOUNTPOINT
+	[ -d "$MOUNTPOINT" ] && rm $MOUNTPOINT
 }
 
 MOUNTPOINT=`mktemp -d`
@@ -31,6 +31,10 @@ detect_hdd_quantity()
 {
 	sleep 5
 	HDD_QUANTITY=`hal-find-by-property --key=storage.drive_type --string=disk | wc -l`
+	if [ "$HDD_QUANTITY" -eq 0 ]; then
+		test_succeeded "No HDDs found"
+		exit 0
+	fi
 	TIME_PER_ARRAY=$(( $TESTTIME / $HDD_QUANTITY ))
 }
 
