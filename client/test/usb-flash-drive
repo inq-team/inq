@@ -14,16 +14,12 @@
 
 exit_handler()
 {
-	[ -f "$TESTFILE" ] && rm $TESTFILE
-	if [ -d "$MOUNTPOINT" ]; then
-		cd /
-		umount -f $MOUNTPOINT >/dev/null 2>&1 || true
-		rm -rf $MOUNTPOINT
-	fi
+	[ -f $FIFOFILE ] && rm $FIFOFILE
+	[ -f $FIFOFILE.md5 ] && rm $FIFOFILE.md5
+	[ -f $FIFOFILE.read_speed ] && rm $FIFOFILE.read_speed
 }
 
-MOUNTPOINT=`mktemp -d`
-TESTFILE=`mktemp`
+FIFOFILE=`mktemp`
 
 # Check for ready for testing drives
 STORAGE_QUANTITY=0
@@ -58,35 +54,25 @@ for UDI in `hal-find-by-property --key storage.bus --string usb`; do
 	block_dev=`hal-get-property --udi "$UDI" --key block.device`
 	echo -n "Drive $block_dev..."
 	
-	dd if=/dev/urandom of=$TESTFILE bs=1024k count=$SIZE >$DEBUG_TTY 2>&1
-
-	# Create filesystem and write testfile
-	mke2fs -m0 -F $block_dev >$DEBUG_TTY 2>&1 || test_failed "Drive $block_dev writing error"
-	mount -t ext2 $block_dev $MOUNTPOINT
-
 	echo -n "writing..."
-	write_time=`dd if=$TESTFILE of=${MOUNTPOINT}/testfile bs=${BLOCKSIZE}k 2>&1 | sed -n '$p' | awk '{print $6}'` \
-		|| test_failed "Drive $block_dev writing error"
-	umount -f $MOUNTPOINT
-
-	# Clear all caches
-	sync;sync;sync
-	echo 3 > /proc/sys/vm/drop_caches
-
-	# Remount for reading
-	mount -t ext2 $block_dev $MOUNTPOINT
+	rm $FIFOFILE
+	mkfifo $FIFOFILE
+	md5sum -b $FIFOFILE | awk '{print $1}' > ${FIFOFILE}.md5 &
+	write_speed_result=`dd if=/dev/urandom bs=${BLOCKSIZE}k count=${SIZE} 2>/dev/null | tee $FIFOFILE | dd of=${block_dev} bs=${BLOCKSIZE}k oflag=sync 2>&1 | sed -n '$ p'` || test_failed "Drive $block_dev writing error"
 
 	echo -n "reading..."
-	read_time=`dd if=$MOUNTPOINT/testfile of=/dev/null bs=${BLOCKSIZE}k 2>&1 | sed -n '$p' | awk '{print $6}'` \
+	read_md5=`dd if=${block_dev} bs=${BLOCKSIZE}k count=${SIZE} 2>${FIFOFILE}.read_speed | md5sum -b | awk '{print $1}'` \
 		|| test_failed "Drive $block_dev reading error"
 
 	echo -n "comparing..."
-	cmp -s $TESTFILE $MOUNTPOINT/testfile || test_failed "Drive $block_dev comparing error"
-	umount -f $MOUNTPOINT
-
+	[ `cat ${FIFOFILE}.md5` == $read_md5 ] || test_failed "Drive $block_dev comparing error"
+	write_speed=`echo "$write_speed_result" | awk '{print $(NF-1)}'`
+	write_speed_unit=`echo "$write_speed_result" | awk '{print $NF}'`
+	read_speed=`sed -n '$ p' < ${FIFOFILE}.read_speed | awk '{print $(NF-1)}'`
+	read_speed_unit=`sed -n '$ p' < ${FIFOFILE}.read_speed | awk '{print $NF}'`
+	benchmark_submit_float "Drive $block_dev writing speed, ${write_speed_unit}" $write_speed
+	benchmark_submit_float "Drive $block_dev reading speed, ${read_speed_unit}" $read_speed
 	echo_success
-	benchmark_submit_float "Drive $block_dev writing speed" $write_time
-	benchmark_submit_float "Drive $block_dev reading speed" $read_time
 done
 fi
 
