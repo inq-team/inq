@@ -1,8 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :profiles
 
-  map.resources :orders
-
   # The priority is based upon order of creation: first created -> highest priority.
   
   # Sample of regular route:
@@ -21,13 +19,13 @@ ActionController::Routing::Routes.draw do |map|
   # instead of a file named 'wsdl'
   map.connect ':controller/service.wsdl', :action => 'wsdl'
 
-  map.connect ':controller/:action/:id/:testing', :controller => 'computer'
+  map.connect 'computer/:action/:id/:testing', :controller => 'computer'
 
   # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id.:format'
   map.connect ':controller/:action/:id'
 
-
-  map.resources :orders
+  map.resources :orders, :collection => { :testings => :get, :staging => :get }, :singular => 'order'
   map.resources :computers
+
 end

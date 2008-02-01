@@ -1,4 +1,4 @@
-require 'mykit/lexer'
+require 'mykit/components'
 
 class OrdersController < ApplicationController
 	# GET /orders
@@ -15,6 +15,12 @@ class OrdersController < ApplicationController
 		@staging = Order.staging
 	end
 
+	def testings
+		ids = Order.find_by_sql("select distinct computers.order_id as id from computers left join testings on testings.computer_id = computers.id where computers.order_id is not null and testings.id is not null").collect { |o| o.id }
+		@orders = Order.find(*ids)
+	end
+
+
 	# GET /orders/1
 	# GET /orders/1.xml
 	def show
@@ -25,9 +31,9 @@ class OrdersController < ApplicationController
 		@st_comp_qty[:testing] = @computers.select{ |c| (c.computer_stages.select{ |s| s.end == nil }[0]).stage == 'testing' if c.computer_stages.size > 0 }.size
 		@st_comp_qty[:packing] = @computers.select{ |c| (c.computer_stages.select{ |s| s.end == nil }[0]).stage == 'packing' if c.computer_stages.size > 0 }.size
 		@qty = @computers.size
-		@models = Model.find_all.map{ |x| x.name }
+		@models = Model.find(:all).map{ |x| x.name }
 		@default_qty = @order.order_lines.map{ |x| x.qty }.min
-		@profiles = Profile.find_all.map{ |x| x.id }
+		@profiles = Profile.find(:all).map{ |x| x.id }
 		@start_id = Computer.find_by_sql('SELECT MAX(id)+1 FROM computers')[0]['MAX(id)+1'].to_i
 		@end_id = @start_id + @default_qty - 1
 
@@ -139,8 +145,33 @@ class OrdersController < ApplicationController
   end
 
 	def items
+		ids = Order.find_by_sql("select distinct computers.order_id as id from computers left join testings on testings.computer_id = computers.id where computers.order_id is not null and testings.id is not null").collect { |o| o.id }
+		@orders = Order.find(*ids)
 		@order = Order.find(params[:id])
+		@next_id = @prev_id = nil
+		if @orders.include?(@order)
+	 		i = @orders.inject(0) { |i, o| break(i) if o == @order; i + 1 }
+			@next_id = @orders[i + 1].id if i + 1 < @orders.size 
+			@prev_id = @orders[i - 1].id if i > 0 
+		end
+		
 		lines = @order.order_lines
 		@items = lines.collect { |l| MyKit::Item.new(l.name) }
 	end
+
+	def components
+		ids = Order.find_by_sql("select distinct computers.order_id as id from computers left join testings on testings.computer_id = computers.id where computers.order_id is not null and testings.id is not null").collect { |o| o.id }
+		@orders = Order.find(*ids)
+		@order = Order.find(params[:id])
+		@next_id = @prev_id = nil
+		if @orders.include?(@order)
+	 		i = @orders.inject(0) { |i, o| break(i) if o == @order; i + 1 }
+			@next_id = @orders[i + 1].id if i + 1 < @orders.size 
+			@prev_id = @orders[i - 1].id if i > 0 
+		end
+		
+		lines = @order.order_lines
+		@items = lines.inject({}) { |h, l| h.merge({ l => MyKit::Parser.parse(l.name) }) }
+	end
+
 end

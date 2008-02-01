@@ -21,12 +21,10 @@
 </table>
 
 
-<% if @components.size > 0 %>
 <% place_hint('e-passport') do %>
-<% form_tag(:action => 'label_epassport', :id => @computer.id, :testing => @testing_number) do %>
-	<input style="width: 20em" type="submit" value="Print E-Passport label"></form>
-<% end %>
-<% end %>
+	<% form_tag(:action => 'label_epassport', :id => @computer.id, :testing => @testing_number) do %>
+		<input style="width: 20em" type="submit" value="Print E-Passport label">
+	<% end %>
 <% end %>
 
 <%= javascript_tag(<<_EOF_

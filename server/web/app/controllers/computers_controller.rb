@@ -1,3 +1,5 @@
+require 'mykit/components'
+require 'mykit/comparison'
 require 'planner'
 
 class ComputersController < ApplicationController
@@ -10,6 +12,11 @@ class ComputersController < ApplicationController
 	def archive
 		@computer_pages, @computers = paginate :computers, :per_page => 20
 		render :action => 'list'
+	end
+
+	def ordered
+		ids = Computer.find_by_sql("select distinct computers.id from computers left join testings on computers.id = testings.computer_id where computers.order_id is not null and testings.id is not null").collect { |c| c.id }
+		@computers = Computer.find(*ids)		
 	end
 
 	def latest
@@ -109,6 +116,23 @@ class ComputersController < ApplicationController
 		prepare_computer_tabs
 		@components = @testing ? @testing.components : []
 		render(:layout => 'computer_tabs')
+	end
+
+	def audit
+                @computer = Computer.find(params[:id])
+                @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
+                @testing_number = params[:testing] ? params[:testing].to_i() : @sorted_testings.size - 1
+                @testing = @sorted_testings[@testing_number]
+                @testing ? @components = @testing.components : @components = []
+		@components.each { |c| c.model.group.name = MyKit::Keywords::GROUP_TRANS[c.model.group.name]  if c.model.group and MyKit::Keywords::GROUP_TRANS[c.model.group.name] }
+		lines = @computer.order.order_lines
+		unless lines.blank?
+			min = lines.inject(lines.first.qty) { |i, j| i > j.qty ? j.qty : i } 
+			lines.each { |l| l.qty /= min }	
+		end
+                @items = lines.inject({}) { |h, l| h.merge({ l => MyKit::Parser.parse(l.name) }) } 
+		@comparison = MyKit::Comparison.compare(@items, @components)
+		render(:layout => 'computer_audit')
 	end
 	
 	def sticker

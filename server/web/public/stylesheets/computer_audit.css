@@ -1,0 +1,108 @@
+td#content {
+	width: 71.7em ! important;
+}
+
+#info_tabs td#info_tab_spacer {
+	width: 62.5em;
+}
+
+.testing_border, #selected_testing_tab, #testing_pane td table td, #testing_pane td table th {
+        border-color: #559F7D ! important;
+}
+
+td#testings_tabs table tr td, td#info_tabs table tr td {
+        border-color: white ! important;
+}
+
+td#testings_tabs table tr td#selected_testing_tab {
+        background-color: #66BF9C;
+        border-color: #66BF9C ! important;
+}
+
+td#testings_tabs table tr td#selected_testing_tab {
+        background-color: #559F7D;
+        border-color: #559F7D ! important;
+}
+
+td#testings_tabs table tr td#selected_testing_tab a {
+	color: white;
+	font-weight: bold;
+} 
+
+td#info_tabs table tr td#info_tab_audit {
+        background-color: #559F7D;
+        border-color: #559F7D ! important;
+}
+
+td#info_tabs table tr td#info_tab_audit a{
+        text-decoration: none;
+        cursor: default;
+        color: white;
+        font-weight: bold;
+	
+}
+
+#hint_type_audit {
+	background-color: #AACFBE ! important;
+}
+
+#hint_type_audit .hint_border {
+	background-image: url('/images/eyes.png');
+	text-align: center;
+}
+
+#components th {
+	background-color: #AACFBE;
+}
+
+
+.component_group {
+        width: 4.3em;
+}
+
+/*.component_db_name {
+        width: 17.6em;
+}*/
+
+.component_name {
+/*        width: 26.6em;*/
+}
+
+.component_db_name {
+        width: 26.6em;
+}
+
+.component_count, .component_db_count {
+	width: 4.3em;
+}
+
+.component_odd {
+}
+
+.component_even {
+        background-color: #f0f4f0;
+}
+
+#hint_type_e-passport {
+        background-color: #AACFBE ! important;
+}
+
+.dev_span_unmatched {
+}
+
+.dev_span_good {
+	background-color: #819A8E;
+}
+
+.dev_span_bad {
+	background-color: yellow;
+}
+
+.dev_span_chunk {
+	background-color: #AACFBE;
+}
+
+.dev_span_evil {
+	background-color: red;
+}
+

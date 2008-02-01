@@ -1,0 +1,22 @@
+<h1>Orders</h1>
+
+<table>
+<tr>
+<th>buyer_order_number</th>
+<th>mfg_task_number</th>
+<th>mfg_report_number</th>
+</tr>
+
+<% for order in @orders %>
+  <tr>
+    <td><%=h order.buyer_order_number %></td>
+    <td><%=h order.mfg_task_number %></td>
+    <td><%=h order.mfg_report_number %></td>
+    <td><%= link_to 'Show', order_path(order) %></td>
+    <td><%= link_to 'Edit', edit_order_path(order) %></td>
+    <td><%= link_to 'Destroy', order_path(order), :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= link_to 'Items', :action => 'items', :id => order.id %></td>
+    <td><%= link_to 'Components', :action => 'components', :id => order.id %></td>
+  </tr>
+<% end %>
+</table>

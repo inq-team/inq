@@ -5,7 +5,7 @@ require 'mykit/keywords'
 module MyKit
 
 class Item
-	attr_accessor :string, :chunks, :sense, :properties, :components, :vendors
+	attr_accessor :string, :chunks, :sense, :properties, :components, :vendors, :keywords
 	def initialize(s)
 		Lexer.lex(s).each { |k, v| send("#{ k }=".to_s, v) }
 	end
@@ -22,7 +22,9 @@ class Lexer
 	@@ts3 = 0
 
 	def self.ts
-		[@@ts1, @@ts2, @@ts3]
+		r = [@@ts1, @@ts2, @@ts3]
+		@@ts1 = @@ts2 = @@ts3 = 0
+		r
 	end	
 	
 	def self.lex(string)
@@ -31,12 +33,13 @@ class Lexer
 		chunks = string.split(/\s+/).collect { |r| r unless r.empty? }.compact
 		components = Array.new(MyKit::Keywords::PROPS.first.size, 0)
 		properties = {}
+		keywords = []
 		vendors = []
 		sense = {}
 		number0 = /^(\d+([.,]\d+)?)([^0-9]+)$/
 		number2 = /^\d+([.,]\d+)?$/
 		number1 = /(\d+([.,]\d+)?)([^0-9]+)$/
-		sense_reg = /^[A-Z0-9@.:_-]+$/
+		sense_reg = /^[A-Z0-9@.:_\-]+$/
 		remove = []
 			
 		# first run
@@ -75,7 +78,7 @@ class Lexer
 
 		#second run
 
-		chunks2 = chunks.collect { |r| r.split(/,|\/|\(|\)/).collect { |t| t unless t.empty? }.compact }.flatten
+		chunks2 = chunks.collect { |r| r.split(/,|\/|\(|\)|>|<|-|\+|=/).collect { |t| t unless t.empty? }.compact }.flatten
 		pairs2 = chunks2[0..-2].zip(chunks2[1..-1])
 		pairs3 = pairs | pairs2
 		chunks3 = chunks | chunks2
@@ -112,14 +115,14 @@ class Lexer
 			@@ts2 += Time.new - ts2
 
 			ts3 = Time.new
-			kws = MyKit::Strings.find_all(_C, @@keywords.keys, MyKit::Keywords::MAX_DISTANCE)
+			kws = MyKit::Strings.find_all(_C, @@keywords.keys, MyKit::Keywords::KW_DISTANCE)
 			@@ts3 += Time.new - ts3
 
 			kw_dist = Strings.distance(_C, kws.first) unless kws.blank?
 			vs_dist = Strings.distance(_C, vs.first) unless vs.blank?
 			which = (vs.blank? || kws.blank?) ? nil : vs_dist < kw_dist
 			vendors |= vs.collect { |v| @@vendors[v] } if which.nil? || which == true
-			kws.each { |s| (kw = @@keywords[s]).each_index { |i| components[i] += kw[i] } } if which.nil? || which == false
+			kws.each { |s| keywords |= [ s ] ; (kw = @@keywords[s]).each_index { |i| components[i] += kw[i] } } if which.nil? || which == false
 			sense.delete(c) unless ms.blank? and kw.blank? and (vs.blank? || vs_dist > MyKit::Keywords::SAFE_DISTANCE) and (kws.blank? || kw_dist > MyKit::Keywords::SAFE_DISTANCE) and _C =~ sense_reg
 		end
 
@@ -127,7 +130,7 @@ class Lexer
 
 		@@ts1 += Time.new - ts1
 
-		{ :string => string, :sense => sense.keys, :properties => properties, :components => components, :vendors => vendors }	
+		{ :keywords => keywords, :string => string, :sense => sense.keys, :properties => properties, :components => components, :vendors => vendors }	
 	end
 
 end

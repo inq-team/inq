@@ -1,0 +1,21 @@
+<table >
+<tr>
+<th>Serial</th>
+<th>Model</th>
+<th>Order</th>
+<th>IP/Shelf</th>
+<th colspan='2'></th>
+</tr>
+
+<% for computer in @computers %>
+<tr>
+<td><%=computer.id %></td>
+<td><%=computer.model.name %></td>
+<td><%=link_to(computer.order.id, :controller => 'orders', :action => 'show', :id => computer.order.id) %></td>
+<td><%=computer.ip || computer.shelf  %></td>
+<td><%= link_to 'Show', :action => 'show', :id => computer.id %></td>
+<td><%= link_to 'Audit', :action => 'audit', :id => computer.id %></td>
+</tr>
+<% end %>
+</table>
+

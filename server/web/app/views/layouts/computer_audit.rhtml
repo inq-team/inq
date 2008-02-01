@@ -9,7 +9,7 @@
 	<%= javascript_include_tag 'rico/ricoStyles' %>
 	<%= javascript_include_tag 'effects' %>
 	<%= stylesheet_link_tag 'inq' %>
-	<%= stylesheet_link_tag "computer_tab_#{controller.action_name}" %>
+	<%= stylesheet_link_tag "computer_audit" %>
 </head>
 <body>
 
@@ -24,7 +24,7 @@
 <% end %>
 	</tr></table>
 	</div>
-	
+
 	<div id='progress_bar'> 
 	<table><tr>
 	<% stages = ['Ordering', 'Warehouse', 'Acceptance', 'Assembling', 'Testing', 'Packaging'] ; now = Time.new() %>
@@ -53,16 +53,16 @@
 	<% stages.each do |stage| %><td class='computer_stage_planned'><%= stage %></td><% end %>
 	</tr></table>
 	</div>
+
 	
 	<table id='testing_pane'>
 
 		<tr>
 		<td colspan=3 id='info_tabs'><table><tr>
 			<td id='info_tab_dummy'>&nbsp;</td>
-			<%= content_tag(:td, (@computer.order && controller.action_name == 'hw' ? link_to(image_tag('counterclockwise.png', :title => 'Audit'), {:action => 'audit', :id => @computer.id, :testing => @testing_number}, :style => 'cursor: pointer; float: left; ') : '' ) + content_tag(:span, link_to("Hardware", {:action => 'hw', :id => @computer.id, :testing => @testing_number})) , :id => 'info_tab_hw') %>
-			<%= content_tag(:td, link_to("Sticker", {:action => 'sticker', :id => @computer.id, :testing => @testing_number}), :id => 'info_tab_sticker') %>
-			<%= content_tag(:td, link_to("Logs", {:action => 'log', :id => @computer.id, :testing => @testing_number}), :id => 'info_tab_log') %>
-			<%= content_tag(:td, link_to("Marks", {:action => 'mark', :id => @computer.id, :testing => @testing_number}), :id => 'info_tab_mark') %>
+			<%= content_tag(:td, '&nbsp;', :id => 'info_tab_spacer') %>
+
+			<%= content_tag(:td, link_to(image_tag('clockwise.png', :title => "Config"), {:action => 'hw', :id => @computer.id, :testing => @testing_number}, :style => 'float: right; cursor: pointer;') + link_to("Audit", {:action => 'audit', :id => @computer.id, :testing => @testing_number}), :id => 'info_tab_audit') %>
 		</td></tr></table>
 		</td></tr>
 
@@ -83,22 +83,6 @@
 			<tr><td class='dummy_tab'></td></tr>	
 			</table>
 		</td>
-
-
-		<td id='testing_plan'><div class='testing_border'>
-			<table>
-				<tr><th class='testing_stage_name'>Stage</th><th class='testing_stage_span'>Elapsed</th></tr>
-			<% if @stages %>
-				<% @stages.each { |stage| %>
-				<tr class='testing_stage_<%= stage[:result] %>'>
-					<td class='testing_stage_name'><%= stage[:id] %></td>
-					<td class='testing_stage_span'><%= sprintf("%02i:%02i:%02i", stage[:elapsed]/3600, stage[:elapsed]%3600/60, stage[:elapsed]%3600%60) if stage[:elapsed] %></td>
-				</tr>
-			<% } %>
-			<% end %>
-			</table>
-			&nbsp;
-		</div></td> 
 
 		<td id='content'><div class='testing_border'>
 			<%= yield %>		

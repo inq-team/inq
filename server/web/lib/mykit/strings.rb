@@ -11,7 +11,9 @@ class Strings
 	@@ts4 = 0
 
 	def self.ts
-		[@@ts, @@ts1, @@ts11, @@ts12, @@ts2, @@ts3, @@ts4]
+		r = [@@ts, @@ts1, @@ts11, @@ts12, @@ts2, @@ts3, @@ts4]
+		@@ts = @@ts1 = @@ts11 = @@ts12 = @@ts2 = @@ts3 = @@ts4 = 0
+		r
 	end
 
 	def self.compare(s1, s2, deb = nil)
@@ -166,18 +168,15 @@ class Strings
 		chunks
 	end
 
-	def self.distance(s1, s2)
-		s1 = s1.chars if s1.is_a?(String) && s1.respond_to?(:chars)
-		s2 = s2.chars if s2.is_a?(String) && s2.respond_to?(:chars)
-
-		chunks = compare(s1, s2)
+	def self.distance_raw(s1, s2, chunks)
 		return (1.0/0.0) if chunks.empty?
 
 		#transform the strings into two vectors of chunks and compute distance between them
 		i = 0
-		co1 = 0
-		co2 = 0
-		dist = 0 
+		co1 = 0.0
+		co2 = 0.0
+		dist = 0.0 
+		bl = 0.0
 		sz = chunks.size
 		chf = chunks[0]
 		chl = chunks[sz - 1]
@@ -187,16 +186,17 @@ class Strings
 		if chf[1] > 0
 			co2 += chf[1]
 		end
-		dist += (co1 + co2) ** 2 ; co1 = 0 ; co2 = 0
-	#	dist += co1 > co2 ? co1 * co1 : co2 * co2 ; co1 = 0 ; co2 = 0
+#		dist += (co1 + co2) ** 2 ; co1 = 0 ; co2 = 0
+		dist += co1 > co2 ? co1 : co2 ; co1 = 0.0 ; co2 = 0.0		
 		while i < sz
 			ch = chunks[i]
+			bl += ch[2]
 			j = i + 1
 			if j < sz		
 				co1 += chunks[j][0] - ch[0] - ch[2]
 				co2 += chunks[j][1] - ch[1] - ch[2]
-				dist += (co1 + co2) ** 2 ; co1 = 0 ; co2 = 0
-	#			dist += co1 > co2 ? co1 * co1 : co2 * co2 ; co1 = 0 ; co2 = 0
+	#			dist += (co1 + co2) ** 2 ; co1 = 0 ; co2 = 0
+				dist += co1 > co2 ? co1 : co2 ; co1 = 0.0 ; co2 = 0.0
 			end
 			co = 0
 			i = j
@@ -205,17 +205,21 @@ class Strings
 			co1 += s1.size - chl[0] - ch[2]				
 		end
 		if chl[1] + chl[2] < s2.size
-			co2 += s2.size - chl[0] - chl[2]	
+			co2 += s2.size - chl[1] - chl[2]	
 		end
-		Math.sqrt(dist + (co1 + co2) ** 2)	
-	#	Math.sqrt(dist + (co1 > co2 ? co1 * co1 : co2 * co2))		
+	#	Math.sqrt((dist + (co1 + co2) ** 2) / bl)
+		(dist + (co1 > co2 ? co1 : co2)) / Math.sqrt(bl)
 	end
 
-	def self.to_vectors(s1, s2)
+	def self.distance(s1, s2)
 		s1 = s1.chars if s1.is_a?(String) && s1.respond_to?(:chars)
 		s2 = s2.chars if s2.is_a?(String) && s2.respond_to?(:chars)
 
 		chunks = compare(s1, s2)
+		distance_raw(s1, s2, chunks)
+	end
+
+	def self.to_vectors_raw(s1, s2, chunks)
 		return [s1, s2] if chunks.empty?
 
 		#transform the strings into two vectors of chunks and compute distance between them
@@ -258,11 +262,23 @@ class Strings
 		[s1a, s2a]
 	end
 
+	def self.to_vectors(s1, s2)
+		s1 = s1.chars if s1.is_a?(String) && s1.respond_to?(:chars)
+		s2 = s2.chars if s2.is_a?(String) && s2.respond_to?(:chars)
+
+		chunks = compare(s1, s2)
+		to_vectors_raw(s1, s2, chunks)
+	end
+
 	def self.base(s1, s2)
 		s1 = s1.chars if s1.is_a?(String) && s1.respond_to?(:chars)
 		s2 = s2.chars if s2.is_a?(String) && s2.respond_to?(:chars)
 
 		compare(s1, s2).inject("") { |s, a| s + s1[a[0]..(a[0] + a[2] - 1)] }
+	end
+
+	def self.base_raw(s1, s2, raw)
+		raw.inject("") { |s, a| s + s1[a[0]..(a[0] + a[2] - 1)] }
 	end
 
 	def self.find_all(s1, strings, max = nil)
@@ -271,6 +287,49 @@ class Strings
 		res = []
 		strings.each_index { |i| res << strings[i] if dist[i] == min } unless max and max < min
 		res
+	end
+
+	def self.find_all_data(s1, strings, max = nil)
+		data = strings.collect { |s| { :string => s, :raw => (raw = compare(s1, s)), :distance => distance_raw(s1, s, raw), :vectors => to_vectors_raw(s1, s, raw), :base => base_raw(s1, s, raw) } }
+		min = data.inject(data[0][:distance]) { |i, j| i < j[:distance] ? i : j[:distance] }		
+		res = []
+		data.each_index { |i| res << data[i] if data[i][:distance] == min } unless (max and max < min) or min.infinite?
+		res
+	end
+
+	def self.to_span(s1, s2, chunks)
+		spans = []
+		return spans if chunks.empty?
+
+		#transform the strings into two vectors of chunks and compute distance between them
+		i = 0
+		s2a = []
+		sz = chunks.size
+		chf = chunks[0]
+		chl = chunks[sz - 1]
+		if chf[1] > 0 || chf[0] > 0
+			s2_str = chf[1] > 0 ? s2[0 .. chf[1] - 1] : '...'
+			s2a << s2[0 .. chf[1] - 1] 
+			g = yield(chf[0] > 0 ? s1[0 .. chf[0] - 1] : '', s2_str)
+			spans << { :string => s2_str, :good => g, :chunk => nil }
+		end
+		while i < sz
+			ch = chunks[i]
+			j = i + 1
+                        spans << { :string => s2[ch[1]..(ch[1] + ch[2] - 1)], :good => 0, :chunk => i }
+			if j < sz					
+				s2_str = s2[(ch[1] + ch[2])..(chunks[j][1] - 1)]
+				g = yield(s1[(ch[0] + ch[2])..(chunks[j][0] - 1)], s2_str)		
+				spans << { :string => s2_str.empty? ? '...' : s2_str, :good => g, :chunk => nil }
+			end
+			i = j
+		end
+		if chl[1] + chl[2] < s2.size || chl[0] + chl[2] < s1.size
+			s2_str = chl[1] + chl[2] < s2.size ? s2[(chl[1] + chl[2])..(s2.size - 1)] : '...'
+			g = yield((chl[0] + chl[2] < s1.size) ? s1[(chl[0] + chl[2])..(s1.size - 1)] : '', s2_str)
+			spans << { :string => s2_str, :good => g, :chunk => nil }
+		end
+		spans
 	end
 
 end

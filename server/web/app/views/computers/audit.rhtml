@@ -1,0 +1,88 @@
+<table id='components'>
+	<tr>
+		<th class='component_group'>Device</th>
+		<th class='component_db_name'>DB Name</th>
+		<th class='component_db_count' title='DB Quantity'>DB #</th>
+		<th class='component_name'>Detect Name</th>
+		<th class='component_count' title='Detect Quantity'>Detect #</th>
+	</tr>
+	<% style = 0 ; @comparison.keys.each do |group| %>
+		<% group_name = group %>
+
+		<% if fold = @comparison[group][:missing].size == @comparison[group][:extra].size && @comparison[group][:missing].empty? %>
+		<% (0 .. @comparison[group][:missing].size - 1).each do |i| %>
+			<% db_dev = @comparison[group][:missing][i] ; dev = @comparison[group][:extra][i] %>
+                        <tr class='component_<%= style % 2 == 0 ? 'even' : 'odd' %>'>
+                        <td class='component_group'><%= group_name ? (group_name = nil ; group) : nil %></td>
+                        <td class='component_db_name'><%= db_dev[:line].name %></td>
+                        <td class='component_db_count'><%= db_dev[:line].qty %></td>
+                        <td class='component_name'><%= content_tag(:span, "#{ dev[:vendor] } #{ dev[:name] }", :class => 'dev_span_evil') %></td>
+                        <td class='component_count'><%= content_tag(:span, dev[:count], :class => db_dev[:line].qty != dev[:count] && 'dev_span_evil') %></td>
+                        </tr>
+			<% style += 1 %>
+		<% end %>
+		<% end %>
+		
+		<% unless fold %>
+		<% @comparison[group][:missing].each do |dev| %>
+			<tr class='component_<%= style % 2 == 0 ? 'even' : 'odd' %>'>
+			<td class='component_group'><%= group_name ? (group_name = nil ; group) : nil %></td>
+			<td class='component_db_name'><%= dev[:line].name %></td>
+			<td class='component_db_count'><%= dev[:line].qty %></td>
+			<td class='component_name' />
+			<td class='component_count' />
+			</tr>
+			<% style += 1 %>
+		<% end %>
+		<% end %>
+
+		<% @comparison[group][:pairs].each do |pair| %>
+			<% spans = MyKit::Comparison.post_process(pair) %>
+			<tr class='component_<%= style % 2 == 0 ? 'even' : 'odd' %>'>
+			<td class='component_group'><%= group_name ? (group_name = nil ; group) : nil %></td>
+			<td class='component_db_name'><%= pair[:db][:line].name %></td>
+			<td class='component_db_count'><%= pair[:db][:line].qty %></td>
+			<td class='component_name'><%= dev_to_spans("#{ pair[:detect][:vendor] } #{ pair[:detect][:name] }", spans) %></td>
+			<td class='component_count'><%= content_tag(:span, pair[:detect][:count], :class => pair[:db][:line].qty != pair[:detect][:count] && 'dev_span_evil') %></td>
+			</tr>
+			<% style += 1 %>
+		<% end %>
+
+		<% unless fold %>
+		<% @comparison[group][:extra].each do |dev| %>
+			<tr class='component_<%= style % 2 == 0 ? 'even' : 'odd' %>'>
+			<td class='component_group'><%= group_name ? (group_name = nil ; group) : nil %></td>
+			<td class='component_db_name' />
+			<td class='component_db_count' />
+			<td class='component_name'><%= "#{ dev[:vendor] } #{ dev[:name] }" %></td>
+			<td class='component_count'><%= dev[:count] %></td>
+			</tr>
+			<% style += 1 %>
+		<% end %>
+		<% end %>
+	<% end %>
+</table>
+
+
+<% place_hint('audit') do %>
+<% form_tag(:action => 'audit', :id => @computer.id, :testing => @testing_number) do %>
+	<table><tr><td>	Confirm detected hardware placement: <br /><br />
+		<input style="width: 6em" type="submit" value="Wrong">
+		<input style="width: 6em" type="submit" value="Ok">
+	</td></tr>
+	</table>
+<% end %>
+<% end %>
+
+<%= javascript_tag(<<_EOF_
+        Event.observe(window, 'load', function () {
+                Rico.Corner.round($$('div.hint').first());
+        });
+_EOF_
+) %>
+
+<div style='color: #aaa ; font-size: 10px; position: fixed; left: 5em ; bottom: 2em;'><%=
+        content_tag(:p, MyKit::Lexer.ts.join(", ")) + content_tag(:p, MyKit::Strings.ts.join(", "))
+%></div>
+
+

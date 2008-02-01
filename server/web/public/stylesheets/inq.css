@@ -196,10 +196,10 @@ td#testings_tabs {
 }
 
 #info_tabs td {
-	width: 8.6em;
+	width: 8.6em; 
 	text-align: center;
 	vertical-align: middle;
-	border-right: 2px solid ! important;
+	border-right: 0.3em solid ! important;
 }
 
 td#info_tabs td#info_tab_dummy {
@@ -237,13 +237,15 @@ tr.testing_stage_running .testing_stage_name {
 	color: #1A1406;
 	background: #F3D079;
 	margin: 1em;
+	margin-left: 1.5em;
+	margin-right: 1.5em;
 }
 
 .hint div.hint_border {
 	background: no-repeat 1.5em 50%;
-	padding: 1em;
-	padding-left: 4em ! important;
-	padding-right: 3em ! important;
+	padding: 0.5em;
+	padding-left: 2em ! important;
+	padding-right: 1em ! important;
 }
 
 #hint_type_info .hint_border {

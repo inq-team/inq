@@ -75,4 +75,8 @@ def def_nice_stack(computers, * names)
 	def_stack(computers, *names.collect() { |n| [n, shelf_type_G()] })
 end
 
+def dev_to_spans(dev, spans)
+	dev.split(/\s+/).collect { |s| (sp = spans.find { |ss| ss[:target] == s }) ? sp[:spans].collect { |r| content_tag(:span, r[:string], :class => "dev_span_#{ r[:good] ? r[:chunk] ? 'chunk' : 'good' : 'bad' }") }.join : content_tag(:span, s, :class => 'dev_span_unmatched') }.join(' ')
+end
+
 end
