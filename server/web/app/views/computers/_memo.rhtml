@@ -1,24 +1,24 @@
-<div class='hidden_memo'>
+<div class="hidden_memo">
 	<%= shadow %>
 	<table>
-	<tr><th colspan='2'><%= computer.title %></th></tr>
-	<tr><td class='img' >Testing started</td><td class='text'><%= format_date(testing.test_start) %></td></tr>
+	<tr><th colspan="2"><%= computer.title %></th></tr>
+	<tr><td class="img">Testing started</td><td class="text"><%= format_date(testing.test_start) %></td></tr>
 	<% if state == :running  %>
-		<tr><td class='img' >Undergoing tests</td><td class='text'><%= format_delta(Time.now, testing.test_start) %></td></tr> 
-		<tr><td class='img' >Current stage</td><td class='text' ><strong><%= stage.stage %></strong> since <%= format_date(stage.start) %></td></tr>
+		<tr><td class="img">Undergoing tests</td><td class="text"><%= format_delta(Time.now, testing.test_start) %></td></tr> 
+		<tr><td class="img">Current stage</td><td class="text"><strong><%= stage.stage %></strong> since <%= format_date(stage.start) %></td></tr>
 	<% elsif state == :after %>
-		<tr><td class='img' >Testing finished</td><td class='text'><%= testing.test_end ? format_date(testing.test_end) : content_tag(:span, 'NULL', :class => 'bad_username')%></td></tr>
-		<tr><td class='img' >Testing took</td><td class='text'><%= testing.test_end ? format_delta(testing.test_end, testing.test_start) :  content_tag(:span, 'NULL', :class => 'bad_username') %></td></tr> 
+		<tr><td class="img">Testing finished</td><td class="text"><%= testing.test_end ? format_date(testing.test_end) : content_tag(:span, 'NULL', :class => 'bad_username')%></td></tr>
+		<tr><td class="img">Testing took</td><td class="text"><%= testing.test_end ? format_delta(testing.test_end, testing.test_start) :  content_tag(:span, 'NULL', :class => 'bad_username') %></td></tr> 
 	<% elsif state == :failed %>
-		<tr><td class='img' >Failed stage</td><td class='text'><strong><%= stage.stage %></strong></td></tr>
-		<tr><td class='img' >Failed on</td><td class='text'><%= format_date(stage.end) %></td></tr>
+		<tr><td class="img">Failed stage</td><td class="text"><strong><%= stage.stage %></strong></td></tr>
+		<tr><td class="img">Failed on</td><td class="text"><%= format_date(stage.end) %></td></tr>
 	<% elsif state == :before %>
-		<tr><td class='img' >Idle for...</td><td class='text'><%= format_delta(Time.new(), testing.test_start) %></td></tr> 
+		<tr><td class="img">Idle for...</td><td class="text"><%= format_delta(Time.new(), testing.test_start) %></td></tr> 
 	<% elsif state == :waiting %>
-		<tr><td class='img' >Undergoing tests</td><td class='text'><%= format_delta(Time.now, testing.test_start) %></td></tr> 
-		<tr><td class='img' >Current stage</td><td class='text' ><strong><%= stage.stage %></strong> since <%= format_date(stage.start) %></td></tr>
+		<tr><td class="img">Undergoing tests</td><td class="text"><%= format_delta(Time.now, testing.test_start) %></td></tr> 
+		<tr><td class="img">Current stage</td><td class="text"><strong><%= stage.stage %></strong> since <%= format_date(stage.start) %></td></tr>
 	<% end %>
-	<tr><td class='img' >Assembler</td><td class='text' ><%= computer.assembler ? computer.assembler.name : content_tag(:span, 'John Doe', :class => 'bad_username') %></td></tr>
-	<tr><td class='img' >QA employee</td><td class='text' ><%= computer.tester ? computer.tester.name : content_tag(:span, 'John Doe', :class => 'bad_username') %></td></tr>
+	<tr><td class="img">Assembler</td><td class="text"><%= computer.assembler ? computer.assembler.name : content_tag(:span, 'John Doe', :class => 'bad_username') %></td></tr>
+	<tr><td class="img">QA employee</td><td class="text"><%= computer.tester ? computer.tester.name : content_tag(:span, 'John Doe', :class => 'bad_username') %></td></tr>
  	</table> 
 </div>

@@ -13,19 +13,19 @@
 </head>
 <body>
 
-	<div id='title_bar'> 
-	<div id='title_bar_link'><%= link_to(image_tag('shelves.png'), :controller => 'computers') %></div>
+	<div id="title_bar"> 
+	<div id="title_bar_link"><%= link_to(image_tag('shelves.png'), :controller => 'computers') %></div>
 	<table><tr>
-		<td id='title_bar_model'><%= @computer.model.name %></td>
-		<td id='title_bar_serial'><%= @computer.serial_no %></td>
-		<td id='title_bar_shelf'><%= @computer.shelf %></td>
+		<td id="title_bar_model"><%= @computer.model.name %></td>
+		<td id="title_bar_serial"><%= @computer.serial_no %></td>
+		<td id="title_bar_shelf"><%= @computer.shelf %></td>
 <% if @computer.order %>
-		<td id='title_bar_doc'>Order: <%= link_to @computer.order.buyer_order_number, { :controller => :orders, :action => :show, :id => @computer.order } %></td>
+		<td id="title_bar_doc">Order: <%= link_to @computer.order.buyer_order_number, { :controller => :orders, :action => :show, :id => @computer.order } %></td>
 <% end %>
 	</tr></table>
 	</div>
 	
-	<div id='progress_bar'> 
+	<div id="progress_bar"> 
 	<table><tr>
 	<% stages = ['Ordering', 'Warehouse', 'Acceptance', 'Assembling', 'Testing', 'Packaging'] ; now = Time.new() %>
 	<% @computer.computer_stages.sort { |a, b| (a.end || now) <=> (b.end || now) }.each() do |stage| %>
@@ -45,20 +45,20 @@
 		classname = stage.end ? 'finished' : 'running'
 		stages.delete(name)
 	%>
-		<td title='<%= stage.comment %>' class='computer_stage_<%= classname %>'>
+		<td title="<%= stage.comment %>" class="computer_stage_<%= classname %>">
 			<p> <%= name %> </p>
 			<p> <%= ary.reverse.collect { |h| h[:span_txt] }.join(" / ") %> </p>
 		</td>
 	<% end %>
-	<% stages.each do |stage| %><td class='computer_stage_planned'><%= stage %></td><% end %>
+	<% stages.each do |stage| %><td class="computer_stage_planned"><%= stage %></td><% end %>
 	</tr></table>
 	</div>
 	
-	<table id='testing_pane'>
+	<table id="testing_pane">
 
 		<tr>
-		<td colspan=3 id='info_tabs'><table><tr>
-			<td id='info_tab_dummy'>&nbsp;</td>
+		<td colspan=3 id="info_tabs"><table><tr>
+			<td id="info_tab_dummy">&nbsp;</td>
 			<%= content_tag(:td, (@computer.order && controller.action_name == 'hw' ? link_to(image_tag('counterclockwise.png', :title => 'Audit'), {:action => 'audit', :id => @computer.id, :testing => @testing_number}, :style => 'cursor: pointer; float: left; ') : '' ) + content_tag(:span, link_to("Hardware", {:action => 'hw', :id => @computer.id, :testing => @testing_number})) , :id => 'info_tab_hw') %>
 			<%= content_tag(:td, link_to("Sticker", {:action => 'sticker', :id => @computer.id, :testing => @testing_number}), :id => 'info_tab_sticker') %>
 			<%= content_tag(:td, link_to("Logs", {:action => 'log', :id => @computer.id, :testing => @testing_number}), :id => 'info_tab_log') %>
@@ -68,31 +68,31 @@
 
 		<tr>
 	
-		<td id='testings_tabs'> 
+		<td id="testings_tabs"> 
 			<table>	
 
 			<%= javascript_tag("function select_testing_tab() { z = document.getElementById('testing_select'); y = (z.options[z.selectedIndex].value); y.match(/\\d+/) && window.location.assign('#{ url_for(:action => controller.action_name, :id => @computer.id, :testing => '__replace_me') }'.replace('__replace_me', y)); }") if @sorted_testings.size > 10 %>
 			<% in_combo = @sorted_testings.size - @testing_number > 10 ; options = [] ; j = 0 ; @sorted_testings.size.downto(1) do |i| %>
 				<% if j < 10 %>
-					<tr><td class='testing_tab' <%= (i - 1 == @testing_number) ? " id='selected_testing_tab' " : "" %> ><%= link_to(i, {:action => controller.action_name, :testing => i - 1}) %></td></tr>
+					<tr><td class='testing_tab' <%= (i - 1 == @testing_number) ? " id='selected_testing_tab' " : "" %>><%= link_to(i, {:action => controller.action_name, :testing => i - 1}) %></td></tr>
 				<% else %>
 					<% options << content_tag(:option, i, { :value => i - 1 }.merge(i - 1 == @testing_number ? { :selected => 1 } : {})) %>					
 					<%= content_tag(:tr, content_tag(:td, select_tag('testing', ((( in_combo ? [] : [ content_tag(:option, '&gt;&gt;', :selected => 1) ])  + options).join()), :id => 'testing_select', :onchange => 'select_testing_tab();'), { :class => 'testing_tab' }.merge(in_combo ? { :id => 'selected_testing_tab' } : {}))) if j == @sorted_testings.size - 1 %>
 				<% end ; j += 1 %>
 			<% end %>
-			<tr><td class='dummy_tab'></td></tr>	
+			<tr><td class="dummy_tab"></td></tr>	
 			</table>
 		</td>
 
 
-		<td id='testing_plan'><div class='testing_border'>
+		<td id="testing_plan"><div class="testing_border">
 			<table>
-				<tr><th class='testing_stage_name'>Stage</th><th class='testing_stage_span'>Elapsed</th></tr>
+				<tr><th class="testing_stage_name">Stage</th><th class="testing_stage_span">Elapsed</th></tr>
 			<% if @stages %>
 				<% @stages.each { |stage| %>
-				<tr class='testing_stage_<%= stage[:result] %>'>
-					<td class='testing_stage_name'><%= stage[:id] %></td>
-					<td class='testing_stage_span'><%= sprintf("%02i:%02i:%02i", stage[:elapsed]/3600, stage[:elapsed]%3600/60, stage[:elapsed]%3600%60) if stage[:elapsed] %></td>
+				<tr class="testing_stage_<%= stage[:result] %>">
+					<td class="testing_stage_name"><%= stage[:id] %></td>
+					<td class="testing_stage_span"><%= sprintf("%02i:%02i:%02i", stage[:elapsed]/3600, stage[:elapsed]%3600/60, stage[:elapsed]%3600%60) if stage[:elapsed] %></td>
 				</tr>
 			<% } %>
 			<% end %>
@@ -100,7 +100,7 @@
 			&nbsp;
 		</div></td> 
 
-		<td id='content'><div class='testing_border'>
+		<td id="content"><div class="testing_border">
 			<%= yield %>		
 		</div></td> 
 	</tr></table>

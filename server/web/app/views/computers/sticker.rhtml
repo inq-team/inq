@@ -1,20 +1,20 @@
-<table id='components'>
+<table id="components">
 	<tr>
-		<th class='component_num'>#</th>
-		<th class='component_name'>P/N</th>
-		<th class='component_qty'>Qty</th>
+		<th class="component_num">#</th>
+		<th class="component_name">P/N</th>
+		<th class="component_qty">Qty</th>
 	</tr>
 	<% @components.each_index do |i| %>
 		<% component = @components[i] %>
-		<tr <%= component[:name].blank? ? "class='broken_component'" : '' %> >
-		<td class='component_num'> <%= i %> </td>
-		<td class='component_name'>
+		<tr <%= component[:name].blank? ? "class="broken_component"" : '' %>>
+		<td class="component_num"> <%= i %> </td>
+		<td class="component_name">
 			<% name = component[:name].blank? ? 'NULL' : component[:name] %>
-			<span class='stub_a'><%= name %></span>
+			<span class="stub_a"><%= name %></span>
 			<% url = url_for(:controller => 'component_models', :action => 'short_name', :id => component[:model].id) %>
 			<%= link_to(name, url, :title => 'Edit shortname...', :target => 'short_name', :onclick => "var z = window.open('#{ url }', 'short_name', 'status=no, location=yes, menubar=no, toolbar=no, personalbar=no, directories=no, dependent=yes, width=480, height=360'); if(window.focus) { z.focus(); } ") %>
 		</td>		
-		<td class='component_qty'><%= component[:count] %></td>
+		<td class="component_qty"><%= component[:count] %></td>
 		</tr>
 	<% end %>
 </table>

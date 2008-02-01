@@ -1,8 +1,8 @@
-<table id='components'>
+<table id="components">
 	<% @marks.each do |m| %>
 		<tr>
-		<td class='mark_name'><%= m.key %></td>
-		<td class='mark_value'><%= m.value_float || m.value_str %></td>
+		<td class="mark_name"><%= m.key %></td>
+		<td class="mark_value"><%= m.value_float || m.value_str %></td>
 		</tr>
 	<% end %>
 </table>

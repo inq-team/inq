@@ -1,19 +1,19 @@
 <% components_count = MyKit::Keywords::PROPS.first.size %>
-<style type='text/css'>
+<style type="text/css">
 	th, td { border: 1px solid #ddd } th { background: #eee } table { border-collapse: collapse }
 </style>
 
-<div style='padding: 5px'>
+<div style="padding: 5px">
 
-<div style='float: left'><%= link_to('< Prev', :action => 'items', :id => @prev_id) if @prev_id %></div>
-<div style='float: right'><%= link_to('Next >', :action => 'items', :id => @next_id) if @next_id %></div>
-<div style='text-align: center'><%= link_to('Components', :action => 'components', :id => @order.id) %></div>
+<div style="float: left"><%= link_to('< Prev', :action => 'items', :id => @prev_id) if @prev_id %></div>
+<div style="float: right"><%= link_to('Next >', :action => 'items', :id => @next_id) if @next_id %></div>
+<div style="text-align: center"><%= link_to('Components', :action => 'components', :id => @order.id) %></div>
 
-<div style='clear: both; height: 1em'>&nbsp;</div>
+<div style="clear: both; height: 1em">&nbsp;</div>
 
-<table style='width: 100%' >
+<table style="width: 100%">
 <tr>
-<th rowspan='2'>Item</th><th rowspan='2'>Vendors</th><th rowspan='2'>Sensible chunks</th><th colspan='<%= components_count %>'>Components</th><th colspan='2'>Properties</th>
+<th rowspan="2">Item</th><th rowspan="2">Vendors</th><th rowspan="2">Sensible chunks</th><th colspan="<%= components_count %>">Components</th><th colspan="2">Properties</th>
 </tr>
 <tr>
 <%= (0..components_count - 1).collect { |i| content_tag(:th, MyKit::Keywords::Components[i], :style => "width: 3em" ) } %>
@@ -41,7 +41,7 @@
 <% end %>
 </table>
 
-<div style='color: #aaa ; font-size: 10px'><%=
+<div style="color: #aaa ; font-size: 10px"><%=
 	content_tag(:p, MyKit::Lexer.ts.join(", ")) + content_tag(:p, MyKit::Strings.ts.join(", "))
 %></div>
 

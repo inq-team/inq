@@ -1,22 +1,22 @@
-<div class='shelves' id='<%= @shelves.name %>'>
+<div class="shelves" id="<%= @shelves.name %>">
 
 <% @shelves.groups.each do |gr| %>
 <% name = "id='group_#{ gr.name.blank? ? gr.stacks.collect { |st| st.name }.join() : gr.full_name }'" %>
-<div class='group' <%= name %> ><% gr.stacks.each do |st| %>
+<div class='group' <%= name %>><% gr.stacks.each do |st| %>
 	<% name = !st.full_name.blank? ? "id='stack_#{ st.full_name }'" : '' %>
-	<table class='stack' <%= name %> ><% st.rows.each do |rw| %>
+	<table class="stack" <%= name %>><% st.rows.each do |rw| %>
 		<% name = !rw.full_name.blank? ? "id='row_#{ rw.full_name }'" : '' %>
-		<tr <%= name %> ><% rw.shelves.each do |sh| %>
+		<tr <%= name %>><% rw.shelves.each do |sh| %>
 			<% 
 				computer = @byshelves[ sh.full_name ]
 				kind = "class='#{ computer ? :testing : sh.kind == :testing ? 'free' : sh.kind.to_s }'"
 				name = !sh.full_name.blank? ? "id='shelf_#{ sh.full_name }'" : ''
 			%>
-			<td <%= kind %> <%= name %> >
+			<td <%= kind %> <%= name %>>
 				<% if computer %> <%= shelf_content(computer) %><% end %>
 				<% if !sh.full_name.blank? && sh.kind == :testing %>
-					<span class='title'><%= sh.full_name %></span>
-					<div class='colour_brick' style="background-color: <%= sh.colour %>">&nbsp;</div>
+					<span class="title"><%= sh.full_name %></span>
+					<div class="colour_brick" style="background-color: <%= sh.colour %>">&nbsp;</div>
 				<% end %>
 			</td>
 		<% end %></tr>		

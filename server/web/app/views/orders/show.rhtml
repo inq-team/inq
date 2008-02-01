@@ -1,5 +1,3 @@
-
-
 <table>
 <tr>
 
@@ -33,19 +31,19 @@ End: <%=h s.end %></span></td>
 <%
 case sq[0]
 when :assembling %>
-<td class='computer_stage_running'><%= sq[1] %>/<%= @qty %></td>
-<td class='computer_stage_planned'></td>
-<td class='computer_stage_planned'></td>
+<td class="computer_stage_running"><%= sq[1] %>/<%= @qty %></td>
+<td class="computer_stage_planned"></td>
+<td class="computer_stage_planned"></td>
 
 <% when :testing %>
-<td class='computer_stage_finished'></td>
-<td class='computer_stage_running'><%= sq[1] %>/<%= @qty %></td>
-<td class='computer_stage_planned'></td>
+<td class="computer_stage_finished"></td>
+<td class="computer_stage_running"><%= sq[1] %>/<%= @qty %></td>
+<td class="computer_stage_planned"></td>
 
 <% when :packing %>
-<td class='computer_stage_finished'></td>
-<td class='computer_stage_finished'></td>
-<td class='computer_stage_running'><%= sq[1] %>/<%= @qty %></td>
+<td class="computer_stage_finished"></td>
+<td class="computer_stage_finished"></td>
+<td class="computer_stage_running"><%= sq[1] %>/<%= @qty %></td>
 
 <% end %>
 </tr>

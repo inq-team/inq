@@ -1,25 +1,25 @@
-<style type='text/css'>
+<style type="text/css">
 	th, td { border: 1px solid #ddd } th { background: #eee } table { border-collapse: collapse }
 </style>
 
-<div style='padding: 5px'>
+<div style="padding: 5px">
 
-<div style='float: left'><%= link_to('< Prev', :action => 'components', :id => @prev_id) if @prev_id %></div>
-<div style='float: right'><%= link_to('Next >', :action => 'components', :id => @next_id) if @next_id %></div>
-<div style='text-align: center'><%= link_to('Items', :action => 'items', :id => @order.id) %></div>
+<div style="float: left"><%= link_to('< Prev', :action => 'components', :id => @prev_id) if @prev_id %></div>
+<div style="float: right"><%= link_to('Next >', :action => 'components', :id => @next_id) if @next_id %></div>
+<div style="text-align: center"><%= link_to('Items', :action => 'items', :id => @order.id) %></div>
 
-<div style='clear: both; height: 1em'>&nbsp;</div>
+<div style="clear: both; height: 1em">&nbsp;</div>
 
-<table style='width: 100%' >
+<table style="width: 100%">
 <tr>
-<th rowspan='2' >Item</th><th rowspan='2'>Group</th><th rowspan='2' >Vendor</th><th rowspan='2' >Title</th><th colspan='2'>Properties</th>
+<th rowspan="2">Item</th><th rowspan="2">Group</th><th rowspan="2">Vendor</th><th rowspan="2">Title</th><th colspan="2">Properties</th>
 </tr>
 <tr>
 <th>Name</th><th>Value</th>
 </tr>
 <% cnt = 0 ; @items.each do |item, components| %>
 	<% title = 0 ; components.each do |component| %>
-		<tr style='background: <%= "#{'%02X' % (0xfe - 0x4 * cnt) }f0f0" %>; font-style: <%= component.onboard ? 'oblique' : 'normal' %>;' >
+		<tr style="background: <%= "#{'%02X' % (0xfe - 0x4 * cnt) }f0f0" %>; font-style: <%= component.onboard ? 'oblique' : 'normal' %>;">
 		<%= content_tag(:td, title && item.name) + content_tag(:td, component.group) + content_tag(:td, component.vendors.join(', ')) + content_tag(:td, component.title.join(', ')) %>
 		<% props = component.property_names.collect { |s| (pr = component.send(s)) ; pr.vector? ? (0..pr.size - 1).inject([]) { |a, i| a <<[ s.to_s, "#{ pr[i].value } #{ pr[i].unit }" ] } : [[ s.to_s, "#{ pr.value } #{ pr.unit }" ]] }.inject([]) { |a, b| a + b } %> 
 		<% unless props.blank? %>
@@ -31,7 +31,7 @@
 		<% title = nil %>
 		</tr>
 		<% until props.blank? %>
-		<tr style='background: <%= "#{'%02X' % (0xfe - 0x4 * cnt) }f0f0" %>'>
+		<tr style="background: <%= "#{'%02X' % (0xfe - 0x4 * cnt) }f0f0" %>">
 			<%= content_tag(:td, '') * 4 %>
 			<% pair = props.pop %>
 			<%= pair.collect { |s| content_tag(:td, s) }.join %>
@@ -42,7 +42,7 @@
 <% end %>
 </table>
 
-<div style='color: #aaa ; font-size: 10px'><%=
+<div style="color: #aaa ; font-size: 10px"><%=
 	content_tag(:p, MyKit::Lexer.ts.join(", ")) + content_tag(:p, MyKit::Strings.ts.join(", "))
 %></div>
 
