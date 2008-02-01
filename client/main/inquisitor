@@ -44,6 +44,7 @@ for I in $SHARE_DIR/self-id/*; do
 	fi
 done
 [ -n "$COMPUTER_ID" ] || fatal_failure 'Self-identification'
+export COMPUTER_ID
 
 # Reporting IP-address to the server
 publish_my_ip || fatal_failure 'IP-address update'
