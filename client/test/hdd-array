@@ -22,7 +22,7 @@ clear_testing_environment()
 exit_handler()
 {
 	clear_testing_environment
-	[ -d "$MOUNTPOINT" ] && rm $MOUNTPOINT
+	[ -d "$MOUNTPOINT" ] && rmdir $MOUNTPOINT
 }
 
 MOUNTPOINT=`mktemp -d`
