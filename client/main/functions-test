@@ -74,29 +74,45 @@ __EOF__
 	# Override communications functions with empty ones
 	test_promise_time() { return 0; }
 	test_stage_progress() { return 0; }
-	benchmark_submit_float() { return 0; }
-	benchmark_submit_string() { return 0; }
+	benchmark_submit_float()
+	{
+		printf "BENCHMARK: %-40s%s" "$1" "$2"
+	}
+	benchmark_submit_string()
+	{
+		printf "BENCHMARK: %-40s%s" "$1" "$2"
+	}
+	test_succeeded()
+	{
+		echo "$@" >&2
+		exit 0
+	}
+	test_failed()
+	{
+		echo "$@" >&2
+		exit 1
+	}
 else
 	. /etc/inquisitor/global
 	. $SHARE_DIR/functions
 	. $SHARE_DIR/communication
+
+	test_succeeded()
+	{
+		if [ -n "$@" ]; then
+			echo "$@" >&4 || echo "$@" >&2
+		fi
+		exit 0
+	}
+
+	test_failed()
+	{
+		if [ -n "$@" ]; then
+			echo "$@" >&4 || echo "$@" >&2
+		fi
+		exit 1
+	}
 fi
-
-test_succeeded()
-{
-	if [ -n "$@" ]; then
-		echo "$@" >&4 || echo "$@" >&2
-	fi
-	exit 0
-}
-
-test_failed()
-{
-	if [ -n "$@" ]; then
-		echo "$@" >&4 || echo "$@" >&2
-	fi
-	exit 1
-}
 
 _exit_handler()
 {
