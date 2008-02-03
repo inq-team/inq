@@ -1,0 +1,12 @@
+Source: inquisitor-client
+Section: unknown
+Priority: extra
+Maintainer: Inquisitor team <team@inquisitor.ru>
+Build-Depends: debhelper (>= 5)
+Standards-Version: 3.7.2
+
+Package: inquisitor-client
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Inquisitor client for client-server system
+ Inquisitor client package for installation in chroot
