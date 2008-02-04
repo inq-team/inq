@@ -12,34 +12,37 @@
 
 . /usr/share/inquisitor/functions-test
 
+exit_handler()
+{
+	[ -f "$TMP_DIR/imei" ] && rm -f $TMP_DIR/imei
+	[ -d "$TMP_DIR" ] && rmdir $TMP_DIR
+}
+
 # Try to set modem speed to 115200 (if it's at 9600). We'll fail if it's
 # already at 115200, so ignore it - we'll check for the final state at
 # next step.
-echo '=== Transition from 9600 to 115200'
+print_green_message "Transition from 9600 to 115200"
 stty 9600 -F $DEV
 chat -t $CHAT_TIMEOUT -Vs '' AT OK-AT-OK AT+IPR=115200 OK <$DEV >$DEV || {
-	echo 'WARNING: Failed to set modem from 9600 to 115200'
+	print_red_message "Failed to set modem from 9600 to 115200 speed"
 	true
 }
 
 sleep 1
 
-echo '=== Check for proper answer from modem'
+print_green_message "Check for proper answer from modem"
 stty 115200 -F $DEV
 sleep 1
 chat -t $CHAT_TIMEOUT -Vs '' AT OK-AT-OK ATI $ANSWER_ATI <$DEV >$DEV || test_failed 'Proper answer from modem'
 
 sleep 1
 
-echo '=== Getting IMEI'
+print_green_message "Getting IMEI"
 TMP_DIR=`mktemp -d`
 chat -t $CHAT_TIMEOUT -Vs '' AT OK-AT-OK AT+GSN OK <$DEV >$DEV 2>$TMP_DIR/imei || test_failed 'Getting IMEI'
 IMEI=`sed -ne '/^[0-9][0-9]*$/ p' <$TMP_DIR/imei`
-echo "IMEI: $IMEI"
+print_green_message "IMEI: $IMEI"
 
 $SHARE_DIR/add-component 'GPRS Modem' 'SIMCOM_Ltd' 'SIMCOM_SIM100S' "$IMEI"
-
-rm -f $TMP_DIR/imei
-rmdir $TMP_DIR
 
 test_succeeded

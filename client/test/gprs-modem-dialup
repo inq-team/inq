@@ -33,7 +33,9 @@ exit_handler()
 			echo_success
 		fi
 	fi
-	[ -d "$TMP_DIR" ] && rm -rf "$TMP_DIR"
+	[ -f "$TMP_DIR/pppd.lock" ] && rm -f $TMP_DIR/pppd.lock
+	[ -f "$TMP_DIR/download" ] && rm -f $TMP_DIR/download
+	[ -d "$TMP_DIR" ] && rmdir $TMP_DIR
 }
 
 MODEM_INIT='AT+CGDCONT=1,\"IP\",\"internet.mts.ru\" OK'
@@ -95,8 +97,7 @@ while [ "$TRIES" -lt "$PPPD_TRIES" ]; do
 
 	# MD5 check
 	echo -n 'Checking MD5 sum'
-	echo "$MD5  $TMP_DIR/download" >$TMP_DIR/checkfile
-	md5sum -c $TMP_DIR/checkfile && echo_success || continue
+	[ `md5sum -b < $TMP_DIR/download | awk '{print $1}'` = $MD5 ] || echo_success || continue
 
 	# Finish test successfully
 	break
