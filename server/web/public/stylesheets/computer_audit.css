@@ -87,6 +87,18 @@ td#info_tabs table tr td#info_tab_audit a{
         background-color: #AACFBE ! important;
 }
 
+#spinner {
+	width: 100%;
+	text-align: center;
+	margin-top: 2em;
+	margin-bottom: 2em;	
+}
+
+.dev_span_good, .dev_span_bad, .dev_span_chunk, .dev_span_evil {
+	padding-left: 2px;
+	padding-right: 1px;
+}
+
 .dev_span_unmatched {
 }
 
@@ -103,6 +115,6 @@ td#info_tabs table tr td#info_tab_audit a{
 }
 
 .dev_span_evil {
-	background-color: red;
+	background-color: #ff4e4e;
 }
 

@@ -268,6 +268,7 @@ GROUP_TRANS =
 	'Power Supply'		=> 'PWR',
 	'Floppy'		=> 'FDD',
 	'Chassis'		=> 'CASE',
+	'OSD'			=> 'ODD',
 	
 }
 

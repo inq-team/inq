@@ -37,7 +37,7 @@ def self.compare(db, detect)
 				end
 				d_mean = d_count / d_mean
 				if d_mean < Keywords::COMP_MARGIN
-#					puts "#{db_dev[:line].name} <=> #{d[:vendor]} #{d[:name]} = #{d_mean}"
+					puts "#{db_dev[:line].name} <=> #{d[:vendor]} #{d[:name]} = #{d_mean}"
 					matr[db_dev][d] = { :data => d_data, :mean => d_mean }
 					relevant << d 
 				end
@@ -47,9 +47,9 @@ def self.compare(db, detect)
 		until relevant.empty?
 			min = (1.0 / 0.0)
 			db_dev = nil ; detect_dev = nil
-			matr.each { |k, v| v.each { |z, y| (db_dev = k ; detect_dev = z ; mean = y[:mean]) if min > y[:mean] } }
+			matr.each { |k, v| v.each { |z, y| (db_dev = k ; detect_dev = z ; min = y[:mean]) if min > y[:mean] } }
 			break unless db_dev and detect_dev
-#			puts "#{db_dev[:line].name} <=> #{detect_dev[:vendor]} #{detect_dev[:name]}"
+			puts "#{db_dev[:line].name} <=> #{detect_dev[:vendor]} #{detect_dev[:name]} == #{ min }"
 			pairs << { :db => db_dev, :detect => detect_dev, :data => matr[db_dev][detect_dev][:data] }
 			matr.each { |k, v| v.delete(detect_dev) }
 			relevant.delete(detect_dev)
@@ -124,10 +124,10 @@ def self.post_process(pair)
 		case token[:origin]
 		when :properties
 			ss = Strings.to_span(s, d[:string], d[:raw]) { |s1, s2| s1 =~ r_prop and s2 =~ r_prop }
-		when :title, :keywords, :vendors
+		when :title, :keywords
 			ss = Strings.to_span(s, d[:string], d[:raw]) { |s1, s2| s1 =~ r_word and s2 =~ r_word }
-#		when :vendors, :keywords
-#			ss = Strings.to_span(s, d[:string], d[:raw]) { |s1, s2| 0 }
+		when :vendors
+			ss = Strings.to_span(s, d[:string], d[:raw]) { |s1, s2| 0 }
 		end
 		spans <<  { :token => token, :target => d[:string], :spans => ss }
 	end

@@ -7,6 +7,8 @@ class ComputersController < ApplicationController
 #	verify :method => :post, :only => [ :destroy, :create, :update ],
 #	       :redirect_to => { :action => :archive }
 
+	layout nil, :only => 'audit_comparison'
+
 	@@default_config = Shelves::Config.new(DEFAULT_SHELVES_CONFIG)
 
 	def archive
@@ -123,6 +125,14 @@ class ComputersController < ApplicationController
                 @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
                 @testing_number = params[:testing] ? params[:testing].to_i() : @sorted_testings.size - 1
                 @testing = @sorted_testings[@testing_number]
+		render(:layout => 'computer_audit')
+	end
+
+	def audit_comparison
+                @computer = Computer.find(params[:id])
+                @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
+                @testing_number = params[:testing] ? params[:testing].to_i() : @sorted_testings.size - 1
+                @testing = @sorted_testings[@testing_number]
                 @testing ? @components = @testing.components : @components = []
 		@components.each { |c| c.model.group.name = MyKit::Keywords::GROUP_TRANS[c.model.group.name]  if c.model.group and MyKit::Keywords::GROUP_TRANS[c.model.group.name] }
 		lines = @computer.order.order_lines
@@ -132,8 +142,8 @@ class ComputersController < ApplicationController
 		end
                 @items = lines.inject({}) { |h, l| h.merge({ l => MyKit::Parser.parse(l.name) }) } 
 		@comparison = MyKit::Comparison.compare(@items, @components)
-		render(:layout => 'computer_audit')
 	end
+
 	
 	def sticker
 		prepare_computer_tabs
