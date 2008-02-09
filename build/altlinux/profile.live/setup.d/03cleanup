@@ -1,1 +1,2 @@
-rm -Rf $ROOT/usr/share/doc $ROOT/usr/share/man $ROOT/usr/share/info $ROOT/usr/lib/locale $ROOT/usr/share/locale
+#!/bin/sh
+rm -Rf /usr/share/doc /usr/share/man /usr/share/info /usr/lib/locale /usr/lib64/locale /usr/share/locale
