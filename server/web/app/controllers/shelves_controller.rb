@@ -16,4 +16,3 @@ def addresses
 end
 
 end
-

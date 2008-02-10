@@ -20,4 +20,3 @@ class ComponentModelsController < ApplicationController
   end
 
 end
-

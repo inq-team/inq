@@ -45,7 +45,7 @@
 		classname = stage.end ? 'finished' : 'running'
 		stages.delete(name)
 	%>
-		<td title="<%= stage.comment %>" class="computer_stage_<%= classname %>">
+		<td title='<%= stage.comment %>' class='computer_stage_<%= classname %>'>
 			<p> <%= name %> </p>
 			<p> <%= ary.reverse.collect { |h| h[:span_txt] }.join(" / ") %> </p>
 		</td>
@@ -74,7 +74,7 @@
 			<%= javascript_tag("function select_testing_tab() { z = document.getElementById('testing_select'); y = (z.options[z.selectedIndex].value); y.match(/\\d+/) && window.location.assign('#{ url_for(:action => controller.action_name, :id => @computer.id, :testing => '__replace_me') }'.replace('__replace_me', y)); }") if @sorted_testings.size > 10 %>
 			<% in_combo = @sorted_testings.size - @testing_number > 10 ; options = [] ; j = 0 ; @sorted_testings.size.downto(1) do |i| %>
 				<% if j < 10 %>
-					<tr><td class="testing_tab" <%= (i - 1 == @testing_number) ? " id="selected_testing_tab" " : "" %>><%= link_to(i, {:action => controller.action_name, :testing => i - 1}) %></td></tr>
+					<tr><td class="testing_tab" <%= (i - 1 == @testing_number) ? " id='selected_testing_tab' " : "" %>><%= link_to(i, {:action => controller.action_name, :testing => i - 1}) %></td></tr>
 				<% else %>
 					<% options << content_tag(:option, i, { :value => i - 1 }.merge(i - 1 == @testing_number ? { :selected => 1 } : {})) %>					
 					<%= content_tag(:tr, content_tag(:td, select_tag('testing', ((( in_combo ? [] : [ content_tag(:option, '&gt;&gt;', :selected => 1) ])  + options).join()), :id => 'testing_select', :onchange => 'select_testing_tab();'), { :class => 'testing_tab' }.merge(in_combo ? { :id => 'selected_testing_tab' } : {}))) if j == @sorted_testings.size - 1 %>

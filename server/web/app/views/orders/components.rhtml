@@ -19,7 +19,7 @@
 </tr>
 <% cnt = 0 ; @items.each do |item, components| %>
 	<% title = 0 ; components.each do |component| %>
-		<tr style="background: <%= "#{'%02X' % (0xfe - 0x4 * cnt) }f0f0" %>; font-style: <%= component.onboard ? 'oblique' : 'normal' %>;">
+		<tr style='background: <%= "#{'%02X' % (0xfe - 0x4 * cnt) }f0f0" %>; font-style: <%= component.onboard ? 'oblique' : 'normal' %>;'>
 		<%= content_tag(:td, title && item.name) + content_tag(:td, component.group) + content_tag(:td, component.vendors.join(', ')) + content_tag(:td, component.title.join(', ')) %>
 		<% props = component.property_names.collect { |s| (pr = component.send(s)) ; pr.vector? ? (0..pr.size - 1).inject([]) { |a, i| a <<[ s.to_s, "#{ pr[i].value } #{ pr[i].unit }" ] } : [[ s.to_s, "#{ pr.value } #{ pr.unit }" ]] }.inject([]) { |a, b| a + b } %> 
 		<% unless props.blank? %>
@@ -31,7 +31,7 @@
 		<% title = nil %>
 		</tr>
 		<% until props.blank? %>
-		<tr style="background: <%= "#{'%02X' % (0xfe - 0x4 * cnt) }f0f0" %>">
+		<tr style='background: <%= "#{'%02X' % (0xfe - 0x4 * cnt) }f0f0" %>'>
 			<%= content_tag(:td, '') * 4 %>
 			<% pair = props.pop %>
 			<%= pair.collect { |s| content_tag(:td, s) }.join %>
@@ -47,4 +47,3 @@
 %></div>
 
 </div>
-

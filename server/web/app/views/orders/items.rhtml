@@ -13,7 +13,7 @@
 
 <table style="width: 100%">
 <tr>
-<th rowspan="2">Item</th><th rowspan="2">Vendors</th><th rowspan="2">Sensible chunks</th><th colspan="<%= components_count %>">Components</th><th colspan="2">Properties</th>
+<th rowspan="2">Item</th><th rowspan="2">Vendors</th><th rowspan="2">Sensible chunks</th><th colspan='<%= components_count %>'>Components</th><th colspan="2">Properties</th>
 </tr>
 <tr>
 <%= (0..components_count - 1).collect { |i| content_tag(:th, MyKit::Keywords::Components[i], :style => "width: 3em" ) } %>
@@ -46,4 +46,3 @@
 %></div>
 
 </div>
-
