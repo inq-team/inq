@@ -19,7 +19,7 @@ test_available()
 {
 	echo "Drivernames: " `get_harddrives_list | perl -npe "s/\n/,/" | \
 		sed 's/,$//g'`
-	$SHARE_DIR/test/additional/hdd-badblocks.rb `get_harddrives_list | \
+	$LIB_DIR/hdd-badblocks.rb `get_harddrives_list | \
 		perl -npe "s/\n/ /" | sed 's/ $//g'`
 }
 
