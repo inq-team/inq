@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/bin/sh -e
 # NAME=HDD passthrough disk
 # DESCRIPTION=HDD passthrough disks test
 # DESTROYS_HDD=true
@@ -6,52 +6,30 @@
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=hdd
+# VAR=DISK_GROUP_SIZE:int:8:Number of disks per group for testing
 
-require 'raid/baseraid'
+. /usr/share/inquisitor/functions-test
 
-COMPUTER_ID=ENV['COMPUTER_ID']
-SHARE_DIR=ENV['SHARE_DIR']
-
-def temporary_workaround(cmd)
-	`PLANNER='' TEST_NAME=hdd_passthrough . /usr/share/inquisitor/functions-test && export COMPUTER_ID=#{COMPUTER_ID} && #{cmd}`
-end
-
-def test_available
-	drivenames = `. /usr/share/inquisitor/functions && get_harddrives_list`.split(/\n/)
-	puts "Drivenames: #{drivenames.join(',')}"
-	system("export COMPUTER_ID=#{COMPUTER_ID} && #{SHARE_DIR}/test/additional/hdd-badblocks.rb #{drivenames.join(' ')}")
-	return drivenames.size
-end
-
-adapters = []
-RAID::BaseRaid::query_adapters.each { |ad|
-	a = RAID::RAIDS[ad[:driver]].new(ad[:num])	
-	adapters << a
-	a.logical_clear
-	a.adapter_restart
+exit_handler()
+{
+	echo "Here will be code to kill badblocks processes"
 }
 
-test_available == 0 && temporary_workaround("test_failed")
-
-adapters.each { |a|
-	a.logical_clear
-	pl = a._physical_list.keys
-	while pl.size > 0
-		# Select 8 discs to test
-		now_testing = []
-		8.times { now_testing << pl.pop }
-		now_testing.compact!
-		puts "Testing #{now_testing.join(',')}"
-
-		# Prepare passthroughs
-		a.logical_clear
-		now_testing.each { |disc|
-			a.logical_add('passthrough', disc, nil)
-		}
-		a.adapter_restart
-		sleep 5
-		test_available
-	end
+test_available()
+{
+	echo "Drivernames: " `get_harddrives_list | perl -npe "s/\n/,/" | \
+		sed 's/,$//g'`
+	$SHARE_DIR/test/additional/hdd-badblocks.rb `get_harddrives_list | \
+		perl -npe "s/\n/ /" | sed 's/ $//g'`
 }
 
-temporary_workaround("test_succeeded")
+raid-wizard-clear
+test_available
+
+I=0
+while ( raid-wizard-passthrough $DISK_GROUP_SIZE $I ); do
+	test_available
+	I=$(( $I + 1 ))
+done
+
+test_succeeded

@@ -1,13 +1,8 @@
 #!/usr/bin/env ruby
 
-COMPUTER_ID=ENV['COMPUTER_ID']
 PERIOD_SCREEN=5
 PERIOD_LOG=15
 BADBLOCKS_COMMAND="badblocks -sv"
-
-def temporary_workaround(cmd)
-	`PLANNER='' TEST_NAME=hdd_passthrough . /usr/share/inquisitor/functions-test && export COMPUTER_ID=#{COMPUTER_ID} && #{cmd}`
-end
 
 class Screen
 	def self.clear
@@ -125,7 +120,8 @@ class DiscTest
 		sum_total = 1 if sum_total == 0
 		s1=sum_done.to_i
 		s2=sum_total.to_i
-		temporary_workaround("test_progress #{s1} #{s2}")
+		#$stderr.print "Progress: #{s1} #{s2}"
+		#temporary_workaround("test_progress #{s1} #{s2}")
 	end
 
 	def wait_completion
@@ -135,18 +131,20 @@ class DiscTest
 
 		status = 0
 		statuses.each { |s|
-			if s[1].exitstatus > 0
+			if ((s[1].exited?) and (s[1].exitstatus > 0)) then
 				ind = @process.index(s[0])
 				if ind then
 					failed_hdd = @devices[ind]
-					temporary_workaround("test_failed #{failed_hdd}");
-					exit 1
+					#temporary_workaround("test_failed #{failed_hdd}");
+					#$stderr.print "Failed: #{failed_hdd}\n"
 					status = s[1].exitstatus 
 				end
+			else
+				status=1
 			end
 		}
 		puts "Status=#{status}"
-		return status
+		exit status
 	end
 end
 
