@@ -18,7 +18,8 @@ CPU_QUANTITY=`grep processor /proc/cpuinfo | wc -l`
 
 for i in `seq 0 $(($CPU_QUANTITY - 1))`; do
 	echo -n "Whetstone on core $i"
-	result=`taskset -c $i whetstone $LOOPS 2>&1 | grep Whetstones | awk '{print $6}'`
+	result=`taskset -c $i whetstone $LOOPS 2>&1 | grep Whetstones | \
+		awk '{print $6}'`
 	echo_success
 	benchmark_submit_float "Core $i MIPS" "$result"
 done

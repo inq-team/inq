@@ -35,9 +35,10 @@ test_odd()
 	readcd -v dev=$odd f=$IMAGE sectors=0-$TEST_IMAGE_BLOCKS \
 		meshpoints=$MESH_POINTS >$RESULT_FILE || true
 	[ ! -s "$IMAGE" ] && dd if=$odd of=$IMAGE bs=2048 \
-				count=$TEST_IMAGE_BLOCKS >$DEBUG_TTY 2>&1 || true
+		count=$TEST_IMAGE_BLOCKS >$DEBUG_TTY 2>&1 || true
 
-	[ `md5sum -b < $IMAGE | awk '{print $1}'` = $TEST_IMAGE_HASH ] && return 0 || return 1
+	[ `md5sum -b < $IMAGE | awk '{print $1}'` = $TEST_IMAGE_HASH ] \
+		&& return 0 || return 1
 }
 
 interactive()
@@ -102,14 +103,16 @@ for odd in `get_odds_list`; do
 	else
 		# Default mode, try to test drive if media present
 		if [ `check_readable_odd $odd` == "true" ];then
-			print_green_message "Found inserted media. Trying to test..."
+			print_green_message \
+				"Found inserted media. Trying to test..."
 			if test_odd $odd; then
 				print_green_message "Drive test passed"
 				TESTED_QUANTITY=$(( $TESTED_QUANTITY + 1 ))
 				test_progress $TESTED_QUANTITY $ODD_QUANTITY
 				eject $odd || true
 			else
-				print_red_message "Drive test failed, going to interactive mode"
+				print_red_message \
+				"Drive test failed, going to interactive mode"
 				interactive $odd
 			fi
 		else

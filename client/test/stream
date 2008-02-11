@@ -9,19 +9,23 @@
 . /usr/share/inquisitor/functions-test
 
 echo -n "Copy operation..."
-benchmark_submit_float "Memory Copy operation" `stream-mem | grep "^Copy" | awk '{print $2}'`
+benchmark_submit_float "Memory Copy operation" `stream-mem | grep "^Copy" | \
+	awk '{print $2}'`
 echo_success
 
 echo -n "Scale operation..."
-benchmark_submit_float "Memory Scale operation" `stream-mem | grep "^Scale" | awk '{print $2}'`
+benchmark_submit_float "Memory Scale operation" `stream-mem | grep "^Scale" | \
+	awk '{print $2}'`
 echo_success
 
 echo -n "Add operation..."
-benchmark_submit_float "Memory Add operation" `stream-mem | grep "^Add" | awk '{print $2}'`
+benchmark_submit_float "Memory Add operation" `stream-mem | grep "^Add" | \
+	awk '{print $2}'`
 echo_success
 
 echo -n "Triad operation..."
-benchmark_submit_float "Memory Triad operation" `stream-mem | grep "^Triad" | awk '{print $2}'`
+benchmark_submit_float "Memory Triad operation" `stream-mem | grep "^Triad" | \
+	awk '{print $2}'`
 echo_success
 
 test_succeeded

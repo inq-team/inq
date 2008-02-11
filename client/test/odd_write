@@ -26,8 +26,10 @@ test_read()
 	local odd=$1
 	local hash
 
-	hash=`readcd -v dev=$odd f=- sectors=0-$TEST_IMAGE_BLOCKS retries=8 | md5sum -b | awk '{print $1}'`
-	[ -z "$hash" ] && {hash=`dd if=$odd bs=2048 count=$TEST_IMAGE_BLOCKS | md5sum -b | awk '{print $1}'` || true}
+	hash=`readcd -v dev=$odd f=- sectors=0-$TEST_IMAGE_BLOCKS retries=8 | \
+		md5sum -b | awk '{print $1}'`
+	[ -z "$hash" ] && {hash=`dd if=$odd bs=2048 count=$TEST_IMAGE_BLOCKS | \
+		md5sum -b | awk '{print $1}'` || true}
 
 	[ $hash = $TEST_IMAGE_MD5 ] && return 0 || return 1
 }
@@ -51,7 +53,8 @@ check_writeable_disc()
 	local odd=$1
 
 	if cdrecord dev=$odd -atip | grep -q 'Is erasable'; then
-		print_green_message "Rewritable media already inserted, not ejecting"
+		print_green_message \
+			"Rewritable media already inserted, not ejecting"
 	else
 		print_green_message "Insert writable media..."
 		eject $odd || true
@@ -66,7 +69,8 @@ detect_maxspeed()
 		SPEED=$WRITE_SPEED
 	else
 		SPEED=`cdrecord dev=$odd -atip | \
-			sed -ne '/speed high/ s/^.*speed high: \(.*\)$/\1/ p' | head -n 1`
+			sed -ne '/speed high/ s/^.*speed high: \(.*\)$/\1/ p' \
+				| head -n 1`
 		[ -z "$SPEED" ] && SPEED=$WRITE_SPEED || true
 	fi
 
@@ -102,7 +106,8 @@ interactive()
 		fi
 
 		if test_write $odd; then
-			print_green_message "Write stage passed, performing read test..."
+			print_green_message \
+				"Write stage passed, performing read test..."
 
 			if test_read $odd; then
 				print_green_message "Drive test passed"
@@ -165,11 +170,13 @@ for odd in `get_odds_list`; do
 				test_progress $TESTED_QUANTITY $ODD_QUANTITY
 				eject $odd || true
 			else
-				print_red_message "Read stage for $odd failed, going to interactive mode"
+				print_red_message \
+			"Read stage for $odd failed, going to interactive mode"
 				interactive $odd
 			fi
 		else
-			print_red_message "Write stage for $odd failed, going to interactive mode"
+			print_red_message \
+			"Write stage for $odd failed, going to interactive mode"
 			interactive $odd
 		fi
 	else

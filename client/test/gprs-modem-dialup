@@ -93,11 +93,13 @@ while [ "$TRIES" -lt "$PPPD_TRIES" ]; do
 
 	# Downloading
 	echo -n "Downloading file"
-	curl --retry "$DOWNLOAD_TRIES" --max-time "$DOWNLOAD_MAX_TIME" http://$URL -o $TMP_DIR/download && echo_success || continue
+	curl --retry "$DOWNLOAD_TRIES" --max-time "$DOWNLOAD_MAX_TIME" \
+		http://$URL -o $TMP_DIR/download && echo_success || continue
 
 	# MD5 check
 	echo -n 'Checking MD5 sum'
-	[ `md5sum -b < $TMP_DIR/download | awk '{print $1}'` = $MD5 ] || echo_success || continue
+	[ `md5sum -b < $TMP_DIR/download | awk '{print $1}'` = $MD5 ] \
+		|| echo_success || continue
 
 	# Finish test successfully
 	break

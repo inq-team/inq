@@ -21,20 +21,34 @@ cp $SHARE_DIR/test/additional/NNET.DAT .
 cp $SHARE_DIR/test/additional/COM.DAT .
 nbench > result
 
-benchmark_submit_float "Numeric sort" `grep "NUMERIC SORT" < result | awk '{print $4}'`
-benchmark_submit_float "String sort" `grep "STRING SORT" < result | awk '{print $4}'`
-benchmark_submit_float "Bitfield" `grep "BITFIELD" < result | awk '{print $3}'`
-benchmark_submit_float "FP emulation" `grep "FP EMULATION" < result | awk '{print $4}'`
-benchmark_submit_float "Fourier" `grep "FOURIER" < result | awk '{print $3}'`
-benchmark_submit_float "Assignment" `grep "ASSIGNMENT" < result | awk '{print $3}'`
-benchmark_submit_float "IDEA" `grep "IDEA" < result | awk '{print $3}'`
-benchmark_submit_float "Huffman" `grep "HUFFMAN" < result | awk '{print $3}'`
-benchmark_submit_float "Neural net" `grep "NEURAL NET" < result | awk '{print $4}'`
-benchmark_submit_float "Lu decomposition" `grep "LU DECOMPOSITION" < result | awk '{print $4}'`
+--------------------------------------------------------------------------------
+benchmark_submit_float "Numeric sort" `grep "NUMERIC SORT" < result | \
+	awk '{print $4}'`
+benchmark_submit_float "String sort" `grep "STRING SORT" < result | \
+	awk '{print $4}'`
+benchmark_submit_float "Bitfield" `grep "BITFIELD" < result | \
+	awk '{print $3}'`
+benchmark_submit_float "FP emulation" `grep "FP EMULATION" < result | \
+	awk '{print $4}'`
+benchmark_submit_float "Fourier" `grep "FOURIER" < result | \
+	awk '{print $3}'`
+benchmark_submit_float "Assignment" `grep "ASSIGNMENT" < result | \
+	awk '{print $3}'`
+benchmark_submit_float "IDEA" `grep "IDEA" < result | \
+	awk '{print $3}'`
+benchmark_submit_float "Huffman" `grep "HUFFMAN" < result | \
+	awk '{print $3}'`
+benchmark_submit_float "Neural net" `grep "NEURAL NET" < result | \
+	awk '{print $4}'`
+benchmark_submit_float "Lu decomposition" `grep "LU DECOMPOSITION" < result | \
+	awk '{print $4}'`
 
-benchmark_submit_float "Integer Index" `grep "INTEGER INDEX" < result | awk '{print $4}' | sed -n '2p'`
-benchmark_submit_float "Floating-poing Index" `grep "FLOATING-POINT INDEX" < result | awk '{print $3}' | sed -n '2p'`
-benchmark_submit_float "Memory Index" `grep "MEMORY INDEX" < result | awk '{print $4}'`
+benchmark_submit_float "Integer Index" `grep "INTEGER INDEX" < result | \
+	awk '{print $4}' | sed -n '2p'`
+benchmark_submit_float "Floating-poing Index" \
+	`grep "FLOATING-POINT INDEX" < result | awk '{print $3}' | sed -n '2p'`
+benchmark_submit_float "Memory Index" `grep "MEMORY INDEX" < result | \
+	awk '{print $4}'`
 
 cd $HOME
 echo_success

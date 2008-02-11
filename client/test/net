@@ -55,9 +55,11 @@ test_nic()
 		fi
 	done
 
-	speed=`curl -s -w "%{speed_download}" -o $TESTFILE --connect-timeout $TIMEOUT http://${SERVER}:${URL} | sed 's/\D//g'` \
+	speed=`curl -s -w "%{speed_download}" -o $TESTFILE --connect-timeout \
+		$TIMEOUT http://${SERVER}:${URL} | sed 's/\D//g'` \
 		|| test_failed "NIC eth${i} test failed"
-	[ `md5sum -b < $TESTFILE | awk '{print $1}'` = $MD5 ] || test_failed "NIC eth${i} test failed"
+	[ `md5sum -b < $TESTFILE | awk '{print $1}'` = $MD5 ] || \
+		test_failed "NIC eth${i} test failed"
 
 	benchmark_submit_float "NIC eth${nic_number} download speed" $speed
 }

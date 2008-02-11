@@ -1,6 +1,6 @@
 #!/bin/sh -ef
 # NAME=USB GPRS modem signal level
-# DESCRIPTION=Measure level of signal, received by GPRS modem, connected using USB
+# DESCRIPTION=Measure signal level, received by GPRS modem, connected via USB
 # DESTROYS_HDD=false
 # IS_INTERACTIVE=false
 # POWEROFF_DURING_TEST=false
@@ -25,7 +25,8 @@ echo_success
 TMP_DIR=`mktemp -d`
 echo 'Getting signal level'
 while true; do
-	chat -t $CHAT_TIMEOUT -Vs '' AT OK-AT-OK AT+CSQ OK <$DEV >$DEV 2>$TMP_DIR/level || test_failed 'Getting signal level'
+	chat -t $CHAT_TIMEOUT -Vs '' AT OK-AT-OK AT+CSQ OK <$DEV >$DEV \
+		2>$TMP_DIR/level || test_failed 'Getting signal level'
 	LEVEL=`sed -ne '/^\+CSQ: / { s/^\+CSQ: //; p; }' <$TMP_DIR/level`
 	echo "GPRS level: $LEVEL"
 	echo -n 'Press ENTER to retry, enter "y" to complete the test: '

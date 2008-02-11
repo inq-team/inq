@@ -20,7 +20,8 @@ TEST_IMAGE=`mktemp`
 
 generate_test_image()
 {
-	if dd if=/dev/urandom of=$TEST_IMAGE bs=1024 count=$FLOPPY_SIZE >$DEBUG_TTY 2>&1; then
+	if dd if=/dev/urandom of=$TEST_IMAGE bs=1024 count=$FLOPPY_SIZE \
+			>$DEBUG_TTY 2>&1; then
 		true
 	else
 		test_failed "Unable to create test image"
@@ -42,7 +43,8 @@ test_fdd()
 	echo 3 > /proc/sys/vm/drop_caches
 
 	echo -n "Reading and comparing..."
-	dd if=$fdd of="$TEST_IMAGE"_fd bs=1024 count=$FLOPPY_SIZE >$DEBUG_TTY 2>&1
+	dd if=$fdd of="$TEST_IMAGE"_fd bs=1024 count=$FLOPPY_SIZE \
+		>$DEBUG_TTY 2>&1
 	diff "$TEST_IMAGE"_fd $TEST_IMAGE >/dev/null 2>&1 || return 1
 	echo_success
 

@@ -14,8 +14,10 @@ for BLOCK_DEV in `get_harddrives_list`; do
 
 	# Perform AVG_SAMPLES tests, calculate sum
 	for i in `seq 1 $AVG_SAMPLES`; do
-		BUFFERED=`hdparm -t $BLOCK_DEV | sed -ne '/Timing/ { s/^.*= *//; s, MB/sec,,; s/\.//; p }'`
-		CACHED=`hdparm -T $BLOCK_DEV | sed -ne '/Timing/ { s/^.*= *//; s, MB/sec,,; s/\.//; p }'`
+		BUFFERED=`hdparm -t $BLOCK_DEV | \
+		sed -ne '/Timing/ { s/^.*= *//; s, MB/sec,,; s/\.//; p }'`
+		CACHED=`hdparm -T $BLOCK_DEV | \
+		sed -ne '/Timing/ { s/^.*= *//; s, MB/sec,,; s/\.//; p }'`
 		BUFFERED_SUM=$(($BUFFERED_SUM + $BUFFERED))
 		CACHED_SUM=$(($CACHED_SUM + $CACHED))
 		echo -n '.'

@@ -30,7 +30,8 @@ MOUNTPOINT=`mktemp -d`
 detect_hdd_quantity()
 {
 	sleep 5
-	HDD_QUANTITY=`hal-find-by-property --key=storage.drive_type --string=disk | wc -l`
+	HDD_QUANTITY=`hal-find-by-property --key=storage.drive_type \
+		--string=disk | wc -l`
 	if [ "$HDD_QUANTITY" -eq 0 ]; then
 		test_succeeded "No HDDs found"
 		exit 0
@@ -57,7 +58,8 @@ array_stress_check()
 			break
 		else
 			make clean >$DEBUG_TTY 2>&1 && \
-			make -j $JOBS fs >$DEBUG_TTY 2>&1 || test_failed "Make error"
+			make -j $JOBS fs >$DEBUG_TTY 2>&1 || \
+				test_failed "Make error"
 		fi
 
 		if [ $(($TIME - $LAST_LOGTIME)) -gt $LOGTIME ]; then

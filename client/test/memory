@@ -13,7 +13,8 @@
 
 # Temporary disabled because of broken oom_killer
 #TOTAL_MEMORY=$(( `grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024 ))
-TOTAL_MEMORY=$(( (`grep MemTotal /proc/meminfo | awk '{print $2}'`) / 1024 - 256 ))
+TOTAL_MEMORY=$(( (`grep MemTotal /proc/meminfo | \
+	awk '{print $2}'`) / 1024 - 256 ))
 TOTAL_SUBSTAGES=$(( 16 * $TEST_LOOPS ))
 COMPLETED_SUBSTAGES=0
 

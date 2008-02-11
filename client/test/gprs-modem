@@ -33,13 +33,15 @@ sleep 1
 print_green_message "Check for proper answer from modem"
 stty 115200 -F $DEV
 sleep 1
-chat -t $CHAT_TIMEOUT -Vs '' AT OK-AT-OK ATI $ANSWER_ATI <$DEV >$DEV || test_failed 'Proper answer from modem'
+chat -t $CHAT_TIMEOUT -Vs '' AT OK-AT-OK ATI $ANSWER_ATI <$DEV >$DEV || \
+	test_failed 'Proper answer from modem'
 
 sleep 1
 
 print_green_message "Getting IMEI"
 TMP_DIR=`mktemp -d`
-chat -t $CHAT_TIMEOUT -Vs '' AT OK-AT-OK AT+GSN OK <$DEV >$DEV 2>$TMP_DIR/imei || test_failed 'Getting IMEI'
+chat -t $CHAT_TIMEOUT -Vs '' AT OK-AT-OK AT+GSN OK <$DEV >$DEV 2>$TMP_DIR/imei \
+	|| test_failed 'Getting IMEI'
 IMEI=`sed -ne '/^[0-9][0-9]*$/ p' <$TMP_DIR/imei`
 print_green_message "IMEI: $IMEI"
 

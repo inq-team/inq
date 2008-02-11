@@ -24,7 +24,8 @@ FIFOFILE=`mktemp`
 # Check for ready for testing drives
 STORAGE_QUANTITY=0
 for UDI in `hal-find-by-property --key storage.bus --string usb`; do
-	hal-get-property --udi "$UDI" --key storage.drive_type | grep -q "^disk$" || continue
+	hal-get-property --udi "$UDI" --key storage.drive_type | \
+		grep -q "^disk$" || continue
 	STORAGE_QUANTITY=$(( $STORAGE_QUANTITY + 1 ))
 done
 if [ "$STORAGE_QUANTITY" -ne "$COUNT" ]; then
@@ -34,7 +35,8 @@ if [ "$STORAGE_QUANTITY" -ne "$COUNT" ]; then
 	read foobar #dummy variable
 
 	for UDI in `hal-find-by-property --key storage.bus --string usb`; do
-		hal-get-property --udi "$UDI" --key storage.drive_type | grep -q "^disk$" || continue
+		hal-get-property --udi "$UDI" --key storage.drive_type | \
+			grep -q "^disk$" || continue
 
 		vendor=`hal-get-property --udi "$UDI" --key storage.vendor`
 		product=`hal-get-property --udi "$UDI" --key info.product`
@@ -50,7 +52,8 @@ if [ "$STORAGE_QUANTITY" -lt "$COUNT" ]; then
 	test_failed "$STORAGE_QUANTITY drives insted of $COUNT"
 else
 for UDI in `hal-find-by-property --key storage.bus --string usb`; do
-	hal-get-property --udi "$UDI" --key storage.drive_type | grep -q "^disk$" || continue
+	hal-get-property --udi "$UDI" --key storage.drive_type | \
+		grep -q "^disk$" || continue
 	block_dev=`hal-get-property --udi "$UDI" --key block.device`
 	echo -n "Drive $block_dev..."
 	
@@ -58,20 +61,30 @@ for UDI in `hal-find-by-property --key storage.bus --string usb`; do
 	rm $FIFOFILE
 	mkfifo $FIFOFILE
 	md5sum -b $FIFOFILE | awk '{print $1}' > ${FIFOFILE}.md5 &
-	write_speed_result=`dd if=/dev/urandom bs=${BLOCKSIZE}k count=${SIZE} 2>/dev/null | tee $FIFOFILE | dd of=${block_dev} bs=${BLOCKSIZE}k oflag=sync 2>&1 | sed -n '$ p'` || test_failed "Drive $block_dev writing error"
+	write_speed_result=`dd if=/dev/urandom bs=${BLOCKSIZE}k count=${SIZE} \
+		2>/dev/null | tee $FIFOFILE | \
+		dd of=${block_dev} bs=${BLOCKSIZE}k oflag=sync 2>&1 | \
+		sed -n '$ p'` || \
+		test_failed "Drive $block_dev writing error"
 
 	echo -n "reading..."
-	read_md5=`dd if=${block_dev} bs=${BLOCKSIZE}k count=${SIZE} 2>${FIFOFILE}.read_speed | md5sum -b | awk '{print $1}'` \
-		|| test_failed "Drive $block_dev reading error"
+	read_md5=`dd if=${block_dev} bs=${BLOCKSIZE}k count=${SIZE} \
+		2>${FIFOFILE}.read_speed | md5sum -b | awk '{print $1}'` || \
+		test_failed "Drive $block_dev reading error"
 
 	echo -n "comparing..."
-	[ `cat ${FIFOFILE}.md5` == $read_md5 ] || test_failed "Drive $block_dev comparing error"
+	[ `cat ${FIFOFILE}.md5` == $read_md5 ] || \
+		test_failed "Drive $block_dev comparing error"
 	write_speed=`echo "$write_speed_result" | awk '{print $(NF-1)}'`
 	write_speed_unit=`echo "$write_speed_result" | awk '{print $NF}'`
-	read_speed=`sed -n '$ p' < ${FIFOFILE}.read_speed | awk '{print $(NF-1)}'`
-	read_speed_unit=`sed -n '$ p' < ${FIFOFILE}.read_speed | awk '{print $NF}'`
-	benchmark_submit_float "Drive $block_dev writing speed, ${write_speed_unit}" $write_speed
-	benchmark_submit_float "Drive $block_dev reading speed, ${read_speed_unit}" $read_speed
+	read_speed=`sed -n '$ p' < ${FIFOFILE}.read_speed | \
+		awk '{print $(NF-1)}'`
+	read_speed_unit=`sed -n '$ p' < ${FIFOFILE}.read_speed | \
+		awk '{print $NF}'`
+	benchmark_submit_float 
+	"Drive $block_dev writing speed, ${write_speed_unit}" $write_speed
+	benchmark_submit_float 
+	"Drive $block_dev reading speed, ${read_speed_unit}" $read_speed
 	echo_success
 done
 fi
