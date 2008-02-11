@@ -1,5 +1,11 @@
 #!/bin/sh
+
+# Inquisitor-specific setup
+
 ln -sf inquisitor/remounttab /etc/
 ln -sf inquisitor/overlaytab /etc/
 #ln -sf inquisitor/pci.ids /usr/share/
 echo "XROOTWARN=no" > /etc/sysconfig/xinitrc
+
+echo 'Setting up /etc/inittab'
+echo inq:2345:once:/usr/bin/inquisitor >> /etc/inittab

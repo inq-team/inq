@@ -1,0 +1,8 @@
+#!/bin/sh
+
+echo 'Generating depmod'
+if [ -x /sbin/depmod ]; then
+	for i in /lib/modules/2*; do
+		/sbin/depmod -a -F /boot/System.map-$(basename $i) $(basename $i)
+	done
+fi

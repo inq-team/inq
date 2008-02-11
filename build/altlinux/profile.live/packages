@@ -17,7 +17,6 @@ net-tools
 pciutils
 xdelta1
 udev
-hotplug
 openssh-clients
 openssh-server
 xorg-x11-drv-ati

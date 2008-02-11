@@ -1,0 +1,10 @@
+#!/bin/sh -e
+
+echo 'Executing firsttime'
+cd /
+unset DURING_INSTALL
+[ ! -x /usr/bin/update-menus ] || /usr/bin/update-menus --nofork -v
+[ ! -f /etc/firsttime.d/menu ] || rm -f /etc/firsttime.d/menu
+if [ -d /etc/firsttime.d ];then
+	for i in /etc/firsttime.d/*; do $i; done ||:
+fi

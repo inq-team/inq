@@ -1,4 +1,5 @@
 /sbin/chkconfig udevd on
 /sbin/chkconfig haldaemon on
 /sbin/chkconfig messagebus on
-/sbin/chkconfig ntpd on || true
+/sbin/chkconfig ntpd on || :
+/sbin/chkconfig hotplug off || :

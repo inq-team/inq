@@ -1,2 +1,0 @@
-subst 's,^\(1.*mingetty.*\)$,#\1,' /etc/inittab
-echo inq:2345:once:/usr/bin/inquisitor >> /etc/inittab
