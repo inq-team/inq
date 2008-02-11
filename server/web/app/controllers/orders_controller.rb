@@ -4,11 +4,7 @@ class OrdersController < ApplicationController
 	# GET /orders
 	# GET /orders.xml
 	def index
-		@orders = Order.find(:all)
-		respond_to do |format|
-			format.html # index.rhtml
-			format.xml  { render :xml => @orders.to_xml }
-		end
+		@staging = Order.staging
 	end
 
 	def staging
@@ -27,9 +23,18 @@ class OrdersController < ApplicationController
 		@order = Order.find(params[:id])
 		@computers = Computer.find_all_by_order_id(params[:id])
 		@st_comp_qty = {}
-		@st_comp_qty[:assembling] = @computers.select{ |c| (c.computer_stages.select{ |s| s.end == nil }[0]).stage == 'assembling' if c.computer_stages.size > 0 }.size
-		@st_comp_qty[:testing] = @computers.select{ |c| (c.computer_stages.select{ |s| s.end == nil }[0]).stage == 'testing' if c.computer_stages.size > 0 }.size
-		@st_comp_qty[:packing] = @computers.select{ |c| (c.computer_stages.select{ |s| s.end == nil }[0]).stage == 'packing' if c.computer_stages.size > 0 }.size
+		
+		[:assembling, :testing, :packing].each do |st|
+			stage_comp = @computers.select do |c|
+				if c.computer_stages.size > 0
+					(s = c.computer_stages.select{ |s| s.end == nil }[0]) ? s.stage == st.to_s : false
+				else
+					false
+				end
+			end
+			@st_comp_qty[st] = stage_comp.size
+		end
+		
 		@qty = @computers.size
 		@models = Model.find(:all).map{ |x| x.name }
 		@default_qty = @order.order_lines.map{ |x| x.qty }.min
