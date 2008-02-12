@@ -31,15 +31,22 @@ class Planner
 	def calculate
 		@plan = []
 		@profile.root.each_element { |t|
-			id = t.attribute('id').to_s
-			type = t.attribute('type').to_s
-			task = Task.new(id, type)
-			t.each_element { |v|
-				if v.name == 'var'
-					task.var[v.attribute('name').to_s] = v.text
-				end
-			}
-			@plan << task
+			case t.name
+			when 'test'
+				id = t.attribute('id').to_s
+				type = t.attribute('type').to_s
+				task = Task.new(id, type)
+				t.each_element { |v|
+					if v.name == 'var'
+						task.var[v.attribute('name').to_s] = v.text
+					end
+				}
+				@plan << task
+			when 'submit-additional-components'
+				@plan << 'submit-additional-components'
+			else
+				raise "Unknown element \"#{t.name}\" encountered in profile"
+			end
 		}
 	end
 
@@ -47,11 +54,15 @@ class Planner
 		calculate unless @plan
 		res = ''
 		@plan.each { |t|
-			res << "PLANNER=1 TEST_NAME=#{t.id} "
-			t.var.each_pair { |k, v|
-				res << "#{k}=#{v} "
-			}
-			res << "run_test #{t.type}\n"
+			if t == 'submit-additional-components'
+				res << "submit_additional_components $HOME/components.xml\n"
+			else
+				res << "PLANNER=1 TEST_NAME=#{t.id} "
+				t.var.each_pair { |k, v|
+					res << "#{k}=#{v} "
+				}
+				res << "run_test #{t.type}\n"
+			end
 		}
 		return res
 	end
