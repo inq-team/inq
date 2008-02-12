@@ -21,7 +21,6 @@ cp $SHARE_DIR/test/additional/NNET.DAT .
 cp $SHARE_DIR/test/additional/COM.DAT .
 nbench > result
 
---------------------------------------------------------------------------------
 benchmark_submit_float "Numeric sort" `grep "NUMERIC SORT" < result | \
 	awk '{print $4}'`
 benchmark_submit_float "String sort" `grep "STRING SORT" < result | \
