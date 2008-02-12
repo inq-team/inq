@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+require "/usr/share/inquisitor/communication.rb"
+
 PERIOD_SCREEN=5
 PERIOD_LOG=15
 BADBLOCKS_COMMAND="badblocks -sv"
@@ -120,8 +122,7 @@ class DiscTest
 		sum_total = 1 if sum_total == 0
 		s1=sum_done.to_i
 		s2=sum_total.to_i
-		#$stderr.print "Progress: #{s1} #{s2}"
-		#temporary_workaround("test_progress #{s1} #{s2}")
+		$comm.test_progress s1,s2
 	end
 
 	def wait_completion
@@ -135,8 +136,7 @@ class DiscTest
 				ind = @process.index(s[0])
 				if ind then
 					failed_hdd = @devices[ind]
-					#temporary_workaround("test_failed #{failed_hdd}");
-					#$stderr.print "Failed: #{failed_hdd}\n"
+					IO.new(5,"w").puts "Failed HDD: #{failed_hdd}"
 					status = s[1].exitstatus 
 				end
 			else
@@ -144,12 +144,13 @@ class DiscTest
 			end
 		}
 		puts "Status=#{status}"
-		exit status
+		return status
 	end
 end
 
 Screen::clear
 Screen::vputs(20, "Testing HDDs: " + ARGV.inspect)
+$comm = Communication.new
 t = DiscTest.new(ARGV)
 t.start
 t.start_show_progress

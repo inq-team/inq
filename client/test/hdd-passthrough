@@ -12,23 +12,20 @@
 
 exit_handler()
 {
-	echo "Here will be code to kill badblocks processes"
+	if [ -s "$FAILED_HDD" ]; then
+		test_failed `cat $FAILED_HDD`
+		rm $FAILED_HDD
+	fi
 }
 
-test_available()
-{
-	echo "Drivernames: " `get_harddrives_list | perl -npe "s/\n/,/" | \
-		sed 's/,$//g'`
-	$LIB_DIR/hdd-badblocks.rb `get_harddrives_list | \
-		perl -npe "s/\n/ /" | sed 's/ $//g'`
-}
+FAILED_HDD=`mktemp`
 
 raid-wizard-clear
-test_available
+$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list`
 
 I=0
-while ( raid-wizard-passthrough $DISK_GROUP_SIZE $I ); do
-	test_available
+while raid-wizard-passthrough $DISK_GROUP_SIZE $I; do
+	$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list` 5>$FAILED_HDD
 	I=$(( $I + 1 ))
 done
 

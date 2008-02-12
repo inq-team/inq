@@ -118,9 +118,7 @@ _exit_handler()
 {
 	local rc=$?
 	trap - EXIT
-	if type exit_handler 2>&1 | grep -q 'function'; then
-		exit_handler
-	fi
+	type exit_handler >$DEBUG_TTY 2>&1 && exit_handler || true
 	exit $rc
 }
 trap _exit_handler HUP PIPE INT QUIT TERM EXIT
