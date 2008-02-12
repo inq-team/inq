@@ -7,6 +7,11 @@ UPDATE computers c
 	INNER JOIN testing_stages ts ON t.id=ts.testing_id
 SET ts.end=NOW(), ts.result=3, t.test_end=NOW()
 WHERE NOW()-last_ping > 120 AND t.test_end IS NULL AND ts.end IS NULL AND ts.result=0;
+
+UPDATE computers c
+	INNER JOIN testings t ON c.id=t.computer_id
+SET t.test_end=NOW()
+WHERE NOW()-last_ping > 120 and t.test_end IS NULL;
 __EOF__
 	sleep 45
 done
