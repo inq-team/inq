@@ -140,7 +140,7 @@ class DiscTest
 					status = s[1].exitstatus 
 				end
 			else
-				status=1
+				status=0
 			end
 		}
 		puts "Status=#{status}"
