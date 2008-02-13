@@ -41,6 +41,7 @@ hal-find-by-property --key storage.drive_type --string cdrom | while read L; do
 		strip_vendor 'TSSTcorp' TSST
 		strip_vendor 'PHILIPS ' Philips
 		strip_vendor 'LITE-ON ' LITE-ON
+		strip_vendor 'Optiarc' Optiarc
 	
 		detect_vendor 'CD-224' Teac
 		detect_vendor 'DW-224' Teac
