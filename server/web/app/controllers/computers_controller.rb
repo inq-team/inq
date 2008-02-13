@@ -478,6 +478,14 @@ class ComputersController < ApplicationController
 	end
 
 	private
+	
+	RESULT_MAPPING = {
+		0 => 'running',
+		1 => 'finished',
+		2 => 'failed',
+		3 => 'hanging',
+	}
+	
 	def prepare_computer_tabs
 		@computer = Computer.find(params[:id])
                 @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
@@ -494,7 +502,7 @@ class ComputersController < ApplicationController
 			{
 				:id => stage.stage,
 				:elapsed => ((stage.end || Time.new()) - stage.start).round,
-				:result => stage.end ? stage.result == 1 ? 'finished' : stage.result == 2 ? 'failed' : 'unknown' : 'running',
+				:result => RESULT_MAPPING[stage.result] || 'unknown',
 			}
 		}
 

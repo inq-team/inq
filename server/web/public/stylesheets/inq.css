@@ -228,6 +228,10 @@ tr.testing_stage_running .testing_stage_name {
 	background: url('/images/stage_running.png') 8px 50% no-repeat;
 }
 
+tr.testing_stage_hanging .testing_stage_name {
+	background: url('/images/stage_hanging.png') 8px 50% no-repeat;
+}
+
 .bad_username {
 	color: red;
 	font-weight: bold;
