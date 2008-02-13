@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 
-require "/usr/share/inquisitor/communication.rb"
+require '/usr/share/inquisitor/communication'
 
 PERIOD_SCREEN=5
 PERIOD_LOG=15
-BADBLOCKS_COMMAND="badblocks -sv"
+BADBLOCKS_COMMAND='badblocks -sv'
 
 class Screen
 	def self.clear
@@ -45,7 +45,7 @@ class DiscTest
 			        STDERR.reopen(pr[1])
 			        pr[1].close
 
-			        exec(BADBLOCKS_COMMAND + " #{hdd}")
+			        exec("#{BADBLOCKS_COMMAND} #{hdd}")
 			}
 
 			pw[0].close
@@ -120,9 +120,7 @@ class DiscTest
 			sum_total += @total[i] if @total[i]
 		}
 		sum_total = 1 if sum_total == 0
-		s1=sum_done.to_i
-		s2=sum_total.to_i
-		$comm.test_progress s1,s2
+		$comm.test_progress sum_done.to_i, sum_total.to_i
 	end
 
 	def wait_completion
@@ -136,16 +134,21 @@ class DiscTest
 				ind = @process.index(s[0])
 				if ind then
 					failed_hdd = @devices[ind]
-					IO.new(5,"w").puts "Failed HDD: #{failed_hdd}"
+					IO.new(5, 'w').puts "Failed HDD: #{failed_hdd}"
 					status = s[1].exitstatus 
 				end
 			else
-				status=0
+				status = 0
 			end
 		}
 		puts "Status=#{status}"
 		return status
 	end
+end
+
+if ARGV.size == 0
+	puts 'hdd-badblocks.rb: nothing to test'
+	exit 0
 end
 
 Screen::clear
