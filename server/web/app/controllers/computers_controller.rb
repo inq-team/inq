@@ -481,6 +481,10 @@ class ComputersController < ApplicationController
 	def prepare_computer_tabs
 		@computer = Computer.find(params[:id])
                 @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
+		if @sorted_testings.empty?
+			@testing_number = 0
+			return
+		end
 		@testing_number = params[:testing] ? params[:testing].to_i() : @sorted_testings.size - 1
 		@testing = @sorted_testings[@testing_number]
 		prev_testing = @sorted_testings[@testing_number - 1]
