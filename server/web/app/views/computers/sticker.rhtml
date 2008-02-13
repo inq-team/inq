@@ -6,7 +6,7 @@
 	</tr>
 	<% @components.each_index do |i| %>
 		<% component = @components[i] %>
-		<tr <%= component[:name].blank? ? "class="broken_component"" : '' %>>
+		<tr <%= component[:name].blank? ? "class=\"broken_component\"" : '' %>>
 		<td class="component_num"> <%= i %> </td>
 		<td class="component_name">
 			<% name = component[:name].blank? ? 'NULL' : component[:name] %>
