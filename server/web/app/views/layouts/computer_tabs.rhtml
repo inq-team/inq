@@ -45,7 +45,7 @@
 		classname = stage.end ? 'finished' : 'running'
 		stages.delete(name)
 	%>
-		<td title='<%= stage.comment %>' class=.computer_stage_<%= classname %>.>
+		<td title='<%= stage.comment %>' class='computer_stage_<%= classname %>'>
 			<p> <%= name %> </p>
 			<p> <%= ary.reverse.collect { |h| h[:span_txt] }.join(" / ") %> </p>
 		</td>
