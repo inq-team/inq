@@ -19,7 +19,7 @@ class Communication
 #			puts cmd
 			@sh.puts(cmd)
 		else
-			cmd = "export COMPUTER_ID=#{ENV['COMPUTER_ID']} && . /etc/inquisitor/global && . $SHARE_DIR/functions && . $SHARE_DIR/communication && " + cmd " >$DEBUG_TTY 2>&1"
+			cmd = "export COMPUTER_ID=#{ENV['COMPUTER_ID']} && . /etc/inquisitor/global && . $SHARE_DIR/functions && . $SHARE_DIR/communication && #{cmd} >$DEBUG_TTY 2>&1"
 #			puts cmd
 			system(cmd)
 		end
