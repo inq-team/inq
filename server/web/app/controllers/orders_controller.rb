@@ -42,7 +42,7 @@ class OrdersController < ApplicationController
 		@start_id = Computer.find_by_sql('SELECT MAX(id)+1 FROM computers')[0]['MAX(id)+1'].to_i
 		@end_id = @start_id + @default_qty - 1
 
-		@order_title = @order.title.gsub(/(\d)(S(A|C))/){$1}.gsub(/(\d)(G(2|3))/){$1 + ' ' + $2}
+		@order_title = @order.title.gsub(/(\d)(S(A|C))/){$1}.gsub(/(\d)(G(2|3))/){$1.to_s + ' ' + $2.to_s}
 		model_names = Model.find_by_sql(['SELECT name FROM models WHERE MATCH(name) AGAINST(?);', @order_title]).sort{ |a,b| a.name <=> b.name }.map{ |x| x.name }
 		@default_model = nil
 
@@ -78,7 +78,7 @@ class OrdersController < ApplicationController
 		
 		if (start_id > end_id) || ((start_id..end_id).to_a.map{ |i| Computer.find_by_id(i) }.compact.size > 0)
 			flash[:notice] = 'Incorrect indexes'
-			redirect_to :action => 'show'
+			redirect_to :action => 'show', :id => params[:id]
 			return
 		end		
 		
@@ -90,7 +90,7 @@ class OrdersController < ApplicationController
 			c.profile = Profile.find_by_id(profile_id)
 			c.save!
 		end
-		redirect_to :action => 'show'				
+		redirect_to :action => 'show', :id => params[:id]
 	end
 
   # GET /orders/new
