@@ -397,9 +397,9 @@ class ComputersController < ApplicationController
 		@testing_number = params[:testing] ? params[:testing].to_i() : @sorted_testings.size - 1
 		@testing = @sorted_testings[@testing_number]
 		prev_testing = @sorted_testings[@testing_number - 1]
-		pl = Planner.new(@computer.profile.xml, @testing.testing_stages, prev_testing.testing_stages, @testing.components, prev_testing.components)
-		pl.calculate
-		render :text => pl.script
+		@pl = Planner.new(@computer.profile.xml, @testing.testing_stages, prev_testing.testing_stages, @testing.components, prev_testing.components)
+		@pl.calculate
+		render :text => @pl.script
 	end
 
 	def ip
