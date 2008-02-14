@@ -1,5 +1,38 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 one:
   id: 1
+  xml: '<tests>
+<test id="cpu" type="cpu">
+        <var name="TESTTIME">1800</var>
+</test>
+<test id="memory" type="memory">
+        <var name="TEST_LOOPS">1</var>
+        <var name="LOGTIME">120</var>
+</test>
+<test id="hdd-passthrough" type="hdd-passthrough">
+        <var name="DISK_GROUP_SIZE">8</var>
+</test>
+<test id="hdd-array" type="hdd-array">
+        <var name="TIMEOUT">3600</var>
+        <var name="LOGTIME">120</var>
+        <var name="JOBS">16</var>
+        <var name="STRESS_TREE">/usr/share/inquisitor/linux-2.6.22.5-31-stress.tar.gz</var>
+</test>
+<test id="net" type="net">
+        <var name="MD5">ca658fd4159bc35698edf9a1cdd70876</var>
+        <var name="URL">3000/test_file.html</var>
+        <var name="TIMEOUT">30</var>
+</test>
+<test id="fdd" type="fdd">
+        <var name="FLOPPY_SIZE">1440</var>
+</test>
+<test id="odd_read" type="odd_read">
+        <var name="TEST_IMAGE_HASH">2e8744dfd11bf425001aad57976d42cc</var>
+        <var name="TEST_IMAGE_BLOCKS">50000</var>
+        <var name="MESH_POINTS">1024</var>
+        <var name="FORCE_NON_INTERACTIVE">false</var>
+</test>
+</tests>'
+
 two:
   id: 2
+  xml: '<tests></tests>'

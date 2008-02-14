@@ -5,88 +5,36 @@ require 'computers_controller'
 class ComputersController; def rescue_action(e) raise e end; end
 
 class ComputersControllerTest < Test::Unit::TestCase
-  fixtures :computers
+	fixtures :computers, :profiles, :models, :testings, :testing_stages
 
-  def setup
-    @controller = ComputersController.new
-    @request    = ActionController::TestRequest.new
-    @response   = ActionController::TestResponse.new
+	def setup
+		@controller = ComputersController.new
+		@request    = ActionController::TestRequest.new
+		@response   = ActionController::TestResponse.new
+	end
 
-    @first_id = computers(:first).id
-  end
+	def test_show
+		get :show, :id => 1
+		assert_response :redirect
+	end
 
-  def test_index
-    get :index
-    assert_response :success
-    assert_template 'list'
-  end
+	def test_hw
+		get :hw, :id => 1, :testing => 0
+		assert_response :success
+	end
 
-  def test_list
-    get :list
-
-    assert_response :success
-    assert_template 'list'
-
-    assert_not_nil assigns(:computers)
-  end
-
-  def test_show
-    get :show, :id => @first_id
-
-    assert_response :success
-    assert_template 'show'
-
-    assert_not_nil assigns(:computer)
-    assert assigns(:computer).valid?
-  end
-
-  def test_new
-    get :new
-
-    assert_response :success
-    assert_template 'new'
-
-    assert_not_nil assigns(:computer)
-  end
-
-  def test_create
-    num_computers = Computer.count
-
-    post :create, :computer => {}
-
-    assert_response :redirect
-    assert_redirected_to :action => 'list'
-
-    assert_equal num_computers + 1, Computer.count
-  end
-
-  def test_edit
-    get :edit, :id => @first_id
-
-    assert_response :success
-    assert_template 'edit'
-
-    assert_not_nil assigns(:computer)
-    assert assigns(:computer).valid?
-  end
-
-  def test_update
-    post :update, :id => @first_id
-    assert_response :redirect
-    assert_redirected_to :action => 'show', :id => @first_id
-  end
-
-  def test_destroy
-    assert_nothing_raised {
-      Computer.find(@first_id)
-    }
-
-    post :destroy, :id => @first_id
-    assert_response :redirect
-    assert_redirected_to :action => 'list'
-
-    assert_raise(ActiveRecord::RecordNotFound) {
-      Computer.find(@first_id)
-    }
-  end
+	def test_plan_1
+		get :plan, :id => 1
+		assert_response :success
+#		p assigns['pl'].script
+		assert_equal assigns['pl'].script, <<__EOF__
+PLANNER=1 TEST_NAME=cpu TESTTIME=1800 run_test cpu
+PLANNER=1 TEST_NAME=memory TEST_LOOPS=1 LOGTIME=120 run_test memory
+PLANNER=1 TEST_NAME=hdd-passthrough DISK_GROUP_SIZE=8 run_test hdd-passthrough
+PLANNER=1 TEST_NAME=hdd-array JOBS=16 TIMEOUT=3600 STRESS_TREE=/usr/share/inquisitor/linux-2.6.22.5-31-stress.tar.gz LOGTIME=120 run_test hdd-array
+PLANNER=1 TEST_NAME=net URL=3000/test_file.html TIMEOUT=30 MD5=ca658fd4159bc35698edf9a1cdd70876 run_test net
+PLANNER=1 TEST_NAME=fdd FLOPPY_SIZE=1440 run_test fdd
+PLANNER=1 TEST_NAME=odd_read MESH_POINTS=1024 TEST_IMAGE_BLOCKS=50000 FORCE_NON_INTERACTIVE=false TEST_IMAGE_HASH=2e8744dfd11bf425001aad57976d42cc run_test odd_read
+__EOF__
+	end
 end
