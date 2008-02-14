@@ -1,4 +1,5 @@
 require 'rexml/document'
+require 'planner/meta'
 
 class Planner
 	attr_reader :start_new
