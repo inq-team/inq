@@ -130,12 +130,12 @@ class DiscTest
 
 		status = 0
 		statuses.each { |s|
-			if ((s[1].exited?) and (s[1].exitstatus > 0)) then
+			if (!(s[1].exited?) or ((s[1].exited?) and (s[1].exitstatus > 0))) then
 				ind = @process.index(s[0])
 				if ind then
 					failed_hdd = @devices[ind]
-					IO.new(5, 'w').puts "Failed HDD: #{failed_hdd}"
-					status = s[1].exitstatus 
+					$comm.test_failed "Failed HDD: #{failed_hdd}"
+					s[1].exited? ? (status = s[1].exitstatus) : status=1
 				end
 			else
 				status = 0

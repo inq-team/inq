@@ -10,22 +10,12 @@
 
 . /usr/share/inquisitor/functions-test
 
-exit_handler()
-{
-	if [ -s "$FAILED_HDD" ]; then
-		test_failed `cat $FAILED_HDD`
-		rm $FAILED_HDD
-	fi
-}
-
-FAILED_HDD=`mktemp`
-
 raid-wizard-clear
 $SHARE_DIR/hdd-badblocks.rb `get_harddrives_list`
 
 I=0
 while raid-wizard-passthrough $DISK_GROUP_SIZE $I; do
-	$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list` 5>$FAILED_HDD
+	$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list`
 	I=$(( $I + 1 ))
 done
 
