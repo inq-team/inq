@@ -358,17 +358,21 @@ class ComputersController < ApplicationController
 	end
 
 	def testing_finished
+		ts = Time.now
 		@computer = Computer.find(params[:id])
-		testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }.last
-		testing.test_end = Time.now
-		if testing.save
-			flash[:notice] = 'Testing finished'
-			respond_to() do |format|
-				format.html { redirect_to(:action => 'show', :id => @computer) }
-				format.xml { render(:xml => testing.to_xml()) }
-			end
-		else
-			head(:status => 500)
+
+		lt = @computer.last_testing
+		lt.test_end = ts
+		lt.save!
+
+		lcs = @computer.last_computer_stage
+		lcs.end = ts
+		lcs.save!
+
+		flash[:notice] = 'Testing finished'
+		respond_to() do |format|
+			format.html { redirect_to(:action => 'show', :id => @computer) }
+			format.xml { render(:xml => lt.to_xml()) }
 		end
 	end
 
