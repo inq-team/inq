@@ -1,0 +1,50 @@
+#!/usr/bin/env ruby
+
+# A minimalistic configure that parses all test metainformation and
+# generates tests-meta.rb file for use with planner and profiles
+
+require 'pp'
+require 'ostruct'
+
+TESTS_DIR='../../../../client/test'
+
+tests = {}
+
+Dir.new(TESTS_DIR).each { |entry|
+	next unless FileTest.file?("#{TESTS_DIR}/#{entry}")
+
+	tests[entry] = t = {
+		:name => nil,
+		:description => nil,
+		:version => nil,
+		:destroys_hdd => false,
+		:is_interactive => false,
+		:poweroff_during_test => false,
+		:var => {}
+	}
+
+	File.open("#{TESTS_DIR}/#{entry}", 'r').each_line { |l|
+		case l
+		when /^# NAME=(.*)$/ then t[:name] = $1
+		when /^# DESCRIPTION=(.*)$/ then t[:description] = $1
+		when /^# VERSION=(.*)$/ then t[:version] = $1
+		when /^# DESTROYS_HDD=true$/ then t[:destroys_hdd] = true
+		when /^# IS_INTERACTIVE=true$/ then t[:is_interactive] = true
+		when /^# POWEROFF_DURING_TEST=true$/ then t[:poweroff_during_test] = true
+		when /^# VAR=(.*?):(.*?):(.*?):(.*)$/
+			t[:var][$1] = {
+				:type => $2,
+				:default => $3,
+				:comment => $4,
+			}
+		end
+	}
+}
+
+File.open('meta.rb', 'w') { |out|
+	out.print <<__EOF__
+# DO NOT EDIT: IT'S A GENERATED FILE! USE ./configure to REGENERATE!
+
+$TESTS = #{tests.pretty_inspect}
+__EOF__
+}
