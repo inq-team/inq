@@ -1,6 +1,6 @@
 require 'mykit/components'
 require 'mykit/comparison'
-require 'planner'
+require 'planner/planner'
 
 class ComputersController < ApplicationController
 	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
