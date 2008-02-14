@@ -42,32 +42,53 @@ class Computer < ActiveRecord::Base
 		Testing.find_by_sql(["SELECT testings.* FROM `testings` where testings.computer_id = ? ORDER BY test_start DESC LIMIT 1", id]).first()
 	end
 
+	def last_computer_stage
+		ComputerStage.find_by_computer_id(id, :order => 'start DESC')
+	end
+
 	def claim_ip(ip)
 		transaction do
 			Computer.update_all('shelf = NULL, ip = NULL', ['ip = ?', ip])
 			self.ip = ip		
-			save!	
+			save!
 		end	
 	end
 
-	def set_assembler(id)
-		transaction do			
-			computer_stages << ComputerStage.new(:start => Time.new(), :person => Person.find(id), :stage => 'assembling')
-			save!
-		end
+	def set_assembler(person_id)
+		set_stage_person('assembling', person_id)
 	end
 
-	def set_tester(id)
-		transaction do			
-			now = Time.new()
-			computer_stages << ComputerStage.new(:start => now, :person => Person.find(id), :stage => 'testing')
-			testings << Testing.new(:test_start => now)
-			save!
-		end
+	def set_tester(person_id)
+		set_stage_person('testing', person_id)
 	end
 
 	def manufacturing_date
 		computer_stages.find_all() { |s| s.stage == 'packaging' && s.stage.end }.sort() { |a, b| a.start <=> b.start }.last().end
 	end
 
+	private
+
+	##
+	# If computer_stage is now running, then just set a person for
+	# it. If it's not running, close last stage, start this stage and
+	# set a person for it.	
+	def set_stage_person(stage_name, person_id)
+		last_cs = last_computer_stage
+		if last_cs and last_cs.stage == stage_name
+			last_cs.person_id = person_id
+			last_cs.save!
+		else
+			if last_cs
+				last_cs.end = Time.new
+				p last_cs
+				last_cs.save!
+			end
+			computer_stages << ComputerStage.new(
+				:start => Time.new(),
+				:person_id => person_id,
+				:stage => stage_name
+			)
+			save!
+		end
+	end
 end
