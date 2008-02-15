@@ -30,7 +30,7 @@ class ComputersControllerTest < Test::Unit::TestCase
 		assert_equal assigns['pl'].script, <<__EOF__
 PLANNER=1 TEST_NAME=cpu TESTTIME=1800 run_test cpu
 PLANNER=1 TEST_NAME=memory TEST_LOOPS=1 LOGTIME=120 run_test memory
-PLANNER=1 TEST_NAME=hdd-passthrough DISK_GROUP_SIZE=8 run_test hdd-passthrough
+PLANNER=1 TEST_NAME=hdd-passthrough DISK_GROUP_SIZE=8 MINIMAL_STRESS_TIME=600 STRESS_TREE=/usr/share/inquisitor/linux-2.6.22.5-31-stress.tar.gz JOBS=16 RAMDISK_SIZE=400 run_test hdd-passthrough
 PLANNER=1 TEST_NAME=hdd-array JOBS=16 TIMEOUT=3600 STRESS_TREE=/usr/share/inquisitor/linux-2.6.22.5-31-stress.tar.gz LOGTIME=120 run_test hdd-array
 PLANNER=1 TEST_NAME=net URL=3000/test_file.html TIMEOUT=30 MD5=ca658fd4159bc35698edf9a1cdd70876 run_test net
 PLANNER=1 TEST_NAME=fdd FLOPPY_SIZE=1440 run_test fdd

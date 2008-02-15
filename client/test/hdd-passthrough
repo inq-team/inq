@@ -7,8 +7,55 @@
 # VERSION=0.1
 # TAGS=hdd
 # VAR=DISK_GROUP_SIZE:int:8:Number of disks per group for testing
+# VAR=MINIMAL_STRESS_TIME:int:600:Minimal time of stress testing
+# VAR=STRESS_TREE:string:/usr/share/inquisitor/linux-2.6.22.5-31-stress.tar.gz:Tarball file containing stress test tree
+# VAR=RAMDISK_SIZE:int:400:Size of memory disk for stress tree building, MB
+# VAR=JOBS:int:16:Number of parallely running jobs during stress test tree compile
 
 . /usr/share/inquisitor/functions-test
+
+exit_handler()
+{
+	if [ -d "$MOUNTPOINT" ]; then
+		cd $HOME/
+		umount -f $MOUNTPOINT >/dev/null 2>&1 || true
+		rmdir $MOUNTPOINT
+	fi
+	[ -f "$SUCCESS_FLAG" ] && rm $SUCCESS_FLAG
+}
+
+SUCCESS_FLAG=`mktemp`
+MOUNTPOINT=`mktemp -d`
+
+stress_test()
+{
+	mount -t tmpfs -o size=${RAMDISK_SIZE}M tmpfs $MOUNTPOINT
+
+	cd $MOUNTPOINT
+	tar xzf "$STRESS_TREE" >$DEBUG_TTY 2>&1 || test_failed "Untaring error"
+
+	tree_name=`basename "$STRESS_TREE" .tar.gz`
+	cd $tree_name
+
+	# Is it linux source?
+	if echo "$tree_name" | grep '^linux' ; then
+		find . -print | xargs touch >/dev/null 2>&1 || true
+		touch .config include/linux/autoconf.h >/dev/null 2>&1 || true
+	fi
+
+	while true; do
+		[ -s "$SUCCESS_FLAG" ] && test_succeeded
+		make clean >$DEBUG_TTY 2>&1 &&
+		make -j $JOBS >$DEBUG_TTY 2>&1 || test_failed "Make error"
+	done
+}
+
+# TEMPORARY checking for correct number of JOBS
+TOTAL_MEMORY=$(( `grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024 ))
+[ "$TOTAL_MEMORY" -lt 512 ] && JOBS=4 || true
+
+stress_test &
+start_time=`date "+%s"`
 
 raid-wizard-clear
 $SHARE_DIR/hdd-badblocks.rb `get_harddrives_list`
@@ -19,4 +66,8 @@ while raid-wizard-passthrough $DISK_GROUP_SIZE $I; do
 	I=$(( $I + 1 ))
 done
 
-test_succeeded
+current_time=`date "+%s"`
+if [ $(( $current_time - $start_time )) -lt "$MINIMAL_STRESS_TIME" ]; then
+	sleep $(( $MINIMAL_STRESS_TIME - ($current_time - $start_time) ))
+fi
+echo "ok" > "$SUCCESS_FLAG"

@@ -27,18 +27,6 @@ exit_handler()
 
 MOUNTPOINT=`mktemp -d`
 
-detect_hdd_quantity()
-{
-	sleep 5
-	HDD_QUANTITY=`hal-find-by-property --key=storage.drive_type \
-		--string=disk | wc -l`
-	if [ "$HDD_QUANTITY" -eq 0 ]; then
-		test_succeeded "No HDDs found"
-		exit 0
-	fi
-	TIME_PER_ARRAY=$(( $TESTTIME / $HDD_QUANTITY ))
-}
-
 array_stress_check()
 {
 	local array=$1
@@ -57,9 +45,9 @@ array_stress_check()
 			clear_testing_environment
 			break
 		else
-			make clean >$DEBUG_TTY 2>&1 && \
-			make -j $JOBS fs >$DEBUG_TTY 2>&1 || \
-				test_failed "Make error"
+			make clean >$DEBUG_TTY 2>&1 &&
+			make -j $JOBS >$DEBUG_TTY 2>&1 ||
+			test_failed "Make error"
 		fi
 
 		if [ $(($TIME - $LAST_LOGTIME)) -gt $LOGTIME ]; then
@@ -91,22 +79,26 @@ prepare_array_for_test()
 
 # Making arrays
 if raid-wizard-optimal; then
-	detect_hdd_quantity
-	true
+	sleep 5
+	HDD_QUANTITY=`get_harddrives_list | wc -l`
+	if [ "$HDD_QUANTITY" -eq 0 ]; then
+		test_succeeded "No HDDs"
+		exit 0
+	fi
+	TIME_PER_ARRAY=$(( $TESTTIME / $HDD_QUANTITY ))
+
+	# TEMPORARY checking for correct number of JOBS
+	TOTAL_MEMORY=$(( `grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024 ))
+	[ "$TOTAL_MEMORY" -lt 512 ] && JOBS=4 || true
+
+	TOTAL_START=`date "+%s"`
+	test_promise_time $TESTTIME
+
+	for i in `get_harddrives_list`; do
+		array_stress_check $i
+	done
+
+	test_succeeded
 else
-	test_failed "No HDDs"
-	exit 1
+	test_succeeded "No HDDs"
 fi
-
-# TEMPORARY checking for correct number of JOBS
-TOTAL_MEMORY=$(( `grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024 ))
-[ "$TOTAL_MEMORY" -lt 512 ] && JOBS=4 || true
-
-TOTAL_START=`date "+%s"`
-test_promise_time $TESTTIME
-
-for i in `get_harddrives_list`; do
-	array_stress_check $i
-done
-
-test_succeeded
