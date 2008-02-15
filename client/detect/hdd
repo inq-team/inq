@@ -1,11 +1,48 @@
 #!/bin/sh
 
-einarc -l | cut -f1 | while read TYPE; do
-	einarc -t  "$TYPE" physical list | while read L; do
-		HDD_VENDOR=`echo "$L" | cut -f2 | cut -f1 -d' '`
-		HDD_MODEL=`echo "$L" | cut -f2 | cut -f2 -d' '`
-		HDD_SERIAL=`echo "$L" | cut -f4`
-		echo HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" ' - einarc' >> $HOME/debug.log
-		$SHARE_DIR/add-component HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL"
+HDD_TYPES='ATA Disk
+SCSI Disk'
+
+strip_vendor()
+{
+	if echo $HDD_MODEL | grep -qi "^$1"; then
+		HDD_VENDOR=$2
+		HDD_MODEL=`echo $HDD_MODEL | sed "s/^$1//i"`
+	fi
+}
+
+lshw_detect()
+{
+	echo "$HDD_TYPES" | while read TYPE; do
+		if INFO=`cat $HOME/lshw.log | grep -A8 "$TYPE"`; then
+			HDD_VENDOR=`echo "$INFO" | sed -n 's/ *vendor: //p'`
+			HDD_PRODUCT=`echo "$INFO" | sed -n 's/ *product: //p'`
+			HDD_SIZE=`echo "$INFO" | sed -n 's/ *size: //p'`
+			HDD_MODEL="$HDD_PRODUCT $HDD_SIZE"
+			HDD_SERIAL=`echo "$INFO" | sed -n 's/ *serial: //p'`
+			
+			strip_vendor 'Maxtor ' 'Maxtor'			
+			
+			if [ -n "$HDD_MODEL" ] && [ -z "`echo "$HDD_VENDOR" | grep -i 'Linux'`" ]; then
+				echo HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" ' - lshw' >> $HOME/debug.log
+				$SHARE_DIR/add-component HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL"
+			fi
+		fi
+	done;
+}
+
+einarc_detect()
+{
+	einarc -l | cut -f1 | while read TYPE; do
+		einarc -t  "$TYPE" physical list | while read L; do
+			HDD_VENDOR=`echo "$L" | cut -f2 | cut -f1 -d' '`
+			HDD_MODEL=`echo "$L" | cut -f2 | cut -f2 -d' '`
+			HDD_SERIAL=`echo "$L" | cut -f4`
+			echo HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" ' - einarc' >> $HOME/debug.log
+			$SHARE_DIR/add-component HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL"
+		done
 	done
-done
+}
+
+lshw_detect
+einarc_detect
