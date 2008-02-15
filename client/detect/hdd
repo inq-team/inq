@@ -21,8 +21,9 @@ lshw_detect()
 			HDD_MODEL="$HDD_PRODUCT $HDD_SIZE"
 			HDD_SERIAL=`echo "$INFO" | sed -n 's/ *serial: //p'`
 			
-			strip_vendor 'Maxtor ' 'Maxtor'			
-			
+			strip_vendor 'Maxtor ' 'Maxtor'
+			strip_vendor 'WDC ' 'Western Digitall'
+									
 			if [ -n "$HDD_MODEL" ] && [ -z "`echo "$HDD_VENDOR" | grep -i 'Linux'`" ]; then
 				echo HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" ' - lshw' >> $HOME/debug.log
 				$SHARE_DIR/add-component HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL"
