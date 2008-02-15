@@ -136,7 +136,7 @@ fi
 if echo "$TEST_IMAGE" | grep -q "^\/"; then
 	true #already absolute path
 else
-	TEST_IMAGE=${SHARE_DIR}${TEST_IMAGE}
+	TEST_IMAGE="${SHARE_DIR}/${TEST_IMAGE}"
 fi
 
 TESTED_QUANTITY=0

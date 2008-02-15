@@ -9,7 +9,7 @@
 # VAR=TESTTIME:int:3600:Total time of HDD array testing, sec
 # VAR=LOGTIME:int:120:Time between progress updates, sec
 # VAR=JOBS:int:16:Number of parallely running jobs during compile
-# VAR=STRESS_TREE:string:/usr/share/inquisitor/linux-2.6.22.5-31-stress.tar.gz:Tarball file containing stress test tree
+# VAR=STRESS_TREE:string:linux-2.6.22.5-31-stress.tar.gz:Tarball file containing stress test tree
 
 . /usr/share/inquisitor/functions-test
 
@@ -76,6 +76,13 @@ prepare_array_for_test()
 		touch .config include/linux/autoconf.h >/dev/null 2>&1 || true
 	fi
 }
+
+# Replace relative path with an absolute one
+if echo "$STRESS_TREE" | grep -q "^\/"; then
+	true #already absolute path
+else
+	STRESS_TREE="${SHARE_DIR}/${STRESS_TREE}"
+fi
 
 # Making arrays
 if raid-wizard-optimal; then

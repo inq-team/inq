@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh -ex
 # NAME=HDD passthrough disk
 # DESCRIPTION=HDD passthrough disks test
 # DESTROYS_HDD=true
@@ -8,7 +8,7 @@
 # TAGS=hdd
 # VAR=DISK_GROUP_SIZE:int:8:Number of disks per group for testing
 # VAR=MINIMAL_STRESS_TIME:int:600:Minimal time of stress testing
-# VAR=STRESS_TREE:string:/usr/share/inquisitor/linux-2.6.22.5-31-stress.tar.gz:Tarball file containing stress test tree
+# VAR=STRESS_TREE:string:linux-2.6.22.5-31-stress.tar.gz:Tarball file containing stress test tree
 # VAR=RAMDISK_SIZE:int:400:Size of memory disk for stress tree building, MB
 # VAR=JOBS:int:16:Number of parallely running jobs during stress test tree compile
 
@@ -54,17 +54,24 @@ stress_test()
 TOTAL_MEMORY=$(( `grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024 ))
 [ "$TOTAL_MEMORY" -lt 512 ] && JOBS=4 || true
 
+# Replace relative path with an absolute one
+if echo "$STRESS_TREE" | grep -q "^\/"; then
+	true #already absolute path
+else
+	STRESS_TREE="${SHARE_DIR}/${STRESS_TREE}"
+fi
+
 stress_test &
 start_time=`date "+%s"`
 
-raid-wizard-clear
-$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list`
+#raid-wizard-clear
+#$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list`
 
-I=0
-while raid-wizard-passthrough $DISK_GROUP_SIZE $I; do
-	$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list`
-	I=$(( $I + 1 ))
-done
+#I=0
+#while raid-wizard-passthrough $DISK_GROUP_SIZE $I; do
+#	$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list`
+#	I=$(( $I + 1 ))
+#done
 
 current_time=`date "+%s"`
 if [ $(( $current_time - $start_time )) -lt "$MINIMAL_STRESS_TIME" ]; then
