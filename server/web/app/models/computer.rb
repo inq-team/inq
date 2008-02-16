@@ -1,8 +1,6 @@
 class Computer < ActiveRecord::Base
 	belongs_to :model
 	belongs_to :customer
-	belongs_to :assembler, :class_name => 'Person', :foreign_key => 'assembler_id'
-	belongs_to :tester, :class_name => 'Person', :foreign_key => 'tester_id'
 	belongs_to :order
 	has_many :testings
 	has_many :computer_stages
