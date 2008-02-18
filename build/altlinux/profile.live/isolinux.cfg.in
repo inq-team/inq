@@ -1,11 +1,14 @@
 default live
 prompt 1
-timeout 3
+timeout 30
 gfxboot bootlogo
 display boot.msg
 implicit 1
 
 label live
+	kernel alt0/vmlinuz
+	append initrd=alt0/full.cz live fastboot automatic=method:cdrom stagename=altlinux/livecd showopts
+label serial
 	kernel alt0/vmlinuz
 	append initrd=alt0/full.cz live fastboot automatic=method:cdrom stagename=altlinux/livecd showopts console=tty0 console=ttyS0,115200n8
 label disk
