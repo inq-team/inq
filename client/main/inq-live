@@ -10,7 +10,7 @@ while true; do
 	        --title 'Choose an action' --menu '' \
 	        13 60 7 \
 	        'Non-destructive' 'Non-destructive tests loop' '' \
-		'Full' 'Full tests loop - WARNING! This test would overwrite all the data on your hard drive!' '' \
+		'Full' 'Full tests loop - WARNING!' 'WARNING! This test would overwrite all the data on your hard drive!' \
 		'Benchmark' 'Benchmark only test loop' '' \
 		'Detects' 'Detects only' '' \
 		'View' 'View test results' '' \
