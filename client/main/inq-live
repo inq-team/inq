@@ -8,9 +8,10 @@ while true; do
 	exec 3>&1
 	value=`$DIALOG --item-help --nocancel --backtitle 'Inquisitor Live' \
 	        --title 'Choose an action' --menu '' \
-	        12 60 6 \
+	        13 60 7 \
 	        'Non-destructive' 'Non-destructive tests loop' '' \
 		'Full' 'Full tests loop - WARNING! This test would overwrite all the data on your hard drive!' '' \
+		'Benchmark' 'Benchmark only test loop' '' \
 		'Detects' 'Detects only' '' \
 		'View' 'View test results' '' \
 		'Save' 'Save test results' 'Save test results to external storage media (USB flash, etc)' \
@@ -64,12 +65,36 @@ __EOF__
 			continue
 		fi
 		;;
+	Benchmark)
+		cat <<__EOF__ >$HOME/test_script
+PLANNER=1 TEST_NAME=whetstone LOOPS=20000 run_test whetstone
+PLANNER=1 TEST_NAME=dhrystone DURATION=30 run_test dhrystone
+PLANNER=1 TEST_NAME=hdparm AVG_SAMPLES=5 run_test hdparm
+PLANNER=1 TEST_NAME=bonnie run_test bonnie
+__EOF__
+		inquisitor
+		;;
 	Detects)
 		inq-detect
 		;;
 	View)
 		;;
 	Save)
+		exec 3>&1
+		RESULT=`$DIALOG --backtitle 'Inquisitor Live: Save test results' \
+			--title 'Save file as...' \
+			--clear \
+			--inputbox 'Save test results tarball (.tar.gz) as:' 8 51 '/media/disk/results.tar.gz' 2>&1 1>&3`
+		retval=$?
+		exec 3>&-
+		if [ "$retval" = 0 ]; then
+			clear
+			echo 'Saving test results...'
+			find $HOME -maxdepth 1 -type f | xargs tar -cvzf "$RESULT"
+			echo 'Saving complete'
+		else
+			continue
+		fi
 		;;
 	Reboot)
 		/sbin/reboot
