@@ -93,3 +93,4 @@ bonnie++
 ipmitool
 readcd
 schedutils
+syslog-ng
