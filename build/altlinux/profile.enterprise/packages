@@ -60,7 +60,6 @@ fglrx_glx
 fglrx-tools
 nvidia_glx_common
 nvidia_glx_1.0.9755
-cdrecord
 eject
 #quakeforge-glx
 less
@@ -92,5 +91,8 @@ memtester
 curl
 bonnie++
 ipmitool
-readcd
 schedutils
+
+cdrtools-control
+cdrecord-classic
+dvdrecord
