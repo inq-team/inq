@@ -4,14 +4,25 @@
 
 DIALOG=dialog
 
+test_descriptions()
+{
+	find $SHARE_DIR/test -maxdepth 1 -type f | while read L; do
+		if grep -q '^# NAME=' "$L"; then
+			echo "'`basename $L`'"
+			sed -ne '/^# NAME=/ { s/^# NAME=\(.*\)$/"\1"/; p }' <"$L"
+		fi
+	done
+}
+
 while true; do
 	exec 3>&1
 	value=`$DIALOG --item-help --nocancel --backtitle 'Inquisitor Live' \
 	        --title 'Choose an action' --menu '' \
-	        13 60 7 \
+	        14 60 8 \
 	        'Non-destructive' 'Non-destructive tests loop' '' \
 		'Full' 'Full tests loop - WARNING!' 'WARNING! This test would overwrite all the data on your hard drive!' \
 		'Benchmark' 'Benchmark only test loop' '' \
+		'Single' 'Run a single test' 'Choose and run a single test with fine-tuning of all parameters' \
 		'Detects' 'Detects only' '' \
 		'View' 'View test results' '' \
 		'Save' 'Save test results' 'Save test results to external storage media (USB flash, etc)' \
@@ -67,15 +78,27 @@ __EOF__
 		;;
 	Benchmark)
 		cat <<__EOF__ >$HOME/test_script
-PLANNER=1 TEST_NAME=dhrystone DURATION=30 run_test dhrystone
 PLANNER=1 TEST_NAME=whetstone LOOPS=20000 run_test whetstone
-PLANNER=1 TEST_NAME=stream run_test stream
+PLANNER=1 TEST_NAME=dhrystone DURATION=30 run_test dhrystone
 PLANNER=1 TEST_NAME=hdparm AVG_SAMPLES=5 run_test hdparm
 PLANNER=1 TEST_NAME=bonnie run_test bonnie
-PLANNER=1 TEST_NAME=bytemark run_test bytemark
-PLANNER=1 TEST_NAME=unixbench run_test unixbench
 __EOF__
 		inquisitor
+		;;
+	Single)
+		exec 3>&1
+		RESULT=`echo $(test_descriptions) | xargs $DIALOG --clear --backtitle 'Inquisitor Live: Run a single test' \
+			--title 'Choose a test' \
+			--menu '' 20 51 14 2>&1 1>&3`
+		retval=$?
+		exec 3>&-
+		if [ "$retval" = 0 ]; then
+			clear
+			echo "Running test '$RESULT'"
+			$SHARE_DIR/test/$RESULT
+		else
+			continue
+		fi
 		;;
 	Detects)
 		inq-detect
