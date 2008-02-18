@@ -2,11 +2,11 @@ PUBLISHER="GreyCat"
 ORIGIN="Inquisitor"
 SUITE="Live CD"
 CODENAME="ALT Linux base"
-VERSION="3.0"
+VERSION="@@INQ_VERSION@@"
 THEME=Compact
 KERNEL=kernel-image-std-smp
 LANGS="ru_RU"
-ARCH=x86_64
+ARCH=@@TARGET@@
 
 OUT=altlinux
 IDENT=live
