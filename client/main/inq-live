@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# A hack to stop "dialog" messing up the terminal when this script is
+# started from /etc/inittab
+export TERM=xterm
+
 . /etc/inquisitor/global
 
 DIALOG=dialog
