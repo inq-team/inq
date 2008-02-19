@@ -28,15 +28,17 @@ build-root:
 	if [ -d $(REPO_HUGE) ]; then echo "rpm file:$(REPO_HUGE) $(TARGET) huge" >>$(WORKDIR)/aptbox/etc/apt/sources.list; fi
 	spt-init-chroot -w $(WORKDIR)
 	spt-make-chroot -w $(WORKDIR)
-	if [ -d image ]; then cp -r image $(WORKDIR)/$(ROOTDIR); fi
+	if [ -d image ]; then cp -r image $(WORKDIR)/$(ROOTDIR)/img; fi
 	spt-run-scripts -w $(WORKDIR)
-	if [ -d image ]; then rm -rf $(WORKDIR)/$(ROOTDIR)/image; fi
+	if [ -d image ]; then rm -rf $(WORKDIR)/$(ROOTDIR)/img; fi
 
 build-huge:
 	genbasedir --create --topdir $(REPO_HUGE) $(TARGET) huge
 
 build-boot:
 	spt-boot-propagator -w $(WORKDIR)
+	spt-boot-gfxboot -w $(WORKDIR)
+#	spt-boot-splash -w $(WORKDIR)
 
 build-live:
 	spt-pack-squashfs -w $(WORKDIR)
