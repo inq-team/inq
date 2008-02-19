@@ -1,30 +1,27 @@
 <table class="order_staging">
-<tr>
-<th width="33%">Ordering</th>
-<th width="34%">Warehouse</th>
-<th width="33%">Ready for mfg</th>
-</tr>
-
-<tr>
-
-<% @staging.each_with_index { |ost, i| %>
-<td style="vertical-align: top<%= '; border-right: none' if i == 2 %>">
-<table width="100%">
-<%	ost.each { |o| %>
-<tr><td class="order_cell">
-<a href=<%= url_for(:controller => 'orders', :action => 'show', :id => o.id) %>>
-<div class="order_number"><%=h o.buyer_order_number %></div>
-<div class="title"><%=h truncate(o.title, 40) %></div>
-<div class="customer"><%=h truncate(o.customer, 40) %></div>
-<div class="timer"><%=h o.from_delay %>d</div>
-</a>
-</td>
-</tr>
-<%	} %>
-</table>
-</td>
-
-<% } %>
-
-</tr>
+	<tr>
+		<th width="33%">Ordering</th>
+		<th width="34%">Warehouse</th>
+		<th width="33%">Ready for mfg</th>
+	</tr>
+	<tr>
+		<% @staging.each_with_index { |ost, i| %>
+		<td style="vertical-align: top<%= '; border-right: none' if i == 2 %>">
+			<table width="100%">
+				<%	ost.each { |o| %>
+				<tr>
+					<td class="order_cell">
+						<a href=<%= url_for(:action => 'show', :controller => 'orders') %><%= o.id %>">
+							<div class="order_number"><%=h o.buyer_order_number %></div>
+							<div class="title"><%=h truncate(o.title, 40) %></div>
+							<div class="customer"><%=h truncate(o.customer, 40) %></div>
+							<div class="timer"><%=h o.from_delay %>d</div>
+						</a>
+					</td>
+				</tr>
+				<%	} %>
+			</table>
+		</td>
+		<% } %>
+	</tr>
 </table>
