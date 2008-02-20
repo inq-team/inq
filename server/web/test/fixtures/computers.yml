@@ -1,9 +1,12 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 one:
   id: 1
   model_id: 1
   profile_id: 1
 two:
   id: 2
+  model_id: 1
+  profile_id: 1
+three:
+  id: 3
   model_id: 1
   profile_id: 1
