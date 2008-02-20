@@ -73,7 +73,8 @@ watchdog()
 
 publish_my_ip()
 {
-	set_ip `subnet_for_dev eth0`
+	local dev=`dev_for_route_to_server`
+	set_ip `subnet_for_dev $dev`
 }
 
 benchmark_submit_float()
