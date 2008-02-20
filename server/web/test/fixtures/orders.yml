@@ -1,7 +1,6 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 one:
   id: 1
-  doc_no: MyString
+  title: Alpha sample order
 two:
   id: 2
-  doc_no: MyString
+  title: Beta model sample order
