@@ -527,6 +527,7 @@ class ComputersController < ApplicationController
 	
 	def prepare_computer_tabs
 		prepare_computer_and_testing
+		return if @sorted_testings.empty?
 		prev_testing = @sorted_testings[@testing_number - 1]
 
 		# Completed or running stages
