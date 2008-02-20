@@ -39,7 +39,7 @@ stress_test()
 
 	# Is it linux source?
 	if echo "$tree_name" | grep '^linux' ; then
-		find . -print | xargs touch >/dev/null 2>&1 || true
+		find . -print | xargs touch >$DEBUG_TTY 2>&1 || true
 		touch .config include/linux/autoconf.h >/dev/null 2>&1 || true
 	fi
 
@@ -64,14 +64,14 @@ fi
 stress_test &
 start_time=`date "+%s"`
 
-#raid-wizard-clear
-#$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list`
+raid-wizard-clear
+$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list`
 
-#I=0
-#while raid-wizard-passthrough $DISK_GROUP_SIZE $I; do
-#	$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list`
-#	I=$(( $I + 1 ))
-#done
+I=0
+while raid-wizard-passthrough $DISK_GROUP_SIZE $I; do
+	$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list`
+	I=$(( $I + 1 ))
+done
 
 current_time=`date "+%s"`
 if [ $(( $current_time - $start_time )) -lt "$MINIMAL_STRESS_TIME" ]; then
