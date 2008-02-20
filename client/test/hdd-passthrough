@@ -30,9 +30,10 @@ stress_test()
 {
 	mount -t tmpfs -o size=${RAMDISK_SIZE}M tmpfs $MOUNTPOINT
 
-	cd $MOUNTPOINT
-	tar xzf "$STRESS_TREE" >$DEBUG_TTY 2>&1 || test_failed "Untaring error"
+	cd "$SHARE_DIR"
+	tar xzf "$STRESS_TREE" -C "$MOUNTPOINT" >$DEBUG_TTY 2>&1 || test_failed "Untaring error"
 
+	cd $MOUNTPOINT
 	tree_name=`basename "$STRESS_TREE" .tar.gz`
 	cd $tree_name
 
@@ -52,13 +53,6 @@ stress_test()
 # TEMPORARY checking for correct number of JOBS
 TOTAL_MEMORY=$(( `grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024 ))
 [ "$TOTAL_MEMORY" -lt 512 ] && JOBS=4 || true
-
-# Replace relative path with an absolute one
-if echo "$STRESS_TREE" | grep -q "^\/"; then
-	true #already absolute path
-else
-	STRESS_TREE="${SHARE_DIR}/${STRESS_TREE}"
-fi
 
 START_TIME=`date "+%s"`
 stress_test &
