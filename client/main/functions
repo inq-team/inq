@@ -65,25 +65,11 @@ echo_running()
 	echo ']'
 }
 
-# Log that something succeeded
-success()
-{
-	echo -n $1
-	echo_success
-}
-
-# Log that something failed
-failure()
+fatal_failure()
 {
 	echo -n $1
 	echo_failure
-}
-
-# Log that something is skipped, because no support for it found
-skipped()
-{
-	echo -n $1
-	echo_skipped
+	exit 1
 }
 
 test_progress()
