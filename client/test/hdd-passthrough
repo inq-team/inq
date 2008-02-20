@@ -1,4 +1,4 @@
-#!/bin/sh -ex
+#!/bin/sh -e
 # NAME=HDD passthrough disk
 # DESCRIPTION=HDD passthrough disks test
 # DESTROYS_HDD=true
@@ -8,6 +8,7 @@
 # TAGS=hdd
 # VAR=DISK_GROUP_SIZE:int:8:Number of disks per group for testing
 # VAR=MINIMAL_STRESS_TIME:int:600:Minimal time of stress testing
+# VAR=MAXIMAL_STRESS_TIME:int:7200:Maximal time of stress testing
 # VAR=STRESS_TREE:string:linux-2.6.22.5-31-stress.tar.gz:Tarball file containing stress test tree
 # VAR=RAMDISK_SIZE:int:400:Size of memory disk for stress tree building, MB
 # VAR=JOBS:int:16:Number of parallely running jobs during stress test tree compile
@@ -21,10 +22,8 @@ exit_handler()
 		umount -f $MOUNTPOINT >/dev/null 2>&1 || true
 		rmdir $MOUNTPOINT
 	fi
-	[ -f "$SUCCESS_FLAG" ] && rm $SUCCESS_FLAG
 }
 
-SUCCESS_FLAG=`mktemp`
 MOUNTPOINT=`mktemp -d`
 
 stress_test()
@@ -44,7 +43,7 @@ stress_test()
 	fi
 
 	while true; do
-		[ -s "$SUCCESS_FLAG" ] && test_succeeded
+		[ $((`date "+%s"` - $START_TIME)) -gt "$MAXIMAL_STRESS_TIME" ] && break || true
 		make clean >$DEBUG_TTY 2>&1 &&
 		make -j $JOBS >$DEBUG_TTY 2>&1 || test_failed "Make error"
 	done
@@ -61,8 +60,8 @@ else
 	STRESS_TREE="${SHARE_DIR}/${STRESS_TREE}"
 fi
 
+START_TIME=`date "+%s"`
 stress_test &
-start_time=`date "+%s"`
 
 raid-wizard-clear
 $SHARE_DIR/hdd-badblocks.rb `get_harddrives_list`
@@ -74,7 +73,9 @@ while raid-wizard-passthrough $DISK_GROUP_SIZE $I; do
 done
 
 current_time=`date "+%s"`
-if [ $(( $current_time - $start_time )) -lt "$MINIMAL_STRESS_TIME" ]; then
-	sleep $(( $MINIMAL_STRESS_TIME - ($current_time - $start_time) ))
+if [ $(( $current_time - $START_TIME )) -lt "$MINIMAL_STRESS_TIME" ]; then
+	sleep $(( $MINIMAL_STRESS_TIME - ($current_time - $START_TIME) ))
+else
+	true
 fi
-echo "ok" > "$SUCCESS_FLAG"
+test_succeeded
