@@ -1,0 +1,4 @@
+<noscript>
+Hardware placement has been marked as <b><%= @confirmation ? 'ok' : 'wrong' %></b>.
+</noscript>
+<%= javascript_tag('window.opener.location.reload(true); window.close();') %>

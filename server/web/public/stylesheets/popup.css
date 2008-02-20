@@ -15,7 +15,8 @@ table.input_form {
 .input_form td, .input_form th {
 	text-align: left;
 	height: 2.5em;
-	text-indent: 0.5em;
+/*	text-indent: 0.5em;*/
+	padding-left: 0.5em;
 }
 
 .title {
@@ -43,6 +44,11 @@ table.input_form {
 
 .input_form button {
 	width: 7em; 
+}
+
+.note {
+	font-style: oblique;
+	font-size: 0.85em;
 }
 
 

@@ -42,13 +42,16 @@ td#info_tabs table tr td#info_tab_audit a{
 	
 }
 
-#hint_type_audit {
+.hint {
 	background-color: #AACFBE ! important;
+}
+
+.hint .hint_border {
+	text-align: center;
 }
 
 #hint_type_audit .hint_border {
 	background-image: url('/images/eyes.png');
-	text-align: center;
 }
 
 #components th {
@@ -83,10 +86,6 @@ td#info_tabs table tr td#info_tab_audit a{
         background-color: #f0f4f0;
 }
 
-#hint_type_e-passport {
-        background-color: #AACFBE ! important;
-}
-
 #spinner {
 	width: 100%;
 	text-align: center;
@@ -117,3 +116,20 @@ td#info_tabs table tr td#info_tab_audit a{
 .dev_span_evil {
 	background-color: #ff4e4e;
 }
+
+#confirmation_comment {
+	display: block;
+	text-align: justify;
+	font-weight: normal;
+	font-style: normal;
+	font-family: monospace;
+	border: 1px dotted #bbb;
+	width: 70%;
+	margin: 1em;
+	margin-left: 150px;
+	padding: 0.3em;
+	background: white; 
+	min-height: 3em;
+}
+
+	

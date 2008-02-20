@@ -237,6 +237,9 @@ tr.testing_stage_hanging .testing_stage_name {
 	font-weight: bold;
 }
 
+.datetime {
+}
+
 .hint {
 	color: #1A1406;
 	background: #F3D079;
@@ -254,6 +257,10 @@ tr.testing_stage_hanging .testing_stage_name {
 
 #hint_type_info .hint_border {
 	background-image: url('/images/info.png');
+}
+
+#hint_type_okay .hint_border {
+	background-image: url('/images/okay.png');
 }
 
 #hint_type_confirm .hint_border {

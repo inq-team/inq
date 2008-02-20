@@ -21,4 +21,14 @@ def format_delta(after, before)
 	delta % 3600 / 60 > 0 ? sprintf("%02d:%02d", delta / 3600, delta % 3600 / 60) : "#{ delta % 3600 % 60 } sec"
 end
 
+def datetime_tag(date)
+	content_tag('span', format_date(date), :class => 'datetime')
+end
+
+def person_tag(person)
+	content_tag('span', person && person.name || 'John Doe', :class => person && person.name ? 'person' : 'bad_username')
+end
+
+
+
 end

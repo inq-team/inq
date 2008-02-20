@@ -11,6 +11,8 @@
 	<%= stylesheet_link_tag 'inq' %>
 	<%= stylesheet_link_tag 'popup' %>
 	<%= stylesheet_link_tag('popup_' + controller.controller_name()) %>
+	<%= stylesheet_link_tag("popup_#{ controller.controller_name() }_#{ controller.action_name }") %>
+
 </head>
 <body>
 	<div id="content_border"><div id="content">

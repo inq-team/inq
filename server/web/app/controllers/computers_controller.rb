@@ -120,21 +120,52 @@ class ComputersController < ApplicationController
 		render(:layout => 'computer_tabs')
 	end
 
+	def audit_popup
+		prepare_computer_and_testing
+		@confirmation = params[:confirmation].to_i
+		@comment = params[:comment] || ''
+		render(:layout => 'popup')
+	end
+
+	def audit_confirmation		
+		prepare_computer_and_testing
+		@confirmation = params[:confirmation].to_i 
+		@comment = params[:comment] || ''
+		@audit = @testing.audit
+		if @audit.confirmation 
+			flash[:error] = "Testing confirmed already!" 		
+			render(:layout => 'popup', :action => 'audit_popup')
+			return
+		end
+		@audit.confirmation = @confirmation
+		@audit.confirmation_date = Time.new
+		@audit.comment = @comment
+		#TODO: add
+		# @audit.person = ... ?
+		unless @audit.save
+			flash[:error] = @audit.errors
+			render(:layout => 'popup', :action =>  'audit_popup')
+			return
+		end
+		render(:layout => 'popup')
+	end
+
+
 	def audit
-                @computer = Computer.find(params[:id])
-                @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
-                @testing_number = params[:testing] ? params[:testing].to_i() : @sorted_testings.size - 1
-                @testing = @sorted_testings[@testing_number]
-		render(:layout => 'computer_audit')
+		prepare_computer_and_testing
+		if cached = @testing.audit
+			@audit = cached
+			@comparison = load_comparison(@audit.comparison)
+			render(:layout => 'computer_audit', :action => 'audit_cached')
+		else
+			render(:layout => 'computer_audit')
+		end
 	end
 
 	def audit_comparison
-                @computer = Computer.find(params[:id])
-                @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
-                @testing_number = params[:testing] ? params[:testing].to_i() : @sorted_testings.size - 1
-                @testing = @sorted_testings[@testing_number]
+		prepare_computer_and_testing
                 @testing ? @components = @testing.components : @components = []
-		@components.each { |c| c.model.group.name = MyKit::Keywords::GROUP_TRANS[c.model.group.name]  if c.model.group and MyKit::Keywords::GROUP_TRANS[c.model.group.name] }
+		@components.each { |c| c.model.group.name = MyKit::Keywords::GROUP_TRANS[c.model.group.name] if c.model.group and MyKit::Keywords::GROUP_TRANS[c.model.group.name] }
 		lines = @computer.order.order_lines
 		unless lines.blank?
 			min = lines.inject(lines.first.qty) { |i, j| i > j.qty ? j.qty : i } 
@@ -142,8 +173,12 @@ class ComputersController < ApplicationController
 		end
                 @items = lines.inject({}) { |h, l| h.merge({ l => MyKit::Parser.parse(l.name) }) } 
 		@comparison = MyKit::Comparison.compare(@items, @components)
+		@audit = Audit.new
+		@audit.comparison = dump_comparison(@comparison)
+		@audit.save!
+		@testing.audit = @audit
+		@testing.save!
 	end
-
 	
 	def sticker
 		prepare_computer_tabs
@@ -491,14 +526,7 @@ class ComputersController < ApplicationController
 	}
 	
 	def prepare_computer_tabs
-		@computer = Computer.find(params[:id])
-                @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
-		if @sorted_testings.empty?
-			@testing_number = 0
-			return
-		end
-		@testing_number = params[:testing] ? params[:testing].to_i() : @sorted_testings.size - 1
-		@testing = @sorted_testings[@testing_number]
+		prepare_computer_and_testing
 		prev_testing = @sorted_testings[@testing_number - 1]
 
 		# Completed or running stages
@@ -520,5 +548,26 @@ class ComputersController < ApplicationController
 				}
 			}
 		end
+	end
+
+	def prepare_computer_and_testing
+		@computer = Computer.find(params[:id])
+                @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
+		if @sorted_testings.empty?
+			@testing_number = 0
+			return
+		end
+		@testing_number = params[:testing] ? params[:testing].to_i() : @sorted_testings.size - 1
+		@testing = @sorted_testings[@testing_number]
+	end
+
+
+	def dump_comparison(comparison)
+		Marshal.dump(comparison)
+	end
+
+
+	def load_comparison(str)
+		Marshal.load(str)
 	end
 end

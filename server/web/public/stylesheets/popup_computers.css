@@ -1,0 +1,14 @@
+#content_border {
+	background-color: #AACFBE;
+}
+
+.title {
+	color: #002514;
+	text-indent: 50px ! important;
+	background: url('/images/eyes.png') 0.5em 50% no-repeat;
+	min-height: 36px;
+}
+
+.input_form td, .input_form th {
+	border-color: #559F7D ! important;
+}

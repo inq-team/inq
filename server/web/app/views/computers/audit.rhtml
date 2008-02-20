@@ -12,13 +12,11 @@
 
 
 <% place_hint('audit') do %>
-<% form_tag(:action => 'audit', :id => @computer.id, :testing => @testing_number) do %>
 	<table><tr><td>Confirm detected hardware placement: <br /><br />
-		<input disabled style="width: 6em" id="submit_wrong" type="submit" value="Wrong">
-		<input disabled style="width: 6em" id="submit_ok" type="submit" value="Ok">
+                        <input type='button' disabled style="width: 6em" id="submit_wrong" value="Wrong" onClick="var z = window.open('<%= url_for(:action =>'audit_popup', :id => @computer.id, :testing => @testing_number, :confirmation => '0' ) %>', 'audit_popup', 'status=no, location=yes, menubar=no, toolbar=no, personalbar=no, directories=no, dependent=yes, width=480, height=360'); if(window.focus) { z.focus(); }">
+                        <input type='button' disabled style="width: 6em" id="submit_ok" type="submit" value="Ok" onClick="var z = window.open('<%= url_for(:action =>'audit_popup', :id => @computer.id, :testing => @testing_number, :confirmation => '1' ) %>', 'audit_popup', 'status=no, location=yes, menubar=no, toolbar=no, personalbar=no, directories=no, dependent=yes, width=480, height=360'); if(window.focus) { z.focus(); }" >
 	</td></tr>
 	</table>
-<% end %>
 <% end %>
 
 <%= javascript_tag(<<_EOF_
