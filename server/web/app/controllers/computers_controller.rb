@@ -540,7 +540,7 @@ class ComputersController < ApplicationController
 
 		# Planned stages
 		if @computer.profile
-			pl = Planner.new(@computer.profile.xml, @testing.testing_stages, prev_testing.testing_stages, @testing.components, prev_testing.components)
+			pl = Planner.new(@computer.profile.xml, @testing.testing_stages, prev_testing.testing_stages, @testing.components, prev_testing.components, true)
 			pl.plan.each { |stage|
 				@stages << {
 					:id => stage.id,

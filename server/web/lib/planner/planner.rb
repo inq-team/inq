@@ -34,15 +34,7 @@ class Planner
 		@profile.root.each_element { |t|
 			case t.name
 			when 'test'
-				id = t.attribute('id').to_s
-				type = t.attribute('type').to_s
-				task = Task.new(id, type)
-				t.each_element { |v|
-					if v.name == 'var'
-						task.var[v.attribute('name').to_s] = v.text
-					end
-				}
-				@plan << task
+				add_test(t) if @stages_now.select { |st| st.stage == t.attribute('id').to_s }.empty?
 			when 'submit-additional-components'
 				@plan << 'submit-additional-components'
 			else
@@ -66,5 +58,20 @@ class Planner
 			end
 		}
 		return res
+	end
+
+	private
+	##
+	# Adds proper test to test plan from XML node 't' from profile
+	def add_test(t)
+		id = t.attribute('id').to_s
+		type = t.attribute('type').to_s
+		task = Task.new(id, type)
+		t.each_element { |v|
+			if v.name == 'var'
+				task.var[v.attribute('name').to_s] = v.text
+			end
+		}
+		@plan << task
 	end
 end
