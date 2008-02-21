@@ -5,7 +5,7 @@ require 'computers_controller'
 class ComputersController; def rescue_action(e) raise e end; end
 
 class ComputersControllerTest < Test::Unit::TestCase
-	fixtures :computers, :profiles, :models, :testings, :testing_stages
+	fixtures :computers, :profiles, :models, :testings, :testing_stages, :components, :component_models, :component_groups
 
 	def setup
 		@controller = ComputersController.new
