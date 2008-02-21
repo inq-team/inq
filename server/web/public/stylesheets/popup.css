@@ -46,12 +46,6 @@ table.input_form {
 	width: 7em; 
 }
 
-.note {
-	font-style: oblique;
-	font-size: 0.85em;
-}
-
-
 div.hint {
 	margin: 0px ! important;
 	border: 1px dotted;

@@ -7,7 +7,7 @@ class ComputersController < ApplicationController
 #	verify :method => :post, :only => [ :destroy, :create, :update ],
 #	       :redirect_to => { :action => :archive }
 
-	layout nil, :only => 'audit_comparison'
+	layout nil, :only => ['audit_comparison', 'check_audit_js']
 
 	@@default_config = Shelves::Config.new(DEFAULT_SHELVES_CONFIG)
 
@@ -124,6 +124,7 @@ class ComputersController < ApplicationController
 		prepare_computer_and_testing
 		@confirmation = params[:confirmation].to_i
 		@comment = params[:comment] || ''
+		@close = params[:close]
 		render(:layout => 'popup')
 	end
 
@@ -131,6 +132,7 @@ class ComputersController < ApplicationController
 		prepare_computer_and_testing
 		@confirmation = params[:confirmation].to_i 
 		@comment = params[:comment] || ''
+		@close = params[:close]
 		@audit = @testing.audit
 		if @audit.confirmation 
 			flash[:error] = "Testing confirmed already!" 		
@@ -150,9 +152,35 @@ class ComputersController < ApplicationController
 		render(:layout => 'popup')
 	end
 
+	def check_audit
+		prepare_computer_and_testing
+		check = @testing && @testing.audit && @testing.audit.confirmation
+                respond_to() do |format|
+                        format.html { 
+				if check
+					redirect_to(:action => 'audit', :id => @computer, :testing => @testing_number) 
+				else
+					head :status => 404
+				end
+			}
+                        format.xml { 
+				if check
+					render(:xml => @testing.audit.to_xml()) 
+				else
+					head :status => 404
+				end
+			}
+			format.js { 
+				render :update do |page|
+					page << (check ? 'window.close();' : ';')
+				end
+			}
+                end
+	end
 
 	def audit
 		prepare_computer_and_testing
+		@close = params[:close]
 		if cached = @testing.audit
 			@audit = cached
 			@comparison = load_comparison(@audit.comparison)

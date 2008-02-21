@@ -69,16 +69,31 @@
 	Testing confirmed as <% @audit.confirmation == 1 ? 'ok' : 'wrong' %> by <%= person_tag(@audit.person) %> on <%= datetime_tag(@audit.confirmation_date) %> with the following comment:<br/>
 	<cite id='confirmation_comment'><%= escape_once(@audit.comment) %></cite>
 <% else %>
-		<table><tr><td>Confirm detected hardware placement: <br /><br />
-			<input type='button' style="width: 6em" id="submit_wrong" value="Wrong" onClick="var z = window.open('<%= url_for(:action =>'audit_popup', :id => @computer.id, :testing => @testing_number, :confirmation => '0' ) %>', 'audit_popup', 'status=no, location=yes, menubar=no, toolbar=no, personalbar=no, directories=no, dependent=yes, width=480, height=360'); if(window.focus) { z.focus(); }">
-			<input type='button' style="width: 6em" id="submit_ok" type="submit" value="Ok" onClick="var z = window.open('<%= url_for(:action =>'audit_popup', :id => @computer.id, :testing => @testing_number, :confirmation => '1' ) %>', 'audit_popup', 'status=no, location=yes, menubar=no, toolbar=no, personalbar=no, directories=no, dependent=yes, width=480, height=360'); if(window.focus) { z.focus(); }" >
+		<table><tr><td>Confirm detected hardware placement: <br />
+		<br />
+			<input type='button' style="width: 6em" id="submit_wrong" value="Wrong" onClick="var z = window.open('<%= url_for(:action =>'audit_popup', :id => @computer.id, :testing => @testing_number, :confirmation => '0', :close => @close ) %>', 'audit_popup', 'status=no, location=yes, menubar=no, toolbar=no, personalbar=no, directories=no, dependent=yes, width=480, height=360'); if(window.focus) { z.focus(); }" onKeyUp="if(event.keyCode == 39) { $('submit_ok').focus(); }" >
+			<input type='button' style="width: 6em" id="submit_ok" type="submit" value="Ok" onClick="var z = window.open('<%= url_for(:action =>'audit_popup', :id => @computer.id, :testing => @testing_number, :confirmation => '1', :close => @close ) %>', 'audit_popup', 'status=no, location=yes, menubar=no, toolbar=no, personalbar=no, directories=no, dependent=yes, width=480, height=360'); if(window.focus) { z.focus(); }" onKeyUp="if(event.keyCode == 37) { $('submit_wrong').focus(); }" >
+		<br /><br />
+		<span class='note'>(use <%= image_tag('key_left.png', :style => 'position: relative; top: 4px;', :alt => 'left cursor key', :name => 'left cursor key') %> and <%= image_tag('key_right.png', :style => 'position: relative; top: 4px;', :alt => 'right cursor key', :name => 'right cursor key') %> to select desired button, <%= image_tag('key_enter.png', :style => 'position: relative; top: 4px;', :alt => 'enter key', :name => 'enter key') %> to press it)</span>
 		</td></tr>
 		</table>
 <% end %>
 <% end %>
 
+<% if @close %>
 <%= javascript_tag(<<_EOF_
         Event.observe(window, 'load', function () {
+		new Ajax.PeriodicalUpdater('close_placeholder', '#{ url_for :action => 'check_audit', :id => @computer.id, :testing => @testing_number, :format => 'js' }', { frequency: 5 });
+        });
+_EOF_
+) %> <div id='close_placeholder' />
+<% end %>
+
+
+
+<%= javascript_tag(<<_EOF_
+        Event.observe(window, 'load', function () {
+		$('submit_wrong').focus();
                 Rico.Corner.round($$('div.hint').first());
         });
 _EOF_

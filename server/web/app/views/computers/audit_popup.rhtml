@@ -21,21 +21,50 @@
 <tr><td class="dummy">
 &nbsp;
 </td><td class="button">
-<%= submit_tag('Ok', :onclick => "if($('comment').value.match('^[ \\t\\r\\n]*$') && $('confirmation_wrong').checked) { alert('For wrong component placement the comment field must be filled out with error description!'); var z = $('comment') ; z.focus() ; z.select() ; return false ; } return confirm('Do you approve?');") %>
+<%= submit_tag('Ok', :onclick => " stop_observing_keyboard() ; if($('comment').value.match('^[ \\t\\r\\n]*$') && $('confirmation_wrong').checked) { alert('For wrong component placement the comment field must be filled out with error description!'); $('comment').focus() ; observe_keyboard() ; return false ; } if(!confirm('Do you approve?')) { $('comment').focus() ; setTimeout('observe_keyboard();', 500) ; return false ;  } else { return true;  } ", :id => 'ok_button' ) %>
 </td><td class="button">
 <button type="button" onClick="window.close();">Cancel</button>
 </td></tr>
+<tr><td class="button" colspan=3>
+<span class='note'>(use <b>Ctrl + <%= image_tag('key_enter.png', :style => 'position: relative; top: 4px;', :alt => 'Enter', :name => 'enter key') %></b> to submit the form, or <b>Esc</b> to cancel.)</span> 
+</td></tr>
 </table>
+
 <% end %>
 
-<% unless @confirmation %>
+
 <%= javascript_tag(<<_EOF_
+	function process_key(event) {
+		if(event.keyCode == 27) {
+			window.close();
+		} else if(event.keyCode == 13 && event.ctrlKey) {
+			$('ok_button').click();
+		}
+	}
+
+	function observe_keyboard() {
+		Event.observe(window, 'keyup', process_key);
+	}
+
+	function stop_observing_keyboard() {
+		Event.stopObserving(window, 'keyup', process_key);
+	}
+
         Event.observe(window, 'load', function () {
 		var z = $("comment");
 		z.focus();
-		z.select();	
+		observe_keyboard();
         });	
 _EOF_
 ) %>
 
+
+<% if @close %>
+<%= javascript_tag(<<_EOF_
+        Event.observe(window, 'load', function () {
+                new Ajax.PeriodicalUpdater('close_placeholder', '#{ url_for :action => 'check_audit', :id => @computer.id, :testing => @testing_number, :format => 'js' }', { frequency: 5 });
+        });
+_EOF_
+) %> <div id='close_placeholder' />
 <% end %>
+

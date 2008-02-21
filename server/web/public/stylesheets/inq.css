@@ -240,6 +240,11 @@ tr.testing_stage_hanging .testing_stage_name {
 .datetime {
 }
 
+.note {
+        font-style: oblique;
+        font-size: 0.85em;
+}
+
 .hint {
 	color: #1A1406;
 	background: #F3D079;
@@ -273,4 +278,8 @@ tr.testing_stage_hanging .testing_stage_name {
 
 input[type=submit] {
 	width: 7em;
+}
+
+#close_placeholder {
+	visibility: hidden;
 }
