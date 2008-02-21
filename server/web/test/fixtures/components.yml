@@ -1,14 +1,14 @@
 1:
   id: 1
-  testing_id: 1
+  testing_id: 2
   component_model_id: 1
 2:
   id: 2
-  testing_id: 1
+  testing_id: 2
   component_model_id: 3
   serial: SERIAL2
 3:
   id: 3
-  testing_id: 1
+  testing_id: 2
   component_model_id: 3
   serial: SERIAL3
