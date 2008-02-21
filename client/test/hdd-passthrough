@@ -26,7 +26,7 @@ exit_handler()
 }
 
 MOUNTPOINT=`mktemp -d`
-ERROR_FILE=`mktemp`; export ERROR_FILE
+export ERROR_FILE=`mktemp`
 
 badblocks_test()
 {
@@ -65,8 +65,7 @@ stress_test()
 		touch .config include/linux/autoconf.h >/dev/null 2>&1 || true
 	fi
 	
-	while true; do
-		[ -d "/proc/$BADBLOCKS_PID" ] || break
+	while [ -d "/proc/$BADBLOCKS_PID" ]; do
 		make clean >$DEBUG_TTY 2>&1 &&
 		make -j $JOBS >$DEBUG_TTY 2>&1 ||
 		echo "Stress test" > $ERROR_FILE

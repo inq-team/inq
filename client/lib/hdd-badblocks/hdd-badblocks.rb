@@ -135,10 +135,10 @@ class DiscTest
 				if ind then
 					failed_hdd = @devices[ind]
 					#$comm.test_failed "Failed HDD: #{failed_hdd}"
-					system "echo \"Failed HDD: #{failed_hdd}\" > #{ENV['ERROR_FILE']}" 
+					File.open(ENV['ERROR_FILE'], 'w') { |f| f.puts "Failed HDD: #{failed_hdd}" }
 					s[1].exited? ? (status = s[1].exitstatus) : status=1
 				else
-					system "echo \"Bad HDD\" > #{ENV['ERROR_FILE']}" 
+					File.open(ENV['ERROR_FILE'], 'w') { |f| f.puts "Bad HDD" }
 				end
 			else
 				status = 0
