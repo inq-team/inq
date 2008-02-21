@@ -37,7 +37,7 @@ MOVE_TO_COL()
 	# "tput hpa N" moves to col N; on dumb terms does nothing.
 	local pos=$(($COLUMNS - $RES_OFFSET))
 	[ $pos -le 0 ] ||
-		tput -- hpa $(($COLUMNS - $RES_OFFSET)) # Horizontal Position Absolute.
+		tput -- hpa $(($COLUMNS - $RES_OFFSET)) || true # Horizontal Position Absolute.
 }
 
 # Enumerate colors
@@ -49,7 +49,7 @@ SETCOLOR_SUCCESS()
 	{
 		echo bold
 		echo setaf $GREEN
-	} |tput -S
+	} |tput -S || true
 }
 
 # Set 'failure' color (currently: red)
@@ -58,7 +58,7 @@ SETCOLOR_FAILURE()
 	{
 		echo bold
 		echo setaf $RED
-	} |tput -S
+	} |tput -S || true
 }
 
 # Set 'warning' color (currently: yellow)
@@ -67,7 +67,7 @@ SETCOLOR_WARNING()
 	{
 		echo bold
 		echo setaf $YELLOW
-	} |tput -S
+	} |tput -S || true
 }
 
 # Set 'info' color (currently: cyan)
@@ -76,7 +76,7 @@ SETCOLOR_INFO()
 	{
 		echo bold
 		echo setaf $CYAN
-	} |tput -S
+	} |tput -S || true
 }
 
 # Set 'banner' color (currently: blue on yellow)
@@ -85,7 +85,7 @@ SETCOLOR_BANNER()
 	{
 		echo setaf $BLUE
 		echo setab $YELLOW
-	} |tput -S
+	} |tput -S || true
 }
 
 # Terminal sequence to reset to the default color.
@@ -94,5 +94,5 @@ SETCOLOR_NORMAL()
 	{
 		echo op; # set Original color Pair.
 		echo sgr0; # turn off all special graphics mode (bold in our case).
-	} |tput -S
+	} |tput -S || true
 }
