@@ -93,7 +93,10 @@ _EOF_
 
 <%= javascript_tag(<<_EOF_
         Event.observe(window, 'load', function () {
-		$('submit_wrong').focus();
+		var z = $('submit_wrong');
+		if(z != null) {
+			z.focus();
+		}
                 Rico.Corner.round($$('div.hint').first());
         });
 _EOF_
