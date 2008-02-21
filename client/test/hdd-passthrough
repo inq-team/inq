@@ -5,10 +5,9 @@
 # IS_INTERACTIVE=false
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
-# TAGS=hdd
+# TAGS=hdd,stress
 # VAR=DISK_GROUP_SIZE:int:8:Number of disks per group for testing
 # VAR=MINIMAL_STRESS_TIME:int:600:Minimal time of stress testing
-# VAR=MAXIMAL_STRESS_TIME:int:7200:Maximal time of stress testing
 # VAR=STRESS_TREE:string:linux-2.6.22.5-31-stress.tar.gz:Tarball file containing stress test tree
 # VAR=RAMDISK_SIZE:int:400:Size of memory disk for stress tree building, MB
 # VAR=JOBS:int:16:Number of parallely running jobs during stress test tree compile
@@ -17,36 +16,60 @@
 
 exit_handler()
 {
+	sleep 5
 	if [ -d "$MOUNTPOINT" ]; then
 		cd $HOME/
 		umount -f $MOUNTPOINT >/dev/null 2>&1 || true
 		rmdir $MOUNTPOINT
 	fi
+	[ -f "$ERROR_FILE" ] && rm $ERROR_FILE
 }
 
 MOUNTPOINT=`mktemp -d`
+ERROR_FILE=`mktemp`; export ERROR_FILE
+
+badblocks_test()
+{
+	raid-wizard-clear
+	$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list`
+
+	I=0
+	while raid-wizard-passthrough $DISK_GROUP_SIZE $I; do
+		$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list`
+		I=$(( $I + 1 ))
+	done
+
+	current_time=`date "+%s"`
+	if [ $(( $current_time - $START_TIME )) -lt "$MINIMAL_STRESS_TIME" ]; then
+		sleep $(( $MINIMAL_STRESS_TIME - ($current_time - $START_TIME) ))
+	else
+		true
+	fi
+}
 
 stress_test()
 {
 	mount -t tmpfs -o size=${RAMDISK_SIZE}M tmpfs $MOUNTPOINT
-
+	
 	cd "$SHARE_DIR"
-	tar xzf "$STRESS_TREE" -C "$MOUNTPOINT" >$DEBUG_TTY 2>&1 || test_failed "Untaring error"
-
+	tar xzf "$STRESS_TREE" -C "$MOUNTPOINT" >$DEBUG_TTY 2>&1 || 
+		echo "Untaring" > $ERROR_FILE
+	
 	cd $MOUNTPOINT
 	tree_name=`basename "$STRESS_TREE" .tar.gz`
 	cd $tree_name
-
+	
 	# Is it linux source?
 	if echo "$tree_name" | grep '^linux' ; then
 		find . -print | xargs touch >$DEBUG_TTY 2>&1 || true
 		touch .config include/linux/autoconf.h >/dev/null 2>&1 || true
 	fi
-
+	
 	while true; do
-		[ $((`date "+%s"` - $START_TIME)) -gt "$MAXIMAL_STRESS_TIME" ] && break || true
+		[ -d "/proc/$BADBLOCKS_PID" ] || break
 		make clean >$DEBUG_TTY 2>&1 &&
-		make -j $JOBS >$DEBUG_TTY 2>&1 || test_failed "Make error"
+		make -j $JOBS >$DEBUG_TTY 2>&1 ||
+		echo "Stress test" > $ERROR_FILE
 	done
 }
 
@@ -55,21 +78,10 @@ TOTAL_MEMORY=$(( `grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024 ))
 [ "$TOTAL_MEMORY" -lt 512 ] && JOBS=4 || true
 
 START_TIME=`date "+%s"`
+
+badblocks_test &
+BADBLOCKS_PID=$!
 stress_test &
 
-raid-wizard-clear
-$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list`
-
-I=0
-while raid-wizard-passthrough $DISK_GROUP_SIZE $I; do
-	$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list`
-	I=$(( $I + 1 ))
-done
-
-current_time=`date "+%s"`
-if [ $(( $current_time - $START_TIME )) -lt "$MINIMAL_STRESS_TIME" ]; then
-	sleep $(( $MINIMAL_STRESS_TIME - ($current_time - $START_TIME) ))
-else
-	true
-fi
-test_succeeded
+wait || true
+[ -s "$ERROR_FILE" ] && test_failed "`sed -n '1p' <$ERROR_FILE`" || test_succeeded

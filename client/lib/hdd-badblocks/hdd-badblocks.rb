@@ -134,8 +134,11 @@ class DiscTest
 				ind = @process.index(s[0])
 				if ind then
 					failed_hdd = @devices[ind]
-					$comm.test_failed "Failed HDD: #{failed_hdd}"
+					#$comm.test_failed "Failed HDD: #{failed_hdd}"
+					system "echo \"Failed HDD: #{failed_hdd}\" > #{ENV['ERROR_FILE']}" 
 					s[1].exited? ? (status = s[1].exitstatus) : status=1
+				else
+					system "echo \"Bad HDD\" > #{ENV['ERROR_FILE']}" 
 				end
 			else
 				status = 0
