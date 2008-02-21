@@ -50,4 +50,43 @@ class ComputersControllerTest < Test::Unit::TestCase
 		assert_response :success
 		assert_equal %w(memory hdd-passthrough hdd-array net fdd odd_read), res
 	end
+
+	def test_submit_components_1
+		post :submit_components, :id => 2, :list => "
+<?xml version='1.0'?>
+<list xmlns='http://www.w3.org/1999/xhtml'>
+  <component>
+    <type>NIC</type>
+    <vendor>nVidia</vendor>
+    <model>MCP55 Ethernet</model>
+    <serial>00:a0:d1:e3:13:b6</serial>
+  </component>
+</list>"
+		assert_equal 2, Computer.find(2).testings.size
+	end
+
+	def test_submit_components_2
+		post :submit_components, :id => 2, :list => "
+<?xml version='1.0'?>
+<list xmlns='http://www.w3.org/1999/xhtml'>
+  <component>
+    <type>CPU</type>
+    <vendor>AMD</vendor>
+    <model>Athlon</model>
+  </component>
+  <component>
+    <type>HDD</type>
+    <vendor>Seagate</vendor>
+    <model>Barracuda 160GB</model>
+    <serial>SERIAL2</serial>
+  </component>
+  <component>
+    <type>HDD</type>
+    <vendor>Seagate</vendor>
+    <model>Barracuda 160GB</model>
+    <serial>SERIAL3</serial>
+  </component>
+</list>"
+		assert_equal 1, Computer.find(2).testings.size
+	end
 end

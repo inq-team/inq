@@ -1,5 +1,14 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-one:
+1:
   id: 1
-two:
+  testing_id: 1
+  component_model_id: 1
+2:
   id: 2
+  testing_id: 1
+  component_model_id: 3
+  serial: SERIAL2
+3:
+  id: 3
+  testing_id: 1
+  component_model_id: 3
+  serial: SERIAL3

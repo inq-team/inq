@@ -1,5 +1,20 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-one:
+amd-athlon:
   id: 1
-two:
+  vendor: AMD
+  name: Athlon
+  component_group_id: 1
+intel-pentium:
   id: 2
+  vendor: Intel
+  name: Pentium
+  component_group_id: 1
+seagate-barracuda-160:
+  id: 3
+  vendor: Seagate
+  name: Barracuda 160GB
+  component_group_id: 2
+seagate-barracuda-320:
+  id: 4
+  vendor: Seagate
+  name: Barracuda 320GB
+  component_group_id: 2
