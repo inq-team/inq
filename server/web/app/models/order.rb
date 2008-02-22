@@ -1,6 +1,7 @@
 class Order < ActiveRecord::Base
 	has_many :order_lines
 	has_many :order_stages
+	has_many :computers
 
 	def update_order(attr)
 		order_lines = attr[:order_lines]
