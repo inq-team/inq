@@ -1,14 +1,14 @@
 #!/bin/sh
 
-LAST_PH_ID=''
+MAX_PHIS_ID=`cat /proc/cpuinfo  | sed -n 's/physical id.*: //p' | sort -n | tail -n1`
+CPU_INFO=`grep -A4 'processor.*: 0' /proc/cpuinfo`
+CPU_VENDOR=`echo "$CPU_INFO" | sed -n 's/vendor_id.*: //p' | sed 's/Genuine//g;s/Authentic//g;'`
+CPU_MODEL=`echo "$CPU_INFO" | sed -n 's/model name.*: //p' | sed 's/(R)//g;s/(tm)//g;s/processor//ig;s/CPU//g;s/Intel//g;s/AMD//g;s/Genuine/Core Solo/;s/@ //;s/  */ /g;s/^ *//g;'`
 
-cat /proc/cpuinfo | grep 'processor' | while read P; do
-    CPU_INFO=`cat /proc/cpuinfo | grep -A8 "$P"`
-    PH_ID=`echo "$CPU_INFO" | grep -m1 'physical id' || true`
-    if [ "$PH_ID" != "$LAST_PH_ID" ] || [ -z "$PH_ID" ]; then
-        CPU_VENDOR=`echo "$CPU_INFO" | sed -n 's/vendor_id.*: //p' | sed 's/Genuine//g;s/Authentic//g;'`
-        CPU_MODEL=`echo "$CPU_INFO" | sed -n 's/model name.*: //p' | sed 's/(R)//g;s/(tm)//g;s/processor//ig;s/CPU//g;s/Intel//g;s/AMD//g;s/Genuine/Core Solo/;s/@ //;s/  */ /g;s/^ *//g;'`
-	LAST_PH_ID="$PH_ID"
-        $SHARE_DIR/add-component CPU "$CPU_VENDOR" "$CPU_MODEL" ''        
-    fi
+if [ -z "$MAX_PHIS_ID" ]; then
+	MAX_PHIS_ID=0
+fi
+
+for I in `seq 0 $MAX_PHIS_ID`; do
+	$SHARE_DIR/add-component CPU "$CPU_VENDOR" "$CPU_MODEL" ''
 done
