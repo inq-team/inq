@@ -62,6 +62,8 @@ else
 	if [ -n "$DIMMS" ]; then
 		fru_detect "$DIMMS"
 	else
-		dmi_detect
+		if [ -r $HOME/dmi.log ]; then
+			dmi_detect
+		fi
 	fi
 fi
