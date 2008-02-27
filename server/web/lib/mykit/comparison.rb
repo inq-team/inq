@@ -44,7 +44,7 @@ def self.compare(db, detect)
 			end
 		end
 
-		until relevant.empty?
+		until matr.empty? or relevant.empty?
 			min = (1.0 / 0.0)
 			db_dev = nil ; detect_dev = nil
 			matr.each { |k, v| v.each { |z, y| (db_dev = k ; detect_dev = z ; min = y[:mean]) if min > y[:mean] } }
@@ -56,21 +56,24 @@ def self.compare(db, detect)
 			relevant.delete(detect_dev)
 			detect_gr.delete(detect_dev)
 			matr.delete(db_dev)
+			puts("[ " + relevant.collect { |z| "#{z[:vendor]} #{z[:name]}" }.join("; ") + " ]")
 		end
 
 		missing = matr.keys
 
 		matr = {} ; relevant = []
-		
+
+		db_devs = db_sec
 		detect_gr.each do |dev|
-			db_devs = db_sec
-			matr[dev] = {}
 			db_devs.each do |d|
+				matr[d] = {} unless matr[d]
+				d_data = {}
 				d_likely = {}
 				d_mean = 0.0
 				d_count = 0
 				d[:searchable].each  do |t|
-					ss = Strings.find_all_data(t[:string], dev[:tokens].keys, Keywords::SPAN_DISTANCE)
+					raise t unless t[:distance]
+					ss = Strings.find_all_data(t[:string], dev[:tokens].keys, t[:distance])
 					unless ss.empty?
 						ss.each { |da| da[:string] = dev[:tokens][da[:string]] }
 						d_data[t] = ss
@@ -79,17 +82,20 @@ def self.compare(db, detect)
 					end
 				end
 				d_mean = d_count / d_mean
-				if d_mean < KeyWords::COMP_MARGIN
+				if d_mean < Keywords::COMP_MARGIN
+                                        puts "#{d[:line][:name]} <=> #{dev[:vendor]} #{dev[:name]} = #{d_mean}"
 					matr[d][dev] = { :data => d_data, :mean => d_mean }
-					relevant << dev 
+					relevant << d 
 				end
 			end
 		end
 
-		until relevant.empty?
+		until matr.empty? or relevant.empty?
 			min = (1.0 / 0.0)
 			db_dev = nil ; detect_dev = nil
-			matr.each { |k, v| v.each { |z, y| (db_dev = k ; detect_dev = z ; mean = y[:mean]) if min > y[:mean] } }
+			matr.each { |k, v| v.each { |z, y| (db_dev = k ; detect_dev = z ; min = y[:mean]) if min > y[:mean] } }
+			break unless db_dev and detect_dev
+			puts "#{db_dev[:line][:name]} <=> #{detect_dev[:vendor]} #{detect_dev[:name]} == #{ min }"
 			db_dev.delete(:comp)
 			pairs << { :db => db_dev, :detect => detect_dev, :data => matr[db_dev][detect_dev][:data] }
 			matr.each { |k, v| v.delete(detect_dev) }

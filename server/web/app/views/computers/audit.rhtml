@@ -36,7 +36,7 @@ _EOF_
 		$('submit_wrong').disabled = true;
 		$('submit_ok').disabled = true;
                 Rico.Corner.round($$('div.hint').first());
-		new Ajax.Request("#{ url_for(:action => 'audit_comparison', :id => @computer.id, :testing => @testing_number) }", { method: 'get', onSuccess: function(transport) {
+		new Ajax.Request("#{ url_for(:action => 'audit_comparison', :id => @computer.id, :testing => @testing_number) }", { method: 'get', onComplete: function(transport) {
 			Effect.Fade($('spinner'), { duration : 0.3,  afterFinish : function() {					
 				$('components').update(transport.responseText);
 				$('components').hide();

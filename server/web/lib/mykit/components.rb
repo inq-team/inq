@@ -50,13 +50,14 @@ class Component
 
 	end
 
-	attr_accessor :vendors, :title, :group, :property_names, :onboard, :keywords
+	attr_accessor :vendors, :title, :group, :property_names, :onboard, :keywords, :item
 	
 	def self.create(itm)
 		Parser::parse_item(itm).collect do |i| 
 			cmp = Component.new 
 			i.each { |k, v| cmp.send("#{ k }=".to_sym, v) unless k == :properties } 
 			cmp.send(:create_props, i[:properties])
+			cmp.item = itm
 			cmp
 		end
 	end
