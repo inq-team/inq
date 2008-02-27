@@ -56,10 +56,10 @@ class Scanner
 					    puts addrs
 					    open("http://#{$SERVER_ADDR}/computers/set_shelf/#{@svals['S']}.xml?shelf=#{@svals['P']}")
 					end
-
-					open("http://#{$SERVER_ADDR}/computers/set_tester/#{@svals['S']}.xml?tester_id=#{@svals['T']}")
-					open("http://#{$SERVER_ADDR}/computers/set_assembler/#{@svals['S']}.xml?assembler_id=#{@svals['A']}")
 					
+					open("http://#{$SERVER_ADDR}/computers/set_assembler/#{@svals['S']}.xml?assembler_id=#{@svals['A']}")
+					open("http://#{$SERVER_ADDR}/computers/set_tester/#{@svals['S']}.xml?tester_id=#{@svals['T']}")
+										
 					addrs.each{ |a| Thread.new(a) { |la| send2ip_addr(la, @svals['S']) } }
 					    
 				end
