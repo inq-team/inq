@@ -4,7 +4,8 @@ class OrdersController < ApplicationController
 	# GET /orders
 	# GET /orders.xml
 	def index
-		@staging = Order.staging
+		@orders = Order.find_by_sql('SELECT o.id, o.buyer_order_number, o.title, o.customer, os.start, DATEDIFF( NOW( ) , os.start ) AS from_delay FROM orders o INNER JOIN order_stages os ON o.id = os.order_id ORDER BY from_delay DESC LIMIT 1, 300') 
+		@orders = @orders.select{ |o| o.order_stages.find{ |os| os.stage == 'warehouse' } == nil }
 	end
 
 	def staging
@@ -38,11 +39,7 @@ class OrdersController < ApplicationController
 		@qty = @computers.size
 		@models = Model.find(:all).map{ |x| x.name }
 		@default_qty = @order.order_lines.map{ |x| x.qty }.min
-		if @default_qty.nil?
-			@default_qty = 1
-		else
-			@default_qty = @default_qty.to_i
-		end
+		@default_qty = 1 if @default_qty.nil?
 		@profiles = Profile.find(:all).map{ |x| x.id }
 		@start_id = Computer.find_by_sql('SELECT MAX(id)+1 FROM computers')[0]['MAX(id)+1'].to_i
 		@end_id = @start_id + @default_qty - 1
