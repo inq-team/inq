@@ -11,4 +11,6 @@ SHARE_DIR=@@SHARE_DIR@@
 
 DEBUG_TTY=@@DEBUG_TTY@@
 
+PATH=/sbin:/usr/sbin:/usr/local/sbin:/bin:/usr/bin:/usr/local/bin:/usr/X11R6/bin
+
 export HOME=/home

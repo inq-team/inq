@@ -1,7 +1,11 @@
+ifeq ($(FLAVOUR), standalone)
+PACKAGE_NAME=inquisitor
+else
 PACKAGE_NAME=inquisitor-client
 PACKAGE_VERSION=1.0
 PACKAGE_RELEASE=alt1
 PACKAGE_RPM=$(PACKAGE_NAME)-$(PACKAGE_VERSION)-$(PACKAGE_RELEASE).$(TARGET).rpm
+endif
 
 # Local build paths
 RPM_BUILD_DIR := $(shell rpm --eval %_topdir)
@@ -9,15 +13,21 @@ WORKDIR=$(PWD)/work
 REPO=$(PWD)/repo
 ROOTDIR=chroot
 
-build-package: 
-	mkdir -p $(RPM_BUILD_DIR)/SOURCES $(RPM_BUILD_DIR)/SPECS $(REPO)/$(TARGET)/RPMS.hasher
-	cp build/altlinux/$(PACKAGE_NAME)-$(FLAVOUR).spec $(RPM_BUILD_DIR)/SPECS/$(PACKAGE_NAME).spec
+build-package:
+	mkdir -p $(RPM_BUILD_DIR)/SOURCES $(RPM_BUILD_DIR)/SPECS
+	cp build/altlinux/$(PACKAGE_NAME)-$(FLAVOUR).spec $(RPM_BUILD_DIR)/SPECS/$(PACKAGE_NAME)-$(FLAVOUR).spec
 	rm -f $(RPM_BUILD_DIR)/SOURCES/$(PACKAGE_NAME).tar
 	tar -cf $(RPM_BUILD_DIR)/SOURCES/$(PACKAGE_NAME).tar client flavour Makefile.config
-	rpmbuild -bb --target=$(TARGET) $(RPM_BUILD_DIR)/SPECS/$(PACKAGE_NAME).spec
+ifeq ($(FLAVOUR), standalone)
+	rpmbuild -ba --target=$(TARGET) $(RPM_BUILD_DIR)/SPECS/$(PACKAGE_NAME)-$(FLAVOUR).spec
+else
+	rpmbuild -bb --target=$(TARGET) $(RPM_BUILD_DIR)/SPECS/$(PACKAGE_NAME)-$(FLAVOUR).spec
+	mkdir -p $(REPO)/$(TARGET)/RPMS.hasher
 	mv -f $(RPM_BUILD_DIR)/RPMS/$(TARGET)/$(PACKAGE_RPM) $(REPO)/$(TARGET)/RPMS.hasher/
 	genbasedir --create --topdir $(REPO) $(TARGET) hasher
+endif
 
+ifneq ($(FLAVOUR), standalone)
 build-root:
 	if [ -d $(WORKDIR)/$(ROOTDIR) ]; then spt-clean -w $(WORKDIR); fi
 	rm -rf $(WORKDIR)
@@ -56,3 +66,4 @@ update-package-remote:
 	ssh $(DEPLOY_HOST) -- sudo chroot $(DEPLOY_PATH) rpm -e $(PACKAGE_NAME) || true
 	ssh $(DEPLOY_HOST) -- sudo chroot $(DEPLOY_PATH) rpm -U /$(PACKAGE_RPM)
 	ssh $(DEPLOY_HOST) -- sudo rm -f $(DEPLOY_PATH)/$(PACKAGE_RPM)
+endif
