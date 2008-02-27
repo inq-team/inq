@@ -11,7 +11,7 @@
 				<%	ost.each { |o| %>
 				<tr>
 					<td class="order_cell">
-						<a href=<%= url_for(:action => 'show', :controller => 'orders') %><%= o.id %>">
+						<a href=<%= url_for(:action => 'show', :controller => 'orders', :id => o) %>>
 							<div class="order_number"><%=h o.buyer_order_number %></div>
 							<div class="title"><%=h truncate(o.title, 40) %></div>
 							<div class="customer"><%=h truncate(o.customer, 40) %></div>
@@ -25,3 +25,4 @@
 		<% } %>
 	</tr>
 </table>
+
