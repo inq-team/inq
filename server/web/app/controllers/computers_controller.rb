@@ -306,7 +306,18 @@ class ComputersController < ApplicationController
 		testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }.last
 		unless testing && testing.components.size == components.size && testing.components.inject(true) { |b, cmp| b && ccp.delete(ccp.find() { |h| (h[:vendor] == cmp.model.vendor && h[:model] == cmp.model.name) || (!h[:serial].blank? && h[:serial] == cmp.serial)  }) }
 			# BAD: component_group_id column used here directly
-			testing = Testing.new(:test_start => Time.new(), :components => components.collect() { |h| Component.new(:serial => h[:serial], :model => ComponentModel.find_or_create_by_name_and_vendor_and_component_group_id(h[:model], h[:vendor], ComponentGroup.find_or_create_by_name(h[:type]).id)) })
+			testing = Testing.new(
+				:test_start => Time.new(),
+				:components => components.collect() { |h|
+					Component.new(
+						:serial => h[:serial],
+						:model => ComponentModel.find_or_create_by_name_and_vendor_and_component_group_id(
+							h[:model],
+							h[:vendor],
+							ComponentGroup.find_or_create_by_name(h[:type]).id)
+					)
+				}
+			)
 			@computer.testings << testing
 		end
 
@@ -521,6 +532,18 @@ class ComputersController < ApplicationController
 		else
 			head(:status => 500)
 		end
+	end
+
+	def monitoring_submit
+		g = Graph.new(
+			:testing => Computer.find(params[:id]).last_testing,
+			:monitoring_id => params[:monitoring_id].to_i,
+			:timestamp => params[:timestamp] ? Time.at(params[:timestamp].to_i) : Time.now,
+			:key => params[:key].to_i,
+			:value => params[:value].to_f			
+		)
+		g.save!
+		head(:status => 200)
 	end
 
 	def destroy

@@ -5,7 +5,7 @@ require 'computers_controller'
 class ComputersController; def rescue_action(e) raise e end; end
 
 class ComputersControllerTest < Test::Unit::TestCase
-	fixtures :computers, :profiles, :models, :testings, :testing_stages, :components, :component_models, :component_groups
+	fixtures :computers, :profiles, :models, :testings, :testing_stages, :components, :component_models, :component_groups, :graphs
 
 	def setup
 		@controller = ComputersController.new
@@ -88,5 +88,18 @@ class ComputersControllerTest < Test::Unit::TestCase
   </component>
 </list>"
 		assert_equal 1, Computer.find(2).testings.size
+	end
+
+	def test_monitoring_submit
+		lt = Computer.find(2).last_testing
+		qty = lt.graphs.size
+		post :monitoring_submit, :id => 2, :monitoring_id => 1, :timestamp => 12345678, :key => 1, :value => 42
+		sleep 30
+		assert_equal qty + 1, lt.graphs.size
+		g = lt.graphs[0]
+		assert_equal 1, g.monitoring_id
+		assert_equal 12345678, g.timestamp
+		assert_equal 1, g.key
+		assert_equal 42, g.value
 	end
 end

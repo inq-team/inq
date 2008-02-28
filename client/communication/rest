@@ -98,3 +98,11 @@ benchmark_submit_string()
 		return 1
 	fi
 }
+
+monitoring_submit()
+{
+	if ! curl -sf "$REST_SERVER/computers/monitoring_submit/$COMPUTER_ID?monitoring_id=$MONITORING_ID&key=$1&value=$2"; then
+		echo "monitoring_submit: failed to submit ${MONITORING_NAME}"
+		return 1
+	fi
+}
