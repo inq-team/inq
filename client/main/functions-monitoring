@@ -1,0 +1,9 @@
+#!/bin/sh
+# Obligatory functions to process on start of every monitoring.
+
+. /etc/inquisitor/global
+. $SHARE_DIR/functions
+. $SHARE_DIR/communication
+
+MONITORING_NAME=`basename $0`
+MONITORING_ID=`sed -ne '/^# ID=/ { s/^# ID=//; p }' <$0`

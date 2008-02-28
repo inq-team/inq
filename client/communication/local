@@ -99,3 +99,8 @@ benchmark_submit_string()
 {
 	echo "$1	$2" >>$HOME/benchmarks.txt
 }
+
+monitoring_submit()
+{
+	echo "`date +%s`	$2" >>$HOME/monitoring_${MONITORING_NAME}_$1.txt
+}
