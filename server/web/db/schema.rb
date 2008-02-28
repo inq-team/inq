@@ -9,7 +9,16 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 3) do
+ActiveRecord::Schema.define(:version => 7) do
+
+  create_table "audits", :force => true do |t|
+    t.binary   "comparison"
+    t.integer  "testing_id"
+    t.integer  "confirmation"
+    t.datetime "confirmation_date"
+    t.integer  "person_id"
+    t.text     "comment"
+  end
 
   create_table "component_groups", :force => true do |t|
     t.string  "name",     :limit => 50
@@ -53,12 +62,21 @@ ActiveRecord::Schema.define(:version => 3) do
     t.integer  "order_id"
     t.datetime "last_ping"
     t.string   "ip",           :limit => 15
+    t.integer  "profile_id"
   end
 
   create_table "customers", :force => true do |t|
     t.string  "name",     :limit => 60
     t.string  "info",     :limit => 100
     t.integer "isactive", :limit => 6,   :default => 1, :null => false
+  end
+
+  create_table "graphs", :force => true do |t|
+    t.integer  "testing_id"
+    t.integer  "monitoring_id"
+    t.datetime "timestamp"
+    t.integer  "key"
+    t.float    "value"
   end
 
   create_table "marks", :force => true do |t|
@@ -76,11 +94,15 @@ ActiveRecord::Schema.define(:version => 3) do
     t.integer "mask",     :limit => 6,   :default => 0,                                                  :null => false
   end
 
+  add_index "models", ["name"], :name => "name"
+
   create_table "order_lines", :force => true do |t|
     t.integer "order_id",                                :null => false
     t.string  "name",     :limit => 250, :default => "", :null => false
     t.integer "qty",                                     :null => false
   end
+
+  add_index "order_lines", ["order_id"], :name => "order_id"
 
   create_table "order_stages", :force => true do |t|
     t.integer  "order_id",                                :null => false
@@ -111,16 +133,11 @@ ActiveRecord::Schema.define(:version => 3) do
   end
 
   create_table "profiles", :force => true do |t|
-    t.text     "xml",                     :default => "", :null => false
+    t.text     "xml"
     t.integer  "model_id"
-    t.string   "feature",   :limit => 64
-    t.datetime "timestamp",                               :null => false
-  end
-
-  create_table "servers_params", :id => false, :force => true do |t|
-    t.integer "param_value", :limit => 20
-    t.integer "unisrv_id"
-    t.integer "param_id"
+    t.integer  "computer_id"
+    t.string   "feature",     :limit => 64
+    t.datetime "timestamp",                 :null => false
   end
 
   create_table "stages", :primary_key => "stage_id", :force => true do |t|
@@ -144,13 +161,14 @@ ActiveRecord::Schema.define(:version => 3) do
   add_index "testing_stages", ["testing_id", "start"], :name => "testing_id_2"
 
   create_table "testings", :force => true do |t|
-    t.integer  "computer_id",       :null => false
+    t.integer  "computer_id",            :null => false
     t.datetime "test_start"
     t.datetime "test_end"
     t.integer  "profile_id"
     t.float    "progress_complete"
     t.float    "progress_total"
     t.text     "custom_sticker"
+    t.integer  "progress_promised_time"
   end
 
 end
