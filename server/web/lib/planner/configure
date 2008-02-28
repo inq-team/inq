@@ -7,6 +7,7 @@ require 'pp'
 require 'ostruct'
 
 TESTS_DIR='../../../../client/test'
+MONITORINGS_DIR='../../../../client/monitoring'
 
 tests = {}
 
@@ -41,10 +42,19 @@ Dir.new(TESTS_DIR).each { |entry|
 	}
 }
 
+monitorings = []
+Dir.new(MONITORINGS_DIR).each { |entry|
+	next unless FileTest.file?("#{MONITORINGS_DIR}/#{entry}")
+	File.open("#{MONITORINGS_DIR}/#{entry}", 'r').each_line { |l|
+		monitorings[$1.to_i] = entry if l =~ /^# ID=(.*)$/
+	}
+}
+
 File.open('meta.rb', 'w') { |out|
 	out.print <<__EOF__
 # DO NOT EDIT: IT'S A GENERATED FILE! USE ./configure to REGENERATE!
 
 $TESTS = #{tests.pretty_inspect}
+$MONITORINGS = #{monitorings.pretty_inspect}
 __EOF__
 }
