@@ -35,7 +35,7 @@ badblocks_test()
 
 	I=0
 	while raid-wizard-passthrough $DISK_GROUP_SIZE $I; do
-		$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list`
+		$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list` || echo "hdd-badblocks.rb failed" > "$ERROR_FILE"
 		I=$(( $I + 1 ))
 	done
 
