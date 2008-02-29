@@ -307,6 +307,7 @@ class ComputersController < ApplicationController
 		unless testing && testing.components.size == components.size && testing.components.inject(true) { |b, cmp| b && ccp.delete(ccp.find() { |h| (h[:vendor] == cmp.model.vendor && h[:model] == cmp.model.name) || (!h[:serial].blank? && h[:serial] == cmp.serial)  }) }
 			# BAD: component_group_id column used here directly
 			testing = Testing.new(
+				:profile_id => @computer.profile_id,
 				:test_start => Time.new(),
 				:components => components.collect() { |h|
 					Component.new(
