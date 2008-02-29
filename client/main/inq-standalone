@@ -1,0 +1,73 @@
+#!/bin/sh
+
+export LC_ALL=C
+
+. /etc/inquisitor/global
+. $SHARE_DIR/functions
+. $SHARE_DIR/communication
+
+DETECT_DIR=$SHARE_DIR/detect
+
+test_one()
+{
+	rm -f $HOME/components.xml
+	echo -n 'Detecting USB'
+	. $DETECT_DIR/usb
+	echo_success
+
+	export COMPUTER_ID=`xmlstarlet sel -t -v "list/component[vendor='Tennex Systems Ltd.']/serial" <$HOME/components.xml | sed 's/^00*//';`
+	echo COMPUTER_ID=$COMPUTER_ID
+
+	submit_components $HOME/components.xml
+	rm -f $HOME/components.xml
+
+	set_profile `cat $HOME/set_profile`
+
+	plan_test_script
+	sed -i 's/^/export /g; s/ submit_additional_components/ \&\& submit_additional_components/g; s/ run_test / \&\& run_test /g; s/$/ || return 1/g;' $HOME/test_script 
+	. $HOME/test_script
+}
+
+while true; do
+	exec 3>&1
+	value=`dialog --item-help --nocancel --backtitle 'Inquisitor Standalone' \
+	        --title 'Choose an profile' --menu '' \
+	        10 60 4 \
+		'1' 'Full testing' '' \
+		'2' 'Fast testing' '' \
+		'3' 'USB presence only' '' \
+		'Quit' 'Quit' '' \
+	2>&1 1>&3`
+	retval=$?
+	exec 3>&-
+
+	clear
+
+	case $retval in
+	0)
+		;;
+	1)
+		exit 0
+		;;
+	255)
+		if test -n "$value" ; then
+			echo "$value"
+		else
+			continue # ESC pressed
+		fi
+		;;
+	esac
+
+	case "$value" in
+	1|2|3)
+		echo $value >$HOME/set_profile
+		test_one
+		echo
+		echo 'Press ENTER to return to main menu'
+		read L
+		;;
+	Quit)
+		exit 0
+		;;
+	esac
+done
