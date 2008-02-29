@@ -228,6 +228,12 @@ tr.testing_stage_running .testing_stage_name {
 	background: url('/images/stage_running.png') 8px 50% no-repeat;
 }
 
+tr.testing_stage_planned .testing_stage_name {
+	background: url('/images/stage_planned.png') 8px 50% no-repeat;
+	color: #777;
+	font-style: italic;
+}
+
 tr.testing_stage_running {
 	background-color: #f0f4f0;
 }
