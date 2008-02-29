@@ -1,0 +1,47 @@
+.testing_border, #selected_testing_tab, #testing_pane td table td, #testing_pane td table th {
+	border-color: #559F7D ! important; 
+}
+
+td#testings_tabs table tr td, td#info_tabs table tr td {
+	border-color: white ! important;
+}
+
+td#testings_tabs table tr td#selected_testing_tab {
+	background-color: #AACFBE;
+	border-color: #AACFBE ! important;
+}
+
+td#info_tabs table tr td#info_tab_graph {
+	background-color: #AACFBE;
+	border-color: #AACFBE ! important;
+}
+
+td#info_tabs table tr td#info_tab_graph a{
+	text-decoration: none;
+	cursor: default;
+	color: #002514;
+	font-weight: bold;
+}
+
+/*********************/
+
+#components th, #testing_plan th {
+	background-color: #AACFBE;
+	color: #002514;
+}
+
+.mark_name {
+	width: 8.6em;
+}
+
+.mark_value {
+	width: 17.6em;
+}
+
+.component_odd {
+}
+
+.component_even {
+	background-color: #f0f4f0;
+}
+
