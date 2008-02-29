@@ -1,8 +1,16 @@
+DEB_TARGET=$(TARGET)
+ifeq ($(TARGET), i586)
+DEB_TARGET=i386
+endif
+ifeq ($(TARGET), x86_64)
+DEB_TARGET=amd64
+endif
+
 PACKAGE_NAME=inquisitor-client
 PACKAGE_VERSION=1.0
 PACKAGE_RELEASE=1
 PACKAGE_DIR=$(PACKAGE_NAME)-$(PACKAGE_VERSION)-$(PACKAGE_RELEASE)
-PACKAGE_DEB=$(PACKAGE_NAME)_$(PACKAGE_VERSION)-$(PACKAGE_RELEASE)_$(TARGET).deb
+PACKAGE_DEB=$(PACKAGE_NAME)_$(PACKAGE_VERSION)-$(PACKAGE_RELEASE)_$(DEB_TARGET).deb
 
 # Local build paths
 WORKDIR=$(PWD)/work
@@ -15,7 +23,7 @@ build-package:
 	cp -r client $(WORKDIR)/build-package/$(PACKAGE_DIR)
 	cp -r flavour Makefile.config $(WORKDIR)/build-package
 	cp -r build/debian/debian $(WORKDIR)/build-package/$(PACKAGE_DIR)
-	cd $(WORKDIR)/build-package/$(PACKAGE_DIR) && dpkg-buildpackage -b -a$(TARGET) -us -uc
+	cd $(WORKDIR)/build-package/$(PACKAGE_DIR) && dpkg-buildpackage -b -a$(DEB_TARGET) -us -uc
 
 build-root:
 	@echo 'Unable to build root for Debian automatically. Please build root manually.' && exit 1
