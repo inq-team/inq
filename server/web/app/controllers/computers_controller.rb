@@ -1,6 +1,7 @@
 require 'mykit/components'
 require 'mykit/comparison'
 require 'planner/planner'
+require 'tempfile'
 
 class ComputersController < ApplicationController
 	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
@@ -265,14 +266,49 @@ class ComputersController < ApplicationController
 	end
 
 	def mark
-		@computer = Computer.find(params[:id])
-                @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
-		@testing_number = params[:testing] ? params[:testing].to_i() : @sorted_testings.size - 1
-		@testing = @sorted_testings[@testing_number]
-
+		prepare_computer_and_testing
 		@marks = Mark.by_testing(@testing)
-
 		render(:layout => 'computer_tabs')
+	end
+
+	def graph
+		prepare_computer_and_testing
+		respond_to { |format|
+			format.html {
+				render(:layout => 'computer_tabs')
+			}
+			format.png {
+				png_file = Tempfile.new('graph_png')
+				data_file = Tempfile.new('graph_data')
+				Graph.find_all_by_testing_id(@testing).each { |g|
+					data_file.puts "#{g.timestamp.to_f}\t#{g.value}"
+				}
+				chart_file = Tempfile.new('graph_chart')
+				chart_file.puts <<__EOF__
+set terminal png size 800, 400
+set output "#{png_file.path}"
+set key below box
+set grid
+set size 1,1
+set lmargin 7
+set rmargin 5
+set tmargin 1
+set bmargin 2
+
+plot '#{data_file.path}' using 1:2 title "Value" with lines
+__EOF__
+
+				data_file.flush
+				chart_file.flush
+
+				system("gnuplot #{chart_file.path}")
+				send_file(png_file.path)
+
+#				data_file.close!
+#				chart_file.close!
+#				png_file.close!
+			}
+		}
 	end
 
 	def update
