@@ -98,6 +98,13 @@ benchmark_submit_string()
 		return 1
 	fi
 }
+set_profile()
+{
+	if ! curl -sf "$REST_SERVER/computers/set_profile/$COMPUTER_ID?profile=$1"; then
+		echo 'set_profile: failed to set'
+		return 1
+	fi
+}
 
 monitoring_submit()
 {

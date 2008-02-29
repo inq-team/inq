@@ -100,7 +100,7 @@ class ComputersController < ApplicationController
 		@computers = Computer.find_testing()
 		@shelves = config || @@default_config 
 		@byshelves = @computers.inject({}) { |h, c| sh = @shelves.by_ipnet(c.ip) ; h[!sh.blank? ? sh.full_name : c.shelf] = c ; h }
-		render(:layout => 'computer_shelves', :template => 'computers/shelves')				
+		render(:layout => 'computer_shelves', :template => 'computers/shelves')
 	end
 
 	def show
@@ -314,7 +314,8 @@ class ComputersController < ApplicationController
 						:model => ComponentModel.find_or_create_by_name_and_vendor_and_component_group_id(
 							h[:model],
 							h[:vendor],
-							ComponentGroup.find_or_create_by_name(h[:type]).id)
+							ComponentGroup.find_or_create_by_name(h[:type]).id
+						)
 					)
 				}
 			)
@@ -465,6 +466,15 @@ class ComputersController < ApplicationController
 		end
 	end
 
+	def set_profile
+		prepare_computer_and_testing
+		@computer.profile_id = params[:profile].to_i
+		@testing.profile_id = params[:profile].to_i
+		@computer.save!
+		@testing.save!
+		head(:status => 200)
+	end
+
 	def plan
 		prepare_computer_and_testing
 		prev_testing = @sorted_testings[@testing_number - 1]
@@ -491,7 +501,7 @@ class ComputersController < ApplicationController
 			head(:ok)
 		else
 			head(:status => 500)
-		end		
+		end
 	end
 
 	def watchdog
