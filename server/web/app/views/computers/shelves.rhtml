@@ -30,13 +30,13 @@
 <%= javascript_tag(<<_EOF_      
         Event.observe(window, 'load', function () {
                 $$('.progress .failed').each( function(c) {
-                        new Effect.Highlight(c.up().up().up(), { startcolor: '#ffffff', endcolor: '#ff7777', restorecolor: '#ff7777' });
+                        c.up().up().up().style.backgroundColor = 'rgb(255, 119, 119)';
                 }); 
                 $$('.progress .before, .progress .attention').each( function(c) {
-                        new Effect.Highlight(c.up().up().up(), { startcolor: '#ffffff', endcolor: '#F3D079', restorecolor: '#F3D079' });
+                        c.up().up().up().style.backgroundColor = 'rgb(243, 208, 121)';
                 }); 
                 $$('.progress .after').each( function(c) {
-                        new Effect.Highlight(c.up().up().up(), { startcolor: '#ffffff', endcolor: '#AACFBE', restorecolor: '#AACFBE' });
+                        c.up().up().up().style.backgroundColor = 'rgb(170, 207, 190)';
                 }); 
         });
 _EOF_
