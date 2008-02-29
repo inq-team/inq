@@ -10,3 +10,7 @@ three:
   id: 3
   model_id: 1
   profile_id: 1
+single_testing_failed_test:
+  id: 4
+  model_id: 1
+  profile_id: 1

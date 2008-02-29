@@ -7,3 +7,9 @@ two:
   id: 3
   computer_id: 3
   test_start: 2000-01-01 00:00
+
+single_testing_failed_test_testing:
+  id: 4
+  computer_id: 4
+  test_start: 2000-01-01 00:00
+  test_end: 2000-01-01 01:00
