@@ -59,28 +59,22 @@ when :assembling %>
 </tr>
 </table>
 
+<table style="border-spacing: 0.5em">
 
+<tr>
+<td class="panel">
 <h1>Details</h1>
-<table>
 
+<table>
 <tr><td>Title:</td><td><%=h @order.title %></td></tr>
 <tr><td>Customer:</td><td><%=h @order.customer %></td></tr>
 <tr><td>Buyer order #:</td><td><%=h @order.buyer_order_number %></td></tr>
 <tr><td>Mfg task #:</td><td><%=h @order.mfg_task_number %></td></tr>
 <tr><td>Mfg report #:</td><td><%=h @order.mfg_report_number %></td></tr>
 </table>
-
-<table>
-<tr>
-<td style="vertical-align: top">
-<h1>Order lines</h1>
-<table>
-<% @order.order_lines.each { |l| %>
-<tr><td><%=h l.name %></td><td><%=h l.qty %></td></tr>
-<% } %>
-</table>
 </td>
-<td style="vertical-align: top">
+
+<td class="panel" rowspan="2">
 
 <h1>Computers</h1>
 <table>
@@ -119,6 +113,19 @@ when :assembling %>
 <% end %>
 
 </td>
+</tr>
+
+<tr>
+
+<td class="panel">
+<h1>Order lines</h1>
+<table>
+<% @order.order_lines.each { |l| %>
+<tr><td><%=h l.name %></td><td><%=h l.qty %></td></tr>
+<% } %>
+</table>
+</td>
+
 </tr>
 </table>
 

@@ -43,3 +43,18 @@
         font-style: italic;
         padding-right: 0.5em;
 }
+
+h1 {
+        background: #845905;
+        color: white;
+	font-size: 1em;
+	padding: 0.5em;
+	margin: 0px;
+}
+
+.panel {
+        background: #f0dfbd;
+	border: none;
+	margin: 0px;
+	vertical-align: top;
+}

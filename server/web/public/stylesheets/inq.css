@@ -120,6 +120,11 @@ td#title_bar_doc {
 	border-color: #A28A50;
 }
 
+.computer_stage_person {
+	font-size: 80%;
+	padding-top: 2px;
+}
+
 /* tabbed pane */
 
 #testing_pane {

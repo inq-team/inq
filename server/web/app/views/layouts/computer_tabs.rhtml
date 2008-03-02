@@ -46,8 +46,11 @@
 		stages.delete(name)
 	%>
 		<td title='<%= stage.comment %>' class='computer_stage_<%= classname %>'>
-			<p> <%= name %> </p>
-			<p> <%= ary.reverse.collect { |h| h[:span_txt] }.join(" / ") %> </p>
+			<div class="computer_stage_name"><%= name %></div>
+<%		if stage.person %>
+			<div class="computer_stage_person">(<%= stage.person.name %>)</div>
+<%		end %>
+			<div class="computer_stage_time"><%= ary.reverse.collect { |h| h[:span_txt] }.join(" / ") %></div>
 		</td>
 	<% end %>
 	<% stages.each do |stage| %><td class="computer_stage_planned"><%= stage %></td><% end %>
