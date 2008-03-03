@@ -150,6 +150,7 @@ class ComputersController < ApplicationController
 			render(:layout => 'popup', :action =>  'audit_popup')
 			return
 		end
+		Waitstring.send_to_computer(@computer, @confirmation == 1 ? 'OK' : 'ERROR', @@default_config)
 		render(:layout => 'popup')
 	end
 
@@ -261,7 +262,11 @@ class ComputersController < ApplicationController
 
 	def log
 		prepare_computer_tabs
-		@logs = File.open("/var/log/HOSTS/c#{ @computer.id }").readlines()
+		begin
+			@logs = File.open("/var/log/HOSTS/c#{ @computer.id }").readlines()
+		rescue
+			@logs = "Logs unavailable"
+		end
 		render(:layout => 'computer_tabs')
 	end
 
@@ -672,4 +677,6 @@ __EOF__
 	def load_comparison(str)
 		Marshal.load(str)
 	end
+
+
 end

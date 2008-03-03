@@ -66,7 +66,7 @@
 
 <% place_hint(@audit.confirmation_date ? @audit.confirmation == 1 ? 'okay' : 'error' : 'audit') do %>
 <% if @audit.confirmation_date %>
-	Testing confirmed as <% @audit.confirmation == 1 ? 'ok' : 'wrong' %> by <%= person_tag(@audit.person) %> on <%= datetime_tag(@audit.confirmation_date) %> with the following comment:<br/>
+	Testing confirmed as <b><%= @audit.confirmation == 1 ? 'ok' : 'wrong' %></b> <!--by <%= person_tag(@audit.person) %> -->on <%= datetime_tag(@audit.confirmation_date) %> with the following comment:<br/>
 	<cite id='confirmation_comment'><%= escape_once(@audit.comment) %></cite>
 <% else %>
 		<table><tr><td>Confirm detected hardware placement: <br />
