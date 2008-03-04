@@ -1,4 +1,4 @@
-<table class="order_staging">
+<table class="order_staging" border='1'>
 	<tr>
 		<th width="16%">Ordering</th>
 		<th width="16%">Warehouse</th>
@@ -7,24 +7,60 @@
 		<th width="16%">Testing</th>
 		<th width="20%">Packing</th>
 	</tr>
+	<% @orders.each do |ord| %>
 	<tr>
-		<% @staging.each_with_index { |ost, i| %>
-		<td style="vertical-align: top<%= '; border-right: none' if i == 2 %>">
-			<table width="100%">
-				<%	ost.each { |o| %>
-				<tr>
-					<td class="order_cell">
-						<a href=<%= url_for(:controller => 'orders', :action => 'show', :id => o.id) %>>
-							<div class="order_number"><%=h o.buyer_order_number %></div>
-							<div class="title"><%=h truncate(o.title, 40) %></div>
-							<div class="customer"><%=h truncate(o.customer, 40) %></div>
-							<div class="timer"><%=h o.from_delay %>d</div>
-						</a>
-					</td>
-				</tr>
-				<%	} %>
-			</table>
-		</td>
-		<% } %>
+		<% if ord.order_stages.select{ |os| !os.end }.size > 0
+			stage = ord.order_stages.select{ |os| !os.end }[0].stage 
+			cell_content = "<td class='order_cell'>
+	<a href=#{ url_for(:action => 'show', :controller => 'orders', :id => ord) }>
+		<div class='order_number'>#{ ord.buyer_order_number }</div>
+		<div class='title'>#{ truncate(ord.title, 40) }</div>
+		<div class='customer'>#{ truncate(ord.customer, 40) }</div>
+		<div class='timer'>#{ ord.from_delay }</div>
+	</a>
+</td>" %>
+			<% case stage 
+			when 'ordering' %>
+				<%= cell_content %><td/><td/>
+			<% when 'warehouse' %>
+				<td/><%= cell_content %><td/>
+			<% when 'ready for mfg' %>
+				<td/><td/><%= cell_content %>
+			<% end				
+		else %>
+			<td/><td/><td/>
+			<% assembling_count = 0
+			testing_count = 0
+			packing_count = 0
+			ord.computers.each{ |c| assembling_count += c.computer_stages.select{ |cs| (cs.stage == 'assembling') && (!cs.end) }.size }
+			ord.computers.each{ |c| testing_count += c.computer_stages.select{ |cs| (cs.stage == 'testing') && (!cs.end) }.size }
+			ord.computers.each{ |c| packing_count += c.computer_stages.select{ |cs| (cs.stage == 'packing') && (!cs.end) }.size }
+			atp = []
+			atp[0] = assembling_count
+			atp[1] = testing_count
+			atp[2] = packing_count
+			first_not_zero = 0
+			if first_not_zero = atp.find{ |x| x != 0 }
+				col_num = atp.index(first_not_zero).to_i + 1
+				last_not_zero = atp.reverse.find{ |x| x != 0 }
+				last_not_zero_index = 2 - atp.reverse.index(last_not_zero)
+				col_span = last_not_zero_index - col_num + 1
+				col_num.times do %>
+					<td/>
+				<% end %>
+				<td class='order_cell' colspan='<%= col_span %>'>
+					<a href=<%= url_for(:action => 'show', :controller => 'orders', :id => ord) %>>
+						<div class='order_number'><%= ord.buyer_order_number %></div>
+						<div class='title'><%= truncate(ord.title, 40) %></div>
+						<div class='customer'><%= truncate(ord.customer, 40) %></div>
+						<div class='timer'><%= ord.from_delay %></div>
+						<div>Number of computers: <%= atp.inspect %></div>
+					</a>
+				</td>
+			<% else %>
+				<td/><td/><td/>				
+			<% end			
+		end %>		
 	</tr>
+	<% end %>
 </table>

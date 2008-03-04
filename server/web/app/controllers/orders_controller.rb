@@ -4,8 +4,7 @@ class OrdersController < ApplicationController
 	# GET /orders
 	# GET /orders.xml
 	def index
-		@orders = Order.find_by_sql('SELECT o.id, o.buyer_order_number, o.title, o.customer, os.start, DATEDIFF( NOW( ) , os.start ) AS from_delay FROM orders o INNER JOIN order_stages os ON o.id = os.order_id ORDER BY from_delay DESC LIMIT 1, 300') 
-		@orders = @orders.select{ |o| o.order_stages.find{ |os| os.stage == 'warehouse' } == nil }
+		@orders = Order.find_by_sql("SELECT o.id, o.buyer_order_number, o.title, o.customer, os.start, DATEDIFF( NOW( ) , os.start ) AS from_delay FROM orders o INNER JOIN order_stages os ON o.id = os.order_id WHERE os.stage NOT LIKE 'warehouse' ORDER BY from_delay DESC")
 	end
 
 	def staging
