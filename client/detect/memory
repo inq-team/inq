@@ -6,6 +6,9 @@ detect_mem_quantity()
 	DMI_NOT_INST_COUNT=`cat $HOME/dmi.log 2>/dev/null | grep -c 'Size: No Module Installed' || true`
 	let DMI_MEM_COUNT=DMI_TOTAL_MEM_COUNT-DMI_NOT_INST_COUNT
 	SPD_MEM_COUNT=`cat $HOME/spd.log 2>/dev/null | sed -n 's/Number of SDRAM DIMMs detected and decoded: //p'`
+	if [ -z "$SPD_MEM_COUNT" ]; then
+		SPD_MEM_COUNT=0
+	fi
 }
 
 spd_detect()
@@ -55,15 +58,20 @@ dmi_detect()
 
 detect_mem_quantity
 DIMMS=`cat $HOME/spd.log 2>/dev/null | grep '^Decoding EEPROM: ' || true`
-if [ -n "$DIMMS" ] && [ "$SPD_MEM_COUNT" -eq "$DMI_MEM_COUNT" ]; then
+if [ -n "$DIMMS" ] && [ "$SPD_MEM_COUNT" -eq "$DMI_MEM_COUNT" ] && [ "$SPD_MEM_COUNT" -ne 0 ]; then
 	spd_detect "$DIMMS"
 else
 	DIMMS=`cat $HOME/fru.log 2>/dev/null | grep 'cpu[0-9]*.mem[0-9]*.vpd' || true`
 	if [ -n "$DIMMS" ]; then
 		fru_detect "$DIMMS"
 	else
-		if [ -r $HOME/dmi.log ]; then
+		if [ -r $HOME/dmi.log ] && [ "$DMI_MEM_COUNT" -ne 0 ]; then
 			dmi_detect
+		else
+			PROC_MEM_SIZE=`cat /proc/meminfo | sed -n 's/MemTotal: *//p' | sed -n 's/ kB$//p'`
+			let PROC_MEM_SIZE=PROC_MEM_SIZE/1024
+			echo Memory '' "$PROC_MEM_SIZE MB" '' - proc >> $HOME/debug.log
+			$SHARE_DIR/add-component Memory '' "$PROC_MEM_SIZE MB" ''
 		fi
 	fi
 fi
