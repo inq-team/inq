@@ -24,7 +24,7 @@ test_one()
 	set_profile `cat $HOME/set_profile`
 
 	plan_test_script
-	sed -i 's/^/export /g; s/ submit_additional_components/ \&\& submit_additional_components/g; s/ run_test / \&\& run_test /g; s/$/ || return 1/g;' $HOME/test_script 
+	sed -i 's/^PLANNER=1 /export PLANNER=1 /g; s/ run_test \(.*\)$/ \&\& run_test \1 || return 1/g;' $HOME/test_script 
 	. $HOME/test_script
 }
 
@@ -33,7 +33,7 @@ while true; do
 	value=`dialog --item-help --nocancel --backtitle 'Inquisitor Standalone' \
 	        --title 'Choose an profile' --menu '' \
 	        10 60 4 \
-		'1' 'Full testing' '' \
+		'4' 'Full testing' '' \
 		'2' 'Fast testing' '' \
 		'3' 'USB presence only' '' \
 		'Quit' 'Quit' '' \
@@ -59,7 +59,7 @@ while true; do
 	esac
 
 	case "$value" in
-	1|2|3)
+	4|2|3)
 		echo $value >$HOME/set_profile
 		test_one
 		echo
