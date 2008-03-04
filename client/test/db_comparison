@@ -9,13 +9,6 @@
 
 . /usr/share/inquisitor/functions-test
 
-exit_handler()
-{
-}
-
 print_green_message "Please refer to the web interface to confirm detected hardware placement"
-OK=`wait-string`
 
-["$OK" == "OK"] && test_succeeded || test_failed 
-
-
+[ "`wait-string`" == "OK" ] && test_succeeded || test_failed 
