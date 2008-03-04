@@ -13,8 +13,9 @@ strip_vendor()
 
 lshw_detect()
 {
-	echo "$HDD_TYPES" | while read TYPE; do
-		if INFO=`cat $HOME/lshw.log | grep -A8 "$TYPE"`; then
+	echo "$HDD_TYPES" | while read TYPE; do	
+		cat $HOME/lshw.log | grep -n "$TYPE" | sed 's/:.*$//' | while read N; do
+			INFO=`cat $HOME/lshw.log | sed -n "$N,+7 p"`
 			HDD_VENDOR=`echo "$INFO" | sed -n 's/ *vendor: //p'`
 			HDD_PRODUCT=`echo "$INFO" | sed -n 's/ *product: //p'`
 			HDD_SIZE=`echo "$INFO" | sed -n 's/ *size: //p'`
@@ -24,12 +25,12 @@ lshw_detect()
 			strip_vendor 'Maxtor ' 'Maxtor'
 			strip_vendor 'WDC ' 'Western Digital'
 
-			if [ -n "$HDD_MODEL" ] && [ -z "`echo "$HDD_VENDOR" | grep -i 'Linux'`" ]; then
+			if [ -n "$HDD_MODEL" ] && [ -z "`echo "$HDD_VENDOR" | grep -i 'Linux'`" ] && [ -z "`echo "$HDD_VENDOR" | grep -i 'Adaptec'`" ]; then
 				echo HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" ' - lshw' >> $HOME/debug.log
 				$SHARE_DIR/add-component HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL"
 			fi
-		fi
-	done;
+		done
+	done
 }
 
 einarc_detect()
