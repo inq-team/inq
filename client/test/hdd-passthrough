@@ -31,11 +31,11 @@ export ERROR_FILE=`mktemp`
 badblocks_test()
 {
 	raid-wizard-clear
-	$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list`
+	$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list` || echo "hdd-badblocks.rb failed" > "$ERROR_FILE"
 
 	I=0
 	while raid-wizard-passthrough $DISK_GROUP_SIZE $I; do
-		$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list` || echo "hdd-badblocks.rb failed" > "$ERROR_FILE"
+		$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list` || echo "hdd-badblocks.rb #$i failed" > "$ERROR_FILE"
 		I=$(( $I + 1 ))
 	done
 
@@ -49,11 +49,11 @@ badblocks_test()
 
 stress_test()
 {
-	mount -t tmpfs -o size=${RAMDISK_SIZE}M tmpfs $MOUNTPOINT
+	mount -t tmpfs -o size=${RAMDISK_SIZE}M tmpfs $MOUNTPOINT || echo "Ramdisk creation failed" > "$ERROR_FILE"
 	
 	cd "$SHARE_DIR"
 	tar xzf "$STRESS_TREE" -C "$MOUNTPOINT" >$DEBUG_TTY 2>&1 || 
-		echo "Untaring" > $ERROR_FILE
+		echo "Untaring failed" > $ERROR_FILE
 	
 	cd $MOUNTPOINT
 	tree_name=`basename "$STRESS_TREE" .tar.gz`
@@ -68,7 +68,7 @@ stress_test()
 	while [ -d "/proc/$BADBLOCKS_PID" ]; do
 		make clean >$DEBUG_TTY 2>&1 &&
 		make -j $JOBS >$DEBUG_TTY 2>&1 ||
-		echo "Stress test" > $ERROR_FILE
+		echo "Make failed" > $ERROR_FILE
 	done
 }
 

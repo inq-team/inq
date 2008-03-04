@@ -245,8 +245,7 @@ subnet_for_dev()
 
 get_harddrives_list()
 {
-	for UDI in `hal-find-by-property --key=storage.drive_type --string disk`
-	do
+	for UDI in `hal-find-by-property --key=storage.drive_type --string disk`; do
 		hal-get-property --udi "$UDI" --key block.device
 	done
 }
