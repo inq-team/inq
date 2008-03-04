@@ -73,7 +73,7 @@ for UDI in `hal-find-by-property --key storage.bus --string usb`; do
 		test_failed "Drive $block_dev reading error"
 
 	echo -n "comparing..."
-	[ `cat ${FIFOFILE}.md5` == $read_md5 ] || \
+	[ `cat ${FIFOFILE}.md5` = "$read_md5" ] || \
 		test_failed "Drive $block_dev comparing error"
 	write_speed=`echo "$write_speed_result" | awk '{print $(NF-1)}'`
 	write_speed_unit=`echo "$write_speed_result" | awk '{print $NF}'`
@@ -81,10 +81,8 @@ for UDI in `hal-find-by-property --key storage.bus --string usb`; do
 		awk '{print $(NF-1)}'`
 	read_speed_unit=`sed -n '$ p' < ${FIFOFILE}.read_speed | \
 		awk '{print $NF}'`
-	benchmark_submit_float 
-	"Drive $block_dev writing speed, ${write_speed_unit}" $write_speed
-	benchmark_submit_float 
-	"Drive $block_dev reading speed, ${read_speed_unit}" $read_speed
+	benchmark_submit_float "Drive $block_dev writing speed, ${write_speed_unit}" $write_speed
+	benchmark_submit_float "Drive $block_dev reading speed, ${read_speed_unit}" $read_speed
 	echo_success
 done
 fi
