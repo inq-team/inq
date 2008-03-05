@@ -30,7 +30,7 @@
 	<% stages = ['Ordering', 'Warehouse', 'Acceptance', 'Assembling', 'Testing', 'Packaging'] ; now = Time.new() %>
 	<% @computer.computer_stages.sort { |a, b| (a.end || now) <=> (b.end || now) }.each() do |stage| %>
 	<%
-		ary = [{ :span => ((stage.end || now) - stage.start).round(), :span_txt => "< 1m" }]
+		ary = [{ :span => ((stage.end || now) - stage.start).round(), :span_txt => "&lt; 1m" }]
 		name = stage.stage.capitalize()
 		ary = ary.collect do |h|
 		        if (z = h[:span] / 86400) > 0
@@ -66,8 +66,8 @@
 			<%= content_tag(:td, link_to("Sticker", {:action => 'sticker', :id => @computer.id, :testing => @testing_number}), :id => 'info_tab_sticker') %>
 			<%= content_tag(:td, link_to("Logs", {:action => 'log', :id => @computer.id, :testing => @testing_number}), :id => 'info_tab_log') %>
 			<%= content_tag(:td, link_to("Marks", {:action => 'mark', :id => @computer.id, :testing => @testing_number}), :id => 'info_tab_mark') %>
-		</td></tr></table>
-		</td></tr>
+		</tr></table></td>
+		</tr>
 
 		<tr>
 	
