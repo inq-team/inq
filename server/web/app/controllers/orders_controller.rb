@@ -4,7 +4,8 @@ class OrdersController < ApplicationController
 	# GET /orders
 	# GET /orders.xml
 	def index
-		@orders = Order.find_by_sql("SELECT o.id, o.buyer_order_number, o.title, o.customer, os.start, DATEDIFF( NOW( ) , os.start ) AS from_delay FROM orders o INNER JOIN order_stages os ON o.id = os.order_id WHERE os.stage NOT LIKE 'warehouse' ORDER BY from_delay DESC")
+		#@orders = Order.find_by_sql("SELECT o.id, o.buyer_order_number, o.title, o.customer, os.start, DATEDIFF( NOW( ) , os.start ) AS from_delay FROM orders o INNER JOIN order_stages os ON o.id = os.order_id WHERE os.stage <> 'manufacturing' ORDER BY from_delay DESC")
+		@orders = Order.find_by_sql("SELECT o1.id, o1.buyer_order_number, o1.title, o1.customer, os1.start, DATEDIFF( NOW( ) , os1.start ) AS from_delay FROM orders AS o1 INNER JOIN order_stages AS os1 ON o1.id = os1.order_id WHERE o1.id NOT IN (SELECT o2.id FROM orders AS o2 LEFT JOIN order_stages AS os2 on o2.id=os2.order_id WHERE os2.stage='manufacturing') ORDER BY from_delay")
 	end
 
 	def staging
@@ -43,7 +44,7 @@ class OrdersController < ApplicationController
 		@start_id = Computer.find_by_sql('SELECT MAX(id)+1 FROM computers')[0]['MAX(id)+1'].to_i
 		@end_id = @start_id + @default_qty - 1
 
-		@order_title = @order.title.gsub(/(\d)(S(A|C))/){$1}.gsub(/(\d)(G(2|3))/){$1.to_s + ' ' + $2.to_s}
+		@order_title = @order.title.to_s.gsub(/(\d)(S(A|C))/){$1}.gsub(/(\d)(G(2|3))/){$1.to_s + ' ' + $2.to_s}
 		model_names = Model.find_by_sql(['SELECT name FROM models WHERE MATCH(name) AGAINST(?);', @order_title]).sort{ |a,b| a.name <=> b.name }.map{ |x| x.name }
 		@default_model = nil
 
