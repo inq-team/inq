@@ -9,7 +9,7 @@ config.cache_classes = false
 config.whiny_nils = true
 
 # Enable the breakpoint server that script/breakpointer connects to
-config.breakpoint_server = true
+config.breakpoint_server = false
 
 # Show full error reports and disable caching
 config.action_controller.consider_all_requests_local = true
@@ -19,3 +19,5 @@ config.action_view.debug_rjs                         = true
 
 # Don't care if the mailer can't send
 config.action_mailer.raise_delivery_errors = false
+config.action_controller.session_store = :memory_store
+

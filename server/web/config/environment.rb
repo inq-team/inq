@@ -59,5 +59,7 @@ end
 
 # Include your application configuration below
 
+# platform takes precedence over mainboard
+
 DEFAULT_SHELVES_CONFIG = 'config/shelves.xml'
 WAITSTRING_CLIENT_PORT = 8372 
