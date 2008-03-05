@@ -4,7 +4,7 @@ detect_mem_quantity()
 {
 	DMI_TOTAL_MEM_COUNT=`cat $HOME/dmi.log 2>/dev/null | grep -c '^Memory Device$' || true`
 	DMI_NOT_INST_COUNT=`cat $HOME/dmi.log 2>/dev/null | grep -c 'Size: No Module Installed' || true`
-	let DMI_MEM_COUNT=DMI_TOTAL_MEM_COUNT-DMI_NOT_INST_COUNT
+	DMI_MEM_COUNT=$(( $DMI_TOTAL_MEM_COUNT - $DMI_NOT_INST_COUNT ))
 	SPD_MEM_COUNT=`cat $HOME/spd.log 2>/dev/null | sed -n 's/Number of SDRAM DIMMs detected and decoded: //p'`
 	if [ -z "$SPD_MEM_COUNT" ]; then
 		SPD_MEM_COUNT=0
@@ -69,7 +69,7 @@ else
 			dmi_detect
 		else
 			PROC_MEM_SIZE=`cat /proc/meminfo | sed -n 's/MemTotal: *//p' | sed -n 's/ kB$//p'`
-			let PROC_MEM_SIZE=PROC_MEM_SIZE/1024
+			PROC_MEM_SIZE=$(( $PROC_MEM_SIZE / 1024 ))
 			echo Memory '' "$PROC_MEM_SIZE MB" '' - proc >> $HOME/debug.log
 			$SHARE_DIR/add-component Memory '' "$PROC_MEM_SIZE MB" ''
 		fi
