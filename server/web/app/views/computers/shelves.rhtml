@@ -16,7 +16,7 @@
 				<% if computer %> <%= shelf_content(computer) %><% end %>
 				<% if !sh.full_name.blank? && sh.kind == :testing %>
 					<span class="title"><%= sh.full_name %></span>
-					<div class="colour_brick" style="background-color: <%= sh.colour %>">&nbsp;</div>
+					<%= link_to('', { :controller => 'shelves', :action => 'active_addresses', :id => sh.full_name }, :title => 'IP addresses', :target => 'IP', :style => "background-color: #{ sh.colour }", :class => "colour_brick" ) %>
 				<% end %>
 			</td>
 		<% end %></tr>		

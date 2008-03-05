@@ -71,6 +71,7 @@ table.stack td .title {
 }
 
 .colour_brick {
+	display: block;
 	position: relative;
 	left: 50%;
 	margin-left: -8px;
