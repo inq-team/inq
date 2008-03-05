@@ -66,6 +66,7 @@
 			<%= content_tag(:td, link_to("Sticker", {:action => 'sticker', :id => @computer.id, :testing => @testing_number}), :id => 'info_tab_sticker') %>
 			<%= content_tag(:td, link_to("Logs", {:action => 'log', :id => @computer.id, :testing => @testing_number}), :id => 'info_tab_log') %>
 			<%= content_tag(:td, link_to("Marks", {:action => 'mark', :id => @computer.id, :testing => @testing_number}), :id => 'info_tab_mark') %>
+			<%= content_tag(:td, link_to("Graphs", {:action => 'graph', :id => @computer.id, :testing => @testing_number}), :id => 'info_tab_graph') %>
 		</tr></table></td>
 		</tr>
 
