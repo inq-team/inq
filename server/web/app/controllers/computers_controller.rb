@@ -442,7 +442,7 @@ __EOF__
 		when :finish, :fail
 			stage.comment = comment
 			stage.end = Time.new()
-			stage.result = event == :finish ? 1 : 2
+			stage.result = (event == :finish) ? TestingStage::FINISHED : TestingStage::FAILED
 			z = stage
 		end
 		if z.save
@@ -625,10 +625,10 @@ __EOF__
 	private
 	
 	RESULT_MAPPING = {
-		0 => 'running',
-		1 => 'finished',
-		2 => 'failed',
-		3 => 'hanging',
+		TestingStage::RUNNING => 'running',
+		TestingStage::FINISHED => 'finished',
+		TestingStage::FAILED => 'failed',
+		TestingStage::HANGING => 'hanging',
 	}
 	
 	def prepare_computer_tabs
