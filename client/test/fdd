@@ -57,9 +57,11 @@ interactive()
 	local non_passed=1
 
 	while ( [ "$non_passed" -eq 1 ] ); do
+		require_attention
 		print_green_message "Drive ${fdd}:"
 		print_green_message "Either press y and insert floppy for testing, or n if you want to finish test: "
 		read choice
+		dismiss_attention
 
 		if [ "$choice" = "n" ]; then
 			test_failed "User cancelled test for $fdd"

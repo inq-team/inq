@@ -1,0 +1,45 @@
+#!/bin/sh -e
+# NAME=Firmware reflashing
+# DESCRIPTION=Firmware reflashing
+# DESTROYS_HDD=false
+# IS_INTERACTIVE=false
+# POWEROFF_DURING_TEST=true
+# VERSION=0.1
+# TAGS=bios,firmware
+
+# UNTESTED DEVELOPMENT VERSION!
+
+. /usr/share/inquisitor/functions-test
+
+exit_handler()
+{
+	[ -r "$FIRMWARES" ] && rm $FIRMWARES
+}
+
+FIRMWARES=`mktemp`
+
+get_needed_firmwares_list > $FIRMWARES
+[ ! -s $FIRMWARES ] && test_succeeded "No firmwares needed to be updated"
+
+cat $FIRMWARES | while read component; do
+	# Parse each component
+	type=`echo $component | awk -F :: '{print $1}'`
+	version=`echo $component | awk -F :: '{print $2}'`
+	firmware_file=`echo $component | awk -F :: '{print $3}'`
+
+	# Detect version
+	case $type in
+	"Motherboard")
+		current_version=`grep -A 3 "BIOS Information" $HOME/dmi.log | 
+					sed -n '3p' | awk '{print $2}'`
+		;;
+	"RAID")
+		current_version=`einarc -t lsi_megarc adapter info | 
+			grep "Firmware Version" | awk '{print $3}'`
+		;;
+	esac
+
+	# Reboot with necessary reflasher
+	[ "$current_version" != $version ] || continue
+	boot_from_image "$firmware_file"
+done

@@ -97,8 +97,11 @@ interactive()
 
 	while ( [ "$non_passed" -eq 1 ] ); do
 		eject $odd || true
+		require_attention
+		print_green_message "Drive ${odd}:"
 		print_green_message "Either press y and insert media for testing, or n if you want to finish test: "
 		read choice
+		dismiss_attention
 
 		if [ "$choice" = "n" ]; then
 			test_failed "User cancelled test for $odd"

@@ -31,8 +31,10 @@ done
 if [ "$STORAGE_QUANTITY" -ne "$COUNT" ]; then
 	STORAGE_QUANTITY=0
 	# Wait user for inserting needed flash drives
+	require_attention
 	print_green_message "Insert $COUNT USB Flash drives and press enter"
 	read foobar #dummy variable
+	dismiss_attention
 
 	for UDI in `hal-find-by-property --key storage.bus --string usb`; do
 		hal-get-property --udi "$UDI" --key storage.drive_type | \

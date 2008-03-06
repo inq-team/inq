@@ -42,14 +42,12 @@ test_promise_time()
 
 submit_components()
 {
-	FILENAME=$1
-	curl -f --data list=\""`cat $FILENAME `"\" -X POST "$REST_SERVER/computers/submit_components/$COMPUTER_ID.xml"
+	curl -f --data list=\""`cat $1 `"\" -X POST "$REST_SERVER/computers/submit_components/$COMPUTER_ID.xml"
 }
 
 submit_additional_components()
 {
-	FILENAME=$1
-	curl -f --data list=\""`cat $FILENAME `"\" -X POST "$REST_SERVER/computers/submit_additional_components/$COMPUTER_ID.xml"
+	curl -f --data list=\""`cat $1 `"\" -X POST "$REST_SERVER/computers/submit_additional_components/$COMPUTER_ID.xml"
 }
 
 # Mark current testing as finished
@@ -118,4 +116,46 @@ monitoring_submit()
 		echo "monitoring_submit: failed to submit ${MONITORING_NAME}"
 		return 1
 	fi
+}
+
+require_attention()
+{
+	return 0
+
+	#if ! curl -sf "$REST_SERVER/computers/require_attention/$COMPUTER_ID&stage=$TEST_NAME"; then
+	#	echo 'require_attention: failed to change state'
+	#	return 1
+	#fi
+}
+
+dismiss_attention()
+{
+	return 0
+
+	#if ! curl -sf "$REST_SERVER/computers/dismiss_attention/$COMPUTER_ID&stage=$TEST_NAME"; then
+	#	echo 'dismiss_attention: failed to change state'
+	#	return 1
+	#fi
+}
+
+get_needed_firmwares_list()
+{
+	# Example values
+	echo "Motherboard::08011::megabios.img"
+	echo "RAID::1.22::raidbios.img"
+
+	#if ! curl -sf "$REST_SERVER/computers/needed_firmwares_list/$COMPUTER_ID"; then
+	#	echo "get_needed_firmwares_list: failed to get list"
+	#	return 1
+	#fi
+}
+
+boot_from_image()
+{
+	local image=`echo -n "$1" | ruby -e 'require "cgi"; print CGI::escape($stdin.read)'`
+
+	#if ! curl -sf "$REST_SERVER/computers/boot_from_image/$COMPUTER_ID&image=$image"; then
+	#	echo "get_needed_firmwares_list: failed to get list"
+	#	return 1
+	#fi
 }
