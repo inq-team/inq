@@ -19,6 +19,7 @@ class Planner
 		@plan = nil
 		@stages_prev = stages_prev
 		@stages_now = stages_now
+		@stages = stages_prev + stages_now
 		@comp_prev = comp_prev
 		@comp_now = comp_now
 		@start_new = !force_continue
@@ -34,7 +35,12 @@ class Planner
 		@profile.root.each_element { |t|
 			case t.name
 			when 'test'
-				add_test(t) if @stages_now.select { |st| st.stage == t.attribute('id').to_s }.empty?
+				if @stages.select { |st|
+					st.stage == t.attribute('id').to_s and
+					st.result == TestingStage::FINISHED
+				}.empty? then
+					add_test(t)
+				end
 			when 'submit-additional-components'
 				@plan << 'submit-additional-components'
 			else

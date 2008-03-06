@@ -94,7 +94,6 @@ class ComputersControllerTest < Test::Unit::TestCase
 		lt = Computer.find(2).last_testing
 		qty = lt.graphs.size
 		post :monitoring_submit, :id => 2, :monitoring_id => 1, :timestamp => 12345678, :key => 1, :value => 42
-		sleep 30
 		assert_equal qty + 1, lt.graphs.size
 		g = lt.graphs[0]
 		assert_equal 1, g.monitoring_id
