@@ -63,6 +63,11 @@ set_ip()
 	curl -sf "$REST_SERVER/computers/set_ip/$COMPUTER_ID?ip=$1"
 }
 
+check_audit()
+{
+	curl -sf "$REST_SERVER/computers/check_audit/$COMPUTER_ID.xml"
+}
+
 watchdog()
 {
 	while true; do
@@ -98,6 +103,7 @@ benchmark_submit_string()
 		return 1
 	fi
 }
+
 set_profile()
 {
 	if ! curl -sf "$REST_SERVER/computers/set_profile/$COMPUTER_ID?profile=$1"; then

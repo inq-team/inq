@@ -13,20 +13,21 @@
 #   http://dev.mysql.com/doc/refman/5.0/en/old-client.html
 development:
   adapter: mysql
-  database: inq
+  database: inq2
   username: inq
   password: inq
-  socket: /var/lib/mysql/mysql.sock
   encoding: utf8
+  socket: /var/lib/mysql/mysql.sock
 
 # Warning: The database defined as 'test' will be erased and
 # re-generated from your development database when you run 'rake'.
 # Do not set this db to the same as development or production.
 test:
   adapter: mysql
-  database: admin_test
-  username: root
-  password:
+  database: inq_test
+  username: inq  
+  password: inq
+  encoding: utf8
   socket: /var/lib/mysql/mysql.sock
 
 production:

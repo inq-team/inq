@@ -156,18 +156,18 @@ class ComputersController < ApplicationController
 
 	def check_audit
 		prepare_computer_and_testing
-		check = @testing && @testing.audit && @testing.audit.confirmation
+		check = @testing && @testing.audit && @testing.audit.confirmation || !@computer.order
                 respond_to() do |format|
                         format.html { 
 				if check
-					redirect_to(:action => 'audit', :id => @computer, :testing => @testing_number) 
+					redirect_to(:action => @computer.order ? 'audit' : 'show', :id => @computer, :testing => @testing_number) 
 				else
 					head :status => 404
 				end
 			}
                         format.xml { 
 				if check
-					render(:xml => @testing.audit.to_xml()) 
+					render(:xml => @testing.audit ? @testing.audit.to_xml() : "<thursday_hack />")
 				else
 					head :status => 404
 				end

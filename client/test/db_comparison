@@ -9,6 +9,9 @@
 
 . /usr/share/inquisitor/functions-test
 
+check_audit && test_succeeded || true
+
 print_green_message "Please refer to the web interface to confirm detected hardware placement"
 
 [ "`wait-string`" == "OK" ] && test_succeeded || test_failed 
+
