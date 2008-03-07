@@ -30,6 +30,11 @@ Rails::Initializer.run do |config|
   # (create the session table with 'rake db:sessions:create')
   # config.action_controller.session_store = :active_record_store
 
+	config.action_controller.session = {
+		:session_key => '_inq_session',
+		:secret => '3b6e239389e503f082598aff803729afd56defe7004d9845eb9ba666661179c2'
+	}
+
   # Use SQL instead of Active Record's schema dumper when creating the test database.
   # This is necessary if your schema can't be completely dumped by the schema dumper, 
   # like if you have constraints or database-specific column types
@@ -56,6 +61,8 @@ end
 # Add new mime types for use in respond_to blocks:
 # Mime::Type.register "text/richtext", :rtf
 # Mime::Type.register "application/x-mobile", :mobile
+
+Mime::Type.register 'image/png', :png
 
 # Include your application configuration below
 
