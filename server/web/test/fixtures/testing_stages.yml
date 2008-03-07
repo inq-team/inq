@@ -11,3 +11,11 @@ two:
   end: 2000-01-01 01:00
   stage: cpu
   result: 1
+
+two_testings_new_hdd_done_cpu0_stage:
+  id: 3
+  testing_id: 50
+  start: 2000-01-01 00:00
+  end: 2000-01-01 01:00
+  stage: cpu
+  result: 1

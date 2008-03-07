@@ -13,3 +13,15 @@ single_testing_failed_test_testing:
   computer_id: 4
   test_start: 2000-01-01 00:00
   test_end: 2000-01-01 01:00
+
+two_testings_new_hdd_done_cpu0:
+  id: 50
+  computer_id: 5
+  test_start: 2000-01-01 00:00
+  test_end: 2000-01-01 01:00
+
+two_testings_new_hdd_done_cpu1:
+  id: 51
+  computer_id: 5
+  test_start: 2000-01-01 02:00
+  test_end: 2000-01-01 03:00

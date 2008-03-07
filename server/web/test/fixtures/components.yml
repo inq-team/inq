@@ -12,3 +12,18 @@
   testing_id: 2
   component_model_id: 3
   serial: SERIAL3
+4:
+  id: 4
+  testing_id: 50
+  component_model_id: 1
+  serial: 000
+5:
+  id: 5
+  testing_id: 51
+  component_model_id: 1
+  serial: 000
+6:
+  id: 6
+  testing_id: 51
+  component_model_id: 1
+  serial: SERIAL2

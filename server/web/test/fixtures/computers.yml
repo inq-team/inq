@@ -14,3 +14,7 @@ single_testing_failed_test:
   id: 4
   model_id: 1
   profile_id: 1
+two_testings_new_hdd_cpu_done:
+  id: 5
+  model_id: 1
+  profile_id: 1

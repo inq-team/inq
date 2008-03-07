@@ -51,6 +51,13 @@ class ComputersControllerTest < Test::Unit::TestCase
 		assert_equal %w(memory hdd-passthrough hdd-array net fdd odd_read), res
 	end
 
+	def test_plan_5
+		get :plan, :id => 5
+		res = assigns['pl'].plan.map { |t| t.type }
+		assert_response :success
+		assert_equal %w(memory hdd-passthrough hdd-array net fdd odd_read), res
+	end
+
 	def test_submit_components_1
 		post :submit_components, :id => 2, :list => "
 <?xml version='1.0'?>
