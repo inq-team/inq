@@ -18,8 +18,7 @@ class ComputersController < ApplicationController
 	end
 
 	def ordered
-		ids = Computer.find_by_sql("select distinct computers.id from computers left join testings on computers.id = testings.computer_id where computers.order_id is not null and testings.id is not null").collect { |c| c.id }
-		@computers = Computer.find(*ids)		
+		@computers = Computer.with_orders		
 	end
 
 	def latest
