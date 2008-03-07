@@ -5,12 +5,24 @@ require 'orders_controller'
 class OrdersController; def rescue_action(e) raise e end; end
 
 class OrdersControllerTest < Test::Unit::TestCase
-	fixtures :orders, :computers, :profiles, :order_lines
+	fixtures :orders, :computers, :profiles, :order_lines, :models
 
 	def setup
 		@controller = OrdersController.new
 		@request    = ActionController::TestRequest.new
 		@response   = ActionController::TestResponse.new
+	end
+
+	def test_show_1
+		get :show, :id => 1
+		assert_equal(
+			[
+				["Alpha model: default (2000-02-06)", 6],
+				["Alpha model: specific (2000-02-06)", 5],
+				["default (2000-02-02)", 2],
+			],
+			assigns['profiles']
+		)
 	end
 
 	def test_create_computers_1

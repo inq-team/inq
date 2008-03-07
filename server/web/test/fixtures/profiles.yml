@@ -42,3 +42,29 @@ two:
   id: 2
   xml: '<tests></tests>'
   timestamp: 2000-02-02
+
+alpha_default_profile:
+  id: 3
+  model_id: 1
+  xml: '<tests></tests>'
+  timestamp: 2000-02-01
+
+alpha_specific_profile:
+  id: 4
+  model_id: 1
+  feature: 'specific'
+  xml: '<tests></tests>'
+  timestamp: 2000-02-03
+
+alpha_specific_profile2:
+  id: 5
+  model_id: 1
+  feature: 'specific'
+  xml: '<tests></tests>'
+  timestamp: 2000-02-06
+
+alpha_default_profile2:
+  id: 6
+  model_id: 1
+  xml: '<tests></tests>'
+  timestamp: 2000-02-06
