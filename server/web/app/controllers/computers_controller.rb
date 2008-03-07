@@ -635,6 +635,20 @@ __EOF__
 		return if @sorted_testings.empty?
 		prev_testing = @sorted_testings[@testing_number - 1]
 
+		now = Time.new
+		@computer_stages = (@computer.computer_stages + (@computer.order ? @computer.order.order_stages.find_all { |stage| stage.stage != 'manufacturing' } : [])).inject([]) do |a, stage|
+			a << { 	:stage => stage.stage, :person => stage.person, 
+				:start => stage.start, 
+				:end => stage.end, :elapsed => stage.end || now - stage.start, 
+				:comment => stage.comment, :status => stage.start > now ? :planned : stage.end ? :finished : :running
+			}
+		end.sort { |a, b| a[:start] <=> b[:start] }
+		['ordering', 'warehouse', 'acceptance', 'assembling', 'testing', 'packaging'].each do |stage_name|
+			unless @computer_stages.find { |stage| stage[:stage] == stage_name }
+				@computer_stages << { :stage => stage_name, :status => :planned }
+			end
+		end
+
 		# Completed or running stages
 		@stages = @testing.testing_stages.sort { |a, b| a.start <=> b.start }.collect { |stage|
 			{

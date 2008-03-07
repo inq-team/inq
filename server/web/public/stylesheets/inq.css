@@ -89,40 +89,77 @@ td#title_bar_doc {
 }
 
 #progress_bar table {
-	border-collapse: separate;
-	border: none;
-	border-spacing: 1em;
+	border-collapse: collapse;
+	border: 0px;
+	margin-top: 1em;
+	margin-bottom: 1em;
 }
 
 #progress_bar td {
 	text-align: center;
-	vertical-align: middle;	
-	width: 8em;
-	height: 4.5em;
-	border: 1px solid #999;
-	padding: 0px;
+	padding: 0px;	
 }
 
-.computer_stage_planned {
+#progress_bar #computer_stages td {
+	width: 10em;
+	padding-left: 0.1em;
+	padding-right: 0.1em;
+}
+
+#computer_stages div {
+	height: 2.8em;
+	padding-left: 38px;
+	border: 1px solid #999;
+}
+
+#computer_stages_comment {
+	background-color: #559F7D; 
+	color: white;
+	height: 2em;
+}
+
+tr#computer_stages_comment td {
+	text-align: left;
+	text-indent: 1em;
+}
+
+#computer_stages_pointers td {
+	height: 11px;
+	font-size: 0px;
+	border: 0px;
+}
+
+.pointer_active {
+	background: url('/images/pointer_arrow.png') 50% 0% no-repeat;
+}
+
+.pointer_inactive {
+}
+
+#progress_bar .person, #progress_bar .timedelta, #progress_bar .computer_stage_name {
+	display: block;
+}
+
+#progress_bar .person {
+	font-size: 75%;
+}
+
+#computer_stages td.computer_stage_planned div {
 	background-color: #ebffef;
 	color: #999;
+	border-color: #999;
 }
 
-.computer_stage_finished {
+#computer_stages td.computer_stage_finished div {
 	background-color: #AACFBE;
 	color: #002514;
 	border-color: #559F7D;
 }
 
-.computer_stage_running {
+#computer_stages td.computer_stage_running div {
 	background-color: #F3D079;
 	color: #4F3D12;
 	border-color: #A28A50;
-}
-
-.computer_stage_person {
-	font-size: 80%;
-	padding-top: 2px;
 }
 
 /* tabbed pane */

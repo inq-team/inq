@@ -25,37 +25,7 @@
 	</tr></table>
 	</div>
 	
-	<div id="progress_bar"> 
-	<table><tr>
-	<% stages = ['Ordering', 'Warehouse', 'Acceptance', 'Assembling', 'Testing', 'Packaging'] ; now = Time.new() %>
-	<% @computer.computer_stages.sort { |a, b| (a.end || now) <=> (b.end || now) }.each() do |stage| %>
-	<%
-		ary = [{ :span => ((stage.end || now) - stage.start).round(), :span_txt => "&lt; 1m" }]
-		name = stage.stage.capitalize()
-		ary = ary.collect do |h|
-		        if (z = h[:span] / 86400) > 0
-				h[:span_txt] = sprintf("%id %ih", z, h[:span] % 86400 / 3600)
-			elsif ( z = h[:span] / 3600) > 0
-				h[:span_txt] = sprintf("%ih %im", z, h[:span] % 3600 / 60)
-			elsif (z = h[:span] / 60) > 0
-				h[:span_txt] = sprintf("%im", z)
-			end
-			h
-		end
-		classname = stage.end ? 'finished' : 'running'
-		stages.delete(name)
-	%>
-		<td title='<%= stage.comment %>' class='computer_stage_<%= classname %>'>
-			<div class="computer_stage_name"><%= name %></div>
-<%		if stage.person %>
-			<div class="computer_stage_person">(<%= stage.person.name %>)</div>
-<%		end %>
-			<div class="computer_stage_time"><%= ary.reverse.collect { |h| h[:span_txt] }.join(" / ") %></div>
-		</td>
-	<% end %>
-	<% stages.each do |stage| %><td class="computer_stage_planned"><%= stage %></td><% end %>
-	</tr></table>
-	</div>
+	<%= progress_bar(@computer_stages) %>
 	
 	<table id="testing_pane">
 
