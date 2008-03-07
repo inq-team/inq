@@ -68,3 +68,15 @@ alpha_default_profile2:
   model_id: 1
   xml: '<tests></tests>'
   timestamp: 2000-02-06
+
+beta_default_profile:
+  id: 7
+  model_id: 2
+  xml: '<tests></tests>'
+  timestamp: 2000-02-06
+
+default_specific_profile:
+  id: 8
+  feature: 'groovy'
+  xml: '<tests></tests>'
+  timestamp: 2000-02-08

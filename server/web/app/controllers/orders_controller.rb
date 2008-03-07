@@ -48,9 +48,6 @@ class OrdersController < ApplicationController
 			@start_id = Computer.free_id
 			@end_id = @start_id + @default_qty - 1
 
-			# Prepare profiles list
-			@profiles = Profile.find(:all).map { |x| [x.name, x.id] }
-
 			# Try to guess default creation model from order
 			@order_title = @order.title.to_s.gsub(/(\d)(S(A|C))/){$1}.gsub(/(\d)(G(2|3))/){$1.to_s + ' ' + $2.to_s}
 			model_names = Model.find_by_sql(['SELECT name FROM models WHERE MATCH(name) AGAINST(?) ORDER BY name;', @order_title]).map { |x| [x.name, x.id] }
@@ -70,6 +67,9 @@ class OrdersController < ApplicationController
 			end
 
 			@default_model = model_names[0][1] if (@default_model == nil) && (model_names.size > 0)
+
+			# Prepare profiles list
+			@profiles = Profile.list_for_model(@default_model).map { |x| [x.name, x.id] }
 		end
 
 		respond_to do |format|
