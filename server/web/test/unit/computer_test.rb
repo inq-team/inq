@@ -1,10 +1,9 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class ComputerTest < Test::Unit::TestCase
-  fixtures :computers
+	fixtures :computers
 
-  # Replace this with your real tests.
-  def test_truth
-    assert true
-  end
+	def test_free_id
+		assert_equal 100001, Computer.free_id
+	end
 end

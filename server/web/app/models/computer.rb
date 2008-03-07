@@ -68,6 +68,10 @@ class Computer < ActiveRecord::Base
 		find_by_sql("select distinct computers.* from computers left join testings on computers.id = testings.computer_id where computers.order_id is not null and testings.id is not null order by computers.order_id")
 	end
 
+	def self.free_id
+		Computer.find_by_sql('SELECT MAX(id)+1 FROM computers')[0]['MAX(id)+1'].to_i
+	end
+
 	private
 
 	##

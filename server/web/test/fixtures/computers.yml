@@ -18,3 +18,7 @@ two_testings_new_hdd_cpu_done:
   id: 5
   model_id: 1
   profile_id: 1
+last_computer:
+  id: 100000
+  model_id: 1
+  profile_id: 1
