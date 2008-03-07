@@ -13,8 +13,7 @@ class OrdersController < ApplicationController
 	end
 
 	def testings
-		ids = Order.find_by_sql("select distinct computers.order_id as id from computers left join testings on testings.computer_id = computers.id where computers.order_id is not null and testings.id is not null").collect { |o| o.id }
-		@orders = Order.find(*ids)
+		@orders = Order.with_testings
 	end
 
 
@@ -152,8 +151,7 @@ class OrdersController < ApplicationController
   end
 
 	def items
-		ids = Order.find_by_sql("select distinct computers.order_id as id from computers left join testings on testings.computer_id = computers.id where computers.order_id is not null and testings.id is not null").collect { |o| o.id }
-		@orders = Order.find(*ids)
+		@orders = Order.with_testings
 		@order = Order.find(params[:id])
 		@next_id = @prev_id = nil
 		if @orders.include?(@order)
@@ -167,8 +165,7 @@ class OrdersController < ApplicationController
 	end
 
 	def components
-		ids = Order.find_by_sql("select distinct computers.order_id as id from computers left join testings on testings.computer_id = computers.id where computers.order_id is not null and testings.id is not null").collect { |o| o.id }
-		@orders = Order.find(*ids)
+		@orders = Order.with_testings
 		@order = Order.find(params[:id])
 		@next_id = @prev_id = nil
 		if @orders.include?(@order)

@@ -34,4 +34,8 @@ WHERE os2.stage='warehouse' AND os2.end IS NOT NULL
 ORDER BY from_delay DESC"]),
 		]
 	end
+
+	def self.with_testings
+                Order.find_by_sql("select distinct orders.* from computers inner join testings on testings.computer_id = computers.id inner join orders on computers.order_id = orders.id where testings.id is not null order by orders.buyer_order_number")
+	end
 end
