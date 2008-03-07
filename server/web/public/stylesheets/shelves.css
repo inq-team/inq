@@ -87,6 +87,7 @@ table.stack td .title {
 	min-height: 12em;
 	position: fixed;
 	padding: 0.5em;
+	width: 40em;
 	padding-bottom: 0px;
 	z-index: 100;
 }

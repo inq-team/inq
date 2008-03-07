@@ -84,7 +84,7 @@ td#title_bar_doc {
 /* Progress bar */
 
 #progress_bar {
-	padding-left: 4.0em;
+	padding-left: 4.4em;
 	border: 0px solid white;
 }
 
@@ -136,11 +136,11 @@ tr#computer_stages_comment td {
 .pointer_inactive {
 }
 
-#progress_bar .person, #progress_bar .timedelta, #progress_bar .computer_stage_name {
+#progress_bar .person, #progress_bar .bad_username, #progress_bar .timedelta, #progress_bar .computer_stage_name {
 	display: block;
 }
 
-#progress_bar .person {
+#progress_bar .bad_username, .person {
 	font-size: 75%;
 }
 
@@ -238,10 +238,10 @@ td#testings_tabs {
 }
 
 #info_tabs td {
-	width: 8.6em; 
+	width: 9.4em; 
 	text-align: center;
 	vertical-align: middle;
-	border-right: 0.3em solid ! important;
+	border-right: 0.2em solid ! important;
 }
 
 td#info_tabs td#info_tab_dummy {
