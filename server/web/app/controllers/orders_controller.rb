@@ -34,37 +34,44 @@ class OrdersController < ApplicationController
 			end
 			@st_comp_qty[st] = stage_comp.size
 		end
-		
+
 		@qty = @computers.size
-		@models = Model.find(:all).map{ |x| x.name }
-		@default_qty = @order.order_lines.map{ |x| x.qty }.min
-		@default_qty = 1 if @default_qty.nil?
-		@profiles = Profile.find(:all).map{ |x| x.name }
-		@start_id = Computer.find_by_sql('SELECT MAX(id)+1 FROM computers')[0]['MAX(id)+1'].to_i
-		@end_id = @start_id + @default_qty - 1
 
-		@order_title = @order.title.to_s.gsub(/(\d)(S(A|C))/){$1}.gsub(/(\d)(G(2|3))/){$1.to_s + ' ' + $2.to_s}
-		model_names = Model.find_by_sql(['SELECT name FROM models WHERE MATCH(name) AGAINST(?);', @order_title]).sort{ |a,b| a.name <=> b.name }.map{ |x| x.name }
-		@default_model = nil
+		if @qty == 0 then
+			@models = Model.find(:all, :order => :name).map { |x| [x.name, x.id] }
 
-		if model_names.size > 0
-			[/G2/, /G3/].each do |g|
-				if @order_title =~ g
-					model_names.each do |name|
-						if name =~ g
-							@default_model = name
-							break
-						end
+			# Guess quantity of computers to create
+			@default_qty = @order.order_lines.map { |x| x.qty }.min
+			@default_qty = 1 if @default_qty.nil?
+
+			# Start and end of ID range
+			@start_id = Computer.free_id
+			@end_id = @start_id + @default_qty - 1
+
+			# Prepare profiles list
+			@profiles = Profile.find(:all).map { |x| [x.name, x.id] }
+
+			# Try to guess default creation model from order
+			@order_title = @order.title.to_s.gsub(/(\d)(S(A|C))/){$1}.gsub(/(\d)(G(2|3))/){$1.to_s + ' ' + $2.to_s}
+			model_names = Model.find_by_sql(['SELECT name FROM models WHERE MATCH(name) AGAINST(?) ORDER BY name;', @order_title]).map { |x| [x.name, x.id] }
+			@default_model = nil
+
+			if model_names.size > 0
+				[/G2/, /G3/].each { |g|
+					if @order_title =~ g
+						model_names.each { |m|
+							if m[0] =~ g
+								@default_model = name[1]
+								break
+							end
+						}
 					end
-				end
+				}
 			end
+
+			@default_model = model_names[0][1] if (@default_model == nil) && (model_names.size > 0)
 		end
 
-		if (@default_model == nil) && (model_names.size > 0)
-			@default_model = model_names[0]
-		end
-
-#		@computers = []
 		respond_to do |format|
 			format.html # show.rhtml
 			format.xml  { render :xml => @order.to_xml(:include => [:order_lines, :manager]) }
@@ -72,23 +79,23 @@ class OrdersController < ApplicationController
 	end
 
 	def create_computers
-		model = params[:model][:name]
+		model_id = params[:model][:id]
 		profile_id = params[:profile][:id]
 		start_id = params[:new_computers][:start_id].to_i
 		end_id = params[:new_computers][:end_id].to_i
-		
+
 		if (start_id > end_id) || ((start_id..end_id).to_a.map{ |i| Computer.find_by_id(i) }.compact.size > 0)
 			flash[:notice] = 'Incorrect indexes'
 			redirect_to :action => 'show', :id => params[:id]
 			return
 		end		
-		
+
 		(start_id..end_id).to_a.each do |id|
 			c = Computer.new
 			c.id = id
-			c.model = Model.find_by_name(model)
+			c.model_id = model_id
 			c.order_id = params[:id]
-			c.profile = Profile.find_by_id(profile_id)
+			c.profile_id = profile_id
 			c.save!
 		end
 		redirect_to :action => 'show', :id => params[:id]

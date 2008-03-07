@@ -112,7 +112,7 @@ when :assembling %>
 </table>
 
 <p><label for="new_computers_model">Model:</label><br/>
-<%= select :model, :name, @models.sort, {:selected => @default_model} %></p>
+<%= select :model, :id, @models, {:selected => @default_model} %></p>
 
 <table style="border-spacing: 0; border-padding: 0; width: 100%">
 <tr>
