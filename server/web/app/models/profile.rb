@@ -5,6 +5,6 @@ class Profile < ActiveRecord::Base
 		res = ''
 		res << "#{model.name}: " if model_id
 		res << if feature then feature else 'default' end
-		res << " (#{timestamp})"
+		res << " (#{timestamp.strftime('%Y-%m-%d')})"
 	end
 end

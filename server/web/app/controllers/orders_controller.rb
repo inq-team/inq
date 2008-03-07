@@ -39,7 +39,7 @@ class OrdersController < ApplicationController
 		@models = Model.find(:all).map{ |x| x.name }
 		@default_qty = @order.order_lines.map{ |x| x.qty }.min
 		@default_qty = 1 if @default_qty.nil?
-		@profiles = Profile.find(:all).map{ |x| x.id }
+		@profiles = Profile.find(:all).map{ |x| x.name }
 		@start_id = Computer.find_by_sql('SELECT MAX(id)+1 FROM computers')[0]['MAX(id)+1'].to_i
 		@end_id = @start_id + @default_qty - 1
 
