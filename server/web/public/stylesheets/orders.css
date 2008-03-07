@@ -58,3 +58,7 @@ h1 {
 	margin: 0px;
 	vertical-align: top;
 }
+
+.panel .content {
+	padding: 0.5em;
+}

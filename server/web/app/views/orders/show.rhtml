@@ -77,6 +77,9 @@ when :assembling %>
 <td class="panel" rowspan="2">
 
 <h1>Computers</h1>
+
+<div class="content">
+
 <table>
 <% @computers.sort{ |a, b| a.id <=> b.id }.each { |c| %>
 <tr>
@@ -90,27 +93,39 @@ when :assembling %>
 
 <% if @computers.size == 0%>
 
-<% form_tag :action => 'create_computers', :id => @order do %>
+<%	form_tag :action => 'create_computers', :id => @order do %>
 
-  <p><label for="new_computers_qty">Quantity:</label><br/>
-  <input id="new_computers_qty" name="new_computers[qty]" size="30" type="text" onKeyPress="return isNumberKey(event)" onKeyUp="qtyEdited() " value="<%= @default_qty %>" /></p>
-  
-  <p><label for="new_computers_qty">Start ID:</label><br/>
-  <input id="new_computers_start_id" name="new_computers[start_id]" size="30" type="text" onKeyPress="return isNumberKey(event)" onKeyUp="someIdEdited()" value="<%= @start_id %>" /></p>
-  
-  <p><label for="new_computers_qty">End ID:</label><br/>
-  <input id="new_computers_end_id" name="new_computers[end_id]" size="30" type="text" onKeyPress="return isNumberKey(event)" onKeyUp="someIdEdited()" value="<%= @end_id %>" /></p>
+<table>
 
-  <p><label for="new_computers_model">Model:</label><br/>
-  <%= select :model, :name, @models.sort, {:selected => @default_model} %></p>
-  
-  <p><label for="new_computers_qty">Profile:</label><br/>
-  <%= select :profile, :id, @profiles %></p>  
+<tr>
+<td><label for="new_computers_qty">Quantity:</label></td>
+<td><label for="new_computers_start_id">Start ID:</label></td>
+<td><label for="new_computers_end_id">End ID:</label></td>
+</tr>
 
-  <%= submit_tag 'Create' %>
+<tr>
+<td><input id="new_computers_qty" name="new_computers[qty]" size="6" type="text" onKeyPress="return isNumberKey(event)" onKeyUp="qtyEdited() " value="<%= @default_qty %>" style="margin-right: 2em" /></td>
+<td>(<input id="new_computers_start_id" name="new_computers[start_id]" size="6" type="text" onKeyPress="return isNumberKey(event)" onKeyUp="someIdEdited()" value="<%= @start_id %>" /> &mdash;</td>
+<td><input id="new_computers_end_id" name="new_computers[end_id]" size="6" type="text" onKeyPress="return isNumberKey(event)" onKeyUp="someIdEdited()" value="<%= @end_id %>" />)</td>
+</tr>
+
+</table>
+
+<p><label for="new_computers_model">Model:</label><br/>
+<%= select :model, :name, @models.sort, {:selected => @default_model} %></p>
+
+<table style="border-spacing: 0; border-padding: 0; width: 100%">
+<tr>
+<td><label for="new_computers_qty">Profile:</label><br/><%= select :profile, :id, @profiles %></td>
+<td style="text-align: right; vertical-align: bottom"><%= submit_tag 'Create' %></td>
+</tr>
+</table>
+
+<%	end %>
+
 <% end %>
 
-<% end %>
+</div>
 
 </td>
 </tr>
