@@ -36,7 +36,9 @@ one:
         <var name="FORCE_NON_INTERACTIVE">false</var>
 </test>
 </tests>'
+  timestamp: 2000-01-01
 
 two:
   id: 2
   xml: '<tests></tests>'
+  timestamp: 2000-02-02

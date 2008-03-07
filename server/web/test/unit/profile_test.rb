@@ -1,10 +1,9 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class ProfileTest < Test::Unit::TestCase
-  fixtures :profiles
+	fixtures :profiles
 
-  # Replace this with your real tests.
-  def test_truth
-    assert true
-  end
+	def test_name_1
+		assert 'default (2000-01-01)', Profile.find(1).name
+	end
 end
