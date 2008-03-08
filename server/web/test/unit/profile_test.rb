@@ -14,5 +14,6 @@ class ProfileTest < Test::Unit::TestCase
 	def test_list_for_model
 		assert_equal [6,5,2,8], Profile.list_for_model(1).collect { |x| x.id }
 		assert_equal [7,2,8], Profile.list_for_model(2).collect { |x| x.id }
+		assert_equal [2,8], Profile.list_for_model(3).collect { |x| x.id }
 	end
 end
