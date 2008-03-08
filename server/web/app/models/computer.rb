@@ -1,6 +1,5 @@
 class Computer < ActiveRecord::Base
 	belongs_to :model
-	belongs_to :customer
 	belongs_to :order
 	has_many :testings
 	has_many :computer_stages
