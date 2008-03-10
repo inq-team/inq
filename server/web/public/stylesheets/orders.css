@@ -28,14 +28,18 @@
 
 .order_cell .order_number {
         float: left;
-        width: 80px;
+        width: 45px;
         min-height: 38px;
         height: 38px;
-        text-indent: 12px;
-        padding-top: 10px;
+        text-indent: 4px;
+        padding-top: 4px;
         font-size: 1.3em;
         margin-right: 0.5em;
         background: url(/img/order.png);
+}
+
+.order_cell .customer {
+	clear: left;
 }
 
 .order_cell .timer {

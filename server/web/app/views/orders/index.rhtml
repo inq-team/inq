@@ -1,55 +1,31 @@
 <table class="order_staging" border='1'>
 	<tr>
-		<th width="16%">Ordering</th>
-		<th width="16%">Warehouse</th>
-		<th width="16%">Ready for mfg</th>
-		<th width="16%">Assembling</th>
-		<th width="16%">Testing</th>
-		<th width="20%">Packing</th>
+		<th width="14%">Ordering</th>
+		<th width="15%">Warehouse</th>
+		<th width="14%">Acceptance</th>
+		<th width="14%">Assembling</th>
+		<th width="15%">Testing</th>
+		<th width="14%">Checking</th>
+		<th width="14%">Packing</th>
 	</tr>
-	<% @orders.each do |ord|
-		cell_content = "<a href=#{ url_for(:action => 'show', :controller => 'orders', :id => ord) }>
-	<div class='order_number'>#{ ord.buyer_order_number }</div>
-	<div class='title'>#{ truncate(ord.title, 40) }</div>
-	<div class='customer'>#{ truncate(ord.customer, 40) }</div>
-	<div class='timer'>#{ ord.from_delay }</div>
-	<div>Number of computers: #{ ord.computers.size }</div>		
-</a>" %>	
 	<tr>
-		<% if ord.order_stages.select{ |os| !os.end }.size > 0
-			stage = ord.order_stages.select{ |os| !os.end }[0].stage 
-			case stage 
-			when 'ordering' %>
-				<td class='order_cell'><%= cell_content %><td/><td/><td/>
-			<% when 'warehouse' %>
-				<td/><td class='order_cell'><%= cell_content %></td><td/>
-			<% when 'ready for mfg' %>
-				<td/><td/><td class='order_cell'><%= cell_content %></td>
-			<% end				
-		else %>
-			<td/><td/><td/>
-			<% assembling_count = 0
-			testing_count = 0
-			packing_count = 0
-			ord.computers.each{ |c| assembling_count += c.computer_stages.select{ |cs| (cs.stage == 'assembling') && (!cs.end) }.size }
-			ord.computers.each{ |c| testing_count += c.computer_stages.select{ |cs| (cs.stage == 'testing') && (!cs.end) }.size }
-			ord.computers.each{ |c| packing_count += c.computer_stages.select{ |cs| (cs.stage == 'packing') && (!cs.end) }.size }
-			atp = []
-			atp[0] = assembling_count
-			atp[1] = testing_count
-			atp[2] = packing_count
-			first_not_zero = atp.find{ |x| x != 0 } || true
-			col_num = atp.index(first_not_zero).to_i
-			last_not_zero = atp.reverse.find{ |x| x != 0 }
-			last_not_zero_index = 2 - atp.reverse.index(last_not_zero).to_i
-			col_span = last_not_zero_index - col_num + 1
-			col_num.times do %>
-				<td/>
-			<% end %>
-			<td class='order_cell' colspan='<%= col_span %>'>
-				<%= cell_content %>
-			</td>
-		<% end %>		
+		<% @staging.each_with_index { |ost, i| %>
+		<td style="vertical-align: top<%= '; border-right: none' if i == 2 %>">
+			<table width="100%">
+				<%	ost.each { |o| %>
+				<tr>
+					<td class="order_cell">
+						<a href=<%= url_for(:action => 'show', :controller => 'orders', :id => o) %>>
+							<div class="order_number"><%=h o.buyer_order_number %></div>
+							<div class="title" title="<%=h o.title %>"><%=h truncate(o.title, 35).gsub(/\//, ' / ').gsub(/\\/, ' \ ') %></div>
+							<div class="customer" title="<%=h o.customer %>"><%=h truncate(o.customer, 22) %></div>
+							<div class="timer"><%=h o.from_delay %>d</div>
+						</a>
+					</td>
+				</tr>
+				<%	} %>
+			</table>
+		</td>
+		<% } %>
 	</tr>
-	<% end %>
 </table>

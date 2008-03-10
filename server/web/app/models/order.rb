@@ -32,6 +32,29 @@ INNER JOIN order_stages os2 ON t2.last_os_id=os2.id
 INNER JOIN orders o ON order_id=o.id
 WHERE os2.stage='warehouse' AND os2.end IS NOT NULL
 ORDER BY from_delay DESC"]),
+			self.find_by_sql(["SELECT o.id, o.buyer_order_number, o.title, o.customer, NOW(), 0 AS from_delay FROM orders o
+INNER JOIN computers c ON c.order_id=o.id
+LEFT JOIN computer_stages cs ON cs.computer_id=c.id
+WHERE cs.id IS NULL AND o.id NOT IN (
+	SELECT o2.id FROM orders o2 LEFT JOIN order_stages os2 ON o2.id=os2.order_id
+	WHERE os2.stage = 'manufacturing'
+)
+ORDER BY from_delay DESC"]),
+			self.find_by_sql(["SELECT o.id, o.buyer_order_number, o.title, o.customer, cs.start, DATEDIFF(NOW(), cs.start) AS from_delay FROM orders o
+INNER JOIN computers c ON c.order_id=o.id
+LEFT JOIN computer_stages cs ON cs.computer_id=c.id
+WHERE cs.stage='testing' AND cs.end IS NULL
+ORDER BY from_delay DESC"]),
+			self.find_by_sql(["SELECT o.id, o.buyer_order_number, o.title, o.customer, cs.start, DATEDIFF(NOW(), cs.start) AS from_delay FROM orders o
+INNER JOIN computers c ON c.order_id=o.id
+LEFT JOIN computer_stages cs ON cs.computer_id=c.id
+WHERE cs.stage='checking' AND cs.end IS NULL
+ORDER BY from_delay DESC"]),
+			self.find_by_sql(["SELECT o.id, o.buyer_order_number, o.title, o.customer, cs.start, DATEDIFF(NOW(), cs.start) AS from_delay FROM orders o
+INNER JOIN computers c ON c.order_id=o.id
+LEFT JOIN computer_stages cs ON cs.computer_id=c.id
+WHERE cs.stage='packing' AND cs.end IS NULL
+ORDER BY from_delay DESC"]),
 		]
 	end
 

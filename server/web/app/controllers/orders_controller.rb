@@ -4,8 +4,7 @@ class OrdersController < ApplicationController
 	# GET /orders
 	# GET /orders.xml
 	def index
-		#@orders = Order.find_by_sql("SELECT o.id, o.buyer_order_number, o.title, o.customer, os.start, DATEDIFF( NOW( ) , os.start ) AS from_delay FROM orders o INNER JOIN order_stages os ON o.id = os.order_id WHERE os.stage <> 'manufacturing' ORDER BY from_delay DESC")
-		@orders = Order.find_by_sql("SELECT o1.id, o1.buyer_order_number, o1.title, o1.customer, os1.start, DATEDIFF( NOW( ) , os1.start ) AS from_delay FROM orders AS o1 INNER JOIN order_stages AS os1 ON o1.id = os1.order_id WHERE o1.id NOT IN (SELECT o2.id FROM orders AS o2 LEFT JOIN order_stages AS os2 on o2.id=os2.order_id WHERE os2.stage='manufacturing') ORDER BY from_delay")
+		@staging = Order.staging
 	end
 
 	def staging
@@ -58,7 +57,7 @@ class OrdersController < ApplicationController
 					if @order_title =~ g
 						model_names.each { |m|
 							if m[0] =~ g
-								@default_model = name[1]
+								@default_model = m[1]
 								break
 							end
 						}
