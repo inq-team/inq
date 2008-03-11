@@ -22,3 +22,23 @@ last_computer:
   id: 100000
   model_id: 1
   profile_id: 1
+alpha_order_1:
+  id: 1001
+  model_id: 1
+  profile_id: 1
+  order_id: 1
+alpha_order_2:
+  id: 1002
+  model_id: 1
+  profile_id: 1
+  order_id: 1
+alpha_order_3:
+  id: 1003
+  model_id: 1
+  profile_id: 1
+  order_id: 1
+alpha_order_4:
+  id: 1004
+  model_id: 1
+  profile_id: 1
+  order_id: 1

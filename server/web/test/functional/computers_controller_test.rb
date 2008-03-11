@@ -30,6 +30,11 @@ class ComputersControllerTest < Test::Unit::TestCase
 		assert_equal %w(cpu memory hdd-passthrough hdd-array net fdd odd_read), res
 	end
 
+	def test_mark_1
+		get :mark, :id => 1
+		assert_response :success
+	end
+
 	def test_plan_1
 		get :plan, :id => 1
 		res = assigns['pl'].plan.map { |t| t.type }

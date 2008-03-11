@@ -1,0 +1,18 @@
+order_1_ordering:
+  id: 1
+  order_id: 1
+  stage: 'ordering'
+  start: 2000-01-01 00:01:00
+  end: 2000-01-01 00:02:00
+order_1_warehouse:
+  id: 2
+  order_id: 1
+  stage: 'warehouse'
+  start: 2000-01-01 00:03:00
+  end: 2000-01-01 00:04:00
+order_1_acceptance:
+  id: 3
+  order_id: 1
+  stage: 'acceptance'
+  start: 2000-01-01 00:05:00
+  end: 2000-01-01 00:06:00

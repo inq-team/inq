@@ -1,0 +1,33 @@
+computer_1001_1:
+  id: 1
+  computer_id: 1001
+  stage: 'assembling'
+  start: 2000-01-01 00:10:00
+computer_1002_1:
+  id: 2
+  computer_id: 1002
+  stage: 'assembling'
+  start: 2000-01-01 00:10:00
+  end: 2000-01-01 00:11:00
+computer_1002_2:
+  id: 3
+  computer_id: 1002
+  stage: 'testing'
+  start: 2000-01-01 00:12:00
+computer_1003_1:
+  id: 4
+  computer_id: 1003
+  stage: 'assembling'
+  start: 2000-01-01 00:10:00
+  end: 2000-01-01 00:11:00
+computer_1003_2:
+  id: 5
+  computer_id: 1003
+  stage: 'testing'
+  start: 2000-01-01 00:12:00
+  end: 2000-01-01 00:13:00
+computer_1003_3:
+  id: 6
+  computer_id: 1003
+  stage: 'checking'
+  start: 2000-01-01 00:14:00
