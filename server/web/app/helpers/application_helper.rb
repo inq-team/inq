@@ -37,10 +37,16 @@ def stage_tag(stage, js = nil)
 	content = '' #content_tag(:span, stage[:stage], :class => "computer_stage_name")
 	if stage[:person].blank? or stage[:status] == :planned
 		content += content_tag(:span, stage[:stage].capitalize, :class => 'person')
-	else 
+	else
 		content += person_tag(stage[:person])	
-	end	
-	content += stage[:status] == :planned ? 'planned' : delta_tag(stage[:end] || Time.new, stage[:start] || Time.new) 
+	end
+	if stage[:progress] 	
+		pro = stage[:progress]
+		content += content_tag(:span, "#{ pro[:value] } / #{ pro[:total] }", :class => 'progress')
+	elsif stage[:blank] 
+	else
+		content += stage[:status] == :planned ? 'planned' : delta_tag(stage[:end] || Time.new, stage[:start] || Time.new) 
+	end
 	content_tag('td', content_tag('div', content, :style => "background-image: url('/images/stages/#{ stage[:stage] }.png') ; background-position: 2px 50% ; background-repeat: no-repeat"), :class => "computer_stage_#{ stage[:status] }", :title => stage[:stage].capitalize, :onmouseover => js)
 end
 

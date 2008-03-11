@@ -137,11 +137,11 @@ tr#computer_stages_comment td {
 .pointer_inactive {
 }
 
-#progress_bar .person, #progress_bar .bad_username, #progress_bar .timedelta, #progress_bar .computer_stage_name {
+#progress_bar .person, #progress_bar .bad_username, #progress_bar .timedelta, #progress_bar .computer_stage_name, #progress_bar .progress {
 	display: block;
 }
 
-#progress_bar .bad_username, .person {
+#progress_bar .bad_username, #progress_bar .person {
 	font-size: 75%;
 }
 

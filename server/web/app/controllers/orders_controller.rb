@@ -23,7 +23,7 @@ class OrdersController < ApplicationController
 		@computers = @order.computers
 		@computer_stage_order = ['assembling', 'testing', 'checking', 'packaging']
 		@st_comp_qty = @computer_stage_order.inject({}) do |h, stage|
-			h.merge({ stage => @computers.find_all { |c| s = c.last_computer_stage ; s && s.stage == stage && s.end.blank? }.size })
+			h.merge({ stage => @computers.find_all { |c| s = c.last_computer_stage ; s && (s.stage == stage) && s.end.blank? }.size })
 		end
 
 		@qty = @computers.size
@@ -77,6 +77,17 @@ class OrdersController < ApplicationController
                                 @order_stages << { :stage => stage_name, :status => :planned }
                         end
                 end 
+
+		['assembling', 'testing', 'checking', 'packaging'].each do |stage| 
+			count = @computers.find_all { |c| s = c.last_computer_stage ; s && s.stage == stage && s.end.blank? }.size
+			passed = @computers.find_all { |c| c.computer_stages.find_by_stage(stage, :conditions => "end is not null") }.size
+			h = { :stage => stage, :progress => { :value => count > 0 ? count : passed, :total => @qty },
+                                :status => @qty == 0 ? :planned : passed == @qty ? :finished : count == 0 ? :planned : :running
+                        }
+			h.delete(:progress) if [:planned, :finished].include?(h[:status])
+			h[:blank] = 0 if h[:status] == :finished
+			@order_stages << h
+                end
 
 		respond_to do |format|
 			format.html # show.rhtml
