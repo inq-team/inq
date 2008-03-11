@@ -34,8 +34,9 @@ td#info_tabs table tr td#info_tab_log a {
 
 /**********************/
 
-textarea {
+#log_area {
 	width: 100%;
+	height: 50em;
 	font-size: 75%;
 	border: none;
 	border-bottom: 1px dotted #6A5338;

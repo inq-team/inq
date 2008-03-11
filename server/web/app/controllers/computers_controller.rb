@@ -261,11 +261,6 @@ class ComputersController < ApplicationController
 
 	def log
 		prepare_computer_tabs
-		begin
-			@logs = File.open("/var/log/HOSTS/c#{ @computer.id }").readlines()
-		rescue
-			@logs = "Logs unavailable"
-		end
 		render(:layout => 'computer_tabs')
 	end
 
