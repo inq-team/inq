@@ -49,7 +49,7 @@ class OrdersController < ApplicationController
 
 			# Try to guess default creation model from order
 			@order_title = @order.title.to_s.gsub(/(\d)(S(A|C))/){$1}.gsub(/(\d)(G(2|3))/){$1.to_s + ' ' + $2.to_s}
-			model_names = Model.find_by_sql(['SELECT name FROM models WHERE MATCH(name) AGAINST(?) ORDER BY name;', @order_title]).map { |x| [x.name, x.id] }
+			model_names = Model.find_by_sql(['SELECT id, name FROM models WHERE MATCH(name) AGAINST(?) ORDER BY name;', @order_title]).map { |x| [x.name, x.id] }
 			@default_model = nil
 
 			if model_names.size > 0
