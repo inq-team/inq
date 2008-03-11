@@ -180,7 +180,7 @@ class ComputersController < ApplicationController
 	end
 
 	def audit
-		prepare_computer_and_testing
+		prepare_computer_and_tabs
 		@close = params[:close]
 		if cached = @testing.audit
 			@audit = cached
@@ -270,13 +270,13 @@ class ComputersController < ApplicationController
 	end
 
 	def mark
-		prepare_computer_and_testing
+		prepare_computer_tabs
 		@marks = Mark.by_testing(@testing)
 		render(:layout => 'computer_tabs')
 	end
 
 	def graph
-		prepare_computer_and_testing
+		prepare_computer_tabs
 		respond_to { |format|
 			format.html {
 				render(:layout => 'computer_tabs')
@@ -632,8 +632,6 @@ __EOF__
 	
 	def prepare_computer_tabs
 		prepare_computer_and_testing
-		return if @sorted_testings.empty?
-		prev_testing = @sorted_testings[@testing_number - 1]
 
 		now = Time.new
 		@computer_stages = (@computer.computer_stages + (@computer.order ? @computer.order.order_stages.find_all { |stage| stage.stage != 'manufacturing' } : [])).inject([]) do |a, stage|
@@ -643,11 +641,15 @@ __EOF__
 				:comment => stage.comment, :status => stage.start > now ? :planned : stage.end ? :finished : :running
 			}
 		end.sort { |a, b| a[:start] <=> b[:start] }
-		['ordering', 'warehouse', 'acceptance', 'assembling', 'testing', 'packaging'].each do |stage_name|
+
+		['ordering', 'warehouse', 'acceptance', 'assembling', 'testing', 'checking', 'packaging'].each do |stage_name|
 			unless @computer_stages.find { |stage| stage[:stage] == stage_name }
 				@computer_stages << { :stage => stage_name, :status => :planned }
 			end
 		end
+
+		return if @sorted_testings.empty?
+		prev_testing = @sorted_testings[@testing_number - 1]
 
 		# Completed or running stages
 		@stages = @testing.testing_stages.sort { |a, b| a.start <=> b.start }.collect { |stage|

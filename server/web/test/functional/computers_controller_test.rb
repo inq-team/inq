@@ -100,11 +100,13 @@ class ComputersControllerTest < Test::Unit::TestCase
 	def test_monitoring_submit
 		lt = Computer.find(2).last_testing
 		qty = lt.graphs.size
-		post :monitoring_submit, :id => 2, :monitoring_id => 1, :timestamp => 12345678, :key => 1, :value => 42
+		now = Time.new
+		post :monitoring_submit, :id => 2, :monitoring_id => 1, :timestamp => now, :key => 1, :value => 42
+		lt = Computer.find(2).last_testing
 		assert_equal qty + 1, lt.graphs.size
-		g = lt.graphs[0]
+		g = lt.graphs.last
 		assert_equal 1, g.monitoring_id
-		assert_equal 12345678, g.timestamp
+		assert_equal now.to_s, g.timestamp.to_s
 		assert_equal 1, g.key
 		assert_equal 42, g.value
 	end

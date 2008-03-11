@@ -41,7 +41,7 @@ def stage_tag(stage, js = nil)
 end
 
 def progress_bar(stages)
-	comments = stages.collect { |stage| content_tag(:b, stage[:stage].capitalize + ': ') + (stage[:comment] ? "#{ stages.first[:comment].gsub('"', "'") }" : '') }
+	comments = stages.collect { |stage| content_tag(:b, stage[:stage].capitalize + ': ') + (stage[:comment] ? "#{ stage[:comment].gsub('"', "'") }" : '') }
 	js = javascript_tag(<<_EOF_
 		var GLOBAL_STAGES_COMMENTS = new Array();
 		#{ (0..comments.size - 1).inject('') do |s, i| s + "GLOBAL_STAGES_COMMENTS[" + i.to_s + "] = \"" + comments[i] + "\";\n" end }
