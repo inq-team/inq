@@ -184,4 +184,9 @@ class OrdersController < ApplicationController
 		@items = lines.inject({}) { |h, l| h.merge({ l => MyKit::Parser.parse(l.name) }) }
 	end
 
+	def live_profile
+		p params
+		@profiles = Profile.list_for_model(params[:model]).map { |x| [x.name, x.id] }
+                render(:layout => false)
+	end
 end

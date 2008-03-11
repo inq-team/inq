@@ -116,10 +116,17 @@ when :assembling %>
 
 <table style="border-spacing: 0; border-padding: 0; width: 100%">
 <tr>
-<td><label for="new_computers_qty">Profile:</label><br/><%= select :profile, :id, @profiles %></td>
+<td><label for="new_computers_qty">Profile:</label><br/><span id="live_profile"><%= select :profile, :id, @profiles %></span></td>
 <td style="text-align: right; vertical-align: bottom"><%= submit_tag 'Create' %></td>
 </tr>
 </table>
+
+<%= observe_field(
+	:model_id,
+	:url => { :action => :live_profile },
+	:update => :live_profile,
+	:with => 'model'
+) %>
 
 <%	end %>
 
