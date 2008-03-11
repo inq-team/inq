@@ -40,10 +40,11 @@ WHERE cs.id IS NULL AND o.id NOT IN (
 	WHERE os2.stage = 'manufacturing'
 )
 ORDER BY from_delay DESC"]),
-			self.find_by_sql(["SELECT o.id, o.buyer_order_number, o.title, o.customer, cs.start, DATEDIFF(NOW(), cs.start) AS from_delay FROM orders o
+			self.find_by_sql(["SELECT o.id, o.buyer_order_number, o.title, o.customer, cs.start, DATEDIFF(NOW(), cs.start) AS from_delay, COUNT(c.id) AS comp_qty FROM orders o
 INNER JOIN computers c ON c.order_id=o.id
 LEFT JOIN computer_stages cs ON cs.computer_id=c.id
 WHERE cs.stage='testing' AND cs.end IS NULL
+GROUP BY o.id
 ORDER BY from_delay DESC"]),
 			self.find_by_sql(["SELECT o.id, o.buyer_order_number, o.title, o.customer, cs.start, DATEDIFF(NOW(), cs.start) AS from_delay FROM orders o
 INNER JOIN computers c ON c.order_id=o.id

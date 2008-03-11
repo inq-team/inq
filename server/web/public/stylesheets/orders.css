@@ -48,6 +48,10 @@
         padding-right: 0.5em;
 }
 
+.order_cell .computers {
+	float: left;
+}
+
 h1 {
         background: #845905;
         color: white;

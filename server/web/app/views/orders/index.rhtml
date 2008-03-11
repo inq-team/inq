@@ -10,7 +10,7 @@
 	</tr>
 	<tr>
 		<% @staging.each_with_index { |ost, i| %>
-		<td style="vertical-align: top<%= '; border-right: none' if i == 2 %>">
+		<td style="vertical-align: top<%= '; border-right: none' if i == 6 %>">
 			<table width="100%">
 				<%	ost.each { |o| %>
 				<tr>
@@ -19,6 +19,9 @@
 							<div class="order_number"><%=h o.buyer_order_number %></div>
 							<div class="title" title="<%=h o.title %>"><%=h truncate(o.title, 35).gsub(/\//, ' / ').gsub(/\\/, ' \ ') %></div>
 							<div class="customer" title="<%=h o.customer %>"><%=h truncate(o.customer, 22) %></div>
+<%						if i == 4 %>
+							<div class="computers"><% o.comp_qty.to_i.times { %><%= image_tag 'computer.png' %><% } %></div>
+<%						end %>
 							<div class="timer"><%=h o.from_delay %>d</div>
 						</a>
 					</td>
