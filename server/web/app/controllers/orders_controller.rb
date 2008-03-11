@@ -20,56 +20,63 @@ class OrdersController < ApplicationController
 	# GET /orders/1.xml
 	def show
 		@order = Order.find(params[:id])
-		@computers = Computer.find_all_by_order_id(params[:id])
-		@st_comp_qty = {}
-		
-		[:assembling, :testing, :packing].each do |st|
-			stage_comp = @computers.select do |c|
-				if c.computer_stages.size > 0
-					(s = c.computer_stages.select{ |s| s.end == nil }[0]) ? s.stage == st.to_s : false
-				else
-					false
-				end
-			end
-			@st_comp_qty[st] = stage_comp.size
+		@computers = @order.computers
+		@computer_stage_order = ['assembling', 'testing', 'checking', 'packaging']
+		@st_comp_qty = @computer_stage_order.inject({}) do |h, stage|
+			h.merge({ stage => @computers.find_all { |c| s = c.last_computer_stage ; s && s.stage == stage && s.end.blank? }.size })
 		end
 
 		@qty = @computers.size
 
-		if @qty == 0 then
-			@models = Model.find(:all, :order => :name).map { |x| [x.name, x.id] }
+                if @qty == 0 then
+                        @models = Model.find(:all, :order => :name).map { |x| [x.name, x.id] }
 
-			# Guess quantity of computers to create
-			@default_qty = @order.order_lines.map { |x| x.qty }.min
-			@default_qty = 1 if @default_qty.nil?
+                        # Guess quantity of computers to create
+                        @default_qty = @order.order_lines.map { |x| x.qty }.min
+                        @default_qty = 1 if @default_qty.nil?
 
-			# Start and end of ID range
-			@start_id = Computer.free_id
-			@end_id = @start_id + @default_qty - 1
+                        # Start and end of ID range
+                        @start_id = Computer.free_id
+                        @end_id = @start_id + @default_qty - 1
 
-			# Try to guess default creation model from order
-			@order_title = @order.title.to_s.gsub(/(\d)(S(A|C))/){$1}.gsub(/(\d)(G(2|3))/){$1.to_s + ' ' + $2.to_s}
-			model_names = Model.find_by_sql(['SELECT id, name FROM models WHERE MATCH(name) AGAINST(?) ORDER BY name;', @order_title]).map { |x| [x.name, x.id] }
-			@default_model = nil
+                        # Try to guess default creation model from order
+                        @order_title = @order.title.to_s.gsub(/(\d)(S(A|C))/){$1}.gsub(/(\d)(G(2|3))/){$1.to_s + ' ' + $2.to_s}
+                        model_names = Model.find_by_sql(['SELECT id, name FROM models WHERE MATCH(name) AGAINST(?) ORDER BY name;', @order_title]).map { |x| [x.name, x.id] }
+                        @default_model = nil
 
-			if model_names.size > 0
-				[/G2/, /G3/].each { |g|
-					if @order_title =~ g
-						model_names.each { |m|
-							if m[0] =~ g
-								@default_model = m[1]
-								break
-							end
-						}
-					end
-				}
-			end
+                        if model_names.size > 0
+                                [/G2/, /G3/].each { |g|
+                                        if @order_title =~ g
+                                                model_names.each { |m|
+                                                        if m[0] =~ g
+                                                                @default_model = m[1]
+                                                                break
+                                                        end
+                                                }
+                                        end
+                                }
+                        end
 
-			@default_model = model_names[0][1] if (@default_model == nil) && (model_names.size > 0)
+                        @default_model = model_names[0][1] if (@default_model == nil) && (model_names.size > 0)
 
-			# Prepare profiles list
-			@profiles = Profile.list_for_model(@default_model).map { |x| [x.name, x.id] }
-		end
+                        # Prepare profiles list
+                        @profiles = Profile.list_for_model(@default_model).map { |x| [x.name, x.id] }
+                end
+
+                now = Time.new
+                @order_stages = @order.order_stages.find_all { |s| s.stage != 'manufacturing' }.inject([]) do |a, stage|
+                        a << {  :stage => stage.stage, :person => stage.person,
+                                :start => stage.start,
+                                :end => stage.end, :elapsed => (stage.end || now) - (stage.start || now),
+                                :comment => stage.comment, :status => (stage.start.blank? || stage.start > now) ? :planned : stage.end ? :finished : :running
+                        }
+                end.sort { |a, b| (a[:start] ? a[:start].to_f : 0) <=> (b[:start] ? b[:start].to_f : 0) }
+
+                ['ordering', 'warehouse', 'acceptance'].each do |stage_name|
+                        unless @order_stages.find { |stage| stage[:stage] == stage_name }
+                                @order_stages << { :stage => stage_name, :status => :planned }
+                        end
+                end 
 
 		respond_to do |format|
 			format.html # show.rhtml

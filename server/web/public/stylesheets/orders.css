@@ -70,3 +70,66 @@ h1 {
 .panel .content {
 	padding: 0.5em;
 }
+
+#composite_bar td {
+	vertical-align: top;
+}
+
+#trident_bar table {
+	margin-top: 1em;
+	margin-bottom: 1em;
+	border-collapse: collapse;
+	border: 0px;
+	padding: 0px;
+}
+
+#trident_bar th, #trident_bar td {
+	vertical-align: middle;
+	text-align: center;
+	height: 2em;
+	min-width: 2em;
+}
+
+#trident_bar th span {
+	display: none;
+	color: white;
+}
+
+#trident_bar th:hover {
+	background-color: #559F7D;	 
+}
+
+#trident_bar th:hover span {
+	display: inline;
+}
+
+#trident_bar th {
+	background-repeat: no-repeat;
+	background-position: 6px 50%;
+	text-indent: 28px;	
+}
+
+#trident_bar td {
+	margin: 0px;
+	padding: 0px;
+	padding-left: 0.2em;
+	padding-right: 0.1em;
+	min-width: 2em;
+	height: 1.5em;
+}
+
+#trident_bar tr.computer_stage_row td {
+	padding-bottom: 0.2em;
+}
+
+#trident_bar td div {
+	border-width: 1px;
+	border-style: solid;
+	width: 100%;
+	height: 100%;
+}
+
+#trident_bar tr.dummy td {
+	font-size: 0px;
+	height: 11px;
+}

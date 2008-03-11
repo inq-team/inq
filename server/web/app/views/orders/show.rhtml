@@ -1,62 +1,16 @@
-<table>
+<table id="composite_bar">
 <tr>
 
 <td>
-<div id="progress_bar">
-<table><tr>
-<% @order.order_stages.each { |s| %>
-<td class="computer_stage_<%= s.end ? 'finished' : 'running' %>">
-<%=h s.stage.capitalize %><br/>
-<span style="font-size: 40%">Start: <%=h s.start %><br/>
-End: <%=h s.end %></span></td>
-<% } %>
-</tr>
-</table>
-</div>
+<%= progress_bar(@order_stages) %>
 </td>
 
 <td>
-
-<div id="progress_bar">
-<table>
-<% if @st_comp_qty.to_a.inject(0){ |s, x| s+=x[1] } > 0  %>
-<th>Assembling</th>
-<th>Testing</th>
-<th>Packing</th>
-<% end %>
-
-<% @st_comp_qty.to_a.select{|x| x[1] != 0}.each do |sq| %>
-<tr>
-
-<%
-case sq[0]
-when :assembling %>
-<td class="computer_stage_running"><%= sq[1] %>/<%= @qty %></td>
-<td class="computer_stage_planned"></td>
-<td class="computer_stage_planned"></td>
-
-<% when :testing %>
-<td class="computer_stage_finished"></td>
-<td class="computer_stage_running"><%= sq[1] %>/<%= @qty %></td>
-<td class="computer_stage_planned"></td>
-
-<% when :packing %>
-<td class="computer_stage_finished"></td>
-<td class="computer_stage_finished"></td>
-<td class="computer_stage_running"><%= sq[1] %>/<%= @qty %></td>
-
-<% end %>
-</tr>
-
-<% end %>
-
-</table>
-
-</div>
+<%= trident_bar(@st_comp_qty, @qty, @computer_stage_order) %>
 </td>
 
-
 </tr>
+
 </table>
 
 <table style="border-spacing: 0.5em">

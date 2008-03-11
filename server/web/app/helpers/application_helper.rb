@@ -30,13 +30,17 @@ def delta_tag(after, before)
 end
 
 def person_tag(person)
-	content_tag('span', person && person.name || 'John Doe', :class => person && person.name ? 'person' : 'bad_username')
+	content_tag('span', person && person.name || ('John Doe' ; '&nbsp;'), :class => person && person.name ? 'person' : 'bad_username')
 end
 
 def stage_tag(stage, js = nil)
-	content = '' #content_tag(:span, stage[:stage], :class => "computer_stage_name")	
-	content += person_tag(stage[:person]) + delta_tag(stage[:end] || Time.new, stage[:start]) unless stage[:status] == :planned
-	content += content_tag(:span, stage[:stage].capitalize, :class => 'person') + 'planned' if stage[:status] == :planned
+	content = '' #content_tag(:span, stage[:stage], :class => "computer_stage_name")
+	if stage[:person].blank? or stage[:status] == :planned
+		content += content_tag(:span, stage[:stage].capitalize, :class => 'person')
+	else 
+		content += person_tag(stage[:person])	
+	end	
+	content += stage[:status] == :planned ? 'planned' : delta_tag(stage[:end] || Time.new, stage[:start] || Time.new) 
 	content_tag('td', content_tag('div', content, :style => "background-image: url('/images/stages/#{ stage[:stage] }.png') ; background-position: 2px 50% ; background-repeat: no-repeat"), :class => "computer_stage_#{ stage[:status] }", :title => stage[:stage].capitalize, :onmouseover => js)
 end
 

@@ -121,6 +121,7 @@ td#title_bar_doc {
 tr#computer_stages_comment td {
 	text-align: left;
 	text-indent: 1em;
+	padding-top: 0.4em;
 }
 
 #computer_stages_pointers td {
@@ -144,19 +145,19 @@ tr#computer_stages_comment td {
 	font-size: 75%;
 }
 
-#computer_stages td.computer_stage_planned div {
+td.computer_stage_planned div {
 	background-color: #ebffef;
 	color: #999;
 	border-color: #999;
 }
 
-#computer_stages td.computer_stage_finished div {
+td.computer_stage_finished div {
 	background-color: #AACFBE;
 	color: #002514;
 	border-color: #559F7D;
 }
 
-#computer_stages td.computer_stage_running div {
+td.computer_stage_running div {
 	background-color: #F3D079;
 	color: #4F3D12;
 	border-color: #A28A50;
