@@ -8,9 +8,9 @@ class ModelsController < ApplicationController
   verify :method => :post, :only => [ :destroy, :create, :update ],
          :redirect_to => { :action => :list }
 
-  def list
-    @model_pages, @models = paginate :models, :per_page => 10
-  end
+	def list
+		@models = Model.find(:all)
+	end
 
   def show
     @model = Model.find(params[:id])
