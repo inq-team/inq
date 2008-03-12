@@ -29,7 +29,7 @@ MEMORY_LOG=`mktemp`
 turnoff_oom_killer()
 {
 	sysctl vm.overcommit_memory=2
-	sysctl vm.overcommit_ratio=1
+	sysctl vm.overcommit_ratio=95
 }
 
 turnon_oom_killer()
@@ -40,14 +40,12 @@ turnon_oom_killer()
 
 #turnoff_oom_killer
 
-memtester $TOTAL_MEMORY $TEST_LOOPS > $MEMORY_LOG &
+memtester $TOTAL_MEMORY $TEST_LOOPS > $MEMORY_LOG 2>&1 &
 MEMTEST_PID=$!
 
 while true ; do
 	sleep $LOGTIME
-	COMPLETED_SUBSTAGES=`sed '{:loop g; n; s/^Loop\|Done/\0/; T loop; g; \
-		b nloop; :nloop n; s/^Loop\|Done/\0/; T nloop; g; b nloop; }' \
-		< $MEMORY_LOG | grep -v '^$' | wc -l`
+	COMPLETED_SUBSTAGES=`grep "ok$" $MEMORY_LOG | wc -l`
 	if [ -d /proc/$MEMTEST_PID ] ; then
 		test_progress $COMPLETED_SUBSTAGES $TOTAL_SUBSTAGES
 	else
@@ -56,10 +54,10 @@ while true ; do
 			#turnon_oom_killer
 			break
 		else
-			if grep -q "FAILURE: possible bad address line"; then
-				possible_bad=`grep "FAILURE: possible bad address line" $MEMORY_LOG | awk '{print $NF}'`
-				print_red_message "Possible bad address line: $possible_bad"
-				test_failed $possible_bad
+			if grep -q "^FAILURE:" $MEMORY_LOG; then
+				failure_message=`sed -n '/^FAILURE:/ s/FAILURE: //p' < $MEMORY_LOG`
+				print_red_message "FAILURE: $failure_message"
+				test_failed "$failure_message"
 				#turnon_oom_killer
 			else
 				test_failed
