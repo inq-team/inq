@@ -180,7 +180,7 @@ class ComputersController < ApplicationController
 	end
 
 	def audit
-		prepare_computer_and_tabs
+		prepare_computer_tabs
 		@close = params[:close]
 		if cached = @testing.audit
 			@audit = cached
