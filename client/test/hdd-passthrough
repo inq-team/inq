@@ -31,10 +31,12 @@ export ERROR_FILE=`mktemp`
 badblocks_test()
 {
 	raid-wizard-clear
+	sleep 10
 	$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list` || echo "hdd-badblocks.rb failed" > "$ERROR_FILE"
 
 	I=0
 	while raid-wizard-passthrough $DISK_GROUP_SIZE $I; do
+		sleep 10
 		$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list` || echo "hdd-badblocks.rb #$i failed" > "$ERROR_FILE"
 		I=$(( $I + 1 ))
 	done

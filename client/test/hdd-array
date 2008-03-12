@@ -80,7 +80,7 @@ prepare_array_for_test()
 
 # Making arrays
 if raid-wizard-optimal; then
-	sleep 5
+	sleep 10
 	HDD_QUANTITY=`get_harddrives_list | wc -l`
 	if [ "$HDD_QUANTITY" -eq 0 ]; then
 		test_succeeded "No HDDs"
