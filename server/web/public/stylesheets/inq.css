@@ -124,6 +124,10 @@ tr#computer_stages_comment td {
 	padding-top: 0.4em;
 }
 
+#progress_bar #computer_stages_comment .timedelta {
+	display: inline;
+}
+
 #computer_stages_pointers td {
 	height: 11px;
 	font-size: 0px;

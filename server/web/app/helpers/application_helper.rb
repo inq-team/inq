@@ -50,8 +50,36 @@ def stage_tag(stage, js = nil)
 	content_tag('td', content_tag('div', content, :style => "background-image: url('/images/stages/#{ stage[:stage] }.png') ; background-position: 2px 50% ; background-repeat: no-repeat"), :class => "computer_stage_#{ stage[:status] }", :title => stage[:stage].capitalize, :onmouseover => js)
 end
 
-def progress_bar(stages)
-	comments = stages.collect { |stage| content_tag(:b, stage[:stage].capitalize + ': ') + (stage[:comment] ? "#{ stage[:comment].gsub('"', "'") }" : '') }
+def progress_comments(stages)
+	now = Time.new
+	stages.collect do |stage|
+		if stage[:computer_list] 
+			computer_list = stage[:computer_list]
+			list = computer_list[:computers]
+			detail = computer_list[:detail]
+			title = stage[:stage].capitalize
+			if progress = stage[:progress]
+				title += " (#{ progress[:value] }/#{ progress[:total] })"
+			end
+			comment = list.collect do |computer|
+                                c = link_to("#{ computer.id.to_s }", :controller => 'computers', :action => 'show', :id => computer)
+				add = case detail
+				when :computer_stage
+					s = computer.computer_stages.find_by_stage(stage[:stage])
+					delta_tag(now, s.start || now)					
+				end
+				"#{ c } (#{ add })"
+			end
+			comment = (comment[0..7] + (comment.size > 8 ? ["..."] : [])).join(', ')
+		else
+			title = content_tag(:b, stage[:stage].capitalize)
+			comment = stage[:comment] || ''
+		end
+		(content_tag(:b, title + ': ') + comment).gsub('"', "'")
+	end
+end
+
+def progress_comment_js(stages, comments)
 	js = javascript_tag(<<_EOF_
 		var GLOBAL_STAGES_COMMENTS = new Array();
 		#{ (0..comments.size - 1).inject('') do |s, i| s + "GLOBAL_STAGES_COMMENTS[" + i.to_s + "] = \"" + comments[i] + "\";\n" end }
@@ -66,10 +94,16 @@ def progress_bar(stages)
 		}
 _EOF_
 )
+	[js, 'update_comments_box(this);']
+end
+
+def progress_bar(stages)
+	comments = progress_comments(stages)
+	js, js_event = progress_comment_js(stages, comments)
 	content = content_tag('tr', content_tag('td', comments.first || '&nbsp;', :colspan => stages.size) , :id => 'computer_stages_comment')
 	active = 0
 	content += content_tag('tr', stages.collect { |stage| content_tag('td', '&nbsp;', :class => active ? (active = nil ; 'pointer_active') : 'pointer_inactive' ) }, :id => 'computer_stages_pointers')
-	content += content_tag('tr', stages.collect { |stage| stage_tag(stage, 'update_comments_box(this);') }, :id => 'computer_stages') 
+	content += content_tag('tr', stages.collect { |stage| stage_tag(stage, js_event) }, :id => 'computer_stages') 
 	js + content_tag(:div, content_tag('table', content_tag('tr', content)), :id => "progress_bar")
 end
 

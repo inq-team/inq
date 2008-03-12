@@ -79,13 +79,16 @@ class OrdersController < ApplicationController
                 end 
 
 		['assembling', 'testing', 'checking', 'packaging'].each do |stage| 
-			count = @computers.find_all { |c| s = c.last_computer_stage ; s && s.stage == stage && s.end.blank? }.size
-			passed = @computers.find_all { |c| c.computer_stages.find_by_stage(stage, :conditions => "end is not null") }.size
+			testing = @computers.find_all { |c| s = c.last_computer_stage ; s && s.stage == stage && s.end.blank? }
+			done = @computers.find_all { |c| c.computer_stages.find_by_stage(stage, :conditions => "end is not null") }
+			count = testing.size
+			passed = done.size
 			h = { :stage => stage, :progress => { :value => count > 0 ? count : passed, :total => @qty },
                                 :status => @qty == 0 ? :planned : passed == @qty ? :finished : count == 0 ? :planned : :running
                         }
 			h.delete(:progress) if [:planned, :finished].include?(h[:status])
 			h[:blank] = 0 if h[:status] == :finished
+			h[:computer_list] = { :computers => testing, :detail => :computer_stage } if h[:status] == :running
 			@order_stages << h
                 end
 
