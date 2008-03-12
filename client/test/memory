@@ -40,7 +40,7 @@ turnon_oom_killer()
 
 #turnoff_oom_killer
 
-memtester $TOTAL_MEMORY $TEST_LOOPS > $MEMORY_LOG 2>&1 &
+memtester -q $TOTAL_MEMORY $TEST_LOOPS > $MEMORY_LOG 2>&1 &
 MEMTEST_PID=$!
 
 while true ; do
