@@ -22,6 +22,9 @@
 <% if @computer.order %>
 		<td id="title_bar_doc">Order: <%= link_to @computer.order.buyer_order_number, { :controller => :orders, :action => :show, :id => @computer.order } %></td>
 <% end %>
+<% if @computer.profile %>
+		<td id="title_bar_profile">Profile: <%= link_to @computer.profile.name, { :controller => :profiles, :action => :show, :id => @computer.profile } %></td>
+<% end %>
 	</tr></table>
 	</div>
 	
