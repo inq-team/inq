@@ -47,7 +47,7 @@ class ProfilesController < ApplicationController
 			REXML::Document.new(params[:profile][:xml])
 		rescue
 			flash[:notice] = 'Wrong XML'
-			render :action => 'edit'
+			redirect_to  :action => 'edit', :id => params[:id]
 			return
 		end
 		@profile = Profile.new

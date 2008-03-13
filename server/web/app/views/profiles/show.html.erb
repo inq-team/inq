@@ -1,4 +1,14 @@
-<pre><code><%=h @text %></code></pre>
+
+<table>
+<tr><td class="panel">
+	<h1>Name: <%= @profile.name %></h1>
+	<div class="content">
+	<pre><code><%=h @text %></code></pre>
+	<p><b>Model: </b><%= @profile.model ? @profile.model.name : 'n/a' %></p>
+	<p><b>Feature: </b><%= @profile.feature ? @profile.feature : 'n/a' %></p>
+</div>
+</td></td>
+</table>
 
 <%= link_to 'Edit', :action => 'edit', :id => @profile %> |
 <%= link_to 'Back', :action => 'index' %>

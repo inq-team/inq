@@ -6,7 +6,7 @@
 <h1>Name: <%= @profile.name %></h1>
 
 <div class="content">
-<% form_for :profile, @profile, :url => {:action => 'update'} do |f| %>
+<% form_for :profile, @profile, :url => {:action => 'update', :id => @profile} do |f| %>
   <p>
 		<p><label for="profile_xml">XML:</label><br/>
 		<%= f.text_area :xml, :cols => 80, :rows => 20 %>
@@ -21,5 +21,5 @@
 </td></tr>
 </table>
 
-<%= link_to 'Show', :action => 'show', :id => @profile %>
+<%= link_to 'Show', :action => 'show', :id => @profile %> |
 <%= link_to 'Back', :action => 'index' %>
