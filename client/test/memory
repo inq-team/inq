@@ -11,10 +11,7 @@
 
 . /usr/share/inquisitor/functions-test
 
-# Temporary disabled because of broken oom_killer
-#TOTAL_MEMORY=$(( `grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024 ))
-TOTAL_MEMORY=$(( (`grep MemTotal /proc/meminfo | \
-	awk '{print $2}'`) / 1024 - 256 ))
+FREE_MEMORY=$(( `grep "^MemFree:" /proc/meminfo | awk '{print $2}'` - 65536 ))
 TOTAL_SUBSTAGES=$(( 16 * $TEST_LOOPS ))
 COMPLETED_SUBSTAGES=0
 
@@ -22,25 +19,20 @@ exit_handler()
 {
 	[ -d "/proc/$MEMTEST_PID" ] && kill $MEMTEST_PID
 	[ -f  "$MEMORY_LOG" ] && rm $MEMORY_LOG
-}
 
-MEMORY_LOG=`mktemp`
-
-turnoff_oom_killer()
-{
-	sysctl vm.overcommit_memory=2
-	sysctl vm.overcommit_ratio=95
-}
-
-turnon_oom_killer()
-{
+	# Turn OOM killer on
 	sysctl vm.overcommit_memory=0
 	sysctl vm.overcommit_ratio=50
 }
 
-#turnoff_oom_killer
+MEMORY_LOG=`mktemp`
 
-memtester -q $TOTAL_MEMORY $TEST_LOOPS > $MEMORY_LOG 2>&1 &
+# Turn OOM killer off
+total_memory=`grep "^MemTotal:" /proc/meminfo | awk '{print $2}'`
+sysctl vm.overcommit_memory=2
+sysctl vm.overcommit_ratio=$(( $FREE_MEMORY * 100 / $total_memory ))
+
+memtester -q $(( $FREE_MEMORY / 1024 )) $TEST_LOOPS > $MEMORY_LOG 2>&1 &
 MEMTEST_PID=$!
 
 while true ; do
@@ -51,17 +43,14 @@ while true ; do
 	else
 		if [ "$COMPLETED_SUBSTAGES" -eq "$TOTAL_SUBSTAGES" ] ; then
 			test_succeeded
-			#turnon_oom_killer
 			break
 		else
 			if grep -q "^FAILURE:" $MEMORY_LOG; then
 				failure_message=`sed -n '/^FAILURE:/ s/FAILURE: //p' < $MEMORY_LOG`
 				print_red_message "FAILURE: $failure_message"
 				test_failed "$failure_message"
-				#turnon_oom_killer
 			else
 				test_failed
-				#turnon_oom_killer
 			fi
 
 			break
