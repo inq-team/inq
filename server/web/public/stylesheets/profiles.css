@@ -17,4 +17,10 @@ h1 {
 	margin: 0px;
 }
 
+.profiles_border {
+	border: 0.3em solid ! important;
+	height: 100%;
+	border-right: 1px dotted black;
+	border-bottom: 1px solid black;
+}
 

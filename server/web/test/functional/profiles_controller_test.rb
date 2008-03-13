@@ -26,9 +26,9 @@ class ProfilesControllerTest < Test::Unit::TestCase
 
 	def test_should_create_profile
 		old_count = Profile.count
-		post :create, :profile => { }
+		post :create, :profile => {}, :model => { :id => nil }
 		assert_equal old_count+1, Profile.count
-    		assert_redirected_to profile_path(assigns(:profile))
+		assert_redirected_to :action => 'index'
 	end
 
 	def test_should_show_profile
@@ -39,10 +39,5 @@ class ProfilesControllerTest < Test::Unit::TestCase
 	def test_should_get_edit
 		get :edit, :id => 1
 		assert_response :success
-	end
-
-	def test_should_update_profile
-		put :update, :id => 1, :profile => { }
-		assert_redirected_to profile_path(assigns(:profile))
 	end
 end

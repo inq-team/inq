@@ -1,5 +1,4 @@
 require 'rexml/document'
-require 'prettyxml'
 
 class ProfilesController < ApplicationController
 	def index
@@ -25,7 +24,7 @@ class ProfilesController < ApplicationController
 	end
 
 	def create
-		if  params[:profile][:xml].empty?
+		if params[:profile][:xml] && params[:profile][:xml].empty?
 			flash[:notice] = 'Empty XML'
 			redirect_to  :action => 'edit', :id => params[:id]
 			return
@@ -42,7 +41,7 @@ class ProfilesController < ApplicationController
 		@profile = Profile.new
 		@profile.xml = params[:profile][:xml]
 		@profile.feature = params[:profile][:feature]
-		@profile.model_id = params[:model][:id]
+ 		@profile.model_id = params[:model][:id]
 		@profile.timestamp = Time.now		
 		if @profile.save!
 			flash[:notice] = 'Profile was successfully created.'

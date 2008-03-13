@@ -75,6 +75,11 @@
 			<% end %>
 			</table>
 			&nbsp;
+			
+			<% if @testing && @testing.profile %>
+				<div class="testing_profile">Profile: <%= link_to @testing.profile.name, { :controller => :profiles, :action => :show, :id => @testing.profile } %></div>
+			<% end %>
+	
 		</div></td> 
 
 		<td id="content"><div class="testing_border">

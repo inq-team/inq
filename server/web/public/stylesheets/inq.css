@@ -75,6 +75,10 @@ td#title_bar_doc {
 	border: none;
 }
 
+td#title_bar_profile {
+	width: 32em;
+}
+
 #title_bar_link {
 	float: right;
 	padding-right: 2em;
@@ -339,4 +343,16 @@ input[type=submit] {
 
 #close_placeholder {
 	visibility: hidden;
+}
+
+.testing_profile {
+	text-align: center;
+	margin-top: 3em;
+	color: #707070;
+	font-style: italic;
+}
+
+.testing_profile a {
+	color: #303030;
+	font-style: normal;
 }
