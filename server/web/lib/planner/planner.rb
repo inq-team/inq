@@ -23,6 +23,7 @@ class Planner
 		@comp_prev = comp_prev
 		@comp_now = comp_now
 		@start_new = !force_continue
+		@force_continue = force_continue
 	end
 
 	def plan
@@ -37,7 +38,7 @@ class Planner
 			when 'test'
 				if @stages.select { |st|
 					st.stage == t.attribute('id').to_s and
-					st.result == TestingStage::FINISHED
+					(st.result == TestingStage::FINISHED or @force_continue)
 				}.empty? then
 					add_test(t)
 				end
