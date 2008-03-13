@@ -1,8 +1,6 @@
-<h1>Listing profiles</h1>
 
-<table>
-  <tr>
-  </tr>
+<table class="panel" border="1">
+  <tr><th><h1>Listing profiles</h1></th></tr>
 
 <% for profile in @profiles %>
   <tr>
@@ -15,4 +13,4 @@
 
 <br />
 
-<%= link_to 'New profile', :action => 'new', :id => profile %>
+<%= link_to 'New profile', :action => 'new' %>

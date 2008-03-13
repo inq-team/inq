@@ -12,44 +12,33 @@ class ProfilesController < ApplicationController
 
 	def show
 		@profile = Profile.find(params[:id])
-		@text = PrettyXML.make(REXML::Document.new(@profile.xml)).gsub(/^\n\n/, '')
+#		@text = PrettyXML.make(REXML::Document.new(@profile.xml)).gsub(/^\n\n/, '')
+		@text = ''
+		REXML::Document.new(@profile.xml, { :compress_whitespace => :all }).write(@text, 0)
+		@text.gsub!(/\'/, "\"")
 	end
 
 	def new
 		@profile = Profile.new
-	end
-
-	def create
-		begin
-			REXML::Document.new(params[:profile][:xml])
-		rescue
-			flash[:notice] = 'Wrong XML'
-			render :action => 'Edit'
-			return
-		end
-		@profile = Profile.new(params[:id])
-		if @profile.save
-			flash[:notice] = 'Profile was successfully created.'
-			redirect_to :action => 'index'
-		else
-			render :action => 'new'
-		end
-	end
-
-	def edit
-		@profile = Profile.find(params[:id])
 		@models = Model.find(:all, :order => :name).map { |x| [x.name, x.id] }.unshift(['', nil])
 		@default_model_id = @profile.model ? @profile.model.id : nil
 	end
 
-	def update
+	def create
+		if  params[:profile][:xml].empty?
+			flash[:notice] = 'Empty XML'
+			redirect_to  :action => 'edit', :id => params[:id]
+			return
+		end
+		
 		begin
 			REXML::Document.new(params[:profile][:xml])
-		rescue
+		rescue REXML::ParseException
 			flash[:notice] = 'Wrong XML'
 			redirect_to  :action => 'edit', :id => params[:id]
 			return
 		end
+		
 		@profile = Profile.new
 		@profile.xml = params[:profile][:xml]
 		@profile.feature = params[:profile][:feature]
@@ -61,6 +50,13 @@ class ProfilesController < ApplicationController
 		else
 			render :action => 'new'
 		end
+
+	end
+
+	def edit
+		@profile = Profile.find(params[:id])
+		@models = Model.find(:all, :order => :name).map { |x| [x.name, x.id] }.unshift(['', nil])
+		@default_model_id = @profile.model ? @profile.model.id : nil
 	end
 
 	def destroy

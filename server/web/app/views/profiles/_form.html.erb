@@ -1,0 +1,14 @@
+
+<div class="content">
+<% form_for :profile, @profile, :url => {:action => 'create', :id => @profile} do |f| %>
+  <p>
+		<p><label for="profile_xml">XML:</label><br/>
+		<%= f.text_area :xml, :cols => 80, :rows => 20 %>
+		<p><label for="model_id">Model:</label><br/>
+		<%= select :model, :id, @models, :selected => @default_model_id %></p>
+		<p><label for="profile_feature">Feature:</label><br/>
+		<%= f.text_field :feature, :size => 60 %></p>
+		<%= f.submit "Update" %>
+  </p>
+<% end %>
+</div
