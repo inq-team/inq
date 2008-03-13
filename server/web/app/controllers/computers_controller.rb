@@ -515,7 +515,7 @@ __EOF__
 		prepare_computer_and_testing
 		prev_testing = @sorted_testings[@testing_number - 1]
 		@pl = Planner.new(
-			@computer.profile.xml,
+			@testing ? @testing.profile.xml : @computer.profile.xml,
 			@testing ? @testing.testing_stages : [],
 			prev_testing ? prev_testing.testing_stages : [],
 			@testing ? @testing.components : nil,
@@ -656,8 +656,8 @@ __EOF__
 		}
 
 		# Planned stages
-		if @computer.profile
-			pl = Planner.new(@computer.profile.xml, @testing.testing_stages, prev_testing.testing_stages, @testing.components, prev_testing.components, true)
+		if @testing.profile
+			pl = Planner.new(@testing.profile.xml, @testing.testing_stages, prev_testing.testing_stages, @testing.components, prev_testing.components, true)
 			pl.plan.each { |stage|
 				@stages << {
 					:id => stage.id,
