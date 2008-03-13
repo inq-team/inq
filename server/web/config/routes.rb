@@ -1,6 +1,4 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :profiles
-
   # The priority is based upon order of creation: first created -> highest priority.
   
   # Sample of regular route:
@@ -27,5 +25,5 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :orders, :collection => { :testings => :get, :staging => :get }, :singular => 'order'
   map.resources :computers
-
+#  map.resources :profiles
 end
