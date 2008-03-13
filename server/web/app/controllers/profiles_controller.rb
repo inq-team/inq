@@ -59,8 +59,8 @@ class ProfilesController < ApplicationController
 		@default_model_id = @profile.model ? @profile.model.id : nil
 	end
 
-	def destroy
-		Profile.find(params[:id]).destroy
-		redirect_to :action => 'list'
-	end
+#	def destroy
+#		Profile.find(params[:id]).destroy
+#		redirect_to :action => 'list'
+#	end
 end
