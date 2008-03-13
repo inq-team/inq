@@ -1,0 +1,25 @@
+<%= error_messages_for :profile %>
+
+<table>
+<tr><td class="panel">
+
+<h1>Name: <%= @profile.name %></h1>
+
+<div class="content">
+<% form_for :profile, @profile, :url => {:action => 'update'} do |f| %>
+  <p>
+		<p><label for="profile_xml">XML:</label><br/>
+		<%= f.text_area :xml, :cols => 80, :rows => 20 %>
+		<p><label for="model_id">Model:</label><br/>
+		<%= select :model, :id, @models, :selected => @default_model_id %></p>
+		<p><label for="profile_feature">Feature:</label><br/>
+		<%= f.text_field :feature, :size => 60 %></p>
+		<%= f.submit "Update" %>
+  </p>
+<% end %>
+
+</td></tr>
+</table>
+
+<%= link_to 'Show', :action => 'show', :id => @profile %>
+<%= link_to 'Back', :action => 'index' %>

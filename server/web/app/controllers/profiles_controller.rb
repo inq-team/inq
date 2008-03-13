@@ -1,3 +1,6 @@
+require 'rexml/document'
+require 'prettyxml'
+
 class ProfilesController < ApplicationController
 	def index
 		@profiles = Profile.find(:all)
@@ -9,6 +12,7 @@ class ProfilesController < ApplicationController
 
 	def show
 		@profile = Profile.find(params[:id])
+		@text = PrettyXML.make(REXML::Document.new(@profile.xml)).gsub(/^\n\n/, '')
 	end
 
 	def new
@@ -16,7 +20,14 @@ class ProfilesController < ApplicationController
 	end
 
 	def create
-		@profile = Profile.new(params[:profile])
+		begin
+			REXML::Document.new(params[:profile][:xml])
+		rescue
+			flash[:notice] = 'Wrong XML'
+			render :action => 'Edit'
+			return
+		end
+		@profile = Profile.new(params[:id])
 		if @profile.save
 			flash[:notice] = 'Profile was successfully created.'
 			redirect_to :action => 'index'
@@ -27,15 +38,28 @@ class ProfilesController < ApplicationController
 
 	def edit
 		@profile = Profile.find(params[:id])
+		@models = Model.find(:all, :order => :name).map { |x| [x.name, x.id] }.unshift(['', nil])
+		@default_model_id = @profile.model ? @profile.model.id : nil
 	end
 
 	def update
-		@profile = Profile.find(params[:id])
-		if @profile.update_attributes(params[:profile])
-			flash[:notice] = 'Profile was successfully updated.'
-			redirect_to :action => 'show', :id => @profile
-		else
+		begin
+			REXML::Document.new(params[:profile][:xml])
+		rescue
+			flash[:notice] = 'Wrong XML'
 			render :action => 'edit'
+			return
+		end
+		@profile = Profile.new
+		@profile.xml = params[:profile][:xml]
+		@profile.feature = params[:profile][:feature]
+		@profile.model_id = params[:model][:id]
+		@profile.timestamp = Time.now		
+		if @profile.save!
+			flash[:notice] = 'Profile was successfully created.'
+			redirect_to :action => 'index'
+		else
+			render :action => 'new'
 		end
 	end
 
