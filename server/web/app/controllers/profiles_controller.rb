@@ -24,7 +24,7 @@ class ProfilesController < ApplicationController
 	end
 
 	def create
-		if params[:profile][:xml] && params[:profile][:xml].empty?
+		if params[:profile][:xml]
 			flash[:notice] = 'Empty XML'
 			redirect_to  :action => 'edit', :id => params[:id]
 			return
