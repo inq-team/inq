@@ -21,18 +21,19 @@ exit_handler()
 	[ -f  "$MEMORY_LOG" ] && rm $MEMORY_LOG
 
 	# Turn OOM killer on
-	sysctl vm.overcommit_memory=0
-	sysctl vm.overcommit_ratio=50
+	#sysctl vm.overcommit_memory=0
+	#sysctl vm.overcommit_ratio=50
 }
 
 MEMORY_LOG=`mktemp`
 
 # Turn OOM killer off
 total_memory=`grep "^MemTotal:" /proc/meminfo | awk '{print $2}'`
-sysctl vm.overcommit_memory=2
-sysctl vm.overcommit_ratio=$(( $FREE_MEMORY * 100 / $total_memory ))
+#sysctl vm.overcommit_memory=2
+ratio=$(( $FREE_MEMORY * 100 / $total_memory ))
+#sysctl vm.overcommit_ratio=$ratio
 
-memtester -q $(( $FREE_MEMORY / 1024 )) $TEST_LOOPS > $MEMORY_LOG 2>&1 &
+memtester -q $(( $total_memory * $ratio / 102400 )) $TEST_LOOPS 2>&1 | tee $MEMORY_LOG >$DEBUG_TTY &
 MEMTEST_PID=$!
 
 while true ; do
