@@ -15,11 +15,11 @@ class Order < ActiveRecord::Base
 			self.find_by_sql(["SELECT o.id, o.buyer_order_number, o.title, o.customer, os.start, DATEDIFF(NOW(), os.start) AS from_delay FROM orders o
 INNER JOIN order_stages os ON o.id=os.order_id
 WHERE os.stage='ordering' AND os.end IS NULL
-ORDER BY from_delay DESC"]),
+ORDER BY from_delay ASC"]),
 			self.find_by_sql(["SELECT o.id, o.buyer_order_number, o.title, o.customer, os.start, DATEDIFF(NOW(), os.start) AS from_delay FROM orders o
 INNER JOIN order_stages os ON o.id=os.order_id
 WHERE os.stage='warehouse' AND os.end IS NULL
-ORDER BY from_delay DESC"]),
+ORDER BY from_delay ASC"]),
 			self.find_by_sql(["SELECT o.id, o.buyer_order_number, o.title, o.customer, os2.end AS start, DATEDIFF(NOW(), os2.end) AS from_delay
 FROM (
 	SELECT CAST(SUBSTR(MAX(hint), LOCATE('$', MAX(hint)) + 1) AS UNSIGNED) AS last_os_id
@@ -30,8 +30,9 @@ FROM (
 ) AS t2
 INNER JOIN order_stages os2 ON t2.last_os_id=os2.id
 INNER JOIN orders o ON order_id=o.id
-WHERE os2.stage='warehouse' AND os2.end IS NOT NULL
-ORDER BY from_delay DESC"]),
+LEFT JOIN computers c ON c.order_id=o.id
+WHERE os2.stage='warehouse' AND os2.end IS NOT NULL AND c.id IS NULL
+ORDER BY from_delay ASC"]),
 			self.find_by_sql(["SELECT o.id, o.buyer_order_number, o.title, o.customer, NOW(), 0 AS from_delay FROM orders o
 INNER JOIN computers c ON c.order_id=o.id
 LEFT JOIN computer_stages cs ON cs.computer_id=c.id
