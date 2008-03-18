@@ -24,6 +24,7 @@ lshw_detect()
 
 			strip_vendor 'Maxtor ' 'Maxtor'
 			strip_vendor 'WDC ' 'Western Digital'
+			strip_vendor 'Hitachi ' 'Hitachi'
 
 			if [ -n "$HDD_MODEL" ] && [ -z "`echo "$HDD_VENDOR" | grep -i 'Linux'`" ] && [ -z "`echo "$HDD_VENDOR" | grep -i 'Adaptec'`" ]; then
 				echo HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" ' - lshw' >> $HOME/debug.log
