@@ -274,23 +274,28 @@ tr.testing_stage_finished .testing_stage_name {
 tr.testing_stage_failed .testing_stage_name {
 	background: url('/images/stage_failed.png') 8px 50% no-repeat;
 }
+tr.testing_stage_failed {
+	background-color: #ff7060;
+}
 
 tr.testing_stage_running .testing_stage_name {
 	background: url('/images/stage_running.png') 8px 50% no-repeat;
 }
-
-tr.testing_stage_planned .testing_stage_name {
-	background: url('/images/stage_planned.png') 8px 50% no-repeat;
-	color: #777;
-	font-style: italic;
-}
-
 tr.testing_stage_running {
 	background-color: #f0f4f0;
 }
 
+tr.testing_stage_planned .testing_stage_name {
+//	background: url('/images/stage_planned.png') 8px 50% no-repeat;
+	color: #999;
+	font-style: italic;
+}
+
 tr.testing_stage_hanging .testing_stage_name {
 	background: url('/images/stage_hanging.png') 8px 50% no-repeat;
+}
+tr.testing_stage_hanging {
+	background-color: #ffa060;
 }
 
 .bad_username {
