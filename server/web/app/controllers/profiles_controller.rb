@@ -24,9 +24,13 @@ class ProfilesController < ApplicationController
 	end
 
 	def create
-		if params[:profile][:xml]
+		if (!params[:profile][:xml]) || params[:profile][:xml].empty?
 			flash[:notice] = 'Empty XML'
-			redirect_to  :action => 'edit', :id => params[:id]
+			if params[:id]
+				redirect_to  :action => 'edit', :id => params[:id]
+			else
+				redirect_to  :action => 'new'
+			end
 			return
 		end
 		
@@ -37,10 +41,10 @@ class ProfilesController < ApplicationController
 			redirect_to  :action => 'edit', :id => params[:id]
 			return
 		end
-		
 		@profile = Profile.new
 		@profile.xml = params[:profile][:xml]
-		@profile.feature = params[:profile][:feature]
+		feature = params[:profile][:feature]
+		@profile.feature = (feature.empty? ? nil : feature)
  		@profile.model_id = params[:model][:id]
 		@profile.timestamp = Time.now		
 		if @profile.save!

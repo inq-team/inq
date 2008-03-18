@@ -3,7 +3,7 @@ You can use this file as is or as a starting point for you own styling
 */
 
 pre {
-       padding: 1em;
+       padding: 0em;
        border: 1px dashed #559F7D;
 }
 
@@ -19,6 +19,7 @@ pre code[class]:after {
 pre code {
   display: block;
   background: #F0F0F0;
+	padding: 1em;
 }
 
 pre code, 
