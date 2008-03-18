@@ -2,6 +2,20 @@
 
 while true; do
 	cat <<__EOF__ | mysql -uinq -pinq inq
+UPDATE computer_stages
+SET end=NOW()
+WHERE id IN (
+	SELECT id FROM (
+		SELECT DISTINCT cs.id AS id, MIN(ts.result) AS res1, MAX(ts.result) AS res2 FROM computers c
+			INNER JOIN testings t ON c.id=t.computer_id
+			INNER JOIN testing_stages ts ON ts.testing_id=t.id
+			INNER JOIN computer_stages cs ON c.id=cs.computer_id
+			WHERE cs.stage='testing' AND cs.end IS NULL AND t.test_end IS NOT NULL
+			GROUP BY ts.testing_id
+			HAVING res1=1 AND res2=1
+	) AS t1
+);
+
 UPDATE computers c
 	INNER JOIN testings t ON c.id=t.computer_id
 	INNER JOIN testing_stages ts ON t.id=ts.testing_id
