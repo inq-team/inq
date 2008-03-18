@@ -18,7 +18,7 @@ end
 
 def format_delta(after, before)
 	delta = (after - before).to_i()
-	delta / 3600 / 24 > 3 ? sprintf("%.1f days", delta.to_f / (3600 * 24)) : delta > 60 ? sprintf("%02d:%02d", delta % (3600 * 24) / 3600, delta % (3600 * 24) % 3600 / 60) : "#{ delta } sec"
+	delta / 3600 / 24 > 0 ? sprintf("%.1f days", delta.to_f / (3600 * 24)) : delta > 60 ? sprintf("%02d:%02d", delta % (3600 * 24) / 3600, delta % (3600 * 24) % 3600 / 60) : "#{ delta } sec"
 end
 
 def datetime_tag(date)

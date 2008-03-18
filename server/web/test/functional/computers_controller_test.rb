@@ -102,6 +102,30 @@ class ComputersControllerTest < Test::Unit::TestCase
 		assert_equal 1, Computer.find(2).testings.size
 	end
 
+	def test_submit_components_nils
+		xml = "
+<?xml version='1.0'?>
+<list xmlns='http://www.w3.org/1999/xhtml'>
+  <component>
+    <type>RAM</type>
+    <model>2048 GB</model>
+  </component>
+  <component>
+    <type>RAM</type>
+    <vendor />
+    <model>2048 GB</model>
+  </component>
+</list>"		
+		post :submit_components, :id => 2, :list => xml
+		assert_equal 2, Computer.find(2).testings.size
+		assert_equal 2, ComponentModel.find_all_by_component_group_id(3).size
+		assert_equal 2, Component.find_all_by_component_model_id(ComponentModel.find_by_name('2048 GB').id).size
+		assert_not_nil ComponentModel.find_by_name('2048 GB').vendor
+		post :submit_components, :id => 2, :list => xml
+		assert_equal 2, Computer.find(2).testings.size
+	end
+
+
 	def test_monitoring_submit
 		lt = Computer.find(2).last_testing
 		qty = lt.graphs.size

@@ -18,3 +18,9 @@ seagate-barracuda-320:
   vendor: Seagate
   name: Barracuda 320GB
   component_group_id: 2
+unknown-memory:
+  id: 5
+  name: 1024 MB
+  vendor: NULL
+  component_group_id: 3
+

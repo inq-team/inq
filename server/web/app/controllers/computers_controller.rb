@@ -327,18 +327,21 @@ __EOF__
 		@computer = Computer.find_by_id(params[:id])
 		d = REXML::Document.new(params[:list])
 		components = []
+		variance = 0
 		d.root.each_element { |c|
 			components << {
-				:type => c.elements['type'] ? c.elements['type'].text : '',
-				:vendor => c.elements['vendor'] ? c.elements['vendor'].text : '',
-				:model => c.elements['model'] ? c.elements['model'].text : '',
-				:serial => c.elements['serial'] ? c.elements['serial'].text : ''
+				:type => c.elements['type'] && c.elements['type'].text || '',
+				:vendor => c.elements['vendor'] && c.elements['vendor'].text || '',
+				:model => c.elements['model'] && c.elements['model'].text || '',
+				:serial => c.elements['serial'] && c.elements['serial'].text || '',
+				:variance => variance += 1
 			}
 		}
 		ccp = components.dup
 
 		errors = []
 		testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }.last
+
 		unless testing && testing.components.size == components.size && testing.components.inject(true) { |b, cmp| b && ccp.delete(ccp.find() { |h| (h[:vendor] == cmp.model.vendor && h[:model] == cmp.model.name) || (!h[:serial].blank? && h[:serial] == cmp.serial)  }) }
 			# BAD: component_group_id column used here directly
 			testing = Testing.new(

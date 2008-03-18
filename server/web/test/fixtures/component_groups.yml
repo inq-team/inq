@@ -4,4 +4,7 @@ cpu:
 hdd:
   id: 2
   name: HDD
+memory:
+  id: 3
+  name: RAM
 
