@@ -125,6 +125,12 @@ class ComputersControllerTest < Test::Unit::TestCase
 		assert_equal 2, Computer.find(2).testings.size
 	end
 
+	def test_boot_from_image
+		post :boot_from_image, :id => 20, :image => "rsbios.my"
+		macs=assigns['macs']
+		assert_equal ["00-e0-81-5d-4f-37", "00-e0-81-5d-4f-38"], macs
+		assert_response :success
+	end
 
 	def test_monitoring_submit
 		lt = Computer.find(2).last_testing

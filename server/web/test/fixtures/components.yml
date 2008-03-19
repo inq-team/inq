@@ -27,4 +27,13 @@
   testing_id: 51
   component_model_id: 1
   serial: SERIAL2
-
+20:
+  id: 20
+  testing_id: 20
+  component_model_id: 20
+  serial: 00:e0:81:5d:4f:37
+21:
+  id: 21
+  testing_id: 20
+  component_model_id: 20
+  serial: 00:e0:81:5d:4f:38

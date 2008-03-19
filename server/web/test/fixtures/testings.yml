@@ -30,3 +30,9 @@ two_testings_new_hdd_done_cpu1:
   test_start: 2000-01-01 02:00
   test_end: 2000-01-01 03:00
   profile_id: 1
+
+bootpc_testing:
+  id: 20
+  computer_id: 20
+  test_start: 2000-01-01 00:00
+  profile_id: 1

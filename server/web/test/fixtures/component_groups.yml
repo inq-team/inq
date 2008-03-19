@@ -7,4 +7,6 @@ hdd:
 memory:
   id: 3
   name: RAM
-
+nic:
+  id: 4
+  name: NIC

@@ -122,7 +122,7 @@ require_attention()
 {
 	return 0
 
-	#if ! curl -sf "$REST_SERVER/computers/require_attention/$COMPUTER_ID&stage=$TEST_NAME"; then
+	#if ! curl -sf "$REST_SERVER/computers/require_attention/$COMPUTER_ID?stage=$TEST_NAME"; then
 	#	echo 'require_attention: failed to change state'
 	#	return 1
 	#fi
@@ -132,7 +132,7 @@ dismiss_attention()
 {
 	return 0
 
-	#if ! curl -sf "$REST_SERVER/computers/dismiss_attention/$COMPUTER_ID&stage=$TEST_NAME"; then
+	#if ! curl -sf "$REST_SERVER/computers/dismiss_attention/$COMPUTER_ID?stage=$TEST_NAME"; then
 	#	echo 'dismiss_attention: failed to change state'
 	#	return 1
 	#fi
@@ -154,8 +154,8 @@ boot_from_image()
 {
 	local image=`echo -n "$1" | ruby -e 'require "cgi"; print CGI::escape($stdin.read)'`
 
-	#if ! curl -sf "$REST_SERVER/computers/boot_from_image/$COMPUTER_ID&image=$image"; then
-	#	echo "get_needed_firmwares_list: failed to get list"
-	#	return 1
-	#fi
+	if ! curl -sf "$REST_SERVER/computers/boot_from_image/$COMPUTER_ID?image=$image"; then
+		echo "boot_from_image: request failed"
+		return 1
+	fi
 }

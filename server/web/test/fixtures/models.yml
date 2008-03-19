@@ -7,3 +7,6 @@ two:
 gamma:
   id: 3
   name: Gamma model
+boot_model:
+  id: 4
+  name: BootPC model

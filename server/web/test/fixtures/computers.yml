@@ -42,3 +42,7 @@ alpha_order_4:
   model_id: 1
   profile_id: 1
   order_id: 1
+boot_pc:
+  id: 20
+  model_id: 4
+  profile_id: 1

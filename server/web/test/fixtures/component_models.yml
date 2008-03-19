@@ -23,4 +23,8 @@ unknown-memory:
   name: 1024 MB
   vendor: NULL
   component_group_id: 3
-
+mynic:
+  id: 20
+  vendor: Intel
+  name: EtherExpress
+  component_group_id: 4

@@ -42,8 +42,8 @@ cat $FIRMWARES | while read component; do
 	# Reboot with necessary reflasher
 	[ "$current_version" != $version ] || continue
 	print_red_message "Necessary $type firmware version does not found!"
-	print_red_message "Found \"$current_version\", instead of \"$current_version\""
+	print_red_message "Found \"$current_version\", instead of \"$version\""
 	print_red_message "Going to reflash with \"$firmware_file\""
 	boot_from_image "$firmware_file"
-	#hard_reboot
+	hard_reboot
 done

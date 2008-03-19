@@ -599,6 +599,34 @@ __EOF__
 		Computer.find(params[:id]).destroy
 		redirect_to :action => 'list'
 	end
+
+	def boot_from_image
+		tftp_dir="/var/lib/tftpboot"
+
+		image=params[:image]
+		@computer=Computer.find(params[:id])
+		@testing=@computer.last_testing
+
+		@macs = Component.find(:all, :include => :model, :conditions => ['testing_id=? AND component_group_id=?', @testing.id, ComponentGroup.find_by_name('NIC')]).map { |x| x.serial }
+		@macs.collect! { |mac| mac.gsub(/:/,'-') }
+
+		to_delete=@macs.collect {|mac| mac="pxelinux.cfg/01-" + mac}.join(" ")
+		File.size("#{tftp_dir}/#{image}") == 16777216 ? add_options="floppy c=16 s=32 h=64" : add_options=""
+
+		@macs.each { |mac|
+			cfgfile=File.new("#{tftp_dir}/pxelinux.cfg/01-#{mac}","w")
+			cfgfile.puts <<__EOF__
+##{to_delete}
+default firmware
+label firmware
+ kernel memdisk
+ append initrd=#{image} #{add_options}
+__EOF__
+			cfgfile.close
+		}
+
+		head(:status => 200)
+	end
 	
 	def label_epassport
 		@computer = Computer.find(params[:id])
