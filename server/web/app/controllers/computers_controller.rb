@@ -601,20 +601,20 @@ __EOF__
 	end
 
 	def boot_from_image
-		tftp_dir="/var/lib/tftpboot"
+		tftp_dir = "/var/lib/tftpboot"
 
-		image=params[:image]
-		@computer=Computer.find(params[:id])
-		@testing=@computer.last_testing
+		image = params[:image]
+		@computer = Computer.find(params[:id])
+		@testing = @computer.last_testing
 
 		@macs = Component.find(:all, :include => :model, :conditions => ['testing_id=? AND component_group_id=?', @testing.id, ComponentGroup.find_by_name('NIC')]).map { |x| x.serial }
 		@macs.collect! { |mac| mac.gsub(/:/,'-') }
 
-		to_delete=@macs.collect {|mac| mac="pxelinux.cfg/01-" + mac}.join(" ")
-		File.size("#{tftp_dir}/#{image}") == 16777216 ? add_options="floppy c=16 s=32 h=64" : add_options=""
+		to_delete = @macs.collect { |mac| "pxelinux.cfg/01-" + mac }.join(" ")
+		add_options = File.size("#{tftp_dir}/#{image}") == 16777216 ? "floppy c=16 s=32 h=64" : ""
 
 		@macs.each { |mac|
-			cfgfile=File.new("#{tftp_dir}/pxelinux.cfg/01-#{mac}","w")
+			cfgfile = File.new("#{tftp_dir}/pxelinux.cfg/01-#{mac}", "w")
 			cfgfile.puts <<__EOF__
 ##{to_delete}
 default firmware
