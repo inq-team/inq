@@ -228,7 +228,7 @@ class OrdersController < ApplicationController
 			orders = Order.find(:all, :conditions => [conditions, start_date, end_date, start_date, end_date], :include => [:order_stages, { :computers => :computer_stages }])
 			@search_result = '<table>'
 			orders.each do |z|
-				@search_result += "<tr><td><a href=\"/orders/show/#{z.id}\">#{z.id}, #{z.customer}</a></td></tr>"
+				@search_result += "<tr><td><a href=\"/orders/show/#{z.id}\">#{z.customer}, #{z.title}</a></td></tr>"
 			end
 			@search_result += '</table>'		
 		else
