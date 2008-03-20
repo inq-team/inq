@@ -6,7 +6,9 @@
 	font-weight: bold;
 	width: 72%;
 	right: 0;
-	margin-left: 240px;
+	margin-left: 238px;
+	border-style: solid;
+	border-color: #559F7D;	
 }
 
 .form_body {
@@ -38,5 +40,9 @@
 	border-bottom: 1px solid #BBBBBB;
 	text-align: left;
 	height: 2em;
+}
+
+#spinner {
+	float: right;
 }
 

@@ -210,4 +210,29 @@ class OrdersController < ApplicationController
 		@profiles = Profile.list_for_model(params[:model]).map { |x| [x.name, x.id] }
                 render(:layout => false)
 	end
+	
+	def search
+		unless params[:date].to_s.empty?
+			start_date = sprintf("%04d-%02d-%02d", params[:date]['start(1i)'], params[:date]['start(2i)'], params[:date]['start(3i)'])
+			end_date = sprintf("%04d-%02d-%02d", params[:date]['end(1i)'], params[:date]['end(2i)'], params[:date]['end(3i)'])
+			start_date = (params[:datetime_start][:use] == '1') ? start_date : ''
+			end_date = (params[:datetime_end][:use] == '1') ? end_date : ''
+			conditions1 = [ [:customer, params[:customer]], [:buyer_order_number, params[:number]] ].select{ |x| not x[1].to_s.empty? }.map{ |x| "#{x[0].to_s} LIKE '%%#{x[1]}%%'" }.join(' AND ')
+			dates = [[:start, start_date], [:end, end_date]].select{ |d| not d[1].to_s.empty? }
+			conditions2 = ['order_stages.start', 'computer_stages.start'].map { |start|	dates.map{ |d| "#{start}#{d[0]==:start ? '>' : '<'}='#{d[1]}'"}.join(' AND ') }
+			conditions2 = conditions2.select{ |x| not x.to_s.empty? }
+			conditions2 = conditions2.map{ |s| "(#{s})" }.join(' OR ') if conditions2.size > 1
+			conditions = [conditions1, conditions2].select{ |x| not x.to_s.empty? }
+			conditions = conditions.map{ |s| "(#{s})" }.join(' AND ') if conditions.size > 1
+			conditions = conditions.to_s
+			orders = Order.find(:all, :conditions => [conditions, start_date, end_date, start_date, end_date], :include => [:order_stages, { :computers => :computer_stages }])
+			@search_result = '<table>'
+			orders.each do |z|
+				@search_result += "<tr><td><a href=\"/orders/show/#{z.id}\">#{z.id}, #{z.customer}</a></td></tr>"
+			end
+			@search_result += '</table>'		
+		else
+			@search_result = ''
+		end		
+	end
 end
