@@ -122,7 +122,7 @@ run_test()
 		test_stage_advance "$TEST_NAME" fail "`cat $MSG_DIR/comment`"
 		echo
 		echo "Fatal failure: testing stops"
-		echo "Reason: $COMMENT"
+		echo "Reason: `cat $MSG_DIR/comment`"
 	fi) | tee /dev/inqlog
 	[ -f ${MSG_DIR}/exit_fail ] && return 1 || return 0
 }
