@@ -1,0 +1,42 @@
+.form_head {
+	background: #559F7D;
+	padding: 2px 7px;
+	font-size: 120%;
+	font-family: arial, sans-serif;
+	font-weight: bold;
+	width: 72%;
+	right: 0;
+	margin-left: 240px;
+}
+
+.form_body {
+	background: #AACFBE;
+	padding: 1px;
+	font-family: arial, sans-serif;
+	border-style: solid;
+	border-color: #559F7D;
+	margin: 0px 100px;
+	padding-top: 0.5em;
+}
+
+.form_body td {
+	text-align: right;
+	font-weight: bold;
+	font-size: 80%;
+	padding: 3px;
+}
+
+#results {
+	background: #FFFFFF;
+}
+
+#results table {
+	width: 100%;
+}
+
+#results td {
+	border-bottom: 1px solid #BBBBBB;
+	text-align: left;
+	height: 2em;
+}
+
