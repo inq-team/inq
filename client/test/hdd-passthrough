@@ -34,6 +34,8 @@ if [ "$TOTAL_MEMORY" -lt 600 ]; then
 	RAMDISK_SIZE=300
 	MAKE_ARGS="fs"
 	JOBS=4
+else
+	MAKE_ARGS="all"
 fi
 
 badblocks_test()
