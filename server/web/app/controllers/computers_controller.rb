@@ -627,6 +627,20 @@ __EOF__
 
 		head(:status => 200)
 	end
+
+	def get_needed_firmwares_list
+		@computer = Computer.find(params[:id])
+		@testing = @computer.last_testing
+		@components = Component.find_all_by_testing_id(@testing.id)
+		@firmwares=""
+		@components.each { |com|
+			Firmware.find_all_by_component_model_id(com.component_model_id).each { |fw|
+				group=ComponentGroup.find_by_id(ComponentModel.find_by_id(com.component_model_id).component_group_id).name
+				@firmwares+="#{group}::#{fw.version}::#{fw.image}\n"
+			}
+		}
+		render :text => @firmwares
+	end
 	
 	def label_epassport
 		@computer = Computer.find(params[:id])

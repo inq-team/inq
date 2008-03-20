@@ -5,7 +5,7 @@ require 'computers_controller'
 class ComputersController; def rescue_action(e) raise e end; end
 
 class ComputersControllerTest < Test::Unit::TestCase
-	fixtures :computers, :profiles, :models, :testings, :testing_stages, :components, :component_models, :component_groups, :graphs
+	fixtures :computers, :profiles, :models, :testings, :testing_stages, :components, :component_models, :component_groups, :graphs, :firmwares
 
 	def setup
 		@controller = ComputersController.new
@@ -130,6 +130,13 @@ class ComputersControllerTest < Test::Unit::TestCase
 		macs=assigns['macs']
 		assert_equal ["00-e0-81-5d-4f-37", "00-e0-81-5d-4f-38"], macs
 		assert_response :success
+	end
+
+	def test_firmware
+		firmwares = "NIC::810011::rs160g3.bios\nNIC::810011::rs160g3.bios\nRAM::1.0::memtester"
+		get :get_needed_firmwares_list, :id => 20
+		firmwares=assigns['firmwares']
+		assert_equal firmwares, firmwares
 	end
 
 	def test_monitoring_submit

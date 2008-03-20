@@ -1,0 +1,11 @@
+one:
+  id: 1
+  component_model_id: 20
+  image: rs160g3.bios
+  version: 810011
+
+two:
+  id: 2
+  component_model_id: 5
+  image: memtester
+  version: 1.0

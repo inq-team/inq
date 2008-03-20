@@ -37,3 +37,8 @@
   testing_id: 20
   component_model_id: 20
   serial: 00:e0:81:5d:4f:38
+22:
+  id: 22
+  testing_id: 20
+  component_model_id: 5
+  serial: 098
