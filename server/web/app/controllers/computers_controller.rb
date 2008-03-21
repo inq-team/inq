@@ -212,7 +212,7 @@ class ComputersController < ApplicationController
 	def sticker
 		prepare_computer_tabs
 		@count = params[:count] 
-		@components = @testing.components.collect { |c| c.model }.inject({}) { |h, m| h[m] = h[m] ? h[m] + 1 : 1 ; h }.collect { |k, v| { :name => k.short_name.blank? ? k.name : k.short_name, :count => v, :model => k  } }.sort() { |q, w| a = q[:model] ; b = w[:model] ; (z = ((a.group ? a.group.name : '') <=> (b.group ? b.group.name : ''))) == 0 ? (q[:name] || 'NULL') <=> (w[:name] || 'NULL') : z }
+		@components = @testing.components.collect { |c| c.model }.inject({}) { |h, m| h[m] = h[m] ? h[m] + 1 : 1 ; h }.collect { |k, v| { :name => k.short_name.blank? ? k.name : k.short_name, :count => v, :model => k, :hidden => k.short_name.blank? } }.sort() { |q, w| a = q[:model] ; b = w[:model] ; (z = ((a.group ? a.group.name : '') <=> (b.group ? b.group.name : ''))) == 0 ? (q[:name] || 'NULL') <=> (w[:name] || 'NULL') : z }
 		render(:layout => 'computer_tabs')
 	end
 
@@ -247,7 +247,7 @@ class ComputersController < ApplicationController
 				@testing.components.collect { |c| c.model }.inject({}) { |h, m| h[m] = h[m] ? h[m] + 1 : 1 unless m.short_name.blank? ; h }.collect { |k, v| { :name => k.short_name, :count => v, :model => k  } }.sort() { |q, w| a = q[:model] ; b = w[:model] ; (z = ((a.group ? a.group.name : '') <=> (b.group ? b.group.name : ''))) == 0 ? q[:name] <=> w[:name] : z }[0..14].inject(1) { |i, y| options[:components] << sprintf("%2s %-38s %s", i, y[:name][0..37], y[:count]) ; i + 1 }
 			end
 			
-			sticker = Sticker.new(options)
+			sticker = Stickercompat.new(options)
 			sticker.send_to_printer(srv, prn)
 						
 			#if sticker.send_to_printer(srv, prn)
@@ -350,7 +350,8 @@ __EOF__
 				:components => components.collect() { |h|
 					Component.new(
 						:serial => h[:serial],
-						:model => ComponentModel.find_or_create_by_name_and_vendor_and_component_group_id(
+						:model => ComponentModel.find_or_create_by_name_and_short_name_and_vendor_and_component_group_id(
+							h[:model],
 							h[:model],
 							h[:vendor],
 							ComponentGroup.find_or_create_by_name(h[:type]).id

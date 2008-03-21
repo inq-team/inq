@@ -38,11 +38,11 @@ td#info_tabs table tr td#info_tab_sticker a {
 }
 
 .component_qty {
-	width: 17.6em;
+	width: 8.6em;
 }
 
 .component_name {
-	width: 26.6em;
+	width: 35.6em;
 }
 
 td.component_name a {
@@ -66,6 +66,11 @@ td.component_name:hover span.stub_a {
 
 .component_even {
 	background-color: #f0f4f0;
+}
+
+tr.hidden_component {
+	font-style: italic;
+	color: #999;
 }
 
 .hint {

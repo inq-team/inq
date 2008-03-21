@@ -4,10 +4,11 @@
 		<th class="component_name">P/N</th>
 		<th class="component_qty">Qty</th>
 	</tr>
-	<% @components.each_index do |i| %>
-		<% component = @components[i] %>
-		<tr <%= component[:name].blank? ? "class=\"broken_component\"" : '' %>>
-		<td class="component_num"> <%= i %> </td>
+	<% [ @components.find_all { |c| !c[:hidden] }, @components.find_all { |c| c[:hidden] } ].each do |comps| %>
+	<% comps.each_index do |i| %>
+		<% component = comps[i] %>
+		<tr class="<%= component[:name].blank? ? "broken_component" : component[:hidden] ? "hidden_component" : ""  %>">
+		<td class="component_num"> <%= component[:hidden] ? '' : i + 1 %> </td>
 		<td class="component_name">
 			<% name = component[:name].blank? ? 'NULL' : component[:name] %>
 			<span class="stub_a"><%= name %></span>
@@ -16,6 +17,7 @@
 		</td>		
 		<td class="component_qty"><%= component[:count] %></td>
 		</tr>
+	<% end %>
 	<% end %>
 </table>
 
@@ -34,6 +36,12 @@
 	<% form_tag({ :action => 'print_sticker', :id => @computer.id, :testing => @testing_number }, :method => 'post', :onsubmit => "return confirm('Are you sure you need ' + $('count').value + ' copies?');") do %>
 	<%= text_field_tag('count', @count || '2') %>
 	<%= submit_tag('Print') %>
+	<% end %>
+</td>
+<td>
+	To <strong>bolddly go where no man has gone before</strong> press the button below:
+	<% form_tag({ :controller => 'stickers', :computer => @computer, :testing => @testing, :action => 'show' }) do %>
+	<%= submit_tag('Engage!') %>
 	<% end %>
 </td>
 <td>
