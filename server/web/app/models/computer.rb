@@ -60,7 +60,8 @@ class Computer < ActiveRecord::Base
 	end
 
 	def manufacturing_date
-		computer_stages.find_all() { |s| s.stage == 'packaging' && s.stage.end }.sort() { |a, b| a.start <=> b.start }.last().end
+		stage = computer_stages.find_all() { |s| s.stage == 'testing' && s.end }.sort() { |a, b| a.start <=> b.start }.last
+		stage.end if stage
 	end
 
 	def self.with_orders
