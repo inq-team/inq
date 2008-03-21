@@ -24,36 +24,47 @@ class ProfilesController < ApplicationController
 	end
 
 	def create
-		if (!params[:profile][:xml]) || params[:profile][:xml].empty?
-			flash[:notice] = 'Empty XML'
-			if params[:id]
-				redirect_to  :action => 'edit', :id => params[:id]
-			else
-				redirect_to  :action => 'new'
-			end
-			return
-		end
-		
-		begin
-			REXML::Document.new(params[:profile][:xml])
-		rescue REXML::ParseException
-			flash[:notice] = 'Wrong XML'
-			redirect_to  :action => 'edit', :id => params[:id]
-			return
-		end
 		@profile = Profile.new
 		@profile.xml = params[:profile][:xml]
 		feature = params[:profile][:feature]
 		@profile.feature = (feature.empty? ? nil : feature)
  		@profile.model_id = params[:model][:id]
 		@profile.timestamp = Time.now		
+		@models = Model.find(:all, :order => :name).map { |x| [x.name, x.id] }.unshift(['', nil])
+		@default_model_id = @profile.model ? @profile.model.id : nil
+	
+		if params[:profile][:xml].to_s.empty?
+			flash[:notice] = 'Empty XML'
+			if params[:id]
+				render :action => 'edit', :id => params[:id]
+			else
+				render :action => 'new'
+			end
+			return
+		end
+
+		begin
+			REXML::Document.new(params[:profile][:xml])
+		rescue REXML::ParseException
+			flash[:notice] = 'Wrong XML'
+			if params[:id]
+				render :action => 'edit', :id => params[:id]
+			else
+				render :action => 'new'
+			end
+			return
+		end
+
 		if @profile.save!
 			flash[:notice] = 'Profile was successfully created.'
 			redirect_to :action => 'index'
 		else
-			render :action => 'new'
+			if params[:id]
+				render :action => 'edit', :id => params[:id]
+			else
+				render :action => 'new'
+			end
 		end
-
 	end
 
 	def edit
@@ -61,9 +72,4 @@ class ProfilesController < ApplicationController
 		@models = Model.find(:all, :order => :name).map { |x| [x.name, x.id] }.unshift(['', nil])
 		@default_model_id = @profile.model ? @profile.model.id : nil
 	end
-
-#	def destroy
-#		Profile.find(params[:id]).destroy
-#		redirect_to :action => 'list'
-#	end
 end
