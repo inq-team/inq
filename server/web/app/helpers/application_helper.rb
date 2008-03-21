@@ -107,6 +107,4 @@ def progress_bar(stages)
 	js + content_tag(:div, content_tag('table', content_tag('tr', content)), :id => "progress_bar")
 end
 
-
-
 end

@@ -1,22 +1,27 @@
 <%= stylesheet_link_tag 'order_search' %>
+<%= stylesheet_link_tag 'calendar.css' %>
+<%= javascript_include_tag 'calendar' %>
 
-<div class="form_head">Search Options</div>
-
+<div class="form_head">Search orders</div>
 <div class="form_body">
 	<% form_tag  'search', :method => :get do %>
 		<center>
 		<table cellspacing="4" cellpadding="0">
 			<tr>
 				<td>Number:</td>
-				<td><%= text_field_tag 'number', nil, :style => 'width:100%' %></td>
-				<td>Start:<%= check_box 'datetime_start', 'use' %></td>
-				<td style="text-align: left"><%= date_select 'date', 'start' %></td>
+				<td><%= text_field_tag 'number', nil, :style => 'width:100%', :value => @number.to_s %></td>
+				<td>Start date:</td>
+				<td style="text-align: left"><%= date_field 'date', 'start', :value => @start_date.to_s, :size => '8' %></td>
 			</tr>
 			<tr>
 				<td>Customer:</td>
-				<td><%= text_field_tag 'customer', nil, :style => 'width:100%' %></td>
-				<td>End:<%= check_box 'datetime_end', 'use' %></td>
-				<td style="text-align: left"><%= date_select 'date', 'end' %></td>
+				<td><%= text_field_tag 'customer', nil, :style => 'width:100%', :value => @customer.to_s %></td>
+				<td>End date:</td>
+				<td style="text-align: left"><%= date_field 'date', 'end', :value => @end_date.to_s, :size => '8' %></td>
+			</tr>
+			<tr>
+				<td>Manager:</td>
+				<td><%= text_field_tag 'manager', nil, :style => 'width:100%', :value => @manager.to_s %></td>				
 			</tr>
 		</table>
 		<%= submit_tag 'Find', :style => 'margin: 1em' %>
