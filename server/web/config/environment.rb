@@ -9,6 +9,10 @@ RAILS_GEM_VERSION = '2.0.2' unless defined? RAILS_GEM_VERSION
 
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
+load File.join(File.dirname(__FILE__), 'stickers-config.rb')
+
+DEFAULT_SHELVES_CONFIG = 'config/shelves.xml'
+WAITSTRING_CLIENT_PORT = 8372 
 
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence over those specified here
@@ -34,6 +38,8 @@ Rails::Initializer.run do |config|
 		:session_key => '_inq_session',
 		:secret => '3b6e239389e503f082598aff803729afd56defe7004d9845eb9ba666661179c2'
 	}
+
+	config.load_paths << STICKER_PRINTERS_PATH if Object.const_defined?('STICKER_PRINTERS_PATH')
 
   # Use SQL instead of Active Record's schema dumper when creating the test database.
   # This is necessary if your schema can't be completely dumped by the schema dumper, 
@@ -68,5 +74,3 @@ Mime::Type.register 'image/png', :png
 
 # platform takes precedence over mainboard
 
-DEFAULT_SHELVES_CONFIG = 'config/shelves.xml'
-WAITSTRING_CLIENT_PORT = 8372 
