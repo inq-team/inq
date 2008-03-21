@@ -4,6 +4,6 @@ class ComputerStages < ActiveRecord::Migration
 	end
 	
 	def self.down
-		remove_index("computer_stages", "computer_id")
+		remove_index 'computer_stages', :name => 'computer_id'
 	end
 end
