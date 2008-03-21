@@ -1,6 +1,6 @@
 class WidenIpField < ActiveRecord::Migration
 	def self.up
-#		change_column(:computers, :ip, :string, :limit => 20)
+		change_column(:computers, :ip, :string, :limit => 20)
 	end
 
 	def self.down

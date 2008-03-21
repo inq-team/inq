@@ -1,6 +1,6 @@
 class OrderStages < ActiveRecord::Migration
 	def self.up
-#		add_index "order_stages", ["order_id"], :name => "order_id"
+		add_index "order_stages", ["order_id"], :name => "order_id"
 	end
 	
 	def self.down
