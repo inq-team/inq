@@ -1,0 +1,30 @@
+<% form_tag(:action => 'apply') do  %>
+	<fieldset>
+	<legend>Sticker profile</legend>
+	<table>
+	<tr><td><label for="computer">Computer</label></td><td><%= text_field_tag 'computer', @computer %></td></tr>
+	<tr><td><label for="testing">Testing</label></td><td><%= text_field_tag 'testing', @testing %></td></tr>
+	<tr>
+		<td><label for="select-profile">Profile</label></td>
+		<td><select name="profile" id="select-profile"><%= options_for_select @profiles.keys, @profile %></select></td></tr>
+	</tr>
+	<tr><td><label for="copies">Copies</label></td><td><%= text_field_tag 'copies', @copies %></td></tr>
+
+	<tr><td>&nbsp;</td><td><%= submit_tag 'Apply' %></td></tr>
+	</table>
+	</fieldset>
+<% end %>
+
+<hr />
+
+<% if @sticker.is_a? Array %>
+<% @sticker.find_all { |h| h[:kind] == :grid }.each do |grid| %>
+<table>
+<%= content_tag(:tr, grid[:head].collect { |s| content_tag(:td, s) }.join) if grid[:head] %>
+<%= grid[:body].collect { |r| content_tag(:tr, r.collect { |c| content_tag(:td, c) }.join) }.join %> 
+</table>
+<% end %>
+<% elsif @sticker %>
+<code><%= @sticker %></code>
+<% end %>
+
