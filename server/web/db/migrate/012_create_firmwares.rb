@@ -1,4 +1,4 @@
-class CreateOrderLines < ActiveRecord::Migration
+class CreateFirmwares < ActiveRecord::Migration
 	def self.up
 		create_table :firmwares do |t|
 			t.column 'version',            :string, :null => false
