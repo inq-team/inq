@@ -68,7 +68,7 @@
 			<% if @stages %>
 				<% @stages.each { |stage| %>
 				<tr class='testing_stage_<%= stage[:result] %>'>
-					<td class="testing_stage_name" title="<%= stage[:result] %>"><%= stage[:id] %></td>
+					<td class="testing_stage_name" title="<%= stage[:comment] %>"><%= stage[:id] %></td>
 					<td class="testing_stage_span"><%= sprintf("%02i:%02i:%02i", stage[:elapsed]/3600, stage[:elapsed]%3600/60, stage[:elapsed]%3600%60) if stage[:elapsed] %></td>
 				</tr>
 			<% } %>

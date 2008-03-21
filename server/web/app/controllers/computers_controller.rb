@@ -401,7 +401,7 @@ __EOF__
 			flash[:notice] = 'Components successfully updated.'
 			respond_to() do |format|
 				format.html { redirect_to(:action => 'show', :id => @computer) }
-				format.xml { render(:xml => testing.to_xml()) }
+				format.xml { head(:status => 200) }
 			end
 		else
 			head(:status => 500)
@@ -697,6 +697,7 @@ __EOF__
 				:id => stage.stage,
 				:elapsed => ((stage.end || Time.new()) - stage.start).round,
 				:result => RESULT_MAPPING[stage.result] || 'unknown',
+				:comment => (RESULT_MAPPING[stage.result] || 'unknown') + (stage.comment ? ": #{stage.comment}" : ''),
 			}
 		}
 
@@ -706,7 +707,8 @@ __EOF__
 			pl.plan.each { |stage|
 				@stages << {
 					:id => stage.id,
-					:result => 'planned'
+					:result => 'planned',
+					:comment => 'planned'
 				}
 			}
 		end
