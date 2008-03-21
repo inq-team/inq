@@ -639,7 +639,7 @@ __EOF__
 				@firmwares+="#{group}::#{fw.version}::#{fw.image}\n"
 			}
 		}
-		render :text => @firmwares
+		render :text => @firmwares.chomp
 	end
 	
 	def label_epassport

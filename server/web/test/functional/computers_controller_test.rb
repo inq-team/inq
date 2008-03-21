@@ -133,10 +133,10 @@ class ComputersControllerTest < Test::Unit::TestCase
 	end
 
 	def test_firmware
-		firmwares = "NIC::810011::rs160g3.bios\nNIC::810011::rs160g3.bios\nRAM::1.0::memtester"
+		needed_firmwares = "NIC::810011::rs160g3.bios\nNIC::810011::rs160g3.bios\nRAM::1.0::memtester\n"
 		get :get_needed_firmwares_list, :id => 20
 		firmwares=assigns['firmwares']
-		assert_equal firmwares, firmwares
+		assert_equal needed_firmwares, firmwares
 	end
 
 	def test_monitoring_submit
