@@ -10,6 +10,8 @@ class ComputersController < ApplicationController
 
 	layout nil, :only => ['audit_comparison', 'check_audit_js']
 
+	enable_sticker_printing
+
 	@@default_config = Shelves::Config.new(DEFAULT_SHELVES_CONFIG)
 
 	def archive
@@ -259,6 +261,21 @@ class ComputersController < ApplicationController
 		redirect_to(:action => 'sticker', :id => params[:id], :count => count.to_s(), :testing => @testing_number)
 	end
 
+	def print_sticker_profile
+                lib = Sticker::Library.new
+                @profiles = lib.by_scope('computer')
+		@profile = @profiles[DEFAULT_STICKER_PROFILE_FIXME]
+		if @profile
+			prepare_computer_and_testing
+	                @copies = params[:copies].to_i 
+			print_sticker(DEFAULT_STICKER_PROFILE_FIXME, @copies)
+                        flash[:notice] = "Sent sticker to printer <strong class='printer'>#{@profile.printers.first.class}</strong>"
+		else
+			flash[:error] = "Profile not specified"
+		end
+		redirect_to(:action => 'sticker', :id => params[:id], :count => @copies.to_s(), :testing => @testing_number)
+        end
+	
 	def log
 		prepare_computer_tabs
 		render(:layout => 'computer_tabs')
