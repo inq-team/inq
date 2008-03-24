@@ -222,7 +222,7 @@ class ComputersController < ApplicationController
 		sticker()
 	end
 
-	def print_sticker		
+	def print_sticker_compat
 		@computer = Computer.find(params[:id])
 		@testing_number = params[:testing].to_i()
                 @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
