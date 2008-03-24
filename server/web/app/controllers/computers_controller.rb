@@ -267,7 +267,7 @@ class ComputersController < ApplicationController
 		@profile = @profiles[DEFAULT_STICKER_PROFILE_FIXME]
 		if @profile
 			prepare_computer_and_testing
-	                @copies = params[:copies].to_i 
+	                @copies = params[:count].to_i 
 			print_sticker(DEFAULT_STICKER_PROFILE_FIXME, @copies)
                         flash[:notice] = "Sent sticker to printer <strong class='printer'>#{@profile.printers.first.class}</strong>"
 		else
