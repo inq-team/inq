@@ -367,8 +367,7 @@ __EOF__
 				:components => components.collect() { |h|
 					Component.new(
 						:serial => h[:serial],
-						:model => ComponentModel.find_or_create_by_name_and_short_name_and_vendor_and_component_group_id(
-							h[:model],
+						:model => ComponentModel.find_or_create_by_name_and_vendor_and_component_group_id(
 							h[:model],
 							h[:vendor],
 							ComponentGroup.find_or_create_by_name(h[:type]).id
