@@ -40,13 +40,14 @@ INNER JOIN orders o ON order_id=o.id
 LEFT JOIN computers c ON c.order_id=o.id
 WHERE os2.stage='warehouse' AND os2.end IS NOT NULL AND c.id IS NULL #{add_filter}
 ORDER BY from_delay ASC", add_arg]),
-			self.find_by_sql(["SELECT o.id, o.buyer_order_number, o.title, o.customer, NOW(), 0 AS from_delay FROM orders o
+			self.find_by_sql(["SELECT o.id, o.buyer_order_number, o.title, o.customer, NOW(), 0 AS from_delay, COUNT(c.id) AS comp_qty FROM orders o
 INNER JOIN computers c ON c.order_id=o.id
 LEFT JOIN computer_stages cs ON cs.computer_id=c.id
 WHERE cs.id IS NULL AND o.id NOT IN (
 	SELECT o2.id FROM orders o2 LEFT JOIN order_stages os2 ON o2.id=os2.order_id
 	WHERE os2.stage = 'manufacturing'
 ) #{add_filter}
+GROUP BY o.id
 ORDER BY from_delay DESC", add_arg]),
 			self.find_by_sql(["SELECT o.id, o.buyer_order_number, o.title, o.customer, cs.start, DATEDIFF(NOW(), cs.start) AS from_delay, COUNT(c.id) AS comp_qty FROM orders o
 INNER JOIN computers c ON c.order_id=o.id
