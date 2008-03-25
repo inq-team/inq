@@ -257,8 +257,7 @@ class OrdersController < ApplicationController
 				raise ArgumentError.new("invalid date: #{s}")
 			end
 		end
-		
-		unless params[:date].to_s.empty?
+		if (params.size > 2) && (!params[:number].to_s.empty? || !params[:manager].to_s.empty? || !params[:date][:start].to_s.empty? || !params[:date][:end].to_s.empty? || !params[:customer].to_s.empty?)
 			@customer = params[:customer]
 			@number = params[:number]
 			@manager = params[:manager]
