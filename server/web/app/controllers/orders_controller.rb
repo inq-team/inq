@@ -4,7 +4,9 @@ class OrdersController < ApplicationController
 	# GET /orders
 	# GET /orders.xml
 	def index
-		@staging = Order.staging
+		@selected_manager = params[:manager][:name]
+		@managers = Order.find_by_sql('SELECT DISTINCT manager FROM orders').map { |x| x.manager }
+		@staging = Order.staging(@selected_manager)
 	end
 
 	def staging
@@ -14,7 +16,6 @@ class OrdersController < ApplicationController
 	def testings
 		@orders = Order.with_testings
 	end
-
 
 	# GET /orders/1
 	# GET /orders/1.xml
@@ -206,7 +207,6 @@ class OrdersController < ApplicationController
 	end
 
 	def live_profile
-		p params
 		@profiles = Profile.list_for_model(params[:model]).map { |x| [x.name, x.id] }
                 render(:layout => false)
 	end

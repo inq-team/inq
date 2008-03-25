@@ -10,16 +10,23 @@ class Order < ActiveRecord::Base
 		update_attributes(attr)
 	end
 
-	def self.staging
+	def self.staging(manager = nil)
+		if manager and not manager.empty?
+			add_filter = "AND o.manager=?"
+			add_arg = manager
+		else
+			add_filter = ''
+			add_arg = nil
+		end		
 		[
 			self.find_by_sql(["SELECT o.id, o.buyer_order_number, o.title, o.customer, os.start, DATEDIFF(NOW(), os.start) AS from_delay FROM orders o
 INNER JOIN order_stages os ON o.id=os.order_id
-WHERE os.stage='ordering' AND os.end IS NULL
-ORDER BY from_delay ASC"]),
+WHERE os.stage='ordering' AND os.end IS NULL #{add_filter}
+ORDER BY from_delay ASC", add_arg]),
 			self.find_by_sql(["SELECT o.id, o.buyer_order_number, o.title, o.customer, os.start, DATEDIFF(NOW(), os.start) AS from_delay FROM orders o
 INNER JOIN order_stages os ON o.id=os.order_id
-WHERE os.stage='warehouse' AND os.end IS NULL
-ORDER BY from_delay ASC"]),
+WHERE os.stage='warehouse' AND os.end IS NULL #{add_filter}
+ORDER BY from_delay ASC", add_arg]),
 			self.find_by_sql(["SELECT o.id, o.buyer_order_number, o.title, o.customer, os2.end AS start, DATEDIFF(NOW(), os2.end) AS from_delay
 FROM (
 	SELECT CAST(SUBSTR(MAX(hint), LOCATE('$', MAX(hint)) + 1) AS UNSIGNED) AS last_os_id
@@ -31,32 +38,32 @@ FROM (
 INNER JOIN order_stages os2 ON t2.last_os_id=os2.id
 INNER JOIN orders o ON order_id=o.id
 LEFT JOIN computers c ON c.order_id=o.id
-WHERE os2.stage='warehouse' AND os2.end IS NOT NULL AND c.id IS NULL
-ORDER BY from_delay ASC"]),
+WHERE os2.stage='warehouse' AND os2.end IS NOT NULL AND c.id IS NULL #{add_filter}
+ORDER BY from_delay ASC", add_arg]),
 			self.find_by_sql(["SELECT o.id, o.buyer_order_number, o.title, o.customer, NOW(), 0 AS from_delay FROM orders o
 INNER JOIN computers c ON c.order_id=o.id
 LEFT JOIN computer_stages cs ON cs.computer_id=c.id
 WHERE cs.id IS NULL AND o.id NOT IN (
 	SELECT o2.id FROM orders o2 LEFT JOIN order_stages os2 ON o2.id=os2.order_id
 	WHERE os2.stage = 'manufacturing'
-)
-ORDER BY from_delay DESC"]),
+) #{add_filter}
+ORDER BY from_delay DESC", add_arg]),
 			self.find_by_sql(["SELECT o.id, o.buyer_order_number, o.title, o.customer, cs.start, DATEDIFF(NOW(), cs.start) AS from_delay, COUNT(c.id) AS comp_qty FROM orders o
 INNER JOIN computers c ON c.order_id=o.id
 LEFT JOIN computer_stages cs ON cs.computer_id=c.id
-WHERE cs.stage='testing' AND cs.end IS NULL
+WHERE cs.stage='testing' AND cs.end IS NULL #{add_filter}
 GROUP BY o.id
-ORDER BY from_delay DESC"]),
+ORDER BY from_delay DESC", add_arg]),
 			self.find_by_sql(["SELECT o.id, o.buyer_order_number, o.title, o.customer, cs.start, DATEDIFF(NOW(), cs.start) AS from_delay FROM orders o
 INNER JOIN computers c ON c.order_id=o.id
 LEFT JOIN computer_stages cs ON cs.computer_id=c.id
-WHERE cs.stage='checking' AND cs.end IS NULL
-ORDER BY from_delay DESC"]),
+WHERE cs.stage='checking' AND cs.end IS NULL #{add_filter}
+ORDER BY from_delay DESC", add_arg]),
 			self.find_by_sql(["SELECT o.id, o.buyer_order_number, o.title, o.customer, cs.start, DATEDIFF(NOW(), cs.start) AS from_delay FROM orders o
 INNER JOIN computers c ON c.order_id=o.id
 LEFT JOIN computer_stages cs ON cs.computer_id=c.id
-WHERE cs.stage='packing' AND cs.end IS NULL
-ORDER BY from_delay DESC"]),
+WHERE cs.stage='packing' AND cs.end IS NULL #{add_filter}
+ORDER BY from_delay DESC", add_arg]),
 		]
 	end
 
