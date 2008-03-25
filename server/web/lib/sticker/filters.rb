@@ -31,16 +31,16 @@ class PropertyFilter
 				data.each { |d| d[to] = d[@property] unless restrict && restrict == 'nil' && d[@property].nil? }
 			when "append-value"
 				value = df.attributes['value']
-				data.each { |d| d[@property] += value }				
+				data.each { |d| d[@property] = "#{d[@property]}#{value}" }				
 			when "append-property"
 				from = df.attributes['from']
-				data.each { |d| d[@property] += d[from] }
+				data.each { |d| d[@property] = "#{d[@property]}#{d[from]}" }
 			when "prepend-value"
 				value = df.attributes['value']
-				data.each { |d| d[@property] = value + d[@property] }	
+				data.each { |d| d[@property] = "#{value}#{d[@property]}" }	
 			when "prepend-property"
 				from = df.attributes['from']
-				data.each { |d| d[@property] = d[from] + d[@property] }			
+				data.each { |d| d[@property] = "#{d[from]}#{d[@property]}" }			
 			when "set-value"
 				value = df.attributes['value']
 				data.each { |d| d[@property] = value }
