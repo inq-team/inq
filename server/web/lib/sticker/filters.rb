@@ -34,7 +34,16 @@ class PropertyFilter
 				data.each { |d| d[@property] += value }				
 			when "append-property"
 				from = df.attributes['from']
-				data.each { |d| d[@property] += d[from] }	
+				data.each { |d| d[@property] += d[from] }
+			when "prepend-value"
+				value = df.attributes['value']
+				data.each { |d| d[@property] = value + d[@property] }	
+			when "prepend-property"
+				from = df.attributes['from']
+				data.each { |d| d[@property] = d[from] + d[@property] }			
+			when "set-value"
+				value = df.attributes['value']
+				data.each { |d| d[@property] = value }
 			when "rename"
 				from = df.attributes['from']
 				to = df.attributes['to']
