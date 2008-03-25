@@ -4,7 +4,7 @@ class OrdersController < ApplicationController
 	# GET /orders
 	# GET /orders.xml
 	def index
-		@selected_manager = params[:manager][:name]
+		@selected_manager = params[:manager][:name] if params[:manager]
 		@managers = Order.find_by_sql('SELECT DISTINCT manager FROM orders').map { |x| x.manager }
 		@staging = Order.staging(@selected_manager)
 	end
