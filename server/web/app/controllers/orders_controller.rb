@@ -230,6 +230,7 @@ class OrdersController < ApplicationController
 	
 	def search
 		parse_date = Proc.new do |s, options|
+			s = s.to_s
 			case s
 			when /^(\d{4})-(\d{2})-(\d{2})$/
 				s
@@ -257,21 +258,22 @@ class OrdersController < ApplicationController
 				raise ArgumentError.new("invalid date: #{s}")
 			end
 		end
-		if (params.size > 2) && (!params[:number].to_s.empty? || !params[:manager].to_s.empty? || !params[:date][:start].to_s.empty? || !params[:date][:end].to_s.empty? || !params[:customer].to_s.empty?)
-			@customer = params[:customer]
-			@number = params[:number]
-			@manager = params[:manager]
-			begin
-				@start_date = parse_date.call(params[:date][:start], :format => :start_date)
-				@end_date = parse_date.call(params[:date][:end], :format => :end_date)				
-			rescue ArgumentError => e
-				flash[:notice] = e.to_s
-				render :action => 'search'
-				return
-			end
+
+		@customer = params[:customer].to_s
+		@number = params[:number].to_s
+		@manager = params[:manager].to_s
+		begin
+			@start_date = parse_date.call((params[:date] || {})[:start], :format => :start_date)
+			@end_date = parse_date.call((params[:date] || {})[:end], :format => :end_date)				
+		rescue ArgumentError => e
+			flash[:notice] = e.to_s
+			render :action => 'search'
+			return
+		end
+		if (params.size > 2) && (!@customer.empty? || !@number.empty? || !@manager.empty? || !@start_date.empty? || !@end_date.empty?)
 			par = []
-			conditions1 = [ ["manager LIKE ?", @manager, "%#{@manager}%"], ["customer LIKE ?", @customer, "%#{@customer}%"], ["buyer_order_number=?", @number, "#{params[:number]}"] ].select{ |x| not x[1].to_s.empty? }.map{ |x| par << x[2]; x[0] }.join(' AND ')
-			dates = [[:start, @start_date], [:end, @end_date]].select{ |d| not d[1].to_s.empty? }
+			conditions1 = [ ["manager LIKE ?", @manager, "%#{@manager}%"], ["customer LIKE ?", @customer, "%#{@customer}%"], ["buyer_order_number=?", @number, "#{params[:number]}"] ].select{ |x| not x[1].empty? }.map{ |x| par << x[2]; x[0] }.join(' AND ')
+			dates = [[:start, @start_date], [:end, @end_date]].select{ |d| not d[1].empty? }
 			conditions2 = ['order_stages.start', 'computer_stages.start'].map{ |start|	dates.map{ |d| par << d[1]; "#{start}#{d[0]==:start ? '>' : '<'}=?"}.join(' AND ') }
 			conditions2 = conditions2.select{ |x| not x.to_s.empty? }
 			conditions2 = conditions2.map{ |s| "(#{s})" }.join(' OR ') if conditions2.size > 1

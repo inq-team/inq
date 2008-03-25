@@ -79,6 +79,8 @@
 			<% if @testing && @testing.profile %>
 				<div class="testing_profile">Profile: <%= link_to @testing.profile.name, { :controller => :profiles, :action => :show, :id => @testing.profile } %></div>
 			<% end %>
+			
+			<div class="testing_profile">Customer: <%= link_to @computer.order.customer, { :controller => :orders, :action => :search, :customer => @computer.order.customer } %></div>			
 	
 		</div></td> 
 
