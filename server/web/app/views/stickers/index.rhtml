@@ -15,6 +15,8 @@
 	</fieldset>
 <% end %>
 
+<%= link_to('Reset zebra images...', '#', :onclick => "var z = window.open('#{ url_for( :action => 'debug_clear_zebra' ) }', 'reset_zebra', 'status=no, location=yes, menubar=no, toolbar=no, personalbar=no, directories=no, dependent=yes, width=480, height=360'); if(window.focus) { z.focus(); } ") %>
+
 <hr />
 
 <% if @sticker.is_a? Array %>

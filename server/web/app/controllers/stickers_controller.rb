@@ -36,4 +36,14 @@ class StickersController < ApplicationController
 		render(:action => 'index')
 	end
 
+	def debug_clear_zebra
+		begin
+			Sticker::Printers.const_get('Abstractzebra').clear_tokens
+			render(:text => "Image tokens reset")
+		rescue NameError
+			render(:text => "Class not defined")
+		end
+	end
+
 end
+
