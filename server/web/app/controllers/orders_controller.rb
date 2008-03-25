@@ -262,12 +262,10 @@ class OrdersController < ApplicationController
 			conditions = [conditions1, conditions2].select{ |x| not x.to_s.empty? }
 			conditions = conditions.map{ |s| "(#{s})" }.join(' AND ') if conditions.size > 1
 			conditions = conditions.to_s
-			orders = Order.find(:all, :conditions => [conditions, *par], :include => [:order_stages, { :computers => :computer_stages }])
-			@search_result = '<table>'
-			orders.each do |z|
-				@search_result += "<tr><td><a href=\"/orders/show/#{z.id}\">#{z.customer}, #{z.title}</a></td></tr>"
+			@orders = Order.find(:all, :conditions => [conditions, *par], :include => [:order_stages, { :computers => :computer_stages }])
+			if @orders.size == 1
+				redirect_to :action => 'show', :id => @orders[0]
 			end
-			@search_result += '</table>'		
 		else
 			@search_result = ''
 		end		
