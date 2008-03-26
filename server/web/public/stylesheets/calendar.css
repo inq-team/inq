@@ -43,11 +43,11 @@ table#calendar_control td.day_number {
   font-size: 12px;
   color: #333333;
   text-align: center;
-  border: 1px solid #6487ae;
+  border: 1px solid #559F7D;
   cursor: pointer;
 }
 table#calendar_control td.normal {
-  background: #c4d3ea;
+  background: #AACFBE;
 }
 table#calendar_control td.blank {
   background: aliceblue;
@@ -57,7 +57,7 @@ table#calendar_control td.hover {
   background: #fff799;
 }
 table#calendar_control td.selected {
-  background: #ffcc66;
+  background: #F0DFBD;
 }
 table#calendar_control td.weekend {
   color: blue;
