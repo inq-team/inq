@@ -270,6 +270,7 @@ class OrdersController < ApplicationController
 			render :action => 'search'
 			return
 		end
+		@orders = []
 		if (params.size > 2) && (!@customer.empty? || !@number.empty? || !@manager.empty? || !@start_date.empty? || !@end_date.empty?)
 			par = []
 			conditions1 = [ ["manager LIKE ?", @manager, "%#{@manager}%"], ["customer LIKE ?", @customer, "%#{@customer}%"], ["buyer_order_number=?", @number, "#{params[:number]}"] ].select{ |x| not x[1].empty? }.map{ |x| par << x[2]; x[0] }.join(' AND ')
@@ -284,8 +285,6 @@ class OrdersController < ApplicationController
 			if @orders.size == 1
 				redirect_to :action => 'show', :id => @orders[0]
 			end
-		else
-			@search_result = ''
-		end		
+		end
 	end
 end
