@@ -270,21 +270,26 @@ class OrdersController < ApplicationController
 			render :action => 'search'
 			return
 		end
-		@orders = []
-		if (params.size > 2) && (!@customer.empty? || !@number.empty? || !@manager.empty? || !@start_date.empty? || !@end_date.empty?)
-			par = []
-			conditions1 = [ ["manager LIKE ?", @manager, "%#{@manager}%"], ["customer LIKE ?", @customer, "%#{@customer}%"], ["buyer_order_number=?", @number, "#{params[:number]}"] ].select{ |x| not x[1].empty? }.map{ |x| par << x[2]; x[0] }.join(' AND ')
-			dates = [[:start, @start_date], [:end, @end_date]].select{ |d| not d[1].empty? }
-			conditions2 = ['order_stages.start', 'computer_stages.start'].map{ |start|	dates.map{ |d| par << d[1]; "#{start}#{d[0]==:start ? '>' : '<'}=?"}.join(' AND ') }
-			conditions2 = conditions2.select{ |x| not x.to_s.empty? }
-			conditions2 = conditions2.map{ |s| "(#{s})" }.join(' OR ') if conditions2.size > 1
-			conditions = [conditions1, conditions2].select{ |x| not x.to_s.empty? }
-			conditions = conditions.map{ |s| "(#{s})" }.join(' AND ') if conditions.size > 1
-			conditions = conditions.to_s
-			@orders = Order.find(:all, :conditions => [conditions, *par], :include => [:order_stages, { :computers => :computer_stages }])
-			if @orders.size == 1
-				redirect_to :action => 'show', :id => @orders[0]
+		p params.size
+		if (params.size > 2)
+			if (!@customer.empty? || !@number.empty? || !@manager.empty? || !@start_date.empty? || !@end_date.empty?)
+				par = []
+				conditions1 = [ ["manager LIKE ?", @manager, "%#{@manager}%"], ["customer LIKE ?", @customer, "%#{@customer}%"], ["buyer_order_number=?", @number, "#{params[:number]}"] ].select{ |x| not x[1].empty? }.map{ |x| par << x[2]; x[0] }.join(' AND ')
+				dates = [[:start, @start_date], [:end, @end_date]].select{ |d| not d[1].empty? }
+				conditions2 = ['order_stages.start', 'computer_stages.start'].map{ |start|	dates.map{ |d| par << d[1]; "#{start}#{d[0]==:start ? '>' : '<'}=?"}.join(' AND ') }
+				conditions2 = conditions2.select{ |x| not x.to_s.empty? }
+				conditions2 = conditions2.map{ |s| "(#{s})" }.join(' OR ') if conditions2.size > 1
+				conditions = [conditions1, conditions2].select{ |x| not x.to_s.empty? }
+				conditions = conditions.map{ |s| "(#{s})" }.join(' AND ') if conditions.size > 1
+				conditions = conditions.to_s
+				@orders = Order.find(:all, :conditions => [conditions, *par], :include => [:order_stages, { :computers => :computer_stages }])
+				if @orders.size == 1
+					redirect_to :action => 'show', :id => @orders[0]
+				end
 			end
+		else
+			@orders = nil
 		end
+		p @orders
 	end
 end
