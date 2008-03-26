@@ -20,7 +20,7 @@
 		<td id="title_bar_serial"><%= @computer.serial_no %></td>
 		<td id="title_bar_shelf"><%= @computer.shelf %></td>
 <% if @computer.order %>
-		<td id="title_bar_doc">Order: <%= link_to @computer.order.buyer_order_number, { :controller => :orders, :action => :show, :id => @computer.order } %> (<%= link_to 'Customer', { :controller => :orders, :action => :search, :customer => @computer.order.customer } %>)</td>
+		<td id="title_bar_doc">Order: <%= link_to @computer.order.buyer_order_number, { :controller => :orders, :action => :show, :id => @computer.order } %> (<%= link_to  truncate(@computer.order.customer, 40).gsub(/ /, '&nbsp;'), { :controller => :orders, :action => :search, :customer => @computer.order.customer } %>)</td>
 <% end %>
 <% if @computer.profile %>
 		<td id="title_bar_profile">Profile: <%= link_to @computer.profile.name, { :controller => :profiles, :action => :show, :id => @computer.profile } %></td>
