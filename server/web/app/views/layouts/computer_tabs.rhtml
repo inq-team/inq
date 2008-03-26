@@ -20,11 +20,12 @@
 		<td id="title_bar_serial"><%= @computer.serial_no %></td>
 		<td id="title_bar_shelf"><%= @computer.shelf %></td>
 <% if @computer.order %>
-		<td id="title_bar_doc">Order: <%= link_to @computer.order.buyer_order_number, { :controller => :orders, :action => :show, :id => @computer.order } %></td>
+		<td id="title_bar_doc">Order: <%= link_to @computer.order.buyer_order_number, { :controller => :orders, :action => :show, :id => @computer.order } %> (<%= link_to 'Customer', { :controller => :orders, :action => :search, :customer => @computer.order.customer } %>)</td>
 <% end %>
 <% if @computer.profile %>
 		<td id="title_bar_profile">Profile: <%= link_to @computer.profile.name, { :controller => :profiles, :action => :show, :id => @computer.profile } %></td>
 <% end %>
+
 	</tr></table>
 	</div>
 	
@@ -80,8 +81,6 @@
 				<div class="testing_profile">Profile: <%= link_to @testing.profile.name, { :controller => :profiles, :action => :show, :id => @testing.profile } %></div>
 			<% end %>
 			
-			<div class="testing_profile">Customer: <%= link_to @computer.order.customer, { :controller => :orders, :action => :search, :customer => @computer.order.customer } %></div>			
-	
 		</div></td> 
 
 		<td id="content"><div class="testing_border">
