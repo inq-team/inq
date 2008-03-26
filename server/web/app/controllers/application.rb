@@ -9,4 +9,5 @@ class ApplicationController < ActionController::Base
 		Sticker::Proxy.inject_into(self)
 	end
 
+	helper :date
 end
