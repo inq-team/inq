@@ -1,8 +1,5 @@
 #!/bin/sh
 
-HDD_TYPES='ATA Disk
-SCSI Disk'
-
 strip_vendor()
 {
 	if echo $HDD_MODEL | grep -qi "^$1"; then
@@ -11,26 +8,48 @@ strip_vendor()
 	fi
 }
 
-lshw_detect()
+detect_vendor()
 {
-	echo "$HDD_TYPES" | while read TYPE; do	
-		cat $HOME/lshw.log | grep -n "$TYPE" | sed 's/:.*$//' | while read N; do
-			INFO=`cat $HOME/lshw.log | sed -n "$N,+7 p"`
-			HDD_VENDOR=`echo "$INFO" | sed -n 's/ *vendor: //p'`
-			HDD_PRODUCT=`echo "$INFO" | sed -n 's/ *product: //p'`
-			HDD_SIZE=`echo "$INFO" | sed -n 's/ *size: //p'`
-			HDD_MODEL="$HDD_PRODUCT $HDD_SIZE"
-			HDD_SERIAL=`echo "$INFO" | sed -n 's/ *serial: //p'`
+	if echo $HDD_MODEL | grep -qi "$1"; then
+		HDD_VENDOR=$2
+	fi
+}
 
-			strip_vendor 'Maxtor ' 'Maxtor'
-			strip_vendor 'WDC ' 'Western Digital'
-			strip_vendor 'Hitachi ' 'Hitachi'
+hal_detect()
+{
+	for UDI in `hal-find-by-property --key storage.drive_type --string 'disk'`; do
+		HDD_DEV=`hal-get-property --udi "$UDI" --key block.device`
+		HDD_INFO=`hdparm -I "$HDD_DEV"`
+		HDD_MODEL=`echo "$HDD_INFO" | sed -n 's/^.*Model Number://p'`
+		HDD_SERIAL=`echo "$HDD_INFO"| sed -n 's/^.*Serial Number: *//p' | sed 's/ *$//'`
 
-			if [ -n "$HDD_MODEL" ] && [ -z "`echo "$HDD_VENDOR" | grep -i 'Linux'`" ] && [ -z "`echo "$HDD_VENDOR" | grep -i 'Adaptec'`" ]; then
-				echo HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" ' - lshw' >> $HOME/debug.log
-				$SHARE_DIR/add-component HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL"
-			fi
-		done
+		detect_vendor '^ST.*' 'Seagate'
+		detect_vendor '^D...-.*' 'IBM'
+		detect_vendor '^IBM.*' 'IBM'
+		detect_vendor '^HITACHI.*' 'Hitachi'
+		detect_vendor '^IC.*' 'Hitachi'
+		detect_vendor '^HTS.*' 'Hitachi'
+		detect_vendor '^HDS.*' 'Hitachi'
+		detect_vendor '^FUJITSU.*' 'Fujitsu'
+		detect_vendor '^MP.*' 'Fujitsu'
+		detect_vendor '^TOSHIBA.*' 'Toshiba'
+		detect_vendor '^MK.*' 'Toshiba'
+		detect_vendor '^MAXTOR.*' 'Maxtor'
+		detect_vendor '^Pioneer.*' 'Pioneer'
+		detect_vendor '^PHILIPS.*' 'Philips'
+		detect_vendor '^QUANTUM.*' 'Quantum'
+		detect_vendor 'FIREBALL.*' 'Quantum'
+		detect_vendor '^WDC.*' 'Western Digital'
+		detect_vendor 'WD.*' 'Western Digital'
+
+		strip_vendor 'Maxtor ' 'Maxtor'
+		strip_vendor 'WDC ' 'Western Digital'
+		strip_vendor 'Hitachi ' 'Hitachi'
+
+		if [ -z "`echo "$HDD_VENDOR" | grep -i 'Linux'`" ] && [ -z "`echo "$HDD_VENDOR" | grep -i 'Adaptec'`" ] && [ -z "`echo "$HDD_VENDOR" | grep -i 'Intel'`" ]; then
+			echo HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" ' - lshw' >> $HOME/debug.log
+			$SHARE_DIR/add-component HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL"
+		fi	
 	done
 }
 
@@ -47,5 +66,5 @@ einarc_detect()
 	done
 }
 
-lshw_detect
+hal_detect
 einarc_detect
