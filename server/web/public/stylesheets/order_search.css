@@ -1,35 +1,31 @@
+#search_form {
+	margin-left: 4em;
+	margin-right: 4em;
+}
+
 .form_head {
+	text-align: center;
 	background: #559F7D;
-	padding: 2px 7px;
 	font-size: 120%;
 	font-family: arial, sans-serif;
 	font-weight: bold;
-	width: 72%;
-	right: 0;
-	margin-left: 238px;
-	margin-right: 100px;
-	border-style: solid;
-	border-color: #559F7D;	
+	border: solid 1px #559F7D;
 }
 
 .form_body {
 	background: #AACFBE;
 	padding: 0.5em;
 	font-family: arial, sans-serif;
-	border-style: solid;
-	border-color: #559F7D;
-	margin: 0px 100px;
-	padding-top: 0.5em;
+	border: solid 1px #559F7D;
 }
 
 .form_body td {
 	text-align: right;
-	font-weight: bold;
-	font-size: 80%;
 	padding: 3px;
 }
 
 #results {
+	padding-top: 1em;
 	background: #FFFFFF;
 }
 
@@ -43,3 +39,12 @@
 	height: 2em;
 }
 
+.computer_cell {
+	vertical-align: top;
+	background: #AACFBE;
+	padding-left: 0.5em;
+}
+
+.computer_cell a {
+	color: black;
+}
