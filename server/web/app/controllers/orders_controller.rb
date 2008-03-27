@@ -283,7 +283,7 @@ class OrdersController < ApplicationController
 				conditions = [conditions1, conditions2].select{ |x| not x.to_s.empty? }
 				conditions = conditions.map{ |s| "(#{s})" }.join(' AND ') if conditions.size > 1
 				conditions = conditions.to_s
-				@orders = Order.find(:all, :conditions => [conditions, *par], :include => [:order_stages, { :computers => :computer_stages }])
+				@orders = Order.find(:all, :conditions => [conditions, *par], :include => [:order_stages, { :computers => :computer_stages }], :order => 'order_stages.start')
 				if @orders.size == 1
 					redirect_to :action => 'show', :id => @orders[0]
 				end
