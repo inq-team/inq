@@ -1,7 +1,8 @@
 require 'mykit/components'
 
 class OrdersController < ApplicationController
-
+	auto_complete_for :order, :manager
+	auto_complete_for :order, :customer
 	enable_sticker_printing
 
 	# GET /orders
@@ -260,9 +261,9 @@ class OrdersController < ApplicationController
 			end
 		end
 
-		@customer = params[:customer].to_s
+		@customer = params[:order][:customer].to_s if params[:order]
 		@number = params[:number].to_s
-		@manager = params[:manager].to_s
+		@manager = params[:order][:manager].to_s if params[:order]
 		begin
 			@start_date = parse_date.call((params[:date] || {})[:start], :format => :start_date)
 			@end_date = parse_date.call((params[:date] || {})[:end], :format => :end_date)				

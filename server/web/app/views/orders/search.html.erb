@@ -1,6 +1,7 @@
 <%= stylesheet_link_tag 'order_search' %>
 <%= stylesheet_link_tag 'calendar.css' %>
 <%= javascript_include_tag 'calendar' %>
+<%= javascript_include_tag 'scriptaculous' %>
 
 <div id="search_form">
 <div class="form_head">Search orders</div>
@@ -9,7 +10,7 @@
 		<center>
 		<table cellspacing="4" cellpadding="0">
 			<tr>
-				<td>Number:</td>
+				<td>Order #:</td>
 				<td><%= text_field_tag 'number', nil, :style => 'width:100%', :value => @number.to_s %></td>
 				<td>Date:</td>
 				<td>
@@ -20,9 +21,9 @@
 			</tr>
 			<tr>
 				<td>Customer:</td>
-				<td><%= text_field_tag 'customer', nil, :style => 'width:100%', :value => @customer.to_s %></td>
+				<td><%= text_field_with_auto_complete 'order', 'customer', :style => 'width:100%', :value => @customer.to_s %></td>
 				<td>Manager:</td>
-				<td><%= text_field_tag 'manager', nil, :style => 'width:100%', :value => @manager.to_s %></td>				
+				<td><%= text_field_with_auto_complete 'order', 'manager', :style => 'width:100%', :value => @manager.to_s %></td>
  			</tr>
 		</table>
 		<%= submit_tag 'Search', :style => 'margin: 1em' %>
@@ -32,20 +33,23 @@
 	<div id="results">	
 	
 	<% if @orders and @orders.size == 0 %>
-		<div style="width: 100%; background: #F0DFBD">No orders found</div>
+		No orders found
 	<% else %>
 		<table>
 		<% @orders.to_a.each do |ord| %>
 			<tr><td class="order_cell" width="30%">
 				<a href=<%= url_for(:action => 'show', :controller => 'orders', :id => ord) %>>
 					<div class="order_number"><%=h ord.buyer_order_number %></div>
-					<div class="title"><%=h ord.title %></div>
+					<div class="title"><%=h ord.title.gsub(/\//, ' / ').gsub(/\\/, ' \ ') %></div>
+<% if ord.order_stages.size > 0 %>
+					<div class="date"><%= ord.order_stages.first.start.strftime('%Y-%m-%d') %></div>
+<% end %>
 					<div class="customer" title="<%=h ord.customer %>"><%=h truncate(ord.customer, 50) %></div>
 				</a>
 			</td>
 			<td class="computer_cell" width="70%">
 				<% ord.computers.each { |c| %>
-					<%= link_to c.serial_no, :controller => 'computers', :id => c.id %>
+					<%= link_to c.serial_no, :controller => 'computers', :action => 'show', :id => c.id %>
 				<% } %>
 			</td>
 			</tr>		

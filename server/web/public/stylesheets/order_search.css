@@ -39,6 +39,12 @@
 	height: 2em;
 }
 
+.order_cell .date {
+	clear: left;
+	float: right;
+	font-weight: bold;
+}
+
 .computer_cell {
 	vertical-align: top;
 	background: #AACFBE;
