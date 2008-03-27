@@ -11,13 +11,14 @@ cores = infos.map do |inf|
 end
 
 processors = cores.select{ |c| c[:core_id] == 0 }.map do |c|
-	\"vendor: #{c[:vendor]}; model: #{c[:model]};\"
+	\"CPU_VENDOR='#{c[:vendor]}'; CPU_MODEL='#{c[:model]}'\"
 end
 
 processors.each{ |p| puts p }"`
 
 echo "$PROCESSORS" | while read I; do
-	CPU_VENDOR=`echo "$I" | sed 's/^vendor: \([^;]*\);.*$/\1/' | sed 's/Genuine//g;s/Authentic//g;'`
-	CPU_MODEL=`echo "$I" | sed 's/^.*model: \([^;]*\);.*$/\1/' | sed 's/(R)//g;s/(tm)//g;s/processor//ig;s/CPU//g;s/Intel//g;s/AMD//g;s/Genuine/Core Solo/;s/@ //;s/  */ /g;s/^ *//g;'`
-	$SHARE_DIR/add-component CPU "$CPU_VENDOR" "$CPU_MODEL" ''
+	eval "$I"
+	CPU_VENDOR=`echo "$CPU_VENDOR" | sed 's/^vendor: \([^;]*\);.*$/\1/' | sed 's/Genuine//g;s/Authentic//g;'`
+	CPU_MODEL=`echo "$CPU_MODEL" | sed 's/^.*model: \([^;]*\);.*$/\1/' | sed 's/(R)//g;s/(tm)//g;s/processor//ig;s/CPU//g;s/Intel//g;s/AMD//g;s/Genuine/Core Solo/;s/@ //;s/  */ /g;s/^ *//g;'`
+	$SHARE_DIR/add-component CPU "$CPU_VENDOR" "$CPU_MODEL" ''	
 done
