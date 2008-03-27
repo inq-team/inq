@@ -1,14 +1,23 @@
 #!/bin/sh
 
-MAX_PHIS_ID=`cat /proc/cpuinfo  | sed -n 's/physical id.*: //p' | sort -n | tail -n1`
-CPU_INFO=`grep -A4 'processor.*: 0' /proc/cpuinfo`
-CPU_VENDOR=`echo "$CPU_INFO" | sed -n 's/vendor_id.*: //p' | sed 's/Genuine//g;s/Authentic//g;'`
-CPU_MODEL=`echo "$CPU_INFO" | sed -n 's/model name.*: //p' | sed 's/(R)//g;s/(tm)//g;s/processor//ig;s/CPU//g;s/Intel//g;s/AMD//g;s/Genuine/Core Solo/;s/@ //;s/  */ /g;s/^ *//g;'`
+PROCESSORS=`ruby -e "text = File.read('/proc/cpuinfo')
+infos = text.split('processor')
+infos.shift
 
-if [ -z "$MAX_PHIS_ID" ]; then
-	MAX_PHIS_ID=0
-fi
+cores = infos.map do |inf|
+	{ :vendor => inf.grep(/vendor_id/)[0].to_s.gsub(/^vendor_id.*: /, '').chomp,
+	:model => inf.grep(/model name/)[0].to_s.gsub(/^model name.*: /, '').chomp,
+	:core_id => inf.grep(/core id/)[0].to_s.gsub(/^core id.*: /, '').chomp.to_i }
+end
 
-for I in `seq 0 $MAX_PHIS_ID`; do
+processors = cores.select{ |c| c[:core_id] == 0 }.map do |c|
+	\"vendor: #{c[:vendor]}; model: #{c[:model]};\"
+end
+
+processors.each{ |p| puts p }"`
+
+echo "$PROCESSORS" | while read I; do
+	CPU_VENDOR=`echo "$I" | sed 's/^vendor: \([^;]*\);.*$/\1/' | sed 's/Genuine//g;s/Authentic//g;'`
+	CPU_MODEL=`echo "$I" | sed 's/^.*model: \([^;]*\);.*$/\1/' | sed 's/(R)//g;s/(tm)//g;s/processor//ig;s/CPU//g;s/Intel//g;s/AMD//g;s/Genuine/Core Solo/;s/@ //;s/  */ /g;s/^ *//g;'`
 	$SHARE_DIR/add-component CPU "$CPU_VENDOR" "$CPU_MODEL" ''
 done
