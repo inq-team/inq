@@ -114,6 +114,7 @@ td#title_bar_profile {
 	height: 2.8em;
 	padding-left: 38px;
 	border: 1px solid #999;
+	position: relative ! important;
 }
 
 #computer_stages_comment {
@@ -130,6 +131,12 @@ tr#computer_stages_comment td {
 
 #progress_bar #computer_stages_comment .timedelta {
 	display: inline;
+}
+
+#progress_bar .overdue_corner, #progress_bar .comment_corner {
+	right: 0px;
+	bottom: 0px;
+	position: absolute;
 }
 
 #computer_stages_pointers td {
