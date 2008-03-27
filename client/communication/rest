@@ -140,14 +140,10 @@ dismiss_attention()
 
 get_needed_firmwares_list()
 {
-	# Example values
-	echo "Motherboard::08011::megabios.img"
-	echo "RAID::1.22::raidbios.img"
-
-	#if ! curl -sf "$REST_SERVER/computers/needed_firmwares_list/$COMPUTER_ID"; then
-	#	echo "get_needed_firmwares_list: failed to get list"
-	#	return 1
-	#fi
+	if ! curl -sf "$REST_SERVER/computers/needed_firmwares_list/$COMPUTER_ID"; then
+		echo "get_needed_firmwares_list: failed to get list"
+		return 1
+	fi
 }
 
 boot_from_image()
