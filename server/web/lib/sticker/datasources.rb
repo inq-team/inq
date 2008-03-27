@@ -84,7 +84,7 @@ class ComputerSource < AbstractSource
 				"title" => computer.title,
 				"name" => computer.model.name,
 				"id" => computer.id,
-				"manufacturing_date" => computer.manufacturing_date,
+				"manufacturing_date" => computer.manufacturing_date && computer.manufacturing_date.strftime("%d.%m.%Y"),
 				"buyer_order_number" => computer.order && computer.order.buyer_order_number,
 				"serial_no" => computer.serial_no,
 			}
