@@ -41,7 +41,7 @@
 				<a href=<%= url_for(:action => 'show', :controller => 'orders', :id => ord) %>>
 					<div class="order_number"><%=h ord.buyer_order_number %></div>
 					<div class="title"><%=h ord.title.gsub(/\//, ' / ').gsub(/\\/, ' \ ') %></div>
-<% if ord.order_stages.size > 0 %>
+<% if ord.order_stages.first and ord.order_stages.first.start %>
 					<div class="date"><%= ord.order_stages.first.start.strftime('%Y-%m-%d') %></div>
 <% end %>
 					<div class="customer" title="<%=h ord.customer %>"><%=h truncate(ord.customer, 50) %></div>
