@@ -138,7 +138,7 @@ class Shelf
 		fmt ||= "%1$d.%2$d.%3$d.%4$d"
                 if ipnet =~ /(\d+)\.(\d+)\.(\d+)\.(\d+)\/(\d+)/
                         net = ($1.to_i() << 24) | ($2.to_i() << 16) | ($3.to_i() << 8) | ($4.to_i())
-                        (1..(1 << (32 - $5.to_i())) - 2).inject([]) { |a, i| a << (net | i) }.collect { |j| sprintf(fmt, j >> 24, (j >> 16) & 255, (j >> 8) & 255, j & 255) }
+                        (2..(1 << (32 - $5.to_i())) - 2).inject([]) { |a, i| a << (net | i) }.collect { |j| sprintf(fmt, j >> 24, (j >> 16) & 255, (j >> 8) & 255, j & 255) }
                 else
                         raise("Malformed ip network address")
                 end
