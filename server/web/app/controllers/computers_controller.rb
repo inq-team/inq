@@ -72,6 +72,12 @@ class ComputersController < ApplicationController
 		head :ok
 	end
 
+	def set_checker
+		@computer = Computer.find(params[:id])		
+		@computer.set_checker(params[:checker_id])
+		head :ok
+	end
+
 	def set_shelf
 		@computer = Computer.find(params[:id])
 		@computer.shelf = params[:shelf]

@@ -63,6 +63,27 @@ class Computer < ActiveRecord::Base
 		set_stage_person('testing', person_id)
 	end
 
+	def set_checker(person_id)
+		stage_name = 'checking'
+		last_cs = last_computer_stage
+		if last_cs and last_cs.stage == stage_name
+			last_cs.person_id = person_id
+			last_cs.end = Time.new
+			last_cs.save!
+		else
+			if last_cs
+				last_cs.end = Time.new
+				last_cs.save!
+			end
+			computer_stages << ComputerStage.new(
+				:start => Time.new(),
+				:person_id => person_id,
+				:stage => stage_name
+			)
+			save!
+		end
+	end
+
 	def manufacturing_date
 		stage = computer_stages.find_all() { |s| s.stage == 'testing' && s.end }.sort() { |a, b| a.start <=> b.start }.last
 		stage.end if stage
@@ -75,8 +96,6 @@ class Computer < ActiveRecord::Base
 	def self.free_id
 		Computer.find_by_sql('SELECT MAX(id)+1 FROM computers')[0]['MAX(id)+1'].to_i
 	end
-
-	private
 
 	##
 	# If computer_stage is now running, then just set a person for

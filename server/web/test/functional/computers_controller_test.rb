@@ -5,7 +5,7 @@ require 'computers_controller'
 class ComputersController; def rescue_action(e) raise e end; end
 
 class ComputersControllerTest < Test::Unit::TestCase
-	fixtures :computers, :profiles, :models, :testings, :testing_stages, :components, :component_models, :component_groups, :graphs, :firmwares
+	fixtures :computers, :profiles, :models, :testings, :testing_stages, :components, :component_models, :component_groups, :graphs, :firmwares, :computer_stages
 
 	def setup
 		@controller = ComputersController.new
@@ -151,5 +151,37 @@ class ComputersControllerTest < Test::Unit::TestCase
 		assert_equal now.to_s, g.timestamp.to_s
 		assert_equal 1, g.key
 		assert_equal 42, g.value
+	end
+
+	def test_set_checker_1
+		cs1 = Computer.find(2).computer_stages.size
+		post :set_checker, :id => 2, :checker_id => 1
+		cs2 = Computer.find(2).computer_stages.size
+		assert_equal cs1 + 1, cs2
+		assert_equal 'checking', Computer.find(2).last_computer_stage.stage
+		assert_equal 1, Computer.find(2).last_computer_stage.person_id
+	end
+
+	def test_set_checker_1
+		cid = 2
+		cs1 = Computer.find(cid).computer_stages.size
+		post :set_checker, :id => cid, :checker_id => 1
+		cs2 = Computer.find(cid).computer_stages.size
+		assert_equal cs1 + 1, cs2
+		assert_equal 'checking', Computer.find(cid).last_computer_stage.stage
+		assert_equal 1, Computer.find(cid).last_computer_stage.person_id
+		assert_nil Computer.find(cid).last_computer_stage.end
+	end
+
+	def test_set_checker_2
+		cid = 1003
+		cs1 = Computer.find(cid).computer_stages.size
+		assert_equal 3, cs1
+		post :set_checker, :id => cid, :checker_id => 1
+		cs2 = Computer.find(cid).computer_stages.size
+		assert_equal cs1, cs2
+		assert_equal 'checking', Computer.find(cid).last_computer_stage.stage
+		assert_equal 1, Computer.find(cid).last_computer_stage.person_id
+		assert_not_nil Computer.find(cid).last_computer_stage.end
 	end
 end
