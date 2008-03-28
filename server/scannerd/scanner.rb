@@ -8,11 +8,11 @@ class Scanner
 	attr_accessor :dev
 
 	def svals=(sv)
-	    @svals[sv[/./]] = sv
+		@svals[ sv=~/\d{10}/ ? 'S' : sv[/./] ] = sv
 	end
 	
 	def svals
-	    @svals
+		@svals
 	end
 	
 	def initialize(devname)
@@ -24,7 +24,7 @@ class Scanner
 	end
 
 	def preprocess_vals()
-	    @svals.keys.each {|k| @svals[k].sub!(/^\w0*/, '') if ['S', 'A', 'T', 'I', 'P'].index(k) != nil }
+		@svals.keys.each {|k| @svals[k].sub!(/^\w0*/, '') if ['S', 'A', 'T', 'I', 'P'].index(k) != nil }
 	end
 	
 	def process_vals()
@@ -43,7 +43,7 @@ class Scanner
 					if @svals['I'] == nil then
 					    begin 
 						puts 'Trying get IP addresses range for place from web-server'
-						addrs = open("http://#{$SERVER_ADDR}/shelves/addresses/#{svals['P']}").readlines.collect { |s| s.chomp }
+						addrs = open("http://#{$SERVER_ADDR}/shelves/active_addresses/#{svals['P']}").readlines.collect { |s| s.chomp }
 					    rescue Exception => ex
 						puts ex
 						puts 'Can\'t get IP addresses range from WEB server. Try to wait it from scanner'
