@@ -678,6 +678,13 @@ __EOF__
 		redirect_to :action => 'hw', :id => params[:id], :testing => @testing_number
 	end
 
+	def update_profile
+		prepare_computer_and_testing
+		@computer.profile_id = params[:profile][:id]
+		@computer.save!
+		redirect_to :action => 'hw', :id => params[:id], :testing => @testing_number
+	end
+
 	private
 	
 	RESULT_MAPPING = {
@@ -689,6 +696,8 @@ __EOF__
 	
 	def prepare_computer_tabs
 		prepare_computer_and_testing
+
+		@profiles = Profile.list_for_model(@computer.model_id).map { |x| [x.name, x.id] }
 
 		now = Time.new
 		@computer_stages = (@computer.computer_stages + (@computer.order ? @computer.order.order_stages.find_all { |stage| stage.stage != 'manufacturing' } : [])).inject([]) do |a, stage|
@@ -743,15 +752,11 @@ __EOF__
 		@testing = @sorted_testings[@testing_number]
 	end
 
-
 	def dump_comparison(comparison)
 		Marshal.dump(comparison)
 	end
 
-
 	def load_comparison(str)
 		Marshal.load(str)
 	end
-
-
 end

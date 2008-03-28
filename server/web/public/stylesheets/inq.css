@@ -368,3 +368,7 @@ input[type=submit] {
 	color: #303030;
 	font-style: normal;
 }
+
+#title_bar_profile_edit {
+	display: none;
+}
