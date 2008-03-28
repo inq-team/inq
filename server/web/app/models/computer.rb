@@ -17,6 +17,10 @@ class Computer < ActiveRecord::Base
 		Person.find_by_sql(["SELECT people.* from people join computer_stages on people.id = computer_stages.person_id join computers on computer_stages.computer_id = computers.id where computers.id = ? and computer_stages.stage = ? order by computer_stages.start desc limit 1", id, "testing"]).first()
 	end
 
+	def checker
+		Person.find_by_sql(["SELECT people.* from people join computer_stages on people.id = computer_stages.person_id join computers on computer_stages.computer_id = computers.id where computers.id = ? and computer_stages.stage = ? order by computer_stages.start desc limit 1", id, "checking"]).first()
+	end
+
 	def title
 		model.name + ' ' + serial_no
 	end
