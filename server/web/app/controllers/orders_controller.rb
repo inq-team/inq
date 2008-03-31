@@ -231,47 +231,22 @@ class OrdersController < ApplicationController
 	end
 	
 	def search
-		parse_date = Proc.new do |s, options|
-			s = s.to_s
-			case s
-			when /^(\d{4})-(\d{2})-(\d{2})$/
-				s
-			when ''
-				s
-			when /^(\d{4})-(\d{2})$/
-				case options[:format]
-				when :start_date
-					"#{s}-01"
-				when :end_date
-					"#{s}-12"
-				else
-					raise ArgumentError.new("unknown format: #{options[:format]}")
-				end
-			when /^(\d{4})$/
-				case options[:format]
-				when :start_date
-					"#{s}-01-01"
-				when :end_date
-					"#{s}-12-31"
-				else
-					raise ArgumentError.new("unknown format: #{options[:format]}")
-				end
-			else
-				raise ArgumentError.new("invalid date: #{s}")
-			end
-		end
-
+		# Prepare and parse form parameters
+		@models = Model.find(:all, :order => 'name').map { |x| [x.name, x.id] }
+		@models.unshift ['', 0]
 		@customer = params[:order][:customer].to_s if params[:order]
 		@number = params[:number].to_s
 		@manager = params[:order][:manager].to_s if params[:order]
 		begin
-			@start_date = parse_date.call((params[:date] || {})[:start], :format => :start_date)
-			@end_date = parse_date.call((params[:date] || {})[:end], :format => :end_date)				
+			@start_date = parse_date((params[:date] || {})[:start], :format => :start_date)
+			@end_date = parse_date((params[:date] || {})[:end], :format => :end_date)				
 		rescue ArgumentError => e
 			flash[:notice] = e.to_s
 			render :action => 'search'
 			return
 		end
+
+		# Execute the search query, if available
 		p params.size
 		if (params.size > 2)
 			if (!@customer.empty? || !@number.empty? || !@manager.empty? || !@start_date.empty? || !@end_date.empty?)
@@ -285,13 +260,41 @@ class OrdersController < ApplicationController
 				conditions = conditions.map{ |s| "(#{s})" }.join(' AND ') if conditions.size > 1
 				conditions = conditions.to_s
 				@orders = Order.find(:all, :conditions => [conditions, *par], :include => [:order_stages, { :computers => :computer_stages }], :order => 'order_stages.start')
-				if @orders.size == 1
-					redirect_to :action => 'show', :id => @orders[0]
-				end
+				redirect_to :action => 'show', :id => @orders[0] if @orders.size == 1
 			end
 		else
 			@orders = nil
 		end
-		p @orders
+	end
+
+	private
+	def parse_date(s, options)
+		s = s.to_s
+		case s
+		when /^(\d{4})-(\d{2})-(\d{2})$/
+			s
+		when ''
+			s
+		when /^(\d{4})-(\d{2})$/
+			case options[:format]
+			when :start_date
+				"#{s}-01"
+			when :end_date
+				"#{s}-12"
+			else
+				raise ArgumentError.new("unknown format: #{options[:format]}")
+			end
+		when /^(\d{4})$/
+			case options[:format]
+			when :start_date
+				"#{s}-01-01"
+			when :end_date
+				"#{s}-12-31"
+			else
+				raise ArgumentError.new("unknown format: #{options[:format]}")
+			end
+		else
+			raise ArgumentError.new("invalid date: #{s}")
+		end
 	end
 end
