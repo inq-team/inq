@@ -140,7 +140,7 @@ dismiss_attention()
 
 get_needed_firmwares_list()
 {
-	if ! curl -sf "$REST_SERVER/computers/needed_firmwares_list/$COMPUTER_ID"; then
+	if ! curl -sf "$REST_SERVER/computers/get_needed_firmwares_list/$COMPUTER_ID"; then
 		echo "get_needed_firmwares_list: failed to get list"
 		return 1
 	fi
