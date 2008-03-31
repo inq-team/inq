@@ -29,6 +29,9 @@ cat $FIRMWARES | while read component; do
 
 	# Detect version
 	case $type in
+	"BMC")
+		current_version=`ipmitool mc info | grep "Firmware Revision" | awk '{print $NF}'`
+		;;
 	"Motherboard")
 		current_version=`grep -A 3 "BIOS Information" $HOME/dmi.log | 
 					sed -n '3p' | awk '{print $2}'`
@@ -45,5 +48,6 @@ cat $FIRMWARES | while read component; do
 	print_red_message "Found \"$current_version\", instead of \"$version\""
 	print_red_message "Going to reflash with \"$firmware_file\""
 	boot_from_image "$firmware_file"
+	sleep 30
 	hard_reboot
 done
