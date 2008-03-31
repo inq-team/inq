@@ -13,24 +13,8 @@
 
 </head>
 <body>
-
-<div id="topbar">
-<div id="topmenu">
-<%= link_to 'Orders', :controller => :orders %>
-<%= link_to 'Computers', :controller => :computers %>
-<%= link_to 'Profiles', :controller => :profiles %>
-</div>
-<div id="login">
-<%= link_to 'Login' %>
-</div>
-<br clear="all" />
-</div>
-
-
-<p style="color: green"><%= flash[:notice] %></p>
-
-
-<%= yield  %>
-
+	<%= render :partial => '/layouts/title_bar' %>
+	<p style="color: green"><%= flash[:notice] %></p>
+	<%= yield  %>
 </body>
 </html>
