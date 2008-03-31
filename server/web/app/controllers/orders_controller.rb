@@ -232,38 +232,54 @@ class OrdersController < ApplicationController
 	
 	def search
 		# Prepare and parse form parameters
-		@models = Model.find(:all, :order => 'name').map { |x| [x.name, x.id] }
-		@models.unshift ['', 0]
-		@customer = params[:order][:customer].to_s if params[:order]
-		@number = params[:number].to_s
-		@manager = params[:order][:manager].to_s if params[:order]
+		@computer_serial = params[:computer_serial] if params[:computer_serial] and not params[:computer_serial].empty?
+		@customer = params[:order][:customer].to_s if params[:order] and params[:order][:customer] and not params[:order][:customer].empty?
+		@number = params[:number].to_s if params[:number] and not params[:number].empty?
+		@manager = params[:order][:manager].to_s if params[:order] and params[:order][:manager] and not params[:order][:manager].empty?
+		@model_id = params[:model][:id].to_i if params[:model] and params[:model][:id] and params[:model][:id].to_i != 0
 		begin
 			@start_date = parse_date((params[:date] || {})[:start], :format => :start_date)
-			@end_date = parse_date((params[:date] || {})[:end], :format => :end_date)				
+			@end_date = parse_date((params[:date] || {})[:end], :format => :end_date)
+			@start_date = nil if @start_date.empty?
+			@end_date = nil if @end_date.empty?
 		rescue ArgumentError => e
 			flash[:notice] = e.to_s
 			render :action => 'search'
 			return
 		end
 
+		# Prepare selection lists
+		@models = Model.find(:all, :order => 'name').map { |x| [x.name, x.id] }
+		@models.unshift ['', 0]
+
 		# Execute the search query, if available
-		p params.size
-		if (params.size > 2)
-			if (!@customer.empty? || !@number.empty? || !@manager.empty? || !@start_date.empty? || !@end_date.empty?)
-				par = []
-				conditions1 = [ ["manager LIKE ?", @manager, "%#{@manager}%"], ["customer LIKE ?", @customer, "%#{@customer}%"], ["buyer_order_number=?", @number, "#{params[:number]}"] ].select{ |x| not x[1].empty? }.map{ |x| par << x[2]; x[0] }.join(' AND ')
-				dates = [[:start, @start_date], [:end, @end_date]].select{ |d| not d[1].empty? }
-				conditions2 = ['order_stages.start', 'computer_stages.start'].map{ |start|	dates.map{ |d| par << d[1]; "#{start}#{d[0]==:start ? '>' : '<'}=?"}.join(' AND ') }
-				conditions2 = conditions2.select{ |x| not x.to_s.empty? }
-				conditions2 = conditions2.map{ |s| "(#{s})" }.join(' OR ') if conditions2.size > 1
-				conditions = [conditions1, conditions2].select{ |x| not x.to_s.empty? }
-				conditions = conditions.map{ |s| "(#{s})" }.join(' AND ') if conditions.size > 1
-				conditions = conditions.to_s
-				@orders = Order.find(:all, :conditions => [conditions, *par], :include => [:order_stages, { :computers => :computer_stages }], :order => 'order_stages.start')
-				redirect_to :action => 'show', :id => @orders[0] if @orders.size == 1
-			end
-		else
-			@orders = nil
+		cond_var = {
+			:manager => "%#{@manager}%",
+			:customer => "%#{@customer}%",
+			:order_number => @number,
+			:computer_serial => @computer_serial,
+			:model_id => @model_id,
+			:start_date => @start_date,
+			:end_date => @end_date,
+		}
+
+		cond = []
+		cond << 'manager LIKE :manager' if @manager
+		cond << 'customer LIKE :customer' if @customer
+		cond << 'buyer_order_number=:order_number' if @number
+		cond << 'computers.id=:computer_serial' if @computer_serial
+		cond << 'computers.model_id=:model_id' if @model_id
+		cond << '(order_stages.start >= :start_date OR computer_stages.start >= :start_date)' if @start_date
+		cond << '(order_stages.start <= :end_date OR computer_stages.start <= :end_date)' if @end_date
+
+		if cond.size > 0
+			@orders = Order.find(
+				:all,
+				:conditions => [cond.join(' AND '), cond_var],
+				:include => [:order_stages, { :computers => :computer_stages }],
+				:order => 'order_stages.start'
+			)
+			redirect_to :action => 'show', :id => @orders[0] if @orders.size == 1
 		end
 	end
 

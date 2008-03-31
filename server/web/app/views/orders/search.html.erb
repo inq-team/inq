@@ -4,11 +4,17 @@
 <%= javascript_include_tag 'scriptaculous' %>
 
 <div id="search_form">
-<div class="form_head">Search orders</div>
+<div class="form_head">Search</div>
 <div class="form_body">
 	<% form_tag  'search', :method => :get do %>
 		<center>
 		<table cellspacing="4" cellpadding="0">
+			<tr>
+				<td>Computer #:</td>
+				<td><%= text_field_tag 'computer_serial', nil, :style => 'width:100%', :value => @computer_serial.to_s %></td>
+				<td>Model:</td>
+				<td><%= select :model, :id, @models, { :selected => @model_id } %></td>
+			</tr>
 			<tr>
 				<td>Order #:</td>
 				<td><%= text_field_tag 'number', nil, :style => 'width:100%', :value => @number.to_s %></td>
