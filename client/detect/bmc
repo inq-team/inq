@@ -1,7 +1,9 @@
 #!/bin/sh
 
-manufacturer=`ipmitool mc info | sed -n '/Manufacturer Name/s/^.*: \(.*\)$/\1/gp'`
-device=`ipmitool mc info | sed -n '/Product ID/s/^.*: \(.*\)$/\1/gp'`
-serial=`ipmitool lan print | grep "MAC Address" | awk '{print $NF}'`
-
-$SHARE_DIR/add-component "BMC" "$manufacturer" "$device" "$serial"
+if manufacturer=`ipmitool mc info | sed -n '/Manufacturer Name/s/^.*: \(.*\)$/\1/gp'`; then
+	device=`ipmitool mc info | sed -n '/Product ID/s/^.*: \(.*\)$/\1/gp'` || true
+	serial=`ipmitool lan print | grep "MAC Address" | awk '{print $NF}'` || true
+	$SHARE_DIR/add-component "BMC" "$manufacturer" "$device" "$serial"
+else
+	true
+fi
