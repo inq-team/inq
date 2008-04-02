@@ -1,10 +1,19 @@
 #!/bin/sh
 
-USB_FLP=`dmesg | grep -i 'usb floppy' || true`
-FLP=`dmesg | grep -i 'floppy' || true`
+if [ `hal-find-by-property --key=storage.drive_type --string floppy | wc -l` -eq 0 ]; then
+	true
+else
+	for UDI in `hal-find-by-property --key=storage.drive_type --string floppy`; do
+		if [ `hal-get-property --udi "$UDI" --key storage.bus` == "usb" ]; then
+			vendor=`hal-get-property --udi "$UDI" --key storage.vendor`
+			model=`hal-get-property --udi "$UDI" --key storage.model`
+			serial=`hal-get-property --udi "$UDI" --key storage.serial`
+		else
+			vendor="PC Floppy Drive"
+			model="1.44 Floppy Drive"
+			serial=""
+		fi
 
-if [ -n "$USB_FLP" ]; then
-        $SHARE_DIR/add-component Floppy '' '1.44 USB Floppy Drive' ''
-elif [ -n "$FLP" ]; then
-	$SHARE_DIR/add-component Floppy '' '1.44 Floppy Drive' ''
+		$SHARE_DIR/add-component "Floppy" "$vendor" "$model" "$serial"
+	done
 fi
