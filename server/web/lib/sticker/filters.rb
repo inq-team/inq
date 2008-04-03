@@ -50,9 +50,12 @@ class PropertyFilter
 				data.each { |d| d[@property] = to if d[@property] == from }					
 			when "collapse"
 				counter = df.attributes['counter-property']
+				concats = df.attributes['concat-properties'].split(',')
+				delimiter = df.attributes['concat-delimiter'] 
 				data = data.inject({}) do |h, d| 
 					if h[d[@property]]
-						h[d[@property]][:count] += 1
+						h[d[@property]][:count] += 1						
+						concats.each { |c| h[d[@property]][:data][c] << "#{ delimiter }#{ d[c] }"}
 						h
 					else
 						h.merge({ d[@property] => { :data => d, :count => 1 } })
