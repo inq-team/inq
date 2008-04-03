@@ -14,15 +14,6 @@ class ComputersController < ApplicationController
 
 	@@default_config = Shelves::Config.new(DEFAULT_SHELVES_CONFIG)
 
-	def archive
-		@computer_pages, @computers = paginate :computers, :per_page => 20
-		render :action => 'list'
-	end
-
-	def ordered
-		@computers = Computer.with_orders		
-	end
-
 	def latest
 		@computer = Computer.find(params[:id])
 		@testing = @computer.testings[-1]
@@ -40,24 +31,6 @@ class ComputersController < ApplicationController
 			format.html { render :action => 'testing' }
 			format.xml  { render :xml => @testing.to_xml(:include => :components) }
 		}
-	end
-
-	def new
-		@computer = Computer.new
-	end
-
-	def create
-		@computer = Computer.new(params[:computer])
-		if @computer.save
-			flash[:notice] = 'Computer was successfully created.'
-			redirect_to :action => 'list'
-		else
-			render :action => 'new'
-		end
-	end
-
-	def edit
-		@computer = Computer.find(params[:id])
 	end
 
 	def set_assembler
@@ -281,7 +254,17 @@ class ComputersController < ApplicationController
 		end
 		redirect_to(:action => 'sticker', :id => params[:id], :count => @copies.to_s(), :testing => @testing_number)
         end
-	
+
+	def print_warranty
+		lib = Sticker::Library.new
+		@profiles = lib.by_scope('computer')
+		@profile = @profiles['Гарантийный талон']
+		raise 'Profile not found' unless @profile
+		prepare_computer_and_testing
+		@sticker = render_sticker('Гарантийный талон', 1)
+		render :text => @sticker
+	end
+
 	def log
 		prepare_computer_tabs
 		render(:layout => 'computer_tabs')
