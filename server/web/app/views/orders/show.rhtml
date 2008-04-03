@@ -96,11 +96,15 @@
 
 <td class="panel">
 <h1>Order lines</h1>
+<% if @order.order_lines.size > 0 %>
 <table>
-<% @order.order_lines.each { |l| %>
+<%	@order.order_lines.each { |l| %>
 <tr><td><%=h l.name %></td><td><%=h l.qty %></td></tr>
-<% } %>
+<%	} %>
 </table>
+<% else %>
+<div style="padding: 0.2em">Not available yet</div>
+<% end %>
 </td>
 
 </tr>
@@ -143,5 +147,3 @@ function someIdEdited()
 	
 	return true;	
 }')%>
-
-<%= link_to 'Back', orders_path %>

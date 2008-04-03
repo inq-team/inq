@@ -26,7 +26,6 @@
 			<%= yield %>		
 	</div>
 
-	<div style="position: fixed; bottom: 2em; left: 2em; "><%= link_to(image_tag('diff_link.png', :title => 'Audit') + ' with orders', {:action => 'ordered'}) %></div>
 	<%= javascript_tag(<<_EOF_
 
 	var z = function () {
