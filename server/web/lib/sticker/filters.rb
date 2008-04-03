@@ -50,7 +50,7 @@ class PropertyFilter
 				data.each { |d| d[@property] = to if d[@property] == from }					
 			when "collapse"
 				counter = df.attributes['counter-property']
-				concats = df.attributes['concat-properties'].split(',')
+				concats = (df.attributes['concat-properties'] || '').split(',')
 				delimiter = df.attributes['concat-delimiter'] 
 				data = data.inject({}) do |h, d| 
 					if h[d[@property]]
