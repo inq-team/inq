@@ -31,7 +31,7 @@ fru_detect()
 	echo "$1" | while read L; do
 		MEM_INFO=`cat $HOME/fru.log 2>/dev/null | grep -A 9 "^$L" || true`
 		if [ -n "MEM_INFO" ]; then
-			MEM_VENDOR=`$SHARE_DIR/vendor \`echo "$MEM_INFO" |  sed -n 's/ Board Mfg *: //p' | head -n1 \``
+			MEM_VENDOR=`$SHARE_DIR/vendor \`echo "$MEM_INFO" |  sed -n 's/ Board Mfg *: //p' | head -n1 | sed 's/0*$//'\``
 			MEM_MODEL=`echo "$MEM_INFO" | sed -n 's/ Board Product *: //p' | head -n1`
 			MEM_SERIAL=`echo "$MEM_INFO" | sed -n 's/ Product Part Number *: //p' | head -n1 | sed 's/ *$//'`
 			echo Memory "$MEM_VENDOR" "$MEM_MODEL" "$MEM_SERIAL" ' - ipmi' >> $HOME/debug.log
