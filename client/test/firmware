@@ -36,9 +36,54 @@ cat $FIRMWARES | while read component; do
 		current_version=`grep -A 3 "BIOS Information" $HOME/dmi.log | 
 					sed -n '3p' | awk '{print $2}'`
 		;;
-	"RAID")
-		current_version=`einarc -t lsi_megarc adapter info | 
-			grep "Firmware Version" | awk '{print $3}'`
+	"Disk Controller")
+		if [ `einarc -l | wc -l` -eq 0 ]; then
+			current_version="Unsupported by einarc"
+		else
+			einarc_module=`einarc -l | awk '{print $1}' | sed -n '1p'`
+			if [ `einarc -l | grep "$einarc_module" | wc -l` -gt 1 ]; then
+				print_red_message "There are more than one disk controller of ony type installed"
+				print_red_message "Currently only some controllers can be flashed automatically"
+				print_red_message "Do you want to either (s)kip this stage or to (f)orce firmware update?"
+				read choice
+				if [ "$choice" = "s" ]; then
+					current_version=$version
+				else
+					for adapter_num in `einarc -l | grep "$einarc_module" | awk '{print $2}'`; do
+						current_version=`einarc -t "$einarc_module" -a $adapter_num adapter info |
+							sed -n '/Firmware version/s/^Firmware version\s*\(.*\)$/\1/pg'`
+						if [ "$current_version" = $version ]; then
+							true
+						else
+							print_green_message "Trying to update firmware on $adapter_num adapter..."
+							if einarc -t "$einarc_module" -a $adapter_num firmware write "$LIB_DIR/firmwares/$firmware_file"; then
+								print_green_message "Rebooting for applying hardware changes..."
+								sleep 30
+								hard_reboot
+							else
+								current_version="Unable to update firmware via einarc."
+								break
+							fi
+						fi
+					done
+				fi
+			else
+					current_version=`einarc -t "$einarc_module" adapter info |
+						sed -n '/Firmware version/s/^Firmware version\s*\(.*\)$/\1/pg'`
+					if [ "$current_version" = $version ]; then
+						true
+					else
+						print_green_message "Trying to update firmware..."
+						if einarc -t "$einarc_module" firmware write "$LIB_DIR/firmwares/$firmware_file"; then
+							print_green_message "Rebooting for applying hardware changes..."
+							sleep 30
+							hard_reboot
+						else
+							current_version="Unable to update firmware via einarc."
+						fi
+					fi
+			fi
+		fi
 		;;
 	esac
 
