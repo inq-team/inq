@@ -15,7 +15,7 @@ install:
 	install -m755 vendor $(DESTDIR)$(SHARE_DIR)
 	install -m755 inq-detect inq-planner get-macs inq-wrapper inq-live $(DESTDIR)$(BIN_DIR)
 	install -m755 inq-sensors-detect $(DESTDIR)$(SHARE_DIR)
-	install -m755 decode-dimms.pl $(DESTDIR)$(BIN_DIR)
+	install -m755 decode-dimms.pl $(DESTDIR)$(SHARE_DIR)
 
 clean:
 	rm -f global

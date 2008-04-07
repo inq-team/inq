@@ -13,7 +13,7 @@ fi
 
 # Save detection logs
 dmidecode > $HOME/dmi.log
-decode-dimms.pl > $HOME/spd.log
+$SHARE_DIR/decode-dimms.pl > $HOME/spd.log
 ipmitool fru 2>/dev/null > $HOME/fru.log || true
 lspci > $HOME/lspci.log
 lshw 2>/dev/null > $HOME/lshw.log
