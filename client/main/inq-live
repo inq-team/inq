@@ -27,14 +27,16 @@ while true; do
 	exec 3>&1
 	value=`$DIALOG --item-help --nocancel --backtitle 'Inquisitor Live' \
 	        --title 'Choose an action' --menu '' \
-	        14 60 8 \
+	        16 72 10 \
 	        'Non-destructive' 'Non-destructive tests loop' '' \
 		'Full' 'Full tests loop - WARNING!' 'WARNING! This test would overwrite all the data on your hard drive!' \
-		'Benchmark' 'Benchmark only test loop' '' \
+		'Benchmark-RO' 'Non-destructive benchmark-only test loop' '' \
+		'Benchmark-RW' 'Destructive benchmark test loop - WARNING!' 'WARNING! This test would overwrite all the data on your hard drive!' \
 		'Single' 'Run a single test' 'Choose and run a single test with fine-tuning of all parameters' \
 		'Detects' 'Detects only' '' \
 		'View' 'View test results' '' \
 		'Save' 'Save test results' 'Save test results to external storage media (USB flash, etc)' \
+		'About' 'About Inquisitor' '' \
 		'Reboot' 'Quit and reboot' '' \
 	2>&1 1>&3`
 	retval=$?
@@ -85,14 +87,29 @@ __EOF__
 			continue
 		fi
 		;;
-	Benchmark)
+	Benchmark-RO)
 		cat <<__EOF__ >$HOME/test_script
 PLANNER=1 TEST_NAME=whetstone LOOPS=20000 run_test whetstone
 PLANNER=1 TEST_NAME=dhrystone DURATION=30 run_test dhrystone
 PLANNER=1 TEST_NAME=hdparm AVG_SAMPLES=5 run_test hdparm
-PLANNER=1 TEST_NAME=bonnie run_test bonnie
+PLANNER=1 TEST_NAME=unixbench run_test unixbench
 __EOF__
 		inquisitor
+		;;
+	Benchmark-RW)
+		if $DIALOG --backtitle 'Inquisitor Live: Destructive benchmark test loop' --title 'WARNING!' --clear --yesno 'This is test run will overwrite all the contents of your hard drives! Are you sure you want to run this test?' 8 60; then
+			clear
+			cat <<__EOF__ >$HOME/test_script
+PLANNER=1 TEST_NAME=whetstone LOOPS=20000 run_test whetstone
+PLANNER=1 TEST_NAME=dhrystone DURATION=30 run_test dhrystone
+PLANNER=1 TEST_NAME=hdparm AVG_SAMPLES=5 run_test hdparm
+PLANNER=1 TEST_NAME=unixbench run_test unixbench
+PLANNER=1 TEST_NAME=bonnie run_test bonnie
+__EOF__
+			inquisitor
+		else
+			continue
+		fi
 		;;
 	Single)
 		exec 3>&1
@@ -143,6 +160,15 @@ __EOF__
 		else
 			continue
 		fi
+		;;
+	About)
+		$DIALOG --backtitle 'Inquisitor Live: About' \
+			--title "Inquisitor Live v$INQ_VERSION" \
+			--msgbox "Copyright (C) 2004-2008 by Inquisitor team. \
+This is free software.  You may redistribute copies of it under the terms of \
+the GNU General Public License <http://www.gnu.org/licenses/gpl.html>. \
+There is NO WARRANTY, to the extent permitted by law." 10 60
+		continue
 		;;
 	Reboot)
 		/sbin/reboot
