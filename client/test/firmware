@@ -38,7 +38,14 @@ cat $FIRMWARES | while read component; do
 		;;
 	"Disk Controller")
 		if [ `einarc -l | wc -l` -eq 0 ]; then
-			current_version="Unsupported by einarc"
+			print_red_message "Disk controller does not supported by einarc"
+			print_red_message "Do you want to either (s)kip this stage or to (f)orce firmware update?"
+			read choice
+			if [ "$choice" = "s" ]; then
+				current_version=$version
+			else
+				current_version="Unsupported by einarc"
+			fi
 		else
 			einarc_module=`einarc -l | awk '{print $1}' | sed -n '1p'`
 			if [ `einarc -l | grep "$einarc_module" | wc -l` -gt 1 ]; then
@@ -68,20 +75,20 @@ cat $FIRMWARES | while read component; do
 					done
 				fi
 			else
-					current_version=`einarc -t "$einarc_module" adapter info |
-						sed -n '/Firmware version/s/^Firmware version\s*\(.*\)$/\1/pg'`
-					if [ "$current_version" = $version ]; then
-						true
+				current_version=`einarc -t "$einarc_module" adapter info |
+					sed -n '/Firmware version/s/^Firmware version\s*\(.*\)$/\1/pg'`
+				if [ "$current_version" = $version ]; then
+					true
+				else
+					print_green_message "Trying to update firmware..."
+					if einarc -t "$einarc_module" firmware write "$LIB_DIR/firmwares/$firmware_file"; then
+						print_green_message "Rebooting for applying hardware changes..."
+						sleep 30
+						hard_reboot
 					else
-						print_green_message "Trying to update firmware..."
-						if einarc -t "$einarc_module" firmware write "$LIB_DIR/firmwares/$firmware_file"; then
-							print_green_message "Rebooting for applying hardware changes..."
-							sleep 30
-							hard_reboot
-						else
-							current_version="Unable to update firmware via einarc."
-						fi
+						current_version="Unable to update firmware via einarc."
 					fi
+				fi
 			fi
 		fi
 		;;
@@ -96,3 +103,6 @@ cat $FIRMWARES | while read component; do
 	sleep 30
 	hard_reboot
 done
+
+# If all firmwares are already updates
+test_succeeded
