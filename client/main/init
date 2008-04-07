@@ -55,6 +55,18 @@ $SHARE_DIR/inq-sensors-detect >/dev/null 2>/dev/null && echo_success || echo_fai
 #echo 'root:x:0:root' >/etc/group || fatal_failure 'Preparing /etc/group'
 #echo -n >/etc/fstab || fatal_failure 'Make null /etc/fstab'
 
+# Set up MegaRAID device
+if grep -q megadev /proc/devices; then
+        MAJOR=`grep megadev /proc/devices | cut -f1 -d\ `
+        mknod /dev/megadev0 c $MAJOR 0 || :
+fi
+
+# Set up Adaptec device
+if grep -q aac /proc/devices; then
+        MAJOR=`grep aac /proc/devices | cut -f1 -d\ `
+        mknod /dev/aac0 c $MAJOR 0 || :
+fi
+
 echo -n 'Creating Inquisitor logging pipe'
 mkfifo /dev/inqlog && echo_success || echo_failure
 
