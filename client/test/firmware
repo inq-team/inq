@@ -63,7 +63,7 @@ cat $FIRMWARES | while read component; do
 							true
 						else
 							print_green_message "Trying to update firmware on $adapter_num adapter..."
-							if einarc -t "$einarc_module" -a $adapter_num firmware write "$LIB_DIR/firmwares/$firmware_file"; then
+							if einarc -t "$einarc_module" -a $adapter_num firmware write "$SHARE_DIR/firmwares/$firmware_file"; then
 								print_green_message "Rebooting for applying hardware changes..."
 								sleep 30
 								hard_reboot
@@ -81,7 +81,7 @@ cat $FIRMWARES | while read component; do
 					true
 				else
 					print_green_message "Trying to update firmware..."
-					if einarc -t "$einarc_module" firmware write "$LIB_DIR/firmwares/$firmware_file"; then
+					if einarc -t "$einarc_module" firmware write "$SHARE_DIR/firmwares/$firmware_file"; then
 						print_green_message "Rebooting for applying hardware changes..."
 						sleep 30
 						hard_reboot
