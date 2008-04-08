@@ -109,7 +109,7 @@ class OrdersController < ApplicationController
 		if(Object.const_defined?('DEFAULT_SERIAL_STICKER_PROFILE_FIXME'))
 	                @order.computers.each do |comp|
 				@computer = comp
-				print_sticker(DEFAULT_SERIAL_STICKER_PROFILE_FIXME, 1)
+				print_sticker(DEFAULT_SERIAL_STICKER_PROFILE_FIXME, 2)
 			end
 			flash[:notice] = "Stickers sent to #{ Sticker::Library.new.profiles[DEFAULT_SERIAL_STICKER_PROFILE_FIXME].printers.first.class }" 
 		else
