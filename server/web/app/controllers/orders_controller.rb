@@ -30,6 +30,8 @@ class OrdersController < ApplicationController
 		@st_comp_qty = @computer_stage_order.inject({}) do |h, stage|
 			h.merge({ stage => @computers.find_all { |c| s = c.last_computer_stage ; s && (s.stage == stage) && s.end.blank? }.size })
 		end
+		@profiles = Profile.find(:all).sort{ |a, b| a.timestamp <=> b.timestamp }.map{ |p| [p.name, p.id] }.unshift(['--', 0])
+		@models = Model.find(:all).sort{ |a, b| a.name <=> b.name }.map{ |m| [m.name, m.id] }.unshift(['--', 0])
 
 		@qty = @computers.size
 
