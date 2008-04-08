@@ -48,7 +48,7 @@ def stage_tag(stage, js = nil)
 		content += stage[:status] == :planned ? 'planned' : delta_tag(stage[:end] || Time.new, stage[:start] || Time.new) 
 	end
 	overdue = stage[:overdue] ? image_tag('overdue_corner.png', :title => 'Overdue', :class => 'overdue_corner') : ''
-	comment = stage[:comment] ? image_tag('comment_corner.png', :class => 'comment_corner') : ''
+	comment = (stage[:comment] and not stage[:comment].empty?) ? image_tag('comment_corner.png', :class => 'comment_corner') : ''
 	content_tag('td', content_tag('div', content + overdue + comment, :style => "background-image: url('/images/stages/#{ stage[:stage] }.png') ; background-position: 2px 50% ; background-repeat: no-repeat"), :class => "computer_stage_#{ stage[:status] }", :title => stage[:stage].capitalize, :onmouseover => js)
 end
 
