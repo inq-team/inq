@@ -31,20 +31,28 @@
 
 <div class="content">
 
+<% form_tag :action => 'update_computers', :id => @order do %>
+
 <table>
 <% @computers.sort{ |a, b| a.id <=> b.id }.each { |c| %>
 <tr>
+<td><%= check_box "comp_#{c.id}", :update, :checked => true %></td>
 <td><%= link_to c.serial_no, :controller => 'computers', :action => 'show', :id => c.id %></td>
 <td><%=h c.model.name %></td>
+<td>Profile: <%= c.profile ? c.profile.name : 'none' %><td>
 </tr>
 <% } %>
 
 <% if @computers.size > 0 %>
 <tr><td colspan="2" style="text-align: center" ><% form_tag(:action => 'computer_stickers', :id => @order.id) do |f| %> <%= submit_tag('Print labels') %><% end %></td></tr>
 <% end %>
-
-
 </table>
+
+<p>Change profile: <%= select :profile, :id, @profiles, :selected => @profile %></p>
+<p>Change model: <%= select :model, :id, @models, :selected => @model %></p>
+<%= submit_tag 'Change' %>
+<% end %>
+
 
 <% if @computers.size == 0%>
 

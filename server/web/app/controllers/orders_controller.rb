@@ -230,6 +230,21 @@ class OrdersController < ApplicationController
                 render(:layout => false)
 	end
 	
+	def update_computers
+		@profile = Profile.find(params[:profile][:id]) if params[:profile][:id].to_i != 0
+		@model = Model.find(params[:model][:id]) if params[:model][:id].to_i != 0
+		@order = Order.find(params[:id])
+		
+		comps= params.to_a.select{ |x| x[0].to_s =~ /comp_[\d]+/ && x[1]['update'] == '1' }.map{ |x|  Computer.find_by_id(x[0].gsub(/comp_/, '').to_i) }
+		comps.each do |c|
+			c.model = @model if @model
+			c.profile = @profile if @profile
+			c.save!
+		end
+		
+		redirect_to :action => 'show', :id => params[:id]
+	end
+	
 	def search
 		# Prepare and parse form parameters
 		@computer_serial = params[:computer_serial] if params[:computer_serial] and not params[:computer_serial].empty?
