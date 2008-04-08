@@ -4,6 +4,7 @@
 /sbin/chkconfig ntpd on || :
 /sbin/chkconfig hotplug off || :
 /sbin/chkconfig syslog-ng off || :
+/sbin/chkconfig smartd off || :
 
 cat >/etc/syslog-ng.conf <<__EOF__
 options {
