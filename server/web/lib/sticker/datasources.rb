@@ -55,17 +55,26 @@ class DetectSource < AbstractSource
 end
 
 class DatabaseSource < AbstractSource
+
+	#HACK: one shoud better find some other way to filter out unsupported chars
+	CYRFILTER = /[^ A-Za-z0-9\/.:()_*=@%;|\\{}+\[\]""''-^]+[, \t.]*/
 	
 	def fetch_data
 		data = []
 		computer = context.proxy.get_property('computer')
-		computer.order.order_lines.each do |line|
-			MyKit::Parser.parse(line.name).each do |component|
-				data << {
-					'name' => line.name,
-					'vendor' => component.vendors.first,
-					'group' => component.group
-				}
+                lines = computer.order.order_lines
+                unless lines.blank?
+                        min = lines.inject(lines.first.qty) { |i, j| i > j.qty ? j.qty : i }
+			lines.each do |line|
+				MyKit::Parser.parse(line.name).each do |component|
+					data << {
+						'name' => line.name.chars.gsub(CYRFILTER, ''),
+						'vendor' => component.vendors.first,
+						'group' => component.group,
+						'count' => line.qty % min == 0 ? line.qty / min : line.qty,
+						'sku' => line.sku.chars.gsub(CYRFILTER, '')
+					}
+				end
 			end
 		end if computer && computer.order
 		data
