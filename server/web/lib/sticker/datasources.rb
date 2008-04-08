@@ -67,8 +67,10 @@ class DatabaseSource < AbstractSource
                         min = lines.inject(lines.first.qty) { |i, j| i > j.qty ? j.qty : i }
 			lines.each do |line|
 				MyKit::Parser.parse(line.name).each do |component|
+					name = line.name.chars.gsub(CYRFILTER, '')
+					component.vendors.each { |v| name = name.gsub(/#{ v }\s*/i, '') }
 					data << {
-						'name' => line.name.chars.gsub(CYRFILTER, ''),
+						'name' => name,
 						'vendor' => component.vendors.first,
 						'group' => component.group,
 						'count' => line.qty % min == 0 ? line.qty / min : line.qty,
