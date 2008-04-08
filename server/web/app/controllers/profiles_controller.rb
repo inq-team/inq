@@ -33,7 +33,7 @@ class ProfilesController < ApplicationController
 		@models = Model.find(:all, :order => :name).map { |x| [x.name, x.id] }.unshift(['', nil])
 		@default_model_id = @profile.model ? @profile.model.id : nil
 	
-		if params[:profile][:xml].to_s.empty?
+		if params[:profile][:xml].blank?
 			flash[:notice] = 'Empty XML'
 			if params[:id]
 				render :action => 'edit', :id => params[:id]
