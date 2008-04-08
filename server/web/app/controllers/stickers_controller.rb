@@ -26,13 +26,13 @@ class StickersController < ApplicationController
 		lib = Sticker::Library.new
 		@profiles = lib.by_scope('computer')
 		@computer = Computer.find(params[:computer])
-		@testing = @computer.testings.find(params[:testing])
+		@testing = @computer.testings.find(params[:testing]) if @computer.testings && !params[:testing].blank?
 		@profile = params[:profile]
 		@copies = params[:copies]
 		@sticker = render_sticker(@profile, @copies)
 		print_sticker(@profile, @copies)
 		@computer = @computer.id
-		@testing = @testing.id	
+		@testing = @testing.id if @testing	
 		render(:action => 'index')
 	end
 
