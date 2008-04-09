@@ -106,19 +106,19 @@ class OrdersController < ApplicationController
 		end
 	end
 
-	def computer_stickers
-		@order = Order.find(params[:id])
-		if(Object.const_defined?('DEFAULT_SERIAL_STICKER_PROFILE_FIXME'))
-	                @order.computers.each do |comp|
-				@computer = comp
-				print_sticker(DEFAULT_SERIAL_STICKER_PROFILE_FIXME, 2)
-			end
-			flash[:notice] = "Stickers sent to #{ Sticker::Library.new.profiles[DEFAULT_SERIAL_STICKER_PROFILE_FIXME].printers.first.class }" 
-		else
-			flash[:error] = "Misconfiguration issue"
-		end
-		redirect_to :action => :show, :id => @order.id
-	end
+#	def computer_stickers
+#		@order = Order.find(params[:id])
+#		if(Object.const_defined?('DEFAULT_SERIAL_STICKER_PROFILE_FIXME'))
+#	                @order.computers.each do |comp|
+#				@computer = comp
+#				print_sticker(DEFAULT_SERIAL_STICKER_PROFILE_FIXME, 2)
+#			end
+#			flash[:notice] = "Stickers sent to #{ Sticker::Library.new.profiles[DEFAULT_SERIAL_STICKER_PROFILE_FIXME].printers.first.class }" 
+#		else
+#			flash[:error] = "Misconfiguration issue"
+#		end
+#		redirect_to :action => :show, :id => @order.id
+#	end
 
 	def create_computers
 		model_id = params[:model][:id]
@@ -232,16 +232,29 @@ class OrdersController < ApplicationController
                 render(:layout => false)
 	end
 	
-	def update_computers
+	def handle_computers
 		@profile = Profile.find(params[:profile][:id]) if params[:profile][:id].to_i != 0
 		@model = Model.find(params[:model][:id]) if params[:model][:id].to_i != 0
 		@order = Order.find(params[:id])
-		
 		comps= params.to_a.select{ |x| x[0].to_s =~ /comp_[\d]+/ && x[1]['update'] == '1' }.map{ |x|  Computer.find_by_id(x[0].gsub(/comp_/, '').to_i) }
-		comps.each do |c|
-			c.model = @model if @model
-			c.profile = @profile if @profile
-			c.save!
+
+		case params[:commit]
+		when /Change/
+			comps.each do |c|
+				c.model = @model if @model
+				c.profile = @profile if @profile
+				c.save!
+			end
+		when /Print labels/
+			if(Object.const_defined?('DEFAULT_SERIAL_STICKER_PROFILE_FIXME'))
+				compts.each do |c|
+					@computer = c
+					print_sticker(DEFAULT_SERIAL_STICKER_PROFILE_FIXME, 2)
+				end
+				flash[:notice] = "Stickers sent to #{ Sticker::Library.new.profiles[DEFAULT_SERIAL_STICKER_PROFILE_FIXME].printers.first.class }" 
+			else
+				flash[:error] = "Misconfiguration issue"
+			end			
 		end
 		
 		redirect_to :action => 'show', :id => params[:id]

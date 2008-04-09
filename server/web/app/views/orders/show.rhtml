@@ -31,7 +31,7 @@
 
 <div class="content">
 
-<% form_tag :action => 'update_computers', :id => @order do %>
+<% form_tag :action => 'handle_computers', :id => @order do %>
 
 <table>
 <% @computers.sort{ |a, b| a.id <=> b.id }.each { |c| %>
@@ -44,19 +44,21 @@
 <% } %>
 
 <% if @computers.size > 0 %>
-<tr><td colspan="2" style="text-align: center" ><% form_tag(:action => 'computer_stickers', :id => @order.id) do |f| %> <%= submit_tag('Print labels') %><% end %></td></tr>
+<tr><td colspan="2" style="text-align: center" >
+	<%= submit_tag 'Print labels' %>
+	<%= submit_tag 'Change' %>
+</td></tr>
 <% end %>
 </table>
 
 <p>Change profile: <%= select :profile, :id, @profiles, :selected => @profile %></p>
 <p>Change model: <%= select :model, :id, @models, :selected => @model %></p>
-<%= submit_tag 'Change' %>
-<% end %>
 
+<% end %>
 
 <% if @computers.size == 0%>
 
-<%	form_tag :action => 'create_computers', :id => @order do %>
+<% form_tag :action => 'create_computers', :id => @order do %>
 
 <table>
 
