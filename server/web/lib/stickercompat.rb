@@ -39,14 +39,13 @@ TEXT #{x+step+textheight},532,\"2\",90,1,1,\"Qty\"\n"
 
 
 		
-		@str << File.open('public/images/bg-top.bmp').read
 		@str << File.open('public/images/bg-bottom.bmp').read
 		
 		i = 1
 		@str << components.inject('') do |s, c| 
 			tx = x + textheight
 			s += "BAR #{x},24,2,548\n
-TEXT #{tx},34,\"2\",90,1,1,\"#{c}\"\n"
+TEXT #{tx},34,\"2\",90,1,1,\"#{c.gsub('"',"''")}\"\n"
 			i = i + 1
 			x -= step
 			s

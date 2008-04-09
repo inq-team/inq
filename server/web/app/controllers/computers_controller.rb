@@ -231,11 +231,11 @@ class ComputersController < ApplicationController
 		srv = 'checker'
 		
 		options = {}
-		options[:name] = @computer.model.dmi_name
+		options[:name] = @computer.model.name
 		options[:copies] = count
 		options[:components] = []
 		options[:serial] = @computer.serial_no
-		options[:date] = @computer.manufacturing_date.strftime("%d.%m.%Y")
+		options[:date] = @computer.manufacturing_date.strftime("%d.%m.%Y") if @computer.manufacturing_date
 		options[:docno] = @computer.order.buyer_order_number if @computer.order
 		options[:qc] = @computer.checker
 
