@@ -236,7 +236,8 @@ class ComputersController < ApplicationController
 		options[:components] = []
 		options[:serial] = @computer.serial_no
 		options[:date] = @computer.manufacturing_date.strftime("%d.%m.%Y")
-		options[:docno] = Order.buyer_order_num(@computer.id)
+		options[:docno] = @computer.order.buyer_order_number if @computer.order
+		options[:qc] = @computer.checker
 
 		if params[:commit] == 'Print'
 			if params[:raw]
