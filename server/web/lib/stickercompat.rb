@@ -28,24 +28,24 @@ CLS\n"
 		
 		@str << "TEXT 790,40,\"3\",90,1,2,\"#{name}\"\n
 BARCODE 799,390,\"128M\",58,0,90,2,2,\"!105#{serial}\"\n
-TEXT 743,345,\"3\",90,1,1,\"S/N:#{serial}\"\n
-BAR #{low},63,#{x+2*step-low},3\n
-BAR #{low},522,#{x+2*step-low},1\n
-BAR #{x+step},24,4,548\n
-BAR #{x+2*step},24,4,548\n
-TEXT #{x+step+textheight},34,\"2\",90,1,1,\"#\"\n
-TEXT #{x+step+textheight},250,\"2\",90,1,1,\"P/N\"\n
-TEXT #{x+step+textheight},532,\"2\",90,1,1,\"Qty\"\n"
-
-
-		
+TEXT 743,345,\"3\",90,1,1,\"S/N:#{serial}\"\n"
+		@str << "BAR #{low},63,#{x+2*step-low},3\n
+BAR #{low},120,#{x+2*step-low},3\n
+BAR #{low},522,#{x+2*step-low},3\n
+BAR #{x+step},24,4,548\n"
+		@str << "TEXT #{x+step+textheight},34,\"2\",90,1,1,\"#\"\n
+TEXT #{x+step+textheight},80,\"2\",90,1,1,\"GR\"\n
+TEXT #{x+step+textheight},300,\"2\",90,1,1,\"P/N\"\n
+TEXT #{x+step+textheight},532,\"2\",90,1,1,\"Qty\"\n
+BAR #{x+2*step},24,4,548\n"
+	
 		@str << File.open('public/images/bg-bottom.bmp').read
 		
 		i = 1
 		@str << components.inject('') do |s, c| 
 			tx = x + textheight
 			s += "BAR #{x},24,2,548\n
-TEXT #{tx},34,\"2\",90,1,1,\"#{c.gsub('"',"''")}\"\n"
+TEXT #{tx},34,\"2\",90,1,1,\"#{c.gsub('"',"'")}\"\n"
 			i = i + 1
 			x -= step
 			s

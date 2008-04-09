@@ -245,7 +245,7 @@ class ComputersController < ApplicationController
 				@testing.save!
 				options[:components] = @testing.custom_sticker.split("\n").collect() { |s| s.chomp }
 			else
-				@testing.components.collect { |c| c.model }.inject({}) { |h, m| h[m] = h[m] ? h[m] + 1 : 1 unless m.short_name.blank? ; h }.collect { |k, v| { :name => k.short_name, :count => v, :model => k  } }.sort() { |q, w| a = q[:model] ; b = w[:model] ; (z = ((a.group ? a.group.name : '') <=> (b.group ? b.group.name : ''))) == 0 ? q[:name] <=> w[:name] : z }[0..14].inject(1) { |i, y| options[:components] << sprintf("%2s %-38s %s", i, y[:name][0..37], y[:count]) ; i + 1 }
+				@testing.components.collect { |c| c.model }.inject({}) { |h, m| h[m] = h[m] ? h[m] + 1 : 1 unless m.short_name.blank? ; h }.collect { |k, v| { :name => k.short_name, :count => v, :model => k  } }.sort() { |q, w| a = q[:model] ; b = w[:model] ; (z = ((a.group ? a.group.name : '') <=> (b.group ? b.group.name : ''))) == 0 ? q[:name] <=> w[:name] : z }[0..14].inject(1) { |i, y| options[:components] << sprintf("%2s %-4s %-32s  %s", i, y[:model].group ? y[:model].group.name : '', y[:name], y[:count]) ; i + 1 }
 			end
 			
 			sticker = Stickercompat.new(options)
