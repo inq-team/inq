@@ -12,7 +12,7 @@
 	<div>
 		Confirm changes made to the sticker<br /><br />
 		<%= text_field_tag('count', @count || '2') %>
-		<%= submit_tag('Print', :onclick => "return confirm('Are you sure you need ' + $('count').value + ' copies?');") %><%= submit_tag('Cancel') %>
+		<%= submit_tag('Print', :onclick => "return confirm('Are you sure you need ' + $('count').value + ' copies?');") %> <%= submit_tag('Cancel') %>
 	</div>
 	<% end %>
 <% end %>
