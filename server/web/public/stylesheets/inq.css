@@ -322,15 +322,15 @@ tr.testing_stage_hanging {
 	color: #1A1406;
 	background: #F3D079;
 	margin: 1em;
-	margin-left: 1.5em;
-	margin-right: 1.5em;
+	margin-left: 1em;
+	margin-right: 1em;
 }
 
 .hint div.hint_border {
-	background: no-repeat 1.5em 50%;
+	background: no-repeat 8px 50%;
 	padding: 0.5em;
-	padding-left: 2em ! important;
-	padding-right: 1em ! important;
+	padding-left: 50px ! important;
+	padding-right: 8px ! important;
 }
 
 #hint_type_info .hint_border {
@@ -350,7 +350,7 @@ tr.testing_stage_hanging {
 }
 
 input[type=submit] {
-	width: 7em;
+	min-width: 4em;
 }
 
 #close_placeholder {

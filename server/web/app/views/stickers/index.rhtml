@@ -1,4 +1,95 @@
-<% form_tag(:action => 'apply') do  %>
+<head>
+<%= javascript_include_tag 'prototype' %>
+<%= javascript_include_tag 'rico/rico' %>
+<%= javascript_include_tag 'rico/ricoStyles' %>
+<%= javascript_include_tag 'effects' %>
+
+<style>
+/*<!-- */
+	td:first-child {
+		text-align: right;
+		padding-right: 0.3em;
+		vertical-align: top;
+	}
+
+	#sticker_system_border {
+		margin-top: 3em;
+		width: 50em;
+		position: absolute;
+		left: -26em;
+		margin-left: 50%;		
+		background-color: #F3D079;
+		display: inline-block;
+	}
+
+	#sticker_system {
+		position: relative;
+	}
+
+	fieldset {
+		border: 2px solid #A28A50; 
+		-moz-border-radius: 5px;
+	}	
+
+	legend {
+		border: 1px solid #A28A50; 
+		background-color: #A28A50;
+		padding: 3px;
+		color: white;
+		-moz-border-radius: 5px;
+	}
+
+	#big_printer {
+		position: absolute;
+		top: 15px;
+		right: 15px;
+		-moz-opacity: .3;
+	}
+
+/* From inq.css */
+
+#topbar {
+        background: #F5F5F5;
+        border-bottom: 1px solid #E0E0E0;
+        font-size: 0.85em;
+        font-family: sans-serif;
+}
+
+#topmenu {
+        padding: 0.5em;
+        float: left;
+}
+
+#login {
+        padding: 0.5em;
+        float: right;
+}
+
+body {
+        padding: 0px;
+        margin: 0px;
+}
+
+
+/* --> */
+</style>
+</head>
+<body>
+<div id="topbar">
+<div id="topmenu">
+<%= link_to 'Orders', :controller => :orders %>
+<%= link_to 'Search', :controller => :orders, :action => :search %>
+<%= link_to 'Computers', :controller => :computers %>
+<%= link_to 'Profiles', :controller => :profiles %>
+</div>
+<div id="login">
+Login
+</div>
+<br clear="all" />
+</div>
+
+<div id="sticker_system_border"><div style="margin: 1.5em">
+<% form_tag({ :action => 'apply' }, :id => 'sticker_system' ) do  %>
 	<fieldset>
 	<legend>Sticker profile</legend>
 	<table>
@@ -10,15 +101,15 @@
 	</tr>
 	<tr><td><label for="copies">Copies</label></td><td><%= text_field_tag 'copies', @copies %></td></tr>
 	<tr><td><label for="custom">Custom paramteters</label></td><td><%= text_area_tag 'custom', @custom, :rows => 3, :cols => 80 %></td></tr>
-
+	<tr><td><%= check_box_tag('hide', 'true', nil) %><td><label for="hide">Hide UI</label></td></tr>
 	<tr><td>&nbsp;</td><td><%= submit_tag 'Apply' %></td></tr>
 	</table>
+	<%= image_tag('big_printer.png', :id => 'big_printer') %>
 	</fieldset>
 <% end %>
 
 <%= link_to('Reset zebra images...', '#', :onclick => "var z = window.open('#{ url_for( :action => 'debug_clear_zebra' ) }', 'reset_zebra', 'status=no, location=yes, menubar=no, toolbar=no, personalbar=no, directories=no, dependent=yes, width=480, height=360'); if(window.focus) { z.focus(); } ") %>
-
-<hr />
+</div></div>
 
 <% if @sticker.is_a? Array %>
 <% @sticker.find_all { |h| h[:kind] == :grid }.each do |grid| %>
@@ -31,3 +122,12 @@
 <code><%= @sticker %></code>
 <% end %>
 
+<%= javascript_tag(<<_EOF_
+        Event.observe(window, 'load', function () {
+                Rico.Corner.round($('sticker_system_border'));
+        });
+_EOF_
+) %>
+
+
+</body>

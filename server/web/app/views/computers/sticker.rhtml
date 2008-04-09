@@ -37,22 +37,22 @@
 	<%= text_field_tag('count', @count || '2') %>
 	<%= submit_tag('Print') %>
 	<% end %>
-</td>
-<td>
-	To <strong>boldly go where no man has gone before</strong> press the button below:
+</td><td>
+	For more printing <strong>options</strong> press the button below:
 	<% form_tag({ :controller => 'stickers', :computer => @computer, :testing => @testing, :action => 'show' }) do %>
-	<%= submit_tag('Engage!') %>
-	<% end %>
+	<%= submit_tag('Advanced') %>
+	<% end %> 
 </td>
 <td>
-	<%= link_to 'Warranty', :action => 'print_warranty', :id => @computer.id, :testing => @testing_number %>
+	<%= link_to 'Press here for "Warranty"', :action => 'print_warranty', :id => @computer.id, :testing => @testing_number %>
 </td>
-<td>
+<!--<td>
 	For <strong>free form</strong> mode press the button below:
 	<% form_tag({ :action => 'free_form', :id => @computer.id, :testing => @testing_number }, :method => 'get') do %>
 	<%= submit_tag('Edit') %>
 	<% end %>
-</td></tr></table>
+</td>-->
+</tr></table>
 <% end %>
 
 <%= javascript_tag(<<_EOF_	

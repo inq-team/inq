@@ -228,7 +228,7 @@ class ComputersController < ApplicationController
 		count = params[:count].to_i()
 	
 		prn = '/dev/ttyS0'
-		srv = 'tos'
+		srv = 'checker'
 		
 		options = {}
 		options[:name] = @computer.model.dmi_name

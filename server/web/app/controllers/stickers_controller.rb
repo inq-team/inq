@@ -34,9 +34,13 @@ class StickersController < ApplicationController
 		@custom_sticker_params = @custom
 		@sticker = render_sticker(@profile, @copies)
 		print_sticker(@profile, @copies)
-		@computer = @computer.id
-		@testing = @testing.id if @testing	
-		render(:action => 'index')
+		if params[:hide]
+			render(:text => @sticker)	
+		else
+			@computer = @computer.id
+			@testing = @testing.id if @testing	
+			render(:action => 'index')
+		end
 	end
 
 	def debug_clear_zebra
