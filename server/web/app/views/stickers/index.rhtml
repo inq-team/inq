@@ -9,6 +9,7 @@
 		<td><select name="profile" id="select-profile"><%= options_for_select @profiles.keys, @profile %></select></td></tr>
 	</tr>
 	<tr><td><label for="copies">Copies</label></td><td><%= text_field_tag 'copies', @copies %></td></tr>
+	<tr><td><label for="custom">Custom paramteters</label></td><td><%= text_area_tag 'custom', @custom, :rows => 3, :cols => 80 %></td></tr>
 
 	<tr><td>&nbsp;</td><td><%= submit_tag 'Apply' %></td></tr>
 	</table>

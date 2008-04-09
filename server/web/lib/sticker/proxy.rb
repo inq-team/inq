@@ -15,7 +15,7 @@ class Proxy
 	end
 
 	def property_defined?(name)
-		@client.instance_variable_defined("@#{ name }")
+		@client.instance_variable_defined?("@#{ name }")
 	end
 
 	def apply(profile)

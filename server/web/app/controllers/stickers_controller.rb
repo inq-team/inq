@@ -19,6 +19,7 @@ class StickersController < ApplicationController
 		@testing = params[:testing]
 		@profile = params[:profile]
 		@copies = params[:copies] || 1
+		@custom = params[:custom]
 		render(:action => 'index')
 	end
 
@@ -29,6 +30,8 @@ class StickersController < ApplicationController
 		@testing = @computer.testings.find(params[:testing]) if @computer.testings && !params[:testing].blank?
 		@profile = params[:profile]
 		@copies = params[:copies]
+		@custom = params[:custom]
+		@custom_sticker_params = @custom
 		@sticker = render_sticker(@profile, @copies)
 		print_sticker(@profile, @copies)
 		@computer = @computer.id

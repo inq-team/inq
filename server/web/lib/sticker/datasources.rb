@@ -106,6 +106,30 @@ class ComputerSource < AbstractSource
 
 end
 
+class CustomParamsSource < AbstractSource
+
+	PATTERN = /([^=]+)\s*=\s*"(([^"]|"")*)"/
+	
+	def fetch_data
+		data = []
+		params = context.proxy.get_property('custom_sticker_params')
+		if params
+			if params.is_a? Hash 
+				data << params
+			else
+				h = {}
+				m = params.to_s.strip.match(PATTERN)
+				while m
+					h[m[1].strip] = m[2].gsub('""', '"')
+					m = m.post_match.match(PATTERN)
+				end
+				data << h
+			end
+		end
+		data
+	end
+end
+
 
 def self.from_element(el)
 	case el.attributes['source']
@@ -115,6 +139,8 @@ def self.from_element(el)
 		DetectSource.new(el.attributes['id'], el)		
 	when 'computer'
 		ComputerSource.new(el.attributes['id'], el)
+	when 'custom'
+		CustomParamsSource.new(el.attributes['id'], el)
 	end	
 end
 
