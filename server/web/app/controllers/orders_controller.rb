@@ -247,7 +247,7 @@ class OrdersController < ApplicationController
 			end
 		when /Print labels/
 			if(Object.const_defined?('DEFAULT_SERIAL_STICKER_PROFILE_FIXME'))
-				compts.each do |c|
+				comps.each do |c|
 					@computer = c
 					print_sticker(DEFAULT_SERIAL_STICKER_PROFILE_FIXME, 2)
 				end
