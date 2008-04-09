@@ -50,7 +50,7 @@ class Component
 
 	end
 
-	attr_accessor :vendors, :title, :group, :property_names, :onboard, :keywords, :item
+	attr_accessor :vendors, :title, :group, :property_names, :onboard, :keywords, :item, :sku
 	
 	def self.create(itm)
 		Parser::parse_item(itm).collect do |i| 
@@ -95,14 +95,19 @@ class Parser
 		end
 	end
 
-	def self.parse(str)
-		Component.create(Item.new(str))
+	def self.parse(str, sku = nil)
+		Component.create(Item.new(str, sku))
 	end
 
 	def self.parse_item(itm)
 		i = (1..itm.components.size - 1).inject(0) { |i, j| (itm.components[i] < itm.components[j]) ? j : i }
-		most_likely = (0..itm.components.size - 1).inject([]) { |a, j| (itm.components[j] == itm.components[i]) ? a + [j] : a }
-		less_likely = (0..itm.components.size - 1).inject([]) { |a, j| ((d = itm.components[i] - itm.components[j]) > 0 && d <= MyKit::Keywords::COMP_DISTANCE && itm.components[j] > 0) ? a + [j] : a }
+		if itm.components[i] > 0  
+			most_likely = (0..itm.components.size - 1).inject([]) { |a, j| (itm.components[j] == itm.components[i]) ? a + [j] : a }
+			less_likely = (0..itm.components.size - 1).inject([]) { |a, j| ((d = itm.components[i] - itm.components[j]) > 0 && d <= MyKit::Keywords::COMP_DISTANCE && itm.components[j] > 0) ? a + [j] : a }
+		else
+			most_likely = []
+			less_likely = []
+		end
 		props2 = Hash[*itm.properties.collect { |k, v| [ k, (v = v.dup ; vv = [] ; until v.empty? ; vv << v.delete(v.first) ; end ; vv)  ] }.inject([]) { |a, b| a + b }]
 
 #		props2[MyKit::Keywords::Properties::CAPACITY].each do |c|
@@ -113,7 +118,7 @@ class Parser
 
 		comps = comps.collect do |comp_i|
 			props = props2.inject({}) { |h, a| MyKit::Keywords::PROPS[a.first][comp_i] == 0 ? h : h.merge({ a.first => a.last.dup.collect { |h| h.merge({ :computed => compute(a.first, h[:value], h[:unit]) }) }}) }
-			{ :onboard => !most_likely.include?(comp_i), :vendors => itm.vendors, :title => itm.sense, :group => MyKit::Keywords::Components[comp_i], :properties => props, :keywords => itm.keywords }
+			{ :onboard => !most_likely.include?(comp_i), :vendors => itm.vendors, :title => itm.sense, :group => MyKit::Keywords::Components[comp_i], :properties => props, :keywords => itm.keywords, :sku => itm.sku }
 		end
 
 		#heuristics to remove incorrectly assigned properties

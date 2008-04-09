@@ -54,6 +54,10 @@ td#info_tabs table tr td#info_tab_audit a{
 	background-image: url('/images/eyes.png');
 }
 
+#hint_type_forced .hint_border {
+	background-image: url('/images/forced_audit.png');
+}
+
 #components th {
 	background-color: #AACFBE;
 }
@@ -66,6 +70,19 @@ td#info_tabs table tr td#info_tab_audit a{
 /*.component_db_name {
         width: 17.6em;
 }*/
+
+.component_db_name .sku {
+	display: inline-block;
+	padding: 2px;
+	padding-left: 18px;
+	border-left: 1px dotted #bbb;
+	border-right: 1px dotted #bbb;
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	margin: 1px;
+	font-family: monospace;	
+	background: #eee url('/images/sku.png') 0px 50% no-repeat;
+}
 
 .component_name {
 /*        width: 26.6em;*/

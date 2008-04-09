@@ -9,8 +9,8 @@ def self.compare(db, detect)
 	Keywords::OMIT_FROM_COMPARISON.each { |g| groups.delete(g) }
 
 	groups.inject({}) do |result, gr|
-		db_gr = db.inject([]) { |a, b| a + b.last.find_all { |c| c.group == gr }.collect { |c| { :line => { :name => b.first.name, :qty => b.first.qty }, :comp => c, :searchable => (c.title.collect { |t| { :origin => :title, :string => t.chars.upcase } } + c.vendors.collect { |t| { :origin => :vendors, :string => t.chars.upcase } } + c.property_names.collect { |pr| { :origin => :properties, :string => c.send(pr).value } } + c.keywords.collect { |t| { :origin => :keywords, :string => t } }) } } }
-		dists = { :vendors => Keywords::MAX_DISTANCE, :keywords => Keywords::SPAN_DISTANCE, 
+		db_gr = db.inject([]) { |a, b| a + b.last.find_all { |c| c.group == gr }.collect { |c| { :line => { :name => b.first.name, :qty => b.first.qty, :sku => b.first.sku }, :comp => c, :searchable => (c.title.collect { |t| { :origin => :title, :string => t.chars.upcase } } + c.vendors.collect { |t| { :origin => :vendors, :string => t.chars.upcase } } + c.property_names.collect { |pr| { :origin => :properties, :string => c.send(pr).value } } + c.keywords.collect { |t| { :origin => :keywords, :string => t } } + (c.sku.blank? ? [] : [{ :origin => :sku, :string => c.sku }] )) } } }
+		dists = { :vendors => Keywords::MAX_DISTANCE, :keywords => Keywords::SPAN_DISTANCE, :sku => Keywords::SPAN_DISTANCE,
 			  :title => Keywords::SPAN_DISTANCE, :properties => Keywords::SPAN_DISTANCE }
 		db_gr.each { |db_dev| db_dev[:searchable].each { |s| s[:distance] = dists[s[:origin]] } }
 		db_prim, db_sec = db_gr.inject([[], []]) { |a, b| b[:comp].onboard ? [ a.first, a.last << b ] : [ a.first << b, a.last ] }
@@ -35,7 +35,7 @@ def self.compare(db, detect)
 						d_count += 1
 					end
 				end
-				d_mean = d_count / d_mean
+				d_mean = 1 / (d_count + d_mean)
 				if d_mean < Keywords::COMP_MARGIN
 					puts "#{db_dev[:line][:name]} <=> #{d[:vendor]} #{d[:name]} = #{d_mean}"
 					matr[db_dev][d] = { :data => d_data, :mean => d_mean }
@@ -133,7 +133,7 @@ def self.post_process(pair)
 		case token[:origin]
 		when :properties
 			ss = Strings.to_span(s, d[:string], d[:raw]) { |s1, s2| s1 =~ r_prop and s2 =~ r_prop }
-		when :title, :keywords
+		when :title, :keywords, :sku
 			ss = Strings.to_span(s, d[:string], d[:raw]) { |s1, s2| s1 =~ r_word and s2 =~ r_word }
 		when :vendors
 			ss = Strings.to_span(s, d[:string], d[:raw]) { |s1, s2| 0 }

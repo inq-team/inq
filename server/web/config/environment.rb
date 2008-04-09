@@ -10,6 +10,7 @@ RAILS_GEM_VERSION = '2.0.2' unless defined? RAILS_GEM_VERSION
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
 load File.join(File.dirname(__FILE__), 'stickers-config.rb')
+require File.join(File.dirname(__FILE__), 'mykit')
 
 DEFAULT_SHELVES_CONFIG = 'config/shelves.xml'
 WAITSTRING_CLIENT_PORT = 8372 
@@ -40,6 +41,7 @@ Rails::Initializer.run do |config|
 	}
 
 	config.load_paths << STICKER_PRINTERS_PATH if Object.const_defined?('STICKER_PRINTERS_PATH')
+	config.load_paths << MYKIT_KEYWORDS_PATH
 
   # Use SQL instead of Active Record's schema dumper when creating the test database.
   # This is necessary if your schema can't be completely dumped by the schema dumper, 

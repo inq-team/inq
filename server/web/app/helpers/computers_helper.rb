@@ -79,4 +79,8 @@ def dev_to_spans(dev, spans)
 	dev.split(/\s+/).collect { |s| (sp = spans.find { |ss| ss[:target] == s }) ? content_tag(:span, sp[:spans].collect { |r| content_tag(:span, r[:string], :class => "dev_span_#{ r[:good] ? r[:chunk] ? 'chunk' : 'good' : 'bad' }") }.join, :title => sp[:token][:string]) : content_tag(:span, s, :class => 'dev_span_unmatched') }.join(' ')
 end
 
+def sku_tag(line)
+	!line[:sku].blank? ? content_tag(:span, line[:sku], :class => 'sku', :title => 'Stock Keeping Unit') : ''
+end
+
 end

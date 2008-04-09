@@ -5,9 +5,9 @@ require 'mykit/keywords'
 module MyKit
 
 class Item
-	attr_accessor :string, :chunks, :sense, :properties, :components, :vendors, :keywords
-	def initialize(s)
-		Lexer.lex(s).each { |k, v| send("#{ k }=".to_s, v) }
+	attr_accessor :string, :chunks, :sense, :properties, :components, :vendors, :keywords, :sku
+	def initialize(s, sku = nil)
+		Lexer.lex(s, sku).each { |k, v| send("#{ k }=".to_s, v) }
 	end
 end
 
@@ -25,9 +25,13 @@ class Lexer
 		r = [@@ts1, @@ts2, @@ts3]
 		@@ts1 = @@ts2 = @@ts3 = 0
 		r
+	end
+
+	def self.lex(string, sku = nil)
+		_lex(string).merge({ :sku => sku })
 	end	
 	
-	def self.lex(string)
+	def self._lex(string)
 		ts1 = Time.new
 		
 		chunks = string.split(/\s+/).collect { |r| r unless r.empty? }.compact

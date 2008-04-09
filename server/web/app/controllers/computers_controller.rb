@@ -181,7 +181,7 @@ class ComputersController < ApplicationController
 			min = lines.inject(lines.first.qty) { |i, j| i > j.qty ? j.qty : i } 
 			lines.each { |l| l.qty /= min }	
 		end
-                @items = lines.inject({}) { |h, l| h.merge({ l => MyKit::Parser.parse(l.name) }) } 
+                @items = lines.inject({}) { |h, l| h.merge({ l => MyKit::Parser.parse(l.name, l.sku) }) } 
 		@comparison = MyKit::Comparison.compare(@items, @components)
 		@audit = Audit.new
 		@audit.comparison = dump_comparison(@comparison)
@@ -189,6 +189,22 @@ class ComputersController < ApplicationController
 		@testing.audit = @audit
 		@testing.save!
 	end
+
+	def force_audit
+		prepare_computer_tabs
+                @testing ? @components = @testing.components : @components = []
+		@components.each { |c| c.model.group.name = MyKit::Keywords::GROUP_TRANS[c.model.group.name] if c.model.group and MyKit::Keywords::GROUP_TRANS[c.model.group.name] }
+		lines = @computer.order.order_lines
+		unless lines.blank?
+			min = lines.inject(lines.first.qty) { |i, j| i > j.qty ? j.qty : i } 
+			lines.each { |l| l.qty /= min }	
+		end
+                @items = lines.inject({}) { |h, l| h.merge({ l => MyKit::Parser.parse(l.name, l.sku) }) } 
+		@comparison = MyKit::Comparison.compare(@items, @components)
+		@forced = 0
+		render(:action => 'audit_cached', :layout => 'computer_audit')
+	end
+
 	
 	def sticker
 		prepare_computer_tabs
