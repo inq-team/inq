@@ -13,7 +13,7 @@
 	}
 
 	#sticker_system_border {
-		margin-top: 3em;
+		margin-top: 2em;
 		width: 50em;
 		position: absolute;
 		left: -26em;
@@ -45,6 +45,19 @@
 		right: 15px;
 		-moz-opacity: .3;
 	}
+
+	#sticker_data {
+		margin-top: 30em;
+		border-top: 4px solid #ddd;
+		background: #eee;
+	}
+
+	#sticker_data h1{
+		margin-top: -1em;
+		margin-bottom: 6px;
+		color: #ddd;
+	}
+
 
 /* From inq.css */
 
@@ -102,6 +115,7 @@ Login
 	<tr><td><label for="copies">Copies</label></td><td><%= text_field_tag 'copies', @copies %></td></tr>
 	<tr><td><label for="custom">Custom paramteters</label></td><td><%= text_area_tag 'custom', @custom, :rows => 3, :cols => 80 %></td></tr>
 	<tr><td><%= check_box_tag('hide', 'true', nil) %><td><label for="hide">Hide UI</label></td></tr>
+	<tr><td><%= check_box_tag('noprint', 'true', nil) %><td><label for="noprint">Only display result (don't send it to printer)</label></td></tr>
 	<tr><td>&nbsp;</td><td><%= submit_tag 'Apply' %></td></tr>
 	</table>
 	<%= image_tag('big_printer.png', :id => 'big_printer') %>
@@ -110,7 +124,8 @@ Login
 
 <%= link_to('Reset zebra images...', '#', :onclick => "var z = window.open('#{ url_for( :action => 'debug_clear_zebra' ) }', 'reset_zebra', 'status=no, location=yes, menubar=no, toolbar=no, personalbar=no, directories=no, dependent=yes, width=480, height=360'); if(window.focus) { z.focus(); } ") %>
 </div></div>
-
+<div id="sticker_data">
+<h1>Print results</h1>
 <% if @sticker.is_a? Array %>
 <% @sticker.find_all { |h| h[:kind] == :grid }.each do |grid| %>
 <table>
@@ -121,6 +136,7 @@ Login
 <% elsif @sticker %>
 <code><%= @sticker %></code>
 <% end %>
+</div>
 
 <%= javascript_tag(<<_EOF_
         Event.observe(window, 'load', function () {

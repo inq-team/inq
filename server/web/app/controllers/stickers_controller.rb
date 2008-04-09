@@ -33,7 +33,7 @@ class StickersController < ApplicationController
 		@custom = params[:custom]
 		@custom_sticker_params = @custom
 		@sticker = render_sticker(@profile, @copies)
-		print_sticker(@profile, @copies)
+		print_sticker(@profile, @copies) unless params[:noprint]
 		if params[:hide]
 			render(:text => @sticker)	
 		else
