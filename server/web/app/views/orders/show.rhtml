@@ -31,6 +31,7 @@
 
 <div class="content">
 
+<% if @computers.size > 0 %>
 <% form_tag :action => 'handle_computers', :id => @order do %>
 
 <table>
@@ -43,17 +44,16 @@
 </tr>
 <% } %>
 
-<% if @computers.size > 0 %>
 <tr><td colspan="2" style="text-align: center" >
 	<%= submit_tag 'Print labels' %>
 	<%= submit_tag 'Change' %>
 </td></tr>
-<% end %>
 </table>
 
 <p>Change profile: <%= select :profile, :id, @profiles, :selected => @profile %></p>
 <p>Change model: <%= select :model, :id, @models, :selected => @model %></p>
 
+<% end %>
 <% end %>
 
 <% if @computers.size == 0%>
