@@ -34,7 +34,7 @@ cat $FIRMWARES | while read component; do
 		;;
 	"Motherboard")
 		current_version=`grep -A 3 "BIOS Information" $HOME/dmi.log | 
-					sed -n '3p' | awk '{print $2}'`
+					sed -n '/Version:/s/^.*Version: \(.*\)$/\1/pg'`
 		;;
 	"Disk Controller")
 		if [ `einarc -l | wc -l` -eq 0 ]; then
