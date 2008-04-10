@@ -32,7 +32,7 @@ cat $FIRMWARES | while read component; do
 	"BMC")
 		current_version=`ipmitool mc info | grep "Firmware Revision" | awk '{print $NF}'`
 		;;
-	"Motherboard")
+	"Mainboard")
 		current_version=`grep -A 3 "BIOS Information" $HOME/dmi.log | 
 					sed -n '/Version:/s/^.*Version: \(.*\)$/\1/pg'`
 		;;
