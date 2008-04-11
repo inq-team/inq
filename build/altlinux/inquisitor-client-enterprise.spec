@@ -1,3 +1,6 @@
+%set_verify_elf_skiplist /usr/lib64/inquisitor/einarc/adaptec_aaccli/cli
+%set_findreq_skiplist /usr/lib64/inquisitor/einarc/adaptec_aaccli/cli
+
 %define _ifcfgdir %_sysconfdir/net/ifaces
 
 Name: inquisitor-client
