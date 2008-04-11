@@ -64,15 +64,16 @@ cat $FIRMWARES | while read component; do
 						else
 							print_green_message "Trying to update firmware on $adapter_num adapter..."
 							if einarc -t "$einarc_module" -a $adapter_num firmware write "$SHARE_DIR/firmwares/$firmware_file"; then
-								print_green_message "Rebooting for applying hardware changes..."
-								sleep 30
-								hard_reboot
+								true
 							else
 								current_version="Unable to update firmware via einarc."
 								break
 							fi
 						fi
 					done
+					print_green_message "Rebooting for applying hardware changes..."
+					sleep 30
+					hard_reboot
 				fi
 			else
 				current_version=`einarc -t "$einarc_module" adapter info |
