@@ -1,5 +1,3 @@
-require 'mykit/components'
-require 'mykit/comparison'
 require 'planner/planner'
 require 'tempfile'
 
@@ -175,14 +173,14 @@ class ComputersController < ApplicationController
 	def audit_comparison
 		prepare_computer_and_testing
                 @testing ? @components = @testing.components : @components = []
-		@components.each { |c| c.model.group.name = MyKit::Keywords::GROUP_TRANS[c.model.group.name] if c.model.group and MyKit::Keywords::GROUP_TRANS[c.model.group.name] }
+		@components.each { |c| c.model.group.name = Mykit::Keywords::GROUP_TRANS[c.model.group.name] if c.model.group and Mykit::Keywords::GROUP_TRANS[c.model.group.name] }
 		lines = @computer.order.order_lines
 		unless lines.blank?
 			min = lines.inject(lines.first.qty) { |i, j| i > j.qty ? j.qty : i } 
 			lines.each { |l| l.qty /= min }	
 		end
-                @items = lines.inject({}) { |h, l| h.merge({ l => MyKit::Parser.parse(l.name, l.sku) }) } 
-		@comparison = MyKit::Comparison.compare(@items, @components)
+                @items = lines.inject({}) { |h, l| h.merge({ l => Mykit::Parser.parse(l.name, l.sku) }) } 
+		@comparison = Mykit::Comparison.compare(@items, @components)
 		@audit = Audit.new
 		@audit.comparison = dump_comparison(@comparison)
 		@audit.save!
@@ -193,14 +191,14 @@ class ComputersController < ApplicationController
 	def force_audit
 		prepare_computer_tabs
                 @testing ? @components = @testing.components : @components = []
-		@components.each { |c| c.model.group.name = MyKit::Keywords::GROUP_TRANS[c.model.group.name] if c.model.group and MyKit::Keywords::GROUP_TRANS[c.model.group.name] }
+		@components.each { |c| c.model.group.name = Mykit::Keywords::GROUP_TRANS[c.model.group.name] if c.model.group and Mykit::Keywords::GROUP_TRANS[c.model.group.name] }
 		lines = @computer.order.order_lines
 		unless lines.blank?
 			min = lines.inject(lines.first.qty) { |i, j| i > j.qty ? j.qty : i } 
 			lines.each { |l| l.qty /= min }	
 		end
-                @items = lines.inject({}) { |h, l| h.merge({ l => MyKit::Parser.parse(l.name, l.sku) }) } 
-		@comparison = MyKit::Comparison.compare(@items, @components)
+                @items = lines.inject({}) { |h, l| h.merge({ l => Mykit::Parser.parse(l.name, l.sku) }) } 
+		@comparison = Mykit::Comparison.compare(@items, @components)
 		@forced = 0
 		render(:action => 'audit_cached', :layout => 'computer_audit')
 	end

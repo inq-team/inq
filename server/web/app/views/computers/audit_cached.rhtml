@@ -37,7 +37,7 @@
 		<% end %>
 
 		<% @comparison[group][:pairs].each do |pair| %>
-			<% spans = MyKit::Comparison.post_process(pair) %>
+			<% spans = Mykit::Comparison.post_process(pair) %>
 			<tr class='component_<%= style % 2 == 0 ? 'even' : 'odd' %>'>
 			<td class='component_group'><%= group_name ? (group_name = nil ; group) : nil %></td>
 			<td class='component_db_name'><%= pair[:db][:line][:name] %><%= sku_tag(pair[:db][:line]) %></td>

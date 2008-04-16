@@ -1,5 +1,3 @@
-require 'mykit/components'
-
 class OrdersController < ApplicationController
 	auto_complete_for :order, :manager
 	auto_complete_for :order, :customer
@@ -210,7 +208,7 @@ class OrdersController < ApplicationController
 		end
 		
 		lines = @order.order_lines
-		@items = lines.collect { |l| MyKit::Item.new(l.name) }
+		@items = lines.collect { |l| Mykit::Item.new(l.name) }
 	end
 
 	def components
@@ -224,7 +222,7 @@ class OrdersController < ApplicationController
 		end
 		
 		lines = @order.order_lines
-		@items = lines.inject({}) { |h, l| h.merge({ l => MyKit::Parser.parse(l.name) }) }
+		@items = lines.inject({}) { |h, l| h.merge({ l => Mykit::Parser.parse(l.name) }) }
 	end
 
 	def live_profile

@@ -1,6 +1,5 @@
 require 'sticker/library'
 require 'sticker/proxy'
-require 'mykit/components'
 
 class StickersController < ApplicationController
 

@@ -10,7 +10,7 @@ RAILS_GEM_VERSION = '2.0.2' unless defined? RAILS_GEM_VERSION
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
 load File.join(File.dirname(__FILE__), 'stickers-config.rb')
-require File.join(File.dirname(__FILE__), 'mykit')
+require File.join(File.dirname(__FILE__), 'mykit-config')
 
 DEFAULT_SHELVES_CONFIG = 'config/shelves.xml'
 WAITSTRING_CLIENT_PORT = 8372 

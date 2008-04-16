@@ -1,4 +1,4 @@
-module MyKit
+module Mykit
 
 class Vendors
 	@@vendors = nil

@@ -1,4 +1,4 @@
-<% components_count = MyKit::Keywords::PROPS.first.size %>
+<% components_count = Mykit::Keywords::PROPS.first.size %>
 <style type="text/css">
 	th, td { border: 1px solid #ddd } th { background: #eee } table { border-collapse: collapse }
 </style>
@@ -16,14 +16,14 @@
 <th rowspan="2">Item</th><th rowspan="2">Vendors</th><th rowspan="2">Sensible chunks</th><th colspan='<%= components_count %>'>Components</th><th colspan="2">Properties</th>
 </tr>
 <tr>
-<%= (0..components_count - 1).collect { |i| content_tag(:th, MyKit::Keywords::Components[i], :style => "width: 3em" ) } %>
+<%= (0..components_count - 1).collect { |i| content_tag(:th, Mykit::Keywords::Components[i], :style => "width: 3em" ) } %>
 <th>Name</th><th>Value</th>
 </tr>
 <% @items.each do |item| %>
 <tr>
 	<%= content_tag(:td, item.string) + content_tag(:td, item.vendors.join(', ')) + content_tag(:td, item.sense.join(', ')) %>
 	<%= item.components.collect { |c| content_tag(:td, c.to_s, :style => "background: \##{'%02X' % (0xfe - 0xb * c) }f0f0") }.join %>
-	<% props = item.properties.collect { |k, v| v.collect { |h| [MyKit::Keywords::Properties[k], "#{h[:value]} #{h[:unit]}"] } }.inject([]) { |a, b| a + b } %> 
+	<% props = item.properties.collect { |k, v| v.collect { |h| [Mykit::Keywords::Properties[k], "#{h[:value]} #{h[:unit]}"] } }.inject([]) { |a, b| a + b } %> 
 	<% unless props.blank? %>
 		<% pair = props.pop %>
 		<%= pair.collect { |s| content_tag(:td, s) }.join %>
@@ -42,7 +42,7 @@
 </table>
 
 <div style="color: #aaa ; font-size: 10px"><%=
-	content_tag(:p, MyKit::Lexer.ts.join(", ")) + content_tag(:p, MyKit::Strings.ts.join(", "))
+	content_tag(:p, Mykit::Lexer.ts.join(", ")) + content_tag(:p, Mykit::Strings.ts.join(", "))
 %></div>
 
 </div>

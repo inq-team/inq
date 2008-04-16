@@ -1,4 +1,4 @@
-module MyKit
+module Mykit
 
 class Strings
 

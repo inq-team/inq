@@ -1,21 +1,10 @@
-require 'mykit/strings'
-require 'mykit/vendors'
-require 'mykit/keywords'
-
-module MyKit
-
-class Item
-	attr_accessor :string, :chunks, :sense, :properties, :components, :vendors, :keywords, :sku
-	def initialize(s, sku = nil)
-		Lexer.lex(s, sku).each { |k, v| send("#{ k }=".to_s, v) }
-	end
-end
+module Mykit
 
 class Lexer
-	@@keywords = MyKit::Keywords::WORDS.inject({}) { |h, a| h.merge({ a.first.chars.upcase.to_str => a.last }) } 
-	@@vendors = MyKit::Vendors.find_all().inject({}) { |h, s| h.merge({ s.chars.upcase.to_str => s }) }
-	@@measures = MyKit::Keywords::MEASURES.inject({}) { |h, a| h.merge({ a.first.chars.upcase.to_str => a.last }) } 
-	@@units = MyKit::Keywords::UNITS.inject({}) { |h, a| h.merge({ a.first.chars.upcase.to_str => a.last }) } 
+	@@keywords = Mykit::Keywords::WORDS.inject({}) { |h, a| h.merge({ a.first.chars.upcase.to_str => a.last }) } 
+	@@vendors = Mykit::Vendors.find_all().inject({}) { |h, s| h.merge({ s.chars.upcase.to_str => s }) }
+	@@measures = Mykit::Keywords::MEASURES.inject({}) { |h, a| h.merge({ a.first.chars.upcase.to_str => a.last }) } 
+	@@units = Mykit::Keywords::UNITS.inject({}) { |h, a| h.merge({ a.first.chars.upcase.to_str => a.last }) } 
 
 	@@ts1 = 0
 	@@ts2 = 0
@@ -35,7 +24,7 @@ class Lexer
 		ts1 = Time.new
 		
 		chunks = string.split(/\s+/).collect { |r| r unless r.empty? }.compact
-		components = Array.new(MyKit::Keywords::PROPS.first.size, 0)
+		components = Array.new(Mykit::Keywords::PROPS.first.size, 0)
 		properties = {}
 		keywords = []
 		vendors = []
@@ -115,11 +104,11 @@ class Lexer
 			end
 
 			ts2 = Time.new
-			vs = Strings.find_all(_C, @@vendors.keys, MyKit::Keywords::MAX_DISTANCE)
+			vs = Strings.find_all(_C, @@vendors.keys, Mykit::Keywords::MAX_DISTANCE)
 			@@ts2 += Time.new - ts2
 
 			ts3 = Time.new
-			kws = MyKit::Strings.find_all(_C, @@keywords.keys, MyKit::Keywords::KW_DISTANCE)
+			kws = Mykit::Strings.find_all(_C, @@keywords.keys, Mykit::Keywords::KW_DISTANCE)
 			@@ts3 += Time.new - ts3
 
 			kw_dist = Strings.distance(_C, kws.first) unless kws.blank?
@@ -127,10 +116,10 @@ class Lexer
 			which = (vs.blank? || kws.blank?) ? nil : vs_dist < kw_dist
 			vendors |= vs.collect { |v| @@vendors[v] } if which.nil? || which == true
 			kws.each { |s| keywords |= [ s ] ; (kw = @@keywords[s]).each_index { |i| components[i] += kw[i] } } if which.nil? || which == false
-			sense.delete(c) unless ms.blank? and kw.blank? and (vs.blank? || vs_dist > MyKit::Keywords::SAFE_DISTANCE) and (kws.blank? || kw_dist > MyKit::Keywords::SAFE_DISTANCE) and _C =~ sense_reg
+			sense.delete(c) unless ms.blank? and kw.blank? and (vs.blank? || vs_dist > Mykit::Keywords::SAFE_DISTANCE) and (kws.blank? || kw_dist > Mykit::Keywords::SAFE_DISTANCE) and _C =~ sense_reg
 		end
 
-		properties.keys.each { |i| components.each_index { |j| components[j] += MyKit::Keywords::PROPS[i][j] } }
+		properties.keys.each { |i| components.each_index { |j| components[j] += Mykit::Keywords::PROPS[i][j] } }
 
 		@@ts1 += Time.new - ts1
 
