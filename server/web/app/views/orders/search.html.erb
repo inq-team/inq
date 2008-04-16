@@ -58,10 +58,28 @@
 					<%= link_to c.serial_no, :controller => 'computers', :action => 'show', :id => c.id %>
 				<% } %>
 			</td>
-			</tr>		
+			</tr>
 		<% end %>
 		</table>
-	<% end %>	
+	<% end %>
+	<% if @computers and @computers.size > 0 %>
+		<p>Computers without orders:</p>
+		<table>
+		<% @computers.each { |c| %>
+			<tr>
+			<td class="order_cell" width="30%">
+<% if c.computer_stages.first and c.computer_stages.first.start %>
+				<div class="date"><%= c.computer_stages.first.start.strftime('%Y-%m-%d') %></div>
+<% end %>
+				<%=h c.model.name %>
+			</td>		
+			<td class="computer_cell" width="70%">
+				<%= link_to c.serial_no, :controller => 'computers', :action => 'show', :id => c.id %>
+			</td>
+			</tr>
+		<% } %>
+		</table>
+	<% end %>
 	
 	</div>
 </div>

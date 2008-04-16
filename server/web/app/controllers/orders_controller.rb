@@ -309,7 +309,15 @@ class OrdersController < ApplicationController
 				:include => [:order_stages, { :computers => :computer_stages }],
 				:order => 'order_stages.start'
 			)
-			redirect_to :action => 'show', :id => @orders[0] if @orders.size == 1
+			cond << 'orders.id IS NULL'
+			@computers = Computer.find(
+				:all,
+				:conditions => [cond.join(' AND '), cond_var],
+				:include => [{ :order => :order_stages}, :computer_stages ],
+				:order => 'computer_stages.start'
+			)
+			redirect_to :action => 'show', :id => @orders[0] if @orders.size == 1 and not params[:no_redirect]
+			redirect_to :controller => 'computers', :action => 'show', :id => @computers[0] if @computers.size == 1 and not params[:no_redirect]
 		end
 	end
 
