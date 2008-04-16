@@ -20,7 +20,6 @@ class Scanner
 		@svals = Hash.new
 		@dev = File.open(devname)
 		$scanners_dev << @dev
-		p @dev
 	end
 
 	def preprocess_vals()
