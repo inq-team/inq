@@ -25,7 +25,7 @@ Manager: <%= select :manager, :name, @managers, :selected => @selected_manager %
 							<div class="title" title="<%=h o.title %>"><%=h truncate(o.title, 35).gsub(/\//, ' / ').gsub(/\\/, ' \ ') %></div>
 							<div class="customer" title="<%=h o.customer %>"><%=h truncate(o.customer, 22) %></div>
 <%						if i == 3 or i == 4 %>
-							<div class="computers"><% o.comp_qty.to_i.times { %><%= image_tag 'computer.png' %><% } %></div>
+							<div class="computers"><% qt = o.comp_qty.to_i > 8 ? 8 : o.comp_qty.to_i; qt.times { %><%= image_tag 'computer.png' %><% } %><%= '...' if o.comp_qty.to_i > 8 %></div>
 <%						end %>
 							<div class="timer"><%=h o.from_delay %>d</div>
 						</a>
