@@ -32,18 +32,28 @@
 <div class="content">
 
 <% if @computers.size > 0 %>
+
 <% form_tag :action => 'handle_computers', :id => @order do %>
 
 <table>
+<tr>
+	<th></th>
+	<th>ID</th>
+	<th>Model</th>
+	<th>Profile</th>
+</tr>
 <% @computers.sort{ |a, b| a.id <=> b.id }.each { |c| %>
 <tr>
 <td><%= check_box "comp_#{c.id}", :update, :checked => true %></td>
 <td><%= link_to c.serial_no, :controller => 'computers', :action => 'show', :id => c.id %></td>
 <td><%=h c.model.name %></td>
-<td>Profile: <%= c.profile ? c.profile.name : 'none' %><td>
+<td><%= c.profile ? c.profile.name : 'none' %><td>
 </tr>
 <% } %>
-
+<tr>
+	<td colspan="3"><%= link_to_function 'Select All', "#{@computers.map{|x|x.id}.inspect}.each(function(x){ $('comp_' + x + '_update').checked = true; })" %> /
+	<%= link_to_function 'Unselect All', "#{@computers.map{|x|x.id}.inspect}.each(function(x){ $('comp_' + x + '_update').checked = false; })" %></td>
+</tr>
 <tr><td colspan="2" style="text-align: center" >
 	<%= submit_tag 'Print labels' %>
 	<%= submit_tag 'Change' %>
