@@ -96,7 +96,25 @@ class Computer < ActiveRecord::Base
 	def self.free_id
 		Computer.find_by_sql('SELECT MAX(id)+1 FROM computers')[0]['MAX(id)+1'].to_i
 	end
-
+	
+	def self.stage_in_process(order_id, stage)
+		Computer.find_by_sql(["SELECT computers.*
+		FROM computers INNER JOIN computer_stages 
+		ON computer_stages.computer_id=computers.id
+		WHERE computers.order_id=?
+		AND computer_stages.stage=?
+		AND computer_stages.end IS NULL", order_id, stage])
+	end
+		
+	def self.stage_done(order_id, stage)
+		Computer.find_by_sql(["SELECT computers.*
+		FROM computers INNER JOIN computer_stages 
+		ON computer_stages.computer_id=computers.id
+		WHERE computers.order_id=?
+		AND computer_stages.stage=?
+		AND computer_stages.end IS NOT NULL", order_id, stage])
+	end
+	
 	##
 	# If computer_stage is now running, then just set a person for
 	# it. If it's not running, close last stage, start this stage and

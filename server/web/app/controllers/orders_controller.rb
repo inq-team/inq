@@ -23,7 +23,7 @@ class OrdersController < ApplicationController
 	# GET /orders/1.xml
 	def show
 		@order = Order.find(params[:id])
-		@computers = Computer.find_all_by_order_id(@order.id, :include => [:model, :profile])
+		@computers = Computer.find_all_by_order_id(@order.id, :include => [:model, :profile, :computer_stages])
 		@computer_stage_order = ['assembling', 'testing', 'checking', 'packaging']
 		@st_comp_qty = @computer_stage_order.inject({}) do |h, stage|
 			h.merge({ stage => @computers.find_all { |c| s = c.last_computer_stage ; s && (s.stage == stage) && s.end.blank? }.size })
@@ -85,16 +85,18 @@ class OrdersController < ApplicationController
                 end 
 
 		['assembling', 'testing', 'checking', 'packaging'].each do |stage| 
-			testing = @computers.find_all { |c| s = c.last_computer_stage ; s && s.stage == stage && s.end.blank? }
-			done = @computers.find_all { |c| c.computer_stages.find_by_stage(stage, :conditions => "end is not null") }
-			count = testing.size
+#			in_process = @computers.find_all { |c| s = c.last_computer_stage ; s && s.stage == stage && s.end.blank? }
+			in_process = Computer.stage_in_process(@order.id, stage)
+#			done = @computers.find_all { |c| c.computer_stages.find_by_stage(stage, :conditions => "end is not null") }
+			done = Computer.stage_done(@order.id, stage)
+			count = in_process.size
 			passed = done.size
 			h = { :stage => stage, :progress => { :value => count > 0 ? count : passed, :total => @qty },
                                 :status => @qty == 0 ? :planned : passed == @qty ? :finished : count == 0 ? :planned : :running
                         }
 			h.delete(:progress) if [:planned, :finished].include?(h[:status])
 			h[:blank] = 0 if h[:status] == :finished
-			h[:computer_list] = { :computers => testing, :detail => :computer_stage } if h[:status] == :running
+			h[:computer_list] = { :computers => in_process, :detail => :computer_stage } if h[:status] == :running
 			@order_stages << h
                 end
 
