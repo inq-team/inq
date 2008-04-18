@@ -101,5 +101,5 @@ if raid-wizard-optimal; then
 
 	test_succeeded
 else
-	test_succeeded "No HDDs"
+	test_failed "Optiomal array creation error"
 fi
