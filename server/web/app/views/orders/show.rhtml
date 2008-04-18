@@ -35,9 +35,20 @@
 
 <% form_tag :action => 'handle_computers', :id => @order do %>
 
-<table>
+<%= javascript_tag ("
+function checkUncheckAll(theElement) {
+	if (theElement.id == 'checkall1'){
+		$('checkall2').checked = theElement.checked;
+	} 
+	else {
+		$('checkall1').checked = theElement.checked;
+	}
+	#{@computers.map{|x|x.id}.inspect}.each(function(x){ $('comp_' + x + '_update').checked = theElement.checked; });
+}
+") %>
+<table border="1">
 <tr>
-	<th></th>
+	<th><input type="checkbox" id="checkall1" checked="checked" onclick="checkUncheckAll(this);" style="height:1.25em;width:1.25em"/></th>
 	<th>ID</th>
 	<th>Model</th>
 	<th>Profile</th>
@@ -47,21 +58,25 @@
 <td><%= check_box "comp_#{c.id}", :update, :checked => true %></td>
 <td><%= link_to c.serial_no, :controller => 'computers', :action => 'show', :id => c.id %></td>
 <td><%=h c.model.name %></td>
-<td><%= c.profile ? c.profile.name : 'none' %><td>
+<td><%= c.profile ? c.profile.name : 'none' %></td>
 </tr>
 <% } %>
 <tr>
-	<td colspan="3"><%= link_to_function 'Select All', "#{@computers.map{|x|x.id}.inspect}.each(function(x){ $('comp_' + x + '_update').checked = true; })" %> /
-	<%= link_to_function 'Unselect All', "#{@computers.map{|x|x.id}.inspect}.each(function(x){ $('comp_' + x + '_update').checked = false; })" %></td>
-</tr>
-<tr><td colspan="2" style="text-align: center" >
+<td>
+	<input type="checkbox" id="checkall2" checked="checked" onclick="checkUncheckAll(this);" style="height:1.25em;width:1.25em"/>
+</td>
+<td colspan="3" style="text-align: right">
 	<%= submit_tag 'Print labels' %>
-	<%= submit_tag 'Change' %>
+	<%= submit_tag 'Change' %><br/>
 </td></tr>
-</table>
 
-<p>Change profile: <%= select :profile, :id, @profiles, :selected => @profile %></p>
-<p>Change model: <%= select :model, :id, @models, :selected => @model %></p>
+<tr><td colspan="2">
+New profile:<br/>
+New model:</td>
+<td colspan="2"><%= select :profile, :id, @profiles, :selected => @profile %><br/>
+<%= select :model, :id, @models, :selected => @model %></td>
+</tr>
+</table>
 
 <% end %>
 <% end %>
