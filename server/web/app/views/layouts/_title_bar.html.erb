@@ -2,6 +2,7 @@
 <div id="topmenu">
 <%= link_to 'Orders', :controller => :orders %>
 <%= link_to 'Search', :controller => :orders, :action => :search %>
+<%= link_to '(Recent)', :controller => :orders, :action => :search, :date => { :start => Date.today-2, :end => Date.today } %>
 <%= link_to 'Computers', :controller => :computers %>
 <%= link_to 'Profiles', :controller => :profiles %>
 </div>
