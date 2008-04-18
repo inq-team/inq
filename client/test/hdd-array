@@ -101,5 +101,5 @@ if raid-wizard-optimal; then
 
 	test_succeeded
 else
-	test_failed "Optiomal array creation error"
+	test_failed "Optimal array creation error"
 fi
