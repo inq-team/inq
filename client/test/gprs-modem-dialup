@@ -4,15 +4,20 @@
 # DESTROYS_HDD=false
 # IS_INTERACTIVE=false
 # POWEROFF_DURING_TEST=false
-# VERSION=0.1
+# VERSION=0.2
 # TAGS=usb,gprs
 # VAR=DEV:string:/dev/ttyUSB0:Name of device to test
 # VAR=APN:string:internet.mts.ru:Cell service provider's Internet APN
+# VAR=PPPD_USERNAME:string:mts:Cell service provider's pppd username
 # VAR=PPPD_TRIES:int:4:Number of tries to bring pppd up
 # VAR=URL:string:img-fotki.yandex.ru/getx/10/photoface.359/sevastopol-foto_34661_L:URL to download (without http)
 # VAR=MD5:string:ca530886183b06d0047e0655537327aa:MD5 of downloaded file
 # VAR=DOWNLOAD_TRIES:int:3:Number of tries to download the file
 # VAR=DOWNLOAD_MAX_TIME:int:60:Timeout for the whole download, sec
+# VAR=UPLOAD_FILE:string:/etc/ld.so.cache:File to upload
+# VAR=UPLOAD_TRIES:int:3:Number of tries to upload the file
+# VAR=UPLOAD_MAX_TIME:int:120:Timeout for file upload, sec
+# VAR=UPLOAD_URL:string::URL to upload (without http)
 # VAR=SPEED:int:115200:Line speed
 
 . /usr/share/inquisitor/functions-test
@@ -36,7 +41,7 @@ exit_handler()
 	[ -d "$TMP_DIR" ] && rm -rf "$TMP_DIR"
 }
 
-MODEM_INIT='AT+CGDCONT=1,\"IP\",\"internet.mts.ru\" OK'
+MODEM_INIT="AT+CGDCONT=1,\"IP\",\"$APN\" OK"
 PHONE="*99***1#"
 					
 # Create temporary directory
@@ -63,20 +68,18 @@ while [ "$TRIES" -lt "$PPPD_TRIES" ]; do
 		rm -f "$TMP_DIR/pppd.lock"
 	fi
 
+#ipcp-accept-local
+#ipcp-accept-remote
 	if pppd \
 		connect 'chat -v ABORT "NO DIALTONE" ABORT "NO CARRIER" ABORT BUSY "" '"$MODEM_INIT"' ATDP'$PHONE' "CONNECT" ;' \
 		crtscts \
 		defaultroute \
 		modem \
 		updetach \
-		mru 576 \
-		ipcp-accept-local \
-		ipcp-accept-remote \
 		noipdefault \
 		debug \
 		usepeerdns \
-		user mts \
-		mtu 576 \
+		user $PPPD_USERNAME \
 		novj \
 		nobsdcomp \
 		novjccomp \
@@ -89,13 +92,30 @@ while [ "$TRIES" -lt "$PPPD_TRIES" ]; do
 		continue
 	fi
 
+	sleep 5
+
 	# Downloading
-	echo -n "Downloading file"
-	curl --retry "$DOWNLOAD_TRIES" --max-time "$DOWNLOAD_MAX_TIME" http://$URL -o $TMP_DIR/download && echo_success || continue
+	echo 'Downloading file'
+	curl --retry "$DOWNLOAD_TRIES" --max-time "$DOWNLOAD_MAX_TIME" http://$URL -o $TMP_DIR/download -w '%{speed_download}' >$TMP_DIR/report && echo_success || continue
+
+	# Speed reporting
+	benchmark_submit_float 'Average download speed' `cat $TMP_DIR/report`
 
 	# MD5 check
-	echo -n 'Checking MD5 sum'
+	echo 'Checking MD5 sum'
 	echo "$MD5  $TMP_DIR/download" >$TMP_DIR/checkfile
+	md5sum -c $TMP_DIR/checkfile && echo_success || continue
+
+	# Uploading
+	echo 'Uploading file'
+	curl --retry "$UPLOAD_TRIES" --max-time "$UPLOAD_MAX_TIME" -F file=@$UPLOAD_FILE http://$UPLOAD_URL -o $TMP_DIR/md5 -w '%{speed_upload}' >$TMP_DIR/report && echo_success || continue
+
+	# Speed reporting
+	benchmark_submit_float 'Average upload speed' `cat $TMP_DIR/report`
+
+	# MD5 check
+	echo 'Checking uploaded MD5 sum'
+	echo "`cat $TMP_DIR/md5`  $UPLOAD_FILE" >$TMP_DIR/checkfile
 	md5sum -c $TMP_DIR/checkfile && echo_success || continue
 
 	# Finish test successfully
