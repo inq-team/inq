@@ -75,7 +75,11 @@ def progress_comments(stages)
 			comment = (comment[0..7] + (comment.size > 8 ? ["..."] : [])).join(', ')
 		else
 			title = content_tag(:b, stage[:stage].capitalize)
-			comment = stage[:comment] || ''
+			date_add = ' - '
+			date_add = stage[:start].strftime('%d.%m.%Y %H:%M') + date_add if stage[:start]
+			date_add += stage[:end] ? stage[:end].strftime('%d.%m.%Y %H:%M') : 'now'
+			comment = "#{stage[:comment]}"
+			comment = "(<small>#{date_add}</small>) #{comment}" if date_add != ' - now'
 		end
 		(content_tag(:b, title + ': ') + comment).gsub('"', "'")
 	end
