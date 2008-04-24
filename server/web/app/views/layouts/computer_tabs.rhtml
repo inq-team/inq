@@ -66,6 +66,9 @@
 		<td id="testing_plan"><div class="testing_border">
 			<table>
 				<tr><th class="testing_stage_name">Stage</th><th class="testing_stage_span">Elapsed</th></tr>
+			<% if @testing and @testing.test_start %>
+				<tr><td class="testing_stages_start" colspan="2"><%= @testing.test_start.strftime('%d.%m.%Y %H:%M') %></td></tr>
+			<% end %>
 			<% if @stages %>
 				<% @stages.each { |stage| %>
 				<tr class='testing_stage_<%= stage[:result] %>'>
@@ -73,6 +76,9 @@
 					<td class="testing_stage_span"><%= sprintf("%02i:%02i:%02i", stage[:elapsed]/3600, stage[:elapsed]%3600/60, stage[:elapsed]%3600%60) if stage[:elapsed] %></td>
 				</tr>
 			<% } %>
+			<% end %>
+			<% if @testing and @testing.test_end %>
+				<tr><td class="testing_stages_end" colspan="2"><%= @testing.test_end.strftime('%d.%m.%Y %H:%M') %></td></tr>
 			<% end %>
 			</table>
 			&nbsp;

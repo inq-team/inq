@@ -229,6 +229,13 @@ td#testing_plan {
 	width: 13em;
 }
 
+.testing_stages_start, .testing_stages_end {
+	padding-left: 24px ! important;
+	font-weight: bold;
+	background: url('/images/clock.png') 90% 50% no-repeat #D0D0D0;
+//	background: #D0D0D0;
+}
+
 td#content {
 	height: 100%;
 	width: 53.7em;
