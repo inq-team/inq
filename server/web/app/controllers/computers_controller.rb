@@ -334,6 +334,11 @@ __EOF__
 		}
 	end
 
+	def ssh
+		prepare_computer_tabs
+		render(:layout => 'computer_tabs')
+	end
+
 	def update
 		@computer = Computer.find(params[:id])
 		if @computer.update_attributes(params[:computer])

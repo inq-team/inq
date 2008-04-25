@@ -20,7 +20,7 @@
 		<td id="title_bar_serial"><%= @computer.serial_no %></td>
 		<td id="title_bar_shelf"><%= @computer.shelf %></td>
 <% if @computer.order %>
-		<td id="title_bar_doc">Order: <%= link_to @computer.order.buyer_order_number, { :controller => :orders, :action => :show, :id => @computer.order } %> (<%= link_to  truncate(@computer.order.customer, 40).gsub(/ /, '&nbsp;'), { :controller => :orders, :action => :search, :order => { :customer => @computer.order.customer } } %>)</td>
+		<td id="title_bar_doc">Order: <%= link_to @computer.order.buyer_order_number, { :controller => :orders, :action => :show, :id => @computer.order } %> (<%= link_to @computer.order.customer ? truncate(@computer.order.customer, 40).gsub(/ /, '&nbsp;') : '', { :controller => :orders, :action => :search, :order => { :customer => @computer.order.customer } } %>)</td>
 <% end %>
 <% if @computer.profile %>
 		<td id="title_bar_profile_show">Profile: <%= link_to @computer.profile.name, { :controller => :profiles, :action => :show, :id => @computer.profile } %><%= link_to_function image_tag('edit.png'), "$('title_bar_profile_show').style.display = 'none'; $('title_bar_profile_edit').style.display = 'table-cell';" %></td>
@@ -41,6 +41,7 @@
 			<%= content_tag(:td, link_to("Logs", {:action => 'log', :id => @computer.id, :testing => @testing_number}), :id => 'info_tab_log') %>
 			<%= content_tag(:td, link_to("Marks", {:action => 'mark', :id => @computer.id, :testing => @testing_number}), :id => 'info_tab_mark') %>
 			<%= content_tag(:td, link_to("Graphs", {:action => 'graph', :id => @computer.id, :testing => @testing_number}), :id => 'info_tab_graph') %>
+			<%= content_tag(:td, link_to("SSH", {:action => 'ssh', :id => @computer.id, :testing => @testing_number}), :id => 'info_tab_ssh') %>
 		</tr></table></td>
 		</tr>
 
