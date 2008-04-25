@@ -140,8 +140,15 @@ class OrdersController < ApplicationController
 			c.model_id = model_id
 			c.order_id = params[:id]
 			c.profile_id = profile_id
+			c.computer_stages << ComputerStage.new(:stage => 'assembling', :start => Time.new)
 			c.save!
 		end
+
+		OrderStage.find_all_by_order_id_and_stage(params[:id], 'acceptance').each { |os|
+			os.end = Time.new
+			os.save!
+		}
+
 		redirect_to :action => 'show', :id => params[:id]
 	end
 

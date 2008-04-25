@@ -1,6 +1,6 @@
 class Order < ActiveRecord::Base
 	has_many :order_lines
-	has_many :order_stages
+	has_many :order_stages, :order => 'start'
 	has_many :computers
 
 	def update_order(attr)
@@ -31,13 +31,10 @@ ORDER BY from_delay ASC", add_arg]),
 INNER JOIN order_stages os ON o.id=os.order_id
 WHERE os.stage='acceptance' AND os.end IS NULL #{add_filter}
 ORDER BY from_delay ASC", add_arg]),
-			self.find_by_sql(["SELECT o.id, o.buyer_order_number, o.title, o.customer, NOW(), 0 AS from_delay, COUNT(c.id) AS comp_qty FROM orders o
+			self.find_by_sql(["SELECT o.id, o.buyer_order_number, o.title, o.customer, cs.start, DATEDIFF(NOW(), cs.start) AS from_delay, COUNT(c.id) AS comp_qty FROM orders o
 INNER JOIN computers c ON c.order_id=o.id
 LEFT JOIN computer_stages cs ON cs.computer_id=c.id
-WHERE cs.id IS NULL AND o.id NOT IN (
-	SELECT o2.id FROM orders o2 LEFT JOIN order_stages os2 ON o2.id=os2.order_id
-	WHERE os2.stage = 'manufacturing'
-) #{add_filter}
+WHERE cs.stage='assembling' AND cs.end IS NULL #{add_filter}
 GROUP BY o.id
 ORDER BY from_delay DESC", add_arg]),
 			self.find_by_sql(["SELECT o.id, o.buyer_order_number, o.title, o.customer, cs.start, DATEDIFF(NOW(), cs.start) AS from_delay, COUNT(c.id) AS comp_qty FROM orders o
