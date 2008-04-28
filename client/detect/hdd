@@ -21,7 +21,7 @@ hal_detect()
 		HDD_DEV=`hal-get-property --udi "$UDI" --key block.device`
 		HDD_MODEL=`hal-get-property --udi "$UDI" --key info.product`
 		HDD_VENDOR=`hal-get-property --udi "$UDI" --key storage.vendor`
-		HDD_SERIAL=`smartctl -a $HDD_DEV | sed -ne '/^Serial number:/ s/^Serial number: *//p'`
+		HDD_SERIAL=`smartctl -a -d ata $HDD_DEV | sed -ne '/^Serial Number:/ s/^Serial Number: *//p'`
 
 		detect_vendor '^ST.*' 'Seagate'
 		detect_vendor '^D...-.*' 'IBM'
