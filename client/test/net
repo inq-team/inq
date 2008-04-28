@@ -41,25 +41,37 @@ test_nic()
 	local nic_number=$1
 	local md5
 
+	echo -n "Setting link up interface"
 	ifconfig eth${nic_number} up
+	echo_success
+
 	sleep 5
+	echo -n "Setting IP address"
 	ifconfig eth${nic_number} inet $LOCAL_IP
+	echo_success
+
+	echo -n "Replacing default route"
 	ip route replace default via $GATEWAY dev eth${nic_number}
+	echo_success
 	sleep 5
 
 	for i in `seq 0 $(( $NIC_QUANTITY - 1 ))`; do
 		if [ "$nic_number" -ne $i ]; then
+			echo -n "Setting link down on eth${i}"
 			ip link set eth${i} down
+			echo_success
 		else
 			true
 		fi
 	done
 
+	echo -n "Downloading testing file"
 	speed=`curl -s -w "%{speed_download}" -o $TESTFILE --connect-timeout \
 		$TIMEOUT http://${SERVER}:${URL} | sed 's/\D//g'` \
 		|| test_failed "NIC eth${i} test failed"
 	[ `md5sum -b < $TESTFILE | awk '{print $1}'` = $MD5 ] || \
 		test_failed "NIC eth${i} test failed"
+	echo_success
 
 	benchmark_submit_float "NIC eth${nic_number} download speed" $speed
 }
@@ -80,6 +92,7 @@ if [ "$FIRST_NIC" -ne $i ]; then
 fi
 done
 
+echo "Testing default NIC..."
 test_nic $FIRST_NIC #to restore startup parameters
 
 test_succeeded
