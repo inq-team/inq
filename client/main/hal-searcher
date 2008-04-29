@@ -1,0 +1,48 @@
+#!/usr/bin/env ruby
+
+require 'getoptlong'
+
+opts = GetoptLong.new(
+	['--help', '-h', GetoptLong::NO_ARGUMENT],
+	['--key', '-k', GetoptLong::REQUIRED_ARGUMENT],
+	['--value', '-v', GetoptLong::REQUIRED_ARGUMENT]
+)
+
+key = nil
+value = nil
+opts.each do |opt, arg|
+	case opt
+	when '--help'
+		puts 'usage: hal-finder --key <key> --value <value> [--help]'
+		exit
+	when '--key'
+		key = arg
+	when '--value'
+		value = arg
+	end	
+end
+
+hal_dump = `hal-device`.split("\n")
+devices = []
+h = {}
+hal_dump.each do |l|
+	h['udi'] = $1 if l =~ /^[0-9]+: udi = '(.+)'$/
+	h[$1] = $2 if l =~ /^ *(.+) = '(.+)'  \(string\)$/
+	h[$1] = $2.split(', ').map{ |s| s.gsub(/^'/, '').gsub(/'$/, '') } if l =~ /^ *(.+) = \{ ('.*', ('.*', )'.*'|'.*') \} \(string list\)$/
+	h[$1] = $2 if l =~ /^ *(.+) = (.+)  \(.+\)  \(int\)$/
+	if l == ''
+		devices << h
+		h = {}
+	end
+end
+devices << h
+
+finded = devices.select do |d|
+	if d[key].class == Array
+		d[key].find{ |x| x == value }
+	else
+		d[key] == value
+	end
+end
+
+finded.each{ |d| puts d['udi'] }
