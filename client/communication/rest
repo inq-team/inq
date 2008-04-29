@@ -47,7 +47,7 @@ submit_components()
 
 submit_additional_components()
 {
-	curl -f --data list=\""`cat $1 `"\" -X POST "$REST_SERVER/computers/submit_additional_components/$COMPUTER_ID.xml"
+	[ -r "$1" ] && curl -f --data list=\""`cat $1 `"\" -X POST "$REST_SERVER/computers/submit_additional_components/$COMPUTER_ID.xml"
 }
 
 # Mark current testing as finished
