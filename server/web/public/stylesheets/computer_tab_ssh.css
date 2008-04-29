@@ -1,0 +1,24 @@
+.testing_border, #selected_testing_tab, #testing_pane td table td, #testing_pane td table th {
+	border-color: #559F7D ! important; 
+}
+
+td#testings_tabs table tr td, td#info_tabs table tr td {
+	border-color: white ! important;
+}
+
+td#testings_tabs table tr td#selected_testing_tab {
+	background-color: #AACFBE;
+	border-color: #AACFBE ! important;
+}
+
+td#info_tabs table tr td#info_tab_ssh {
+	background-color: #AACFBE;
+	border-color: #AACFBE ! important;
+}
+
+td#info_tabs table tr td#info_tab_ssh a{
+	text-decoration: none;
+	cursor: default;
+	color: #002514;
+	font-weight: bold;
+}
