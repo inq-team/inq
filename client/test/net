@@ -4,11 +4,12 @@
 # DESTROYS_HDD=false
 # IS_INTERACTIVE=false
 # POWEROFF_DURING_TEST=false
-# VERSION=0.1
+# VERSION=0.2
 # TAGS=net
 # VAR=TIMEOUT:int:15:Wait timeout while test file retrieving, sec
 # VAR=URL:string:3000/test_file:Relative to server PORT:URL to be fetched and checked
 # VAR=MD5:string:805414334eb1d3ff4fdca507ec82098f:MD5 checksum for checking
+# VAR=EXCLUDE_MAC:string::Exclude NICs with MAC addresses that match this regexp from testing
 
 . /usr/share/inquisitor/functions-test
 
@@ -40,6 +41,13 @@ test_nic()
 {
 	local nic_number=$1
 	local md5
+	local udi
+
+	udi=`hal-find-by-property --key net.interface --string eth${nic_number}`
+	if [ -n "$udi" ] && [ -n "$EXCLUDE_MAC" ] && hal-get-property --udi "$udi" --key net.address | egrep -q "$EXCLUDE_MAC"; then
+		echo "Skipping testing (MAC $mac)"
+		return 0
+	fi
 
 	echo -n "Setting link up interface"
 	ifconfig eth${nic_number} up
