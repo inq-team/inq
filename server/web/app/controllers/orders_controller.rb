@@ -23,7 +23,7 @@ class OrdersController < ApplicationController
 	# GET /orders/1.xml
 	def show
 		@order = Order.find(params[:id])
-		@computers = Computer.find_all_by_order_id(@order.id, :include => [:model, :profile, :computer_stages])
+		@computers = Computer.find_all_by_order_id(@order.id, :include => [:model, :profile, :computer_stages], :order => 'computers.id, computer_stages.start')
 		@computer_stage_order = ['assembling', 'testing', 'checking', 'packaging']
 		@st_comp_qty = @computer_stage_order.inject({}) do |h, stage|
 			h.merge({ stage => @computers.find_all { |c| s = c.last_computer_stage ; s && (s.stage == stage) && s.end.blank? }.size })
