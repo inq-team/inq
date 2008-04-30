@@ -630,8 +630,6 @@ __EOF__
 	end
 
 	def boot_from_image
-		tftp_dir = "/var/lib/tftpboot"
-
 		image = params[:image]
 		@computer = Computer.find(params[:id])
 		@testing = @computer.last_testing
@@ -640,10 +638,10 @@ __EOF__
 		@macs.collect! { |mac| mac.gsub(/:/,'-') }
 
 		to_delete = @macs.collect { |mac| "pxelinux.cfg/01-" + mac }.join(" ")
-		add_options = File.size("#{tftp_dir}/#{image}") == 16777216 ? "floppy c=16 s=32 h=64" : ""
+		add_options = File.size("#{TFTP_DIR}/#{image}") == 16777216 ? "floppy c=16 s=32 h=64" : ""
 
 		@macs.each { |mac|
-			cfgfile = File.new("#{tftp_dir}/pxelinux.cfg/01-#{mac}", "w")
+			cfgfile = File.new("#{TFTP_DIR}/pxelinux.cfg/01-#{mac}", "w")
 			cfgfile.puts <<__EOF__
 ##{to_delete}
 default firmware

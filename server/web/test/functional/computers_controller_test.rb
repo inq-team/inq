@@ -1,5 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 require 'computers_controller'
+require 'fileutils'
 
 # Re-raise errors caught by the controller.
 class ComputersController; def rescue_action(e) raise e end; end
@@ -126,16 +127,27 @@ class ComputersControllerTest < Test::Unit::TestCase
 	end
 
 	def test_boot_from_image
-		post :boot_from_image, :id => 20, :image => "rsbios.my"
-		macs=assigns['macs']
+		# Create temporary "BIOS-image" file and pxelinux.cfg directory
+		tmpfile = rand(100).to_s
+		f = File.new("#{TFTP_DIR}/#{tmpfile}", "w")
+		f.close
+		FileUtils.mkdir("#{TFTP_DIR}/pxelinux.cfg")
+
+		post :boot_from_image, :id => 20, :image => tmpfile
+		macs = assigns['macs']
 		assert_equal ["00-e0-81-5d-4f-37", "00-e0-81-5d-4f-38"], macs
 		assert_response :success
+
+		FileUtils.rm("#{TFTP_DIR}/pxelinux.cfg/01-00-e0-81-5d-4f-37")
+		FileUtils.rm("#{TFTP_DIR}/pxelinux.cfg/01-00-e0-81-5d-4f-38")
+		FileUtils.rm("#{TFTP_DIR}/#{tmpfile}")
+		FileUtils.rmdir("#{TFTP_DIR}/pxelinux.cfg")
 	end
 
 	def test_firmware
 		needed_firmwares = "NIC::810011::rs160g3.bios\nNIC::810011::rs160g3.bios\nRAM::1.0::memtester\n"
 		get :get_needed_firmwares_list, :id => 20
-		firmwares=assigns['firmwares']
+		firmwares = assigns['firmwares']
 		assert_equal needed_firmwares, firmwares
 	end
 

@@ -19,3 +19,4 @@ config.action_controller.perform_caching             = false
 config.action_mailer.delivery_method = :test
 config.action_controller.session_store = :memory_store
 
+TFTP_DIR = "/tmp"
