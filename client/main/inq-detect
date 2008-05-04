@@ -1,7 +1,34 @@
 #!/bin/sh
 
 . /etc/inquisitor/global
+. $SHARE_DIR/functions
 
+# Save detection logs
+dmidecode >$HOME/dmi.log
+$SHARE_DIR/decode-dimms.pl >$HOME/spd.log
+ipmitool fru 2>/dev/null >$HOME/fru.log || true
+lspci >$HOME/lspci.log
+lshw 2>/dev/null >$HOME/lshw.log
+rm -f $HOME/einarc_detects.log
+touch $HOME/einarc_detects.log
+einarc -l | cut -f1 | while read TYPE; do
+	CTRL_INFO=`einarc -t $TYPE adapter info`
+	CTRL_PCI_VENDOR_ID=`echo "$CTRL_INFO" | sed -n "s/PCI vendor ID\t//p" | sed 's/^0*//'`
+	CTRL_PCI_PRODUCT_ID=`echo "$CTRL_INFO" | sed -n "s/PCI product ID\t//p" | sed 's/^0*//'`
+	CTRL_PCI_SUBVENDOR_ID=`echo "$CTRL_INFO" | sed -n "s/PCI subvendor ID\t//p" | sed 's/^0*//'`
+	CTRL_PCI_SUBPRODUCT_ID=`echo "$CTRL_INFO" | sed -n "s/PCI subproduct ID\t//p" | sed 's/^0*//'`
+	if [ -n "$CTRL_PCI_PRODUCT_ID" ]; then
+		if [ -z "$CTRL_PCI_SUBPRODUCT_ID" ]; then 
+			CTRL_PCI_SUBVENDOR_ID="$CTRL_PCI_VENDOR_ID"
+			CTRL_PCI_SUBPRODUCT_ID="$CTRL_PCI_PRODUCT_ID"
+		fi
+		echo "$CTRL_PCI_VENDOR_ID:$CTRL_PCI_PRODUCT_ID:$CTRL_PCI_SUBVENDOR_ID:$CTRL_PCI_SUBPRODUCT_ID" >> $HOME/einarc_detects.log
+	fi
+done
+
+# Starting detects
 for I in $SHARE_DIR/detect/*; do
+	echo -n "Detecting `basename $I`"
 	. $I
+	echo_success
 done

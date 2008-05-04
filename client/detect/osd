@@ -2,15 +2,15 @@
 
 strip_vendor()
 {
-	if echo $OSD_MODEL | grep -q "^$1"; then
+	if echo "$OSD_MODEL" | grep -q "^$1"; then
 		OSD_VENDOR=$2
-		OSD_MODEL=`echo $OSD_MODEL | sed "s/^$1//;"`
+		OSD_MODEL=`echo "$OSD_MODEL" | sed "s/^$1//;"`
 	fi
 }
 
 detect_vendor()
 {
-	if echo $OSD_MODEL | grep -q "^$1"; then
+	if echo "$OSD_MODEL" | grep -q "^$1"; then
 		OSD_VENDOR=$2
 	fi
 }

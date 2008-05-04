@@ -1,37 +1,91 @@
 #!/bin/sh
 
-TYPES='IDE interface
-RAID bus controller
-Mass storage controller
-SCSI storage controller'
+#SHARE_DIR=$HOME
 
-echo "$TYPES" | while read TYPE; do
-	CTRLS=`cat $HOME/lspci.log 2>/dev/null | grep -i "$TYPE" || true`
-	echo "$CTRLS" | while read CTRL; do
-		if [ -n "$CTRL" ]; then
-			BUS=`echo "$CTRL" | grep -o  '..:..\..'`
-			CTRL_INFO=`cat $HOME/lshw.log 2>/dev/null | grep -i -B3 "$BUS"$`
-			CTRL_VENDOR=`echo "$CTRL_INFO" | sed -n 's/ *vendor: //p'`
-			CTRL_MODEL=`echo "$CTRL_INFO" | sed -n 's/ *product: //p'`
-			if [ -z "`echo "$CTRL_VENDOR" | grep -i 'lsi'`" ] && [ -z "`echo "$CTRL_VENDOR" | grep -i 'areca'`" ] && [ -z "`echo "$CTRL_VENDOR" | grep -i 'adaptec'`" ] || [ -n "`echo "$CTRL_MODEL" | grep -i 'SAS1064E'`" ] || [ -n "`echo "$CTRL_VENDOR" | grep -i 'mpt'`" ]; then
-				$SHARE_DIR/add-component 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" ''
-			fi
-		fi	
+einarc_detect()
+{
+	einarc -l | while read L; do
+		CTRL_TYPE=`echo "$L" | cut -f1`
+		CTRL_MODEL=`echo "$L" | cut -f3`
+		CTRL_INFO=`einarc -t $CTRL_TYPE adapter info`
+		CTRL_SERIAL=`echo "$CTRL_INFO" | sed -n "s/Serial number\t//p" | sed 's/[^ -~]//g'`
+		case $CTRL_TYPE in
+			'areca') CTRL_VENDOR='Areca';;
+			'lsi_megarc') CTRL_VENDOR='LSI';;
+			'lsi_megcli') CTRL_VENDOR='LSI';;
+			'adaptec_aaccli') CTRL_VENDOR='Adaptec';;
+		esac		
+		echo 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" "$CTRL_SERIAL" - eianrc >> $HOME/debug.log
+#		echo 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" "$CTRL_SERIAL" - eianrc
+		$SHARE_DIR/add-component 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" "$CTRL_SERIAL"
 	done
-done
+}
 
-einarc -l | while read L; do
-	CTRL_TYPE=`echo "$L" | cut -f1`
-	CTRL_MODEL=`echo "$L" | cut -f3`
-	CTRL_SERIAL=`einarc -t $CTRL_TYPE adapter info | sed -n "s/Serial number\t//p" | sed 's/[^ -~]//g'`
-	if [ "$CTRL_TYPE" = "areca" ]; then
-		CTRL_VENDOR='Areca'
-	elif [ "$CTRL_TYPE" = "lsi_megarc" ]; then
-		CTRL_VENDOR='LSI'
-	elif [ "$CTRL_TYPE" = "lsi_megcli" ]; then
-		CTRL_VENDOR='LSI'
-	elif [ "$CTRL_TYPE" = "adaptec_aaccli" ]; then
-		CTRL_VENDOR='Adaptec'
+ctrl_detected()
+{
+	if [ -n "`cat $HOME/einarc_detects.log | grep "$1"`" ]; then
+		return 0
+	else
+		return 1
 	fi
-	$SHARE_DIR/add-component 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" "$CTRL_SERIAL"
-done
+}
+
+strip_vendor()
+{
+	CTRL_VENDOR=`echo "$1" | sed '	s/, Ltd\.//g;
+		s/ microsystems$//gi;
+		s/ systems$//gi;
+		s/ technologies$//gi;
+		s/Co\.,//g;
+		s/Ltd\.//g;
+		s/Co\.//g;
+		s/Corp\.//g;
+		s/Corporation//g;
+		s/ System Inc$//gi;
+		s/, Inc\.//g;
+		s/, Inc//g;
+		s/Inc\.//g;
+		s/Inc$//g;
+		s/, Ltd//g;
+		s/ Ltd$//g;
+		s/ Co$//g;
+		s/American Megatrends/AMI/g;
+		s/Realtek Semiconductor/Realtek/g;
+		s/Advanced Micro Devices \[AMD\]/AMD/g;
+		s/Silicon Integrated Systems \[SiS\]/SiS/g;
+		s/VIA Technologies Inc\./VIA/g;
+		s/VIA Technologies/VIA/g;
+		s/Agere Systems (former Lucent Microelectronics)/Agere/g;
+		s/ATI Technologies/ATI/g;
+		s/nVidia Corporation/nVidia/g;
+		s/Hightech Information System/HIS/g;
+		s/Marvell Technology Group/Marvell/g;
+		s!Linksys, A Division of Cisco Systems!Linksys/Cisco!g;
+		s/Atheros Communications/Atheros/g;
+		s/INPROCOMM IPN 2220 Wireless LAN Adapter (rev 01)/INPROCOMM IPN 2220/g;
+		s/VT8378 \[S3 UniChrome\] Integrated/VT8378 [S3 UniChrome] Int./g;
+		s/S3 Unichrome Pro VGA Adapter/S3 UniChrome Pro/g;
+		s/nVidia/NVIDIA/g;
+		s/  *$//g;'`
+}
+
+hal_detect()
+{
+	for UDI in `$SHARE_DIR/hal-searcher --key pci.device_class --value 1`; do
+		CTRL_PCI_VENDOR_ID=`hal-get-property --udi "$UDI" --key pci.vendor_id --hex 2>/dev/null`
+		CTRL_PCI_PRODUCT_ID=`hal-get-property --udi "$UDI" --key pci.product_id --hex 2>/dev/null`
+		CTRL_PCI_SUBVENDOR_ID=`hal-get-property --udi "$UDI" --key pci.subsys_vendor_id --hex 2>/dev/null`
+		CTRL_PCI_SUBPRODUCT_ID=`hal-get-property --udi "$UDI" --key pci.subsys_product_id --hex 2>/dev/null`
+		if ! ctrl_detected "$CTRL_PCI_VENDOR_ID:$CTRL_PCI_PRODUCT_ID:$CTRL_PCI_SUBVENDOR_ID:$CTRL_PCI_SUBPRODUCT_ID"; then
+			CTRL_VENDOR=`hal-get-property --udi "$UDI" --key pci.vendor`
+			CTRL_MODEL=`hal-get-property --udi "$UDI" --key info.product`
+			strip_vendor "$CTRL_VENDOR"
+			echo 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" '' - hal >> $HOME/debug.log
+#			echo 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" '' - hal
+			$SHARE_DIR/add-component 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" ''
+		fi
+	done
+}
+
+einarc_detect
+hal_detect

@@ -11,19 +11,8 @@ fi
 # Detects
 # ===========================================================================
 
-# Save detection logs
-dmidecode > $HOME/dmi.log
-$SHARE_DIR/decode-dimms.pl > $HOME/spd.log
-ipmitool fru 2>/dev/null > $HOME/fru.log || true
-lspci > $HOME/lspci.log
-lshw 2>/dev/null > $HOME/lshw.log
-
 echo 'Starting detects'
-for I in $SHARE_DIR/detect/*; do
-	echo -n "Detecting `basename $I`"
-	. $I
-	echo_success
-done
+$SHARE_DIR/inq-detect
 echo 'Detects finished'
 
 # ===========================================================================

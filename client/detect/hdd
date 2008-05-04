@@ -1,5 +1,38 @@
 #!/bin/sh
 
+einarc_detect()
+{
+	einarc -l | cut -f1 | while read TYPE; do
+		einarc -t  "$TYPE" physical list | while read L; do
+			HDD_VENDOR=`echo "$L" | cut -f2 | cut -f1 -d' '`
+			HDD_MODEL=`echo "$L" | cut -f2 | cut -f2 -d' '`
+			HDD_SERIAL=`echo "$L" | cut -f4`
+			echo HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" ' - einarc' >> $HOME/debug.log
+#			echo HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" ' - einarc'
+			$SHARE_DIR/add-component HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL"
+		done
+	done
+}
+
+hdd_detected()
+{
+	local udi="$1"
+	while [ -n "$udi" ]; do
+		if udi=`hal-get-property --udi "$udi" --key info.parent 2>/dev/null`; then
+			PCI_VENDOR_ID=`hal-get-property --udi "$udi" --key pci.vendor_id --hex 2>/dev/null`
+			PCI_PRODUCT_ID=`hal-get-property --udi "$udi" --key pci.product_id --hex 2>/dev/null`
+			PCI_SUBVENDOR_ID=`hal-get-property --udi "$udi" --key pci.subsys_vendor_id --hex 2>/dev/null`
+			PCI_SUBPRODUCT_ID=`hal-get-property --udi "$udi" --key pci.subsys_product_id --hex 2>/dev/null`
+			ID="$PCI_VENDOR_ID:$PCI_PRODUCT_ID:$PCI_SUBVENDOR_ID:$PCI_SUBPRODUCT_ID"
+			if [ -n "`cat "$HOME/einarc_detects.log" | grep "$ID"`" ]; then
+				return 0
+				break
+			fi
+		fi
+	done
+	return 1
+}
+
 strip_vendor()
 {
 	if echo $HDD_MODEL | grep -qi "^$1"; then
@@ -17,54 +50,43 @@ detect_vendor()
 
 hal_detect()
 {
-	for UDI in `hal-find-by-property --key storage.drive_type --string 'disk'`; do
-		HDD_DEV=`hal-get-property --udi "$UDI" --key block.device`
-		HDD_MODEL=`hal-get-property --udi "$UDI" --key info.product`
-		HDD_VENDOR=`hal-get-property --udi "$UDI" --key storage.vendor`
-		HDD_SERIAL=`smartctl -a -d ata $HDD_DEV | sed -ne '/^Serial Number:/ s/^Serial Number: *//p'`
 
-		detect_vendor '^ST.*' 'Seagate'
-		detect_vendor '^D...-.*' 'IBM'
-		detect_vendor '^IBM.*' 'IBM'
-		detect_vendor '^HITACHI.*' 'Hitachi'
-		detect_vendor '^IC.*' 'Hitachi'
-		detect_vendor '^HTS.*' 'Hitachi'
-		detect_vendor '^HDS.*' 'Hitachi'
-		detect_vendor '^FUJITSU.*' 'Fujitsu'
-		detect_vendor '^MP.*' 'Fujitsu'
-		detect_vendor '^TOSHIBA.*' 'Toshiba'
-		detect_vendor '^MK.*' 'Toshiba'
-		detect_vendor '^MAXTOR.*' 'Maxtor'
-		detect_vendor '^Pioneer.*' 'Pioneer'
-		detect_vendor '^PHILIPS.*' 'Philips'
-		detect_vendor '^QUANTUM.*' 'Quantum'
-		detect_vendor 'FIREBALL.*' 'Quantum'
-		detect_vendor '^WDC.*' 'Western Digital'
-		detect_vendor 'WD.*' 'Western Digital'
+	for UDI in `hal-find-by-property --key storage.drive_type --string 'disk'; hal-find-by-property --key scsi.type --string 'disk'`; do
+		if ! hdd_detected "$UDI"; then	
+			HDD_DEV=`hal-get-property --udi "$UDI" --key block.device`
+			HDD_INFO=`hdparm -I "$HDD_DEV"`
+			HDD_MODEL=`echo "$HDD_INFO" | sed -n 's/^.*Model Number://p'`
+			HDD_SERIAL=`echo "$HDD_INFO"| sed -n 's/^.*Serial Number: *//p' | sed 's/ *$//'`
 
-		strip_vendor 'Maxtor ' 'Maxtor'
-		strip_vendor 'WDC ' 'Western Digital'
-		strip_vendor 'Hitachi ' 'Hitachi'
+			detect_vendor '^ST.*' 'Seagate'
+			detect_vendor '^D...-.*' 'IBM'
+			detect_vendor '^IBM.*' 'IBM'
+			detect_vendor '^HITACHI.*' 'Hitachi'
+			detect_vendor '^IC.*' 'Hitachi'
+			detect_vendor '^HTS.*' 'Hitachi'
+			detect_vendor '^HDS.*' 'Hitachi'
+			detect_vendor '^FUJITSU.*' 'Fujitsu'
+			detect_vendor '^MP.*' 'Fujitsu'
+			detect_vendor '^TOSHIBA.*' 'Toshiba'
+			detect_vendor '^MK.*' 'Toshiba'
+			detect_vendor '^MAXTOR.*' 'Maxtor'
+			detect_vendor '^Pioneer.*' 'Pioneer'
+			detect_vendor '^PHILIPS.*' 'Philips'
+			detect_vendor '^QUANTUM.*' 'Quantum'
+			detect_vendor 'FIREBALL.*' 'Quantum'
+			detect_vendor '^WDC.*' 'Western Digital'
+			detect_vendor 'WD.*' 'Western Digital'
 
-		if [ -z "`echo "$HDD_VENDOR" | grep -i 'Linux'`" ] && [ -z "`echo "$HDD_VENDOR" | grep -i 'Adaptec'`" ] && [ -z "`echo "$HDD_VENDOR" | grep -i 'Intel'`" ]; then
-			echo HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" ' - lshw' >> $HOME/debug.log
+			strip_vendor 'Maxtor ' 'Maxtor'
+			strip_vendor 'WDC ' 'Western Digital'
+			strip_vendor 'Hitachi ' 'Hitachi'
+		
+			echo HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" ' - hal' >> $HOME/debug.log
+#			echo HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" ' - hal'
 			$SHARE_DIR/add-component HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL"
 		fi	
 	done
 }
 
-einarc_detect()
-{
-	einarc -l | cut -f1 | while read TYPE; do
-		einarc -t  "$TYPE" physical list | while read L; do
-			HDD_VENDOR=`echo "$L" | cut -f2 | cut -f1 -d' '`
-			HDD_MODEL=`echo "$L" | cut -f2 | cut -f2 -d' '`
-			HDD_SERIAL=`echo "$L" | cut -f4`
-			echo HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" ' - einarc' >> $HOME/debug.log
-			$SHARE_DIR/add-component HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL"
-		done
-	done
-}
-
-hal_detect
 einarc_detect
+hal_detect
