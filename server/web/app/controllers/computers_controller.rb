@@ -12,25 +12,6 @@ class ComputersController < ApplicationController
 
 	@@default_config = Shelves::Config.new(DEFAULT_SHELVES_CONFIG)
 
-	def latest
-		@computer = Computer.find(params[:id])
-		@testing = @computer.testings[-1]
-		@components = @testing.components
-		respond_to { |format|
-			format.html { render :action => 'testing' }
-			format.xml  { render :xml => @computer.to_xml }
-		}
-	end
-
-	def testing
-		@computer = Computer.find(params[:id])
-		@testing = Testing.find(params[:testing_id])
-		respond_to { |format|
-			format.html { render :action => 'testing' }
-			format.xml  { render :xml => @testing.to_xml(:include => :components) }
-		}
-	end
-
 	def set_assembler
 		@computer = Computer.find(params[:id])
 		@computer.set_assembler(params[:assembler_id])
@@ -58,7 +39,7 @@ class ComputersController < ApplicationController
 
 	def add_component
 		@computer = Computer.find(params[:id])
-		testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }.last
+		testing = @computer.testings.last
 		testing.components << Component.new(
 			:serial => params[:serial],
 			:model => ComponentModel.find_or_create_by_name_and_vendor_and_component_group_id(params[:model], params[:vendor], ComponentGroup.find_or_create_by_name(params[:type]).id)
@@ -84,7 +65,7 @@ class ComputersController < ApplicationController
 
 	def show
 		@computer = Computer.find(params[:id])
-                @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
+                @sorted_testings = @computer.testings
 		if @sorted_testings
 			@testing_number = params[:testing] ? params[:testing].to_i() : @sorted_testings.size - 1
 			redirect_to(:action => 'hw', :id => params[:id], :testing => @testing_number)
@@ -202,7 +183,6 @@ class ComputersController < ApplicationController
 		@forced = 0
 		render(:action => 'audit_cached', :layout => 'computer_audit')
 	end
-
 	
 	def sticker
 		prepare_computer_tabs
@@ -221,7 +201,7 @@ class ComputersController < ApplicationController
 	def print_sticker_compat
 		@computer = Computer.find(params[:id])
 		@testing_number = params[:testing].to_i()
-                @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
+                @sorted_testings = @computer.testings
 		@testing = @sorted_testings[@testing_number]			
 		count = params[:count].to_i()
 	
@@ -366,12 +346,7 @@ __EOF__
 				:variance => variance += 1
 			}
 		}
-		ccp = components.dup
-
-		errors = []
-		testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }.last
-
-		unless testing && testing.components.size == components.size && testing.components.inject(true) { |b, cmp| b && ccp.delete(ccp.find() { |h| (h[:vendor] == cmp.model.vendor && h[:model] == cmp.model.name) || (!h[:serial].blank? && h[:serial] == cmp.serial)  }) }
+		if need_new_testing(@computer.testings.last, components)
 			# BAD: component_group_id column used here directly
 			testing = Testing.new(
 				:profile_id => @computer.profile_id,
@@ -394,7 +369,7 @@ __EOF__
 			flash[:notice] = 'Components successfully updated.'
 			respond_to() do |format|
 				format.html { redirect_to(:action => 'show', :id => @computer) }
-				format.xml { render(:xml => testing.to_xml()) }
+				format.xml { render(:xml => @computer.testings.last.to_xml()) }
 			end
 		else
 			head(:status => 500)
@@ -459,8 +434,8 @@ __EOF__
 		name = params[:stage]
 		comment = params[:comment] || ""
 		raise "Event not supported: #{ event }." unless [:start, :finish, :fail].include?(event)
-                testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }.last
-		stage = testing.testing_stages.sort() { |a, b| a.start <=> b.start }.last
+                testing = @computer.testings.last
+		stage = testing.testing_stages.last
 		case event
 		when :start
 			testing.testing_stages << TestingStage.new(:start => Time.new(), :comment => comment, :stage => name)
@@ -484,7 +459,7 @@ __EOF__
 
 	def progress
 		@computer = Computer.find(params[:id])
-		testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }.last
+		testing = @computer.testings.last
 		progress = params[:complete].to_f() || 0
 		total = params[:total].to_f()
 		testing.progress_complete = progress
@@ -548,10 +523,13 @@ __EOF__
 		prev_testing = @sorted_testings[@testing_number - 1]
 		@pl = Planner.new(
 			@testing ? @testing.profile.xml : @computer.profile.xml,
-			@testing ? @testing.testing_stages : [],
 			prev_testing ? prev_testing.testing_stages : [],
+			@testing ? @testing.testing_stages : [],
+			prev_testing ? prev_testing.components : nil,
 			@testing ? @testing.components : nil,
-			prev_testing ? prev_testing.components : nil
+			false,
+			prev_testing ? prev_testing.profile_id : nil,
+			@testing ? @testing.profile_id : nil
 		)
 		@pl.calculate
 		render :text => @pl.script
@@ -740,7 +718,7 @@ __EOF__
 
 		# Planned stages
 		if @testing.profile
-			pl = Planner.new(@testing.profile.xml, @testing.testing_stages, prev_testing.testing_stages, @testing.components, prev_testing.components, true)
+			pl = Planner.new(@testing.profile.xml, @testing.testing_stages, prev_testing.testing_stages, @testing.components, prev_testing.components, true, @testing.profile_id, prev_testing.profile_id)
 			pl.plan.each { |stage|
 				@stages << {
 					:id => stage.id,
@@ -753,7 +731,7 @@ __EOF__
 
 	def prepare_computer_and_testing
 		@computer = Computer.find(params[:id])
-                @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
+                @sorted_testings = @computer.testings
 		if @sorted_testings.empty?
 			@testing_number = 0
 			return
@@ -768,5 +746,21 @@ __EOF__
 
 	def load_comparison(str)
 		Marshal.load(str)
+	end
+
+	# Decide if we have to open new testing or we can continue the last one
+	def need_new_testing(testing, components)
+		return true unless testing
+		return true unless testing.components.size == components.size
+		return true unless testing.profile_id == @computer.profile_id
+		return true if testing.close_hanging
+
+		ccp = components.dup
+		return true unless testing.components.inject(true) { |b, cmp|
+			b && ccp.delete(ccp.find() { |h|
+				(h[:vendor] == cmp.model.vendor && h[:model] == cmp.model.name) || (!h[:serial].blank? && h[:serial] == cmp.serial)
+			})
+		}
+		return false
 	end
 end

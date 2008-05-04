@@ -19,3 +19,82 @@ two_testings_new_hdd_done_cpu0_stage:
   end: 2000-01-01 01:00
   stage: cpu
   result: 1
+
+switching_ts1:
+  id: 4
+  testing_id: 60
+  start: 2000-01-01 00:00
+  end: 2000-01-01 01:00
+  stage: cpu
+  result: 1
+
+switching_ts2:
+  id: 5
+  testing_id: 60
+  start: 2000-01-01 01:00
+  end: 2000-01-01 02:00
+  stage: hdd-passthrough
+  result: 1
+
+running_ts1:
+  id: 700
+  testing_id: 70
+  start: 2000-01-01 01:00
+  stage: cpu
+  result: 0
+
+changing_hdd1:
+  id: 801
+  testing_id: 80
+  start: 2000-01-01 01:00
+  end: 2000-01-01 02:00
+  stage: cpu
+  result: 1
+
+changing_hdd2:
+  id: 802
+  testing_id: 80
+  start: 2000-01-01 02:00
+  end: 2000-01-01 03:00
+  stage: memory
+  result: 1
+
+changing_hdd3:
+  id: 803
+  testing_id: 80
+  start: 2000-01-01 03:00
+  end: 2000-01-01 04:00
+  stage: hdd-passthrough
+  result: 1
+
+changing_hdd4:
+  id: 804
+  testing_id: 80
+  start: 2000-01-01 04:00
+  end: 2000-01-01 05:00
+  stage: hdd-array
+  result: 1
+
+changing_hdd5:
+  id: 805
+  testing_id: 80
+  start: 2000-01-01 05:00
+  end: 2000-01-01 06:00
+  stage: net
+  result: 1
+
+changing_hdd6:
+  id: 806
+  testing_id: 80
+  start: 2000-01-01 06:00
+  end: 2000-01-01 07:00
+  stage: fdd
+  result: 1
+
+changing_hdd7:
+  id: 807
+  testing_id: 80
+  start: 2000-01-01 07:00
+  end: 2000-01-01 08:00
+  stage: odd_read
+  result: 1

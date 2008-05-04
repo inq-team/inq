@@ -64,6 +64,13 @@ class ComputersControllerTest < Test::Unit::TestCase
 		assert_equal %w(memory hdd-passthrough hdd-array net fdd odd_read), res
 	end
 
+	def test_plan_6
+		get :plan, :id => 6
+		res = assigns['pl'].plan.map { |t| t.type }
+		assert_response :success
+		assert_equal %w(hdd-passthrough hdd-array), res
+	end
+
 	def test_submit_components_1
 		post :submit_components, :id => 2, :list => "
 <?xml version='1.0'?>
@@ -79,7 +86,7 @@ class ComputersControllerTest < Test::Unit::TestCase
 	end
 
 	def test_submit_components_2
-		post :submit_components, :id => 2, :list => "
+		post :submit_components, :id => 3, :list => "
 <?xml version='1.0'?>
 <list xmlns='http://www.w3.org/1999/xhtml'>
   <component>
@@ -100,7 +107,7 @@ class ComputersControllerTest < Test::Unit::TestCase
     <serial>SERIAL3</serial>
   </component>
 </list>"
-		assert_equal 1, Computer.find(2).testings.size
+		assert_equal 1, Computer.find(3).testings.size
 	end
 
 	def test_submit_components_nils
@@ -124,6 +131,149 @@ class ComputersControllerTest < Test::Unit::TestCase
 		assert_not_nil ComponentModel.find_by_name('2048 GB').vendor
 		post :submit_components, :id => 2, :list => xml
 		assert_equal 2, Computer.find(2).testings.size
+	end
+
+	def test_submit_components_switch_profile
+		c = Computer.find(2)
+		c.profile_id = 9
+		c.save!
+		post :submit_components, :id => 2, :list => "<?xml version='1.0'?>
+<list xmlns='http://www.w3.org/1999/xhtml'>
+  <component>
+    <type>CPU</type>
+    <vendor>AMD</vendor>
+    <model>Athlon</model>
+  </component>
+  <component>
+    <type>HDD</type>
+    <vendor>Seagate</vendor>
+    <model>Barracuda 160GB</model>
+    <serial>SERIAL2</serial>
+  </component>
+  <component>
+    <type>HDD</type>
+    <vendor>Seagate</vendor>
+    <model>Barracuda 160GB</model>
+    <serial>SERIAL3</serial>
+  </component>
+</list>"
+		assert_equal 2, Computer.find(2).testings.size		
+	end
+
+	# Computer 5 has 2 closed testings, submitting same components should start testing #3
+	def test_submit_components_after_closed_testing_same_components
+		post :submit_components, :id => 5, :list => "<?xml version='1.0'?>
+<list xmlns='http://www.w3.org/1999/xhtml'>
+  <component>
+    <type>CPU</type>
+    <vendor>AMD</vendor>
+    <model>Athlon</model>
+    <serial>0</serial>
+  </component>
+  <component>
+    <type>CPU</type>
+    <vendor>AMD</vendor>
+    <model>Athlon</model>
+    <serial>SERIAL2</serial>
+  </component>
+</list>"
+		c = Computer.find(5)
+		assert_equal 3, c.testings.size
+
+		c1 = c.testings[1].components
+		c2 = c.testings[2].components
+		assert_equal c1.size, c2.size
+
+		assert_block('Components differ, while they should be the same') {
+			res = true
+			c1.size.times { |i| res = false unless c1[i] === c2[i] }
+			return res
+		}
+	end
+
+	# Computer 5 has 2 closed testings, submitting different components should start testing #3
+	def test_submit_components_after_closed_testing_diff_components
+		post :submit_components, :id => 5, :list => "<?xml version='1.0'?>
+<list xmlns='http://www.w3.org/1999/xhtml'>
+  <component>
+    <type>CPU</type>
+    <vendor>AMD</vendor>
+    <model>Athlon</model>
+    <serial>000</serial>
+  </component>
+  <component>
+    <type>HDD</type>
+    <vendor>Seagate</vendor>
+    <model>Barracuda 160GB</model>
+    <serial>SERIAL3</serial>
+  </component>
+</list>"
+		assert_equal 3, Computer.find(5).testings.size		
+	end
+
+	# Computer X has unclosed testing with 1 running test_stage =>
+	# new testing should be started, all other test_stages should be
+	# closed as hanging
+	def test_submit_components_running_test_stages
+		post :submit_components, :id => 7, :list => "
+<?xml version='1.0'?>
+<list xmlns='http://www.w3.org/1999/xhtml'>
+  <component>
+    <type>CPU</type>
+    <vendor>AMD</vendor>
+    <model>Athlon</model>
+    <serial>000</serial>
+  </component>
+</list>"
+		c = Computer.find(7)
+		assert_equal 2, c.testings.size
+		t0 = c.testings[0]
+		assert_not_nil t0.test_end
+		assert_equal TestingStage::HANGING, t0.testing_stages[0].result
+		assert_not_nil t0.testing_stages[0].end
+	end
+
+	# Computer 8 had a single component (HDD) and passed many
+	# test_stages in single testing.
+
+	# Nothing was changed in configuration, but it was occasionally
+	# restarted. No new testings/test stages should be started.
+	def test_retest_after_nothing
+		post :submit_components, :id => 8, :list => "
+<?xml version='1.0'?>
+<list xmlns='http://www.w3.org/1999/xhtml'>
+  <component>
+    <type>HDD</type>
+    <vendor>Seagate</vendor>
+    <model>Barracuda 160GB</model>
+    <serial>OLD</serial>
+  </component>
+</list>"
+		assert_equal 1, Computer.find(8).testings.size
+		get :plan, :id => 8
+		res = assigns['pl'].plan.map { |t| t.type }
+		assert_response :success
+		assert_equal [], res				
+	end
+
+	# After a while HDD was replaced and new testing initiated. Only
+	# HDD-related tests should be planned.
+	def test_retest_after_changing_hdds
+		post :submit_components, :id => 8, :list => "
+<?xml version='1.0'?>
+<list xmlns='http://www.w3.org/1999/xhtml'>
+  <component>
+    <type>HDD</type>
+    <vendor>Seagate</vendor>
+    <model>Barracuda 160GB</model>
+    <serial>NEW</serial>
+  </component>
+</list>"
+		assert_equal 2, Computer.find(8).testings.size
+		get :plan, :id => 8
+		res = assigns['pl'].plan.map { |t| t.type }
+		assert_response :success
+		assert_equal %w(hdd-passthrough hdd-array), res
 	end
 
 	def test_boot_from_image

@@ -1,15 +1,15 @@
 1:
   id: 1
-  testing_id: 2
+  testing_id: 3
   component_model_id: 1
 2:
   id: 2
-  testing_id: 2
+  testing_id: 3
   component_model_id: 3
   serial: SERIAL2
 3:
   id: 3
-  testing_id: 2
+  testing_id: 3
   component_model_id: 3
   serial: SERIAL3
 4:
@@ -42,3 +42,13 @@
   testing_id: 20
   component_model_id: 5
   serial: 098
+running_ts:
+  id: 700
+  testing_id: 70
+  component_model_id: 1
+  serial: 000
+changing_hdd_old:
+  id: 800
+  testing_id: 80
+  component_model_id: 3
+  serial: OLD

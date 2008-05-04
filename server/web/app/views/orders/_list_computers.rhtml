@@ -25,7 +25,9 @@ function checkUncheckAll(theElement) {
 <td><%= link_to c.serial_no, :controller => 'computers', :action => 'show', :id => c.id %></td>
 <td><%=h c.model.name %></td>
 <td><%= c.profile ? c.profile.name : 'none' %></td>
+<%	if c.computer_stages and c.computer_stages.last %>
 <td<%= ' style="font-weight: bold"' unless c.computer_stages.last.end.nil? %>><%= c.computer_stages.last.stage %> <%= c.computer_stages.last.end.nil? ? 'now' : 'done' %></td>
+<%	end %>
 </tr>
 <% } %>
 <tr>

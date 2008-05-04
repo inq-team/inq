@@ -36,3 +36,29 @@ bootpc_testing:
   computer_id: 20
   test_start: 2000-01-01 00:00
   profile_id: 1
+
+switching_profile_testing1:
+  id: 60
+  computer_id: 6
+  test_start: 2000-01-01 00:00
+  test_end: 2000-01-01 01:00
+  profile_id: 1
+
+switching_profile_testing2:
+  id: 61
+  computer_id: 6
+  test_start: 2000-01-01 01:00
+  profile_id: 9
+
+running_test_stages_testing:
+  id: 70
+  computer_id: 7
+  test_start: 2000-01-01 01:00
+  profile_id: 1
+
+changing_hdd:
+  id: 80
+  computer_id: 8
+  test_start: 2000-01-01 01:00
+  test_end: 2000-01-01 15:00
+  profile_id: 1

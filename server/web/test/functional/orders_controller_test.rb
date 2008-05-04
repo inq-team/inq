@@ -13,8 +13,29 @@ class OrdersControllerTest < Test::Unit::TestCase
 		@response   = ActionController::TestResponse.new
 	end
 
+	# /order/show on order with already created computers
 	def test_show_1
 		get :show, :id => 1
+		assert_equal(
+			[
+				["--", 0],
+				["default (2000-01-01)", 1],
+				["default (2000-01-01)", 9],
+				["Alpha model: default (2000-02-01)", 3],
+				["default (2000-02-02)", 2],
+				["Alpha model: specific (2000-02-03)", 4],
+				["Alpha model: default (2000-02-06)", 6],
+				["Beta model: default (2000-02-06)", 7],
+				["Alpha model: specific (2000-02-06)", 5],
+				["groovy (2000-02-08)", 8]
+			],
+			assigns['profiles']
+		)
+	end
+
+	# /order/show on order with computer creation dialog
+	def test_show_2
+		get :show, :id => 2
 		assert_equal(
 			[
 				["Alpha model: default (2000-02-06)", 6],

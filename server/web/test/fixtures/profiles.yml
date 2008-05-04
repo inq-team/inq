@@ -80,3 +80,22 @@ default_specific_profile:
   feature: 'groovy'
   xml: '<tests></tests>'
   timestamp: 2000-02-08
+
+other-good:
+  id: 9
+  xml: '<tests>
+<test id="hdd-passthrough" type="hdd-passthrough">
+        <var name="DISK_GROUP_SIZE">8</var>
+        <var name="MINIMAL_STRESS_TIME">600</var>
+        <var name="STRESS_TREE">/usr/share/inquisitor/linux-2.6.22.5-31-stress.tar.gz</var>
+        <var name="RAMDISK_SIZE">400</var>
+        <var name="JOBS">16</var>
+</test>
+<test id="hdd-array" type="hdd-array">
+        <var name="TIMEOUT">3600</var>
+        <var name="LOGTIME">120</var>
+        <var name="JOBS">16</var>
+        <var name="STRESS_TREE">/usr/share/inquisitor/linux-2.6.22.5-31-stress.tar.gz</var>
+</test>
+</tests>'
+  timestamp: 2000-01-01

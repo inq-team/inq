@@ -14,16 +14,19 @@ class Planner
 		end
 	end
 
-	def initialize(profile, stages_prev, stages_now, comp_prev, comp_now, force_continue = false)
+	def initialize(profile, stages_prev, stages_now, comp_prev, comp_now, force_continue, prev_profile_id, testing_profile_id)
 		@profile = REXML::Document.new(profile)	
 		@plan = nil
 		@stages_prev = stages_prev
 		@stages_now = stages_now
-		@stages = stages_prev + stages_now
 		@comp_prev = comp_prev
 		@comp_now = comp_now
 		@start_new = !force_continue
 		@force_continue = force_continue
+		@profile_now = testing_profile_id
+		@profile_prev = prev_profile_id
+
+		@stages = (@profile_now == @profile_prev) ? stages_prev + stages_now : stages_now
 	end
 
 	def plan

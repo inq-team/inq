@@ -1,8 +1,8 @@
 class Computer < ActiveRecord::Base
 	belongs_to :model
 	belongs_to :order
-	has_many :testings
-	has_many :computer_stages
+	has_many :testings, :order => 'test_start'
+	has_many :computer_stages, :order => 'start'
 	belongs_to :profile
 
 	def serial_no

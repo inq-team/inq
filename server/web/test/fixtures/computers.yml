@@ -18,6 +18,10 @@ two_testings_new_hdd_cpu_done:
   id: 5
   model_id: 1
   profile_id: 1
+switching_profile:
+  id: 6
+  model_id: 1
+  profile_id: 9
 last_computer:
   id: 100000
   model_id: 1
@@ -45,4 +49,12 @@ alpha_order_4:
 boot_pc:
   id: 20
   model_id: 4
+  profile_id: 1
+running_test_stages:
+  id: 7
+  model_id: 1
+  profile_id: 1
+changing_hdd:
+  id: 8
+  model_id: 1
   profile_id: 1
