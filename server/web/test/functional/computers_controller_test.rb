@@ -286,6 +286,25 @@ class ComputersControllerTest < Test::Unit::TestCase
 		post :boot_from_image, :id => 20, :image => tmpfile
 		macs = assigns['macs']
 		assert_equal ["00-e0-81-5d-4f-37", "00-e0-81-5d-4f-38"], macs
+
+		needed = "#pxelinux.cfg/01-00-e0-81-5d-4f-37 pxelinux.cfg/01-00-e0-81-5d-4f-38\n";
+		needed = needed + "default firmware\nlabel firmware\n";
+		needed = needed + " kernel memdisk\n append initrd=#{tmpfile} \n"
+
+		file = File.open("#{TFTP_DIR}/pxelinux.cfg/01-00-e0-81-5d-4f-37")
+		got = ""
+		while (l = file.gets)
+			got = got + l
+		end
+		assert_equal needed, got
+
+		file = File.open("#{TFTP_DIR}/pxelinux.cfg/01-00-e0-81-5d-4f-38")
+		got = ""
+		while (l = file.gets)
+			got = got + l
+		end
+		assert_equal needed, got
+
 		assert_response :success
 
 		FileUtils.rm("#{TFTP_DIR}/pxelinux.cfg/01-00-e0-81-5d-4f-37")
