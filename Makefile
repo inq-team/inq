@@ -33,6 +33,11 @@ clean:
 	rm -Rf $(WORKDIR) $(REPO)
 	CONFIG=$(CONFIG) $(MAKE) -C client clean
 
+# Files with metadata, gathered from client modules
+metadata:
+	cd server/web/lib/planner && ./configure
+	cd ../web && ./generate-from-metadata
+
 #===============================================================================
 # Client image deployment
 #===============================================================================

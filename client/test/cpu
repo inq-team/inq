@@ -1,6 +1,6 @@
 #!/bin/sh -e
-# NAME=CPU burning
-# DESCRIPTION=CPU burn-in testing
+# NAME=CPU burn
+# DESCRIPTION=Basic CPU burn test makes CPU execute instructions that rapidly increase process temperature in infinite loop. Test makes special care This test  CPU itself or 
 # DESTROYS_HDD=false
 # IS_INTERACTIVE=false
 # POWEROFF_DURING_TEST=false

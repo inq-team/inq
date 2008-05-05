@@ -28,8 +28,9 @@ $TESTS = {"gprs-modem"=>
       {:type=>"int",
        :default=>"120",
        :comment=>"Time between progress updates, sec"}},
-   :name=>"Memory",
-   :description=>"Memory test",
+   :name=>"Memory test: memtester",
+   :description=>
+    "This memory test is performed without reboot, under control of live full-featured OS, using user-space memtester program. Test takes special precautions and tries to lock maximum possible amount of memory for memtester. memtester tests memory using standard read-write-check method using 16 patterns.",
    :version=>"0.1",
    :depends=>["Memory"],
    :destroys_hdd=>false},
@@ -310,8 +311,9 @@ $TESTS = {"gprs-modem"=>
       {:type=>"int",
        :default=>"5",
        :comment=>"Number of tests per disc to average for result"}},
-   :name=>"Hdparm",
-   :description=>"Hdparm HDD speed benchmark",
+   :name=>"HDD speed benchmark: hdparm",
+   :description=>
+    "This benchmark runs on all hard drives in the system sequentally. Every hard drive is benchmarked for buffered speed and cached speed using basic hdparm test several times. The results for every HDD are averaged and submitted as benchmark results.",
    :version=>"0.1",
    :depends=>["Disk Controller", "HDD"],
    :destroys_hdd=>false},
@@ -349,11 +351,22 @@ $TESTS = {"gprs-modem"=>
       {:type=>"string",
        :default=>"linux-2.6.22.5-31-stress.tar.gz",
        :comment=>"Tarball file containing stress test tree"}},
-   :name=>"HDD passthrough disk",
-   :description=>"HDD passthrough disks test",
+   :name=>"HDD passthrough",
+   :description=>
+    "HDD passthrough is a stress test that imposes heavy load on main system components. First, it tries to make all HDDs present in system to appear as separate device nodes - it checks all available RAID controllers, deletes all arrays / disk groups and creates passthrough devices to access individual HDDs if required. Second, it runs badblocks test on every available HDD, separating them in groups for simultaneous badblocks (8 HDDs doing badblocks simultaneously by default). Third, it makes a ramdisk filesystem and starts infinite compilation loop in memory, doing so with 16 simulatenous jobs (by default). Test ends successfully after both 1) minimal required stress time passes, 2) all HDDs get checked with badblocks. Test would fail if any bad blocks would be detected on any HDD. Test will usually hang or crash the system on unstable hardware.",
    :version=>"0.1",
    :depends=>["CPU", "HDD", "Memory", "Mainboard", "Disk Controller"],
    :destroys_hdd=>true},
+ "hdd-smart"=>
+  {:is_interactive=>false,
+   :poweroff_during_test=>false,
+   :var=>{},
+   :name=>"HDD SMART",
+   :description=>
+    "This test starts internal SMART tests for every HDD available. These tests usually put heavy load on drive with lots of internal block reading/writing operations, though it's all done transparently by HDD's firmware in background. This test does not destroy any data on HDDs.",
+   :version=>"0.1",
+   :depends=>["HDD", "Disk Controller"],
+   :destroys_hdd=>false},
  "cpu"=>
   {:is_interactive=>false,
    :poweroff_during_test=>false,
