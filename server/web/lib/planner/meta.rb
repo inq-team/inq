@@ -31,6 +31,7 @@ $TESTS = {"gprs-modem"=>
    :name=>"Memory",
    :description=>"Memory test",
    :version=>"0.1",
+   :depends=>["Memory"],
    :destroys_hdd=>false},
  "hdd-array"=>
   {:is_interactive=>false,
@@ -55,6 +56,7 @@ $TESTS = {"gprs-modem"=>
    :name=>"HDD array stress",
    :description=>"HDD array stress test",
    :version=>"0.1",
+   :depends=>["CPU", "HDD", "Memory", "Mainboard", "Disk Controller"],
    :destroys_hdd=>true},
  "mencoder"=>
   {:is_interactive=>false,
@@ -72,6 +74,7 @@ $TESTS = {"gprs-modem"=>
    :name=>"Mencoder",
    :description=>"Mencoder encoding time benchmark",
    :version=>"0.1",
+   :depends=>["CPU", "Memory", "Mainboard"],
    :destroys_hdd=>false},
  "stream"=>
   {:is_interactive=>false,
@@ -80,6 +83,7 @@ $TESTS = {"gprs-modem"=>
    :name=>"Stream",
    :description=>"STREAM memory throughput benchmark",
    :version=>"0.1",
+   :depends=>["Memory"],
    :destroys_hdd=>false},
  "dhrystone"=>
   {:is_interactive=>false,
@@ -90,6 +94,7 @@ $TESTS = {"gprs-modem"=>
    :name=>"Dhrystone",
    :description=>"Dhrystone integer calculations benchmark",
    :version=>"0.1",
+   :depends=>["CPU"],
    :destroys_hdd=>false},
  "usb-flash-drive"=>
   {:is_interactive=>true,
@@ -98,7 +103,7 @@ $TESTS = {"gprs-modem"=>
     {"SIZE"=>
       {:type=>"int",
        :default=>"20",
-       :comment=>"Size of test file to be written, MiB"},
+       :comment=>"Size of test file to be written, Blocksizes"},
      "COUNT"=>
       {:type=>"int",
        :default=>"2",
@@ -110,7 +115,17 @@ $TESTS = {"gprs-modem"=>
    :name=>"USB Flash Drive",
    :description=>"USB Flash Drive working ability test with speed measurement",
    :version=>"0.1",
+   :depends=>["USB"],
    :destroys_hdd=>true},
+ "firmware"=>
+  {:is_interactive=>false,
+   :poweroff_during_test=>true,
+   :var=>{},
+   :name=>"Firmware reflashing",
+   :description=>"Firmware reflashing",
+   :version=>"0.1",
+   :depends=>["Mainboard", "Disk Controller"],
+   :destroys_hdd=>false},
  "odd_read"=>
   {:is_interactive=>true,
    :poweroff_during_test=>false,
@@ -134,17 +149,30 @@ $TESTS = {"gprs-modem"=>
    :name=>"ODD read",
    :description=>"Optical Disc Drive read test",
    :version=>"0.1",
+   :depends=>["OSD"],
    :destroys_hdd=>false},
  "gprs-modem-dialup"=>
   {:is_interactive=>false,
    :poweroff_during_test=>false,
    :var=>
     {"SPEED"=>{:type=>"int", :default=>"115200", :comment=>"Line speed"},
+     "PPPD_USERNAME"=>
+      {:type=>"string",
+       :default=>"mts",
+       :comment=>"Cell service provider's pppd username"},
      "URL"=>
       {:type=>"string",
        :default=>
         "img-fotki.yandex.ru/getx/10/photoface.359/sevastopol-foto_34661_L",
        :comment=>"URL to download (without http)"},
+     "UPLOAD_TRIES"=>
+      {:type=>"int",
+       :default=>"3",
+       :comment=>"Number of tries to upload the file"},
+     "UPLOAD_URL"=>
+      {:type=>"string",
+       :default=>"",
+       :comment=>"URL to upload (without http)"},
      "DOWNLOAD_TRIES"=>
       {:type=>"int",
        :default=>"3",
@@ -153,6 +181,10 @@ $TESTS = {"gprs-modem"=>
       {:type=>"int",
        :default=>"4",
        :comment=>"Number of tries to bring pppd up"},
+     "UPLOAD_FILE"=>
+      {:type=>"string",
+       :default=>"/etc/ld.so.cache",
+       :comment=>"File to upload"},
      "MD5"=>
       {:type=>"string",
        :default=>"ca530886183b06d0047e0655537327aa",
@@ -165,13 +197,17 @@ $TESTS = {"gprs-modem"=>
       {:type=>"string",
        :default=>"internet.mts.ru",
        :comment=>"Cell service provider's Internet APN"},
+     "UPLOAD_MAX_TIME"=>
+      {:type=>"int",
+       :default=>"120",
+       :comment=>"Timeout for file upload, sec"},
      "DEV"=>
       {:type=>"string",
        :default=>"/dev/ttyUSB0",
        :comment=>"Name of device to test"}},
    :name=>"USB GPRS Modem Dialup",
    :description=>"Test GPRS modem, connected using USB",
-   :version=>"0.1",
+   :version=>"0.2",
    :destroys_hdd=>false},
  "fdd"=>
   {:is_interactive=>true,
@@ -184,12 +220,18 @@ $TESTS = {"gprs-modem"=>
    :name=>"FDD read/write",
    :description=>"Floppy drive read/write test",
    :version=>"0.1",
+   :depends=>["Floppy"],
    :destroys_hdd=>false},
  "net"=>
   {:is_interactive=>false,
    :poweroff_during_test=>false,
    :var=>
-    {"URL"=>
+    {"EXCLUDE_MAC"=>
+      {:type=>"string",
+       :default=>"",
+       :comment=>
+        "Exclude NICs with MAC addresses that match this regexp from testing"},
+     "URL"=>
       {:type=>"string",
        :default=>"3000/test_file",
        :comment=>"Relative to server PORT:URL to be fetched and checked"},
@@ -203,7 +245,8 @@ $TESTS = {"gprs-modem"=>
        :comment=>"MD5 checksum for checking"}},
    :name=>"Network interface",
    :description=>"Network interfaces testing",
-   :version=>"0.1",
+   :version=>"0.2",
+   :depends=>["NIC"],
    :destroys_hdd=>false},
  "odd_write"=>
   {:is_interactive=>true,
@@ -240,6 +283,7 @@ $TESTS = {"gprs-modem"=>
    :name=>"odd_write",
    :description=>"Optical Disc Drive write test",
    :version=>"0.1",
+   :depends=>["ODD"],
    :destroys_hdd=>false},
  "gprs-modem-level"=>
   {:is_interactive=>false,
@@ -269,6 +313,7 @@ $TESTS = {"gprs-modem"=>
    :name=>"Hdparm",
    :description=>"Hdparm HDD speed benchmark",
    :version=>"0.1",
+   :depends=>["Disk Controller", "HDD"],
    :destroys_hdd=>false},
  "unixbench"=>
   {:is_interactive=>false,
@@ -277,6 +322,7 @@ $TESTS = {"gprs-modem"=>
    :name=>"Unixbench",
    :description=>"UNIX Bench Multi-CPU benchmark",
    :version=>"0.1",
+   :depends=>["CPU", "Memory", "Mainboard"],
    :destroys_hdd=>false},
  "hdd-passthrough"=>
   {:is_interactive=>false,
@@ -306,6 +352,7 @@ $TESTS = {"gprs-modem"=>
    :name=>"HDD passthrough disk",
    :description=>"HDD passthrough disks test",
    :version=>"0.1",
+   :depends=>["CPU", "HDD", "Memory", "Mainboard", "Disk Controller"],
    :destroys_hdd=>true},
  "cpu"=>
   {:is_interactive=>false,
@@ -318,6 +365,7 @@ $TESTS = {"gprs-modem"=>
    :name=>"CPU burning",
    :description=>"CPU burn-in testing",
    :version=>"0.1",
+   :depends=>["CPU"],
    :destroys_hdd=>false},
  "usb-device"=>
   {:is_interactive=>false,
@@ -340,6 +388,7 @@ $TESTS = {"gprs-modem"=>
    :name=>"USB presence",
    :description=>"Tests presence of designated USB device",
    :version=>"0.1",
+   :depends=>["USB"],
    :destroys_hdd=>false},
  "bonnie"=>
   {:is_interactive=>false,
@@ -348,6 +397,7 @@ $TESTS = {"gprs-modem"=>
    :name=>"Bonnie",
    :description=>"Bonnie HDD performance benchmark",
    :version=>"0.1",
+   :depends=>["HDD"],
    :destroys_hdd=>true},
  "whetstone"=>
   {:is_interactive=>false,
@@ -356,6 +406,7 @@ $TESTS = {"gprs-modem"=>
    :name=>"Whetstone",
    :description=>"Whetstone floating-point calculations benchmark",
    :version=>"0.1",
+   :depends=>["CPU"],
    :destroys_hdd=>false},
  "flash"=>
   {:is_interactive=>false,
@@ -369,6 +420,29 @@ $TESTS = {"gprs-modem"=>
    :description=>"Flash disk badblocks test",
    :version=>"0.1",
    :destroys_hdd=>true},
+ "db_comparison"=>
+  {:is_interactive=>false,
+   :poweroff_during_test=>false,
+   :var=>{},
+   :name=>"DB to Detects comparison",
+   :description=>
+    "Pauses testing until comparison has been completed on application server",
+   :version=>"0.1",
+   :depends=>
+    ["BMC",
+     "CPU",
+     "Chassis",
+     "Disk Controller",
+     "Floppy",
+     "HDD",
+     "Mainboard",
+     "Memory",
+     "NIC",
+     "OSD",
+     "Platform",
+     "USB",
+     "Video"],
+   :destroys_hdd=>false},
  "bytemark"=>
   {:is_interactive=>false,
    :poweroff_during_test=>false,
@@ -376,6 +450,7 @@ $TESTS = {"gprs-modem"=>
    :name=>"BYTEmark",
    :description=>"BYTEmark native mode benchmark",
    :version=>"0.1",
+   :depends=>["CPU", "Memory", "Mainboard"],
    :destroys_hdd=>false}}
 
 $MONITORINGS = [nil, "hdd-smart"]

@@ -32,6 +32,7 @@ Dir.new(TESTS_DIR).each { |entry|
 		when /^# DESTROYS_HDD=true$/ then t[:destroys_hdd] = true
 		when /^# IS_INTERACTIVE=true$/ then t[:is_interactive] = true
 		when /^# POWEROFF_DURING_TEST=true$/ then t[:poweroff_during_test] = true
+		when /^# DEPENDS=(.*)$/ then t[:depends] = $1.split(/ *, */)
 		when /^# VAR=(.*?):(.*?):(.*?):(.*)$/
 			t[:var][$1] = {
 				:type => $2,
