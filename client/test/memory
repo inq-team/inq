@@ -6,6 +6,7 @@
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=ram,memory
+# DEPENDS=Memory
 # VAR=TEST_LOOPS:int:3:Number of testing loops
 # VAR=LOGTIME:int:120:Time between progress updates, sec
 

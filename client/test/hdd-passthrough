@@ -6,6 +6,7 @@
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=hdd,stress
+# DEPENDS=CPU,HDD,Memory,Mainboard,Disk Controller
 # VAR=DISK_GROUP_SIZE:int:8:Number of disks per group for testing
 # VAR=MINIMAL_STRESS_TIME:int:600:Minimal time of stress testing
 # VAR=STRESS_TREE:string:linux-2.6.22.5-31-stress.tar.gz:Tarball file containing stress test tree

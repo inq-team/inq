@@ -6,6 +6,7 @@
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=usb
+# DEPENDS=USB
 # VAR=IDVENDOR:string:0403:Filter in only devices with this idVendor (match all if empty)
 # VAR=IDPRODUCT:string:6001:Filter in only devices with this idProduct (match all if empty)
 # VAR=COUNT:int:1:There should be this many devices

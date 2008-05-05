@@ -5,6 +5,7 @@
 # IS_INTERACTIVE=true
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
+# DEPENDS=ODD
 # VAR=TEST_IMAGE:string:iso/testimage.iso:ISO image path (absolute or relative)
 # VAR=TEST_IMAGE_BLOCKS:int:332800:This images size in blocks (2048 bytes each)
 # VAR=TEST_IMAGE_MD5:string:ffffffffffffffffffffffffffffffff:Test image MD5 hash

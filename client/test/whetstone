@@ -5,6 +5,7 @@
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=benchmark,cpu
+# DEPENDS=CPU
 # VAR=LOOPS:int:20000:Loop count
 
 . /usr/share/inquisitor/functions-test

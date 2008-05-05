@@ -6,6 +6,7 @@
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=cpu,stress
+# DEPENDS=CPU
 # VAR=TESTTIME:int:1800:Total time of CPU testing, sec
 
 . /usr/share/inquisitor/functions-test

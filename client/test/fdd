@@ -6,6 +6,7 @@
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=fdd
+# DEPENDS=Floppy
 # VAR=FLOPPY_SIZE:int:1440:Size of testing floppy, KiB
 
 . /usr/share/inquisitor/functions-test

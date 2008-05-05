@@ -5,6 +5,7 @@
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=benchmark,cpu,stress,memory,ram
+# DEPENDS=CPU,Memory,Mainboard
 
 . /usr/share/inquisitor/functions-test
 

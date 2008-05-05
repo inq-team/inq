@@ -5,6 +5,7 @@
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=benchmark,hdd
+# DEPENDS=Disk Controller,HDD
 # VAR=AVG_SAMPLES:int:5:Number of tests per disc to average for result
 
 . /usr/share/inquisitor/functions-test

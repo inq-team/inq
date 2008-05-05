@@ -6,6 +6,7 @@
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=hdd,stress
+# DEPENDS=CPU,HDD,Memory,Mainboard,Disk Controller
 # VAR=TESTTIME:int:3600:Total time of HDD array testing, sec
 # VAR=LOGTIME:int:120:Time between progress updates, sec
 # VAR=JOBS:int:16:Number of parallely running jobs during compile

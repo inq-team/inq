@@ -5,6 +5,7 @@
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=benchmark,cpu,stress
+# DEPENDS=CPU,Memory,Mainboard
 # VAR=ENCODE_OPTIONS:string:-ovc lavc -lavcopts vcodec=mpeg4 -oac mp3lame -lameopts vbr=3:Encoding options
 # VAR=FILE_TO_ENCODE:string:/usr/share/inquisitor/movie.avi:Path to file need to be encoded
 

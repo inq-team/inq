@@ -6,6 +6,7 @@
 # POWEROFF_DURING_TEST=true
 # VERSION=0.1
 # TAGS=bios,firmware
+# DEPENDS=Mainboard,Disk Controller
 
 # UNTESTED DEVELOPMENT VERSION!
 

@@ -5,6 +5,7 @@
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=benchmark,ram,memory
+# DEPENDS=Memory
 
 . /usr/share/inquisitor/functions-test
 

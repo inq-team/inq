@@ -5,6 +5,7 @@
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=benchmark,cpu
+# DEPENDS=CPU
 # VAR=DURATION:int:30:Benchmark duration (sec)
 
 . /usr/share/inquisitor/functions-test
