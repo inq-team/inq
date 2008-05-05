@@ -6,7 +6,7 @@
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=odd
-# DEPENDS=OSD
+# DEPENDS=ODD
 # VAR=TEST_IMAGE_HASH:string:6fa7786eef2e11d36e8bc1663679f161:Default image for comparison hash
 # VAR=TEST_IMAGE_BLOCKS:int:332800:This images size in blocks (2048 bytes each)
 # VAR=MESH_POINTS:int:1024:Points for meshes for monitoring drive's speed
