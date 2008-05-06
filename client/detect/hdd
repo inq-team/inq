@@ -54,9 +54,9 @@ hal_detect()
 	for UDI in `hal-find-by-property --key storage.drive_type --string 'disk'; hal-find-by-property --key scsi.type --string 'disk'`; do
 		if ! hdd_detected "$UDI"; then	
 			HDD_DEV=`hal-get-property --udi "$UDI" --key block.device`
-			HDD_INFO=`hdparm -I "$HDD_DEV"`
-			HDD_MODEL=`echo "$HDD_INFO" | sed -n 's/^.*Model Number://p'`
-			HDD_SERIAL=`echo "$HDD_INFO"| sed -n 's/^.*Serial Number: *//p' | sed 's/ *$//'`
+			HDD_MODEL=`hal-get-property --udi "$UDI" --key info.product`
+			HDD_VENDOR=`hal-get-property --udi "$UDI" --key storage.vendor`
+			HDD_SERIAL=`smartctl -d ata -a $HDD_DEV | sed -ne '/^Serial Number:/ s/^Serial Number: *//p'`
 
 			detect_vendor '^ST.*' 'Seagate'
 			detect_vendor '^D...-.*' 'IBM'
