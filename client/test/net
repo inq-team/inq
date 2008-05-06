@@ -46,7 +46,7 @@ test_nic()
 
 	udi=`hal-find-by-property --key net.interface --string eth${nic_number}`
 	if [ -n "$udi" ] && [ -n "$EXCLUDE_MAC" ] && hal-get-property --udi "$udi" --key net.address | egrep -q "$EXCLUDE_MAC"; then
-		echo "Skipping testing (MAC $mac)"
+		echo "Skipping testing due to MAC exclusion"
 		return 0
 	fi
 
