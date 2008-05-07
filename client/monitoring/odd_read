@@ -1,0 +1,5 @@
+#!/bin/sh -e
+# ID=3
+# This is not a real monitoring: it runs only once during odd_read
+# test, that submits drive speed. You can view actual code in
+# client/test/odd_read in generate_speed_results function.
