@@ -118,6 +118,14 @@ monitoring_submit()
 	fi
 }
 
+monitoring_submit_multiple()
+{
+	if ! curl -sf -F monitoring_data=@$1 "$REST_SERVER/computers/monitoring_submit_multiple/$COMPUTER_ID?monitoring_id=$MONITORING_ID"; then
+		echo "monitoring_submit_multiple: failed to submit ${MONITORING_NAME}"
+		return 1
+	fi
+}
+
 require_attention()
 {
 	return 0
