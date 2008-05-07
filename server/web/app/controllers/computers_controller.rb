@@ -413,6 +413,21 @@ __EOF__
 		end
 	end
 
+	def show_components
+		computer = Computer.find(params[:id])
+                testing = computer.last_testing
+		components = Component.find_all_by_testing_id(testing.id)
+		coms = ""
+		components.each { |com|
+			vendor = ComponentModel.find_by_id(com.component_model_id).vendor.to_s
+			name = ComponentModel.find_by_id(com.component_model_id).name.to_s
+
+			coms += "#{vendor}::#{name}\n"
+		}
+
+		render :text => coms
+	end
+
 	def identify
 		@macs = params[:macs].split(",")
 		p @macs
