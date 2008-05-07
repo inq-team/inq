@@ -8,7 +8,7 @@ memtester:
 	$(MAKE) -C memtester-4.0.8
 
 clean:
-	rm -r memtester-4.0.8
+	rm -fr memtester-4.0.8
 
 install:
 	mkdir -p $(DESTDIR)$(BIN_DIR)
