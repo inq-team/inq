@@ -84,7 +84,7 @@ generate_speed_results()
 	echo "Submitting speed results..."
 	for i in `cat $RESULT_FILE`; do
 		echo "$i" | grep -q "\." || continue
-		monitoring_submit $TESTED_QUANITY $i
+		monitoring_submit $TESTED_QUANTITY $i
 	done
 	echo_success
 }
