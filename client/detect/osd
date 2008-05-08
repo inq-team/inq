@@ -70,6 +70,7 @@ hal-find-by-property --key storage.drive_type --string cdrom | while read L; do
 		detect_vendor 'ATAPI DVD A DH20A4P' LITE-ON
 		detect_vendor 'SR244W' Mitsumi
 		detect_vendor 'SSM-' LITE-ON
+		detect_vendor 'DV-28E-V' TEAC
 
 		OSD_MODEL=`echo $OSD_MODEL | sed 's/^  *//;s/  *$//;'`
 
