@@ -4,7 +4,7 @@
 # 
 # Author:	Miquel van Smoorenburg, <miquels@drinkel.nl.mugnet.org>
 # Hacked by:	Greg Galloway and Marc Ewing
-# Changed by:	Dmitry V. Levin, later by Inquisitor team
+# Changed by:	Dmitry V. Levin
 
 # Set the initial default search path for use by startup scripts.
 export PATH="/sbin:/usr/sbin:/usr/local/sbin:/bin:/usr/bin:/usr/local/bin:/usr/X11R6/bin"
