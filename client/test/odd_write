@@ -32,7 +32,8 @@ test_read()
 	[ -z "$hash" ] && {hash=`dd if=$odd bs=2048 count=$TEST_IMAGE_BLOCKS | \
 		md5sum -b | awk '{print $1}'` || true}
 
-	[ $hash = $TEST_IMAGE_MD5 ] && return 0 || return 1
+	echo "Read data MD5 checksum: $hash"
+	[ "$hash" = "$TEST_IMAGE_MD5" ] && return 0 || return 1
 }
 
 test_write()

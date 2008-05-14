@@ -39,7 +39,9 @@ test_odd()
 	[ ! -s "$IMAGE" ] && dd if=$odd of=$IMAGE bs=2048 \
 		count=$TEST_IMAGE_BLOCKS >$DEBUG_TTY 2>&1 || true
 
-	[ `md5sum -b < $IMAGE | awk '{print $1}'` = $TEST_IMAGE_HASH ] \
+	local read_md5=`md5sum -b < $IMAGE | awk '{print $1}'`
+	echo "Read data MD5 checksum: $read_md5"
+	[ "$read_md5" = $TEST_IMAGE_HASH ] \
 		&& return 0 || return 1
 }
 
