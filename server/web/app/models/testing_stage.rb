@@ -6,4 +6,5 @@ class TestingStage < ActiveRecord::Base
 	FINISHED = 1
 	FAILED = 2
 	HANGING = 3
+	ATTENTION = 4
 end

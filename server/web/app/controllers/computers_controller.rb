@@ -56,7 +56,13 @@ class ComputersController < ApplicationController
 		end
 	end
 
-	def index	
+	def show_components
+		render :text => Computer.find(params[:id]).last_testing.components.collect { |com|
+			"#{com.model.vendor}::#{com.model.name}"
+		}.join("\n")
+	end
+
+	def index
 		config = Shelves::Config.new(params[:config]) if params[:config]
 		@computers = Computer.find_testing()
 		@shelves = config || @@default_config 
@@ -413,21 +419,6 @@ __EOF__
 		end
 	end
 
-	def show_components
-		computer = Computer.find(params[:id])
-                testing = computer.last_testing
-		components = Component.find_all_by_testing_id(testing.id)
-		coms = ""
-		components.each { |com|
-			vendor = ComponentModel.find_by_id(com.component_model_id).vendor.to_s
-			name = ComponentModel.find_by_id(com.component_model_id).name.to_s
-
-			coms += "#{vendor}::#{name}\n"
-		}
-
-		render :text => coms
-	end
-
 	def identify
 		@macs = params[:macs].split(",")
 		p @macs
@@ -449,7 +440,7 @@ __EOF__
 		event = params[:event].to_sym() || :start
 		name = params[:stage]
 		comment = params[:comment] || ""
-		raise "Event not supported: #{ event }." unless [:start, :finish, :fail].include?(event)
+		raise "Event not supported: #{ event }." unless [:start, :finish, :fail, :require_attention, :dismiss_attention].include?(event)
                 testing = @computer.testings.last
 		stage = testing.testing_stages.last
 		case event
@@ -458,8 +449,17 @@ __EOF__
 			z = testing
 		when :finish, :fail
 			stage.comment = comment
-			stage.end = Time.new()
+			stage.end = Time.new
 			stage.result = (event == :finish) ? TestingStage::FINISHED : TestingStage::FAILED
+			z = stage
+		when :require_attention
+			stage.end = Time.new
+			stage.result = TestingStage::ATTENTION
+			z = stage
+		when :dismiss_attention
+			stage.accumulated_idle += stage.end - Time.new
+			stage.end = nil
+			stage.result = TestingStage::RUNNING
 			z = stage
 		end
 		if z.save

@@ -365,4 +365,23 @@ class ComputersControllerTest < Test::Unit::TestCase
 		assert_equal 1, Computer.find(cid).last_computer_stage.person_id
 		assert_not_nil Computer.find(cid).last_computer_stage.end
 	end
+
+	def test_attention
+		cid = 7
+		post :advance, :id => cid, :stage => 'cpu', :event => 'require_attention'
+		ts = Computer.find(cid).last_testing.testing_stages
+		assert_equal 1, ts.size
+		assert_equal TestingStage::ATTENTION, ts.first.result
+		assert_not_nil ts.first.end
+		assert_equal 0, ts.first.accumulated_idle
+
+		sleep 0.5
+
+		post :advance, :id => cid, :stage => 'cpu', :event => 'dismiss_attention'
+		ts = Computer.find(cid).last_testing.testing_stages
+		assert_equal 1, ts.size
+		assert_equal TestingStage::RUNNING, ts.first.result
+		assert_nil ts.first.end
+		assert_not_equal 0, ts.first.accumulated_idle
+	end
 end
