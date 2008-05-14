@@ -9,6 +9,7 @@ class OrdersController < ApplicationController
 		@selected_manager = params[:manager][:name] if params[:manager]
 		@managers = Order.find_by_sql('SELECT DISTINCT manager FROM orders').map { |x| x.manager }
 		@staging = Order.staging(@selected_manager)
+		@autorefresh = true
 	end
 
 	def staging

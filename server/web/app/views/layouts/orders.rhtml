@@ -8,12 +8,9 @@
 <%= stylesheet_link_tag 'orders' %>
 <%= stylesheet_link_tag 'computers' %>
 <%= javascript_include_tag 'prototype' %>
-
-<!--
-<?php if ($refresh) { ?>
-<meta http-equiv="Refresh" content="60; URL=<?php echo $refresh ?>"/>
-<?php } ?>
--->
+<% if @autorefresh %>
+<meta http-equiv="Refresh" content="60; URL=<%= request.request_uri %>"/>
+<% end %>
 </head>
 <body>
 	<%= render :partial => '/layouts/title_bar' %>
