@@ -128,22 +128,18 @@ monitoring_submit_multiple()
 
 require_attention()
 {
-	return 0
-
-	#if ! curl -sf "$REST_SERVER/computers/require_attention/$COMPUTER_ID?stage=$TEST_NAME"; then
-	#	echo 'require_attention: failed to change state'
-	#	return 1
-	#fi
+	if ! curl -sf "$REST_SERVER/computers/advance/$COMPUTER_ID?event=require_attention&stage=$TEST_NAME"; then
+		echo 'require_attention: failed to change state'
+		return 1
+	fi
 }
 
 dismiss_attention()
 {
-	return 0
-
-	#if ! curl -sf "$REST_SERVER/computers/dismiss_attention/$COMPUTER_ID?stage=$TEST_NAME"; then
-	#	echo 'dismiss_attention: failed to change state'
-	#	return 1
-	#fi
+	if ! curl -sf "$REST_SERVER/computers/advance/$COMPUTER_ID?event=dismiss_attention&stage=$TEST_NAME"; then
+		echo 'dismiss_attention: failed to change state'
+		return 1
+	fi
 }
 
 get_needed_firmwares_list()
