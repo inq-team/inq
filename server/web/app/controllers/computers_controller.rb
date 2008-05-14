@@ -457,7 +457,7 @@ __EOF__
 			stage.result = TestingStage::ATTENTION
 			z = stage
 		when :dismiss_attention
-			stage.accumulated_idle += stage.end - Time.new
+			stage.accumulated_idle += Time.new - stage.end
 			stage.end = nil
 			stage.result = TestingStage::RUNNING
 			z = stage
@@ -710,6 +710,7 @@ __EOF__
 		TestingStage::FINISHED => 'finished',
 		TestingStage::FAILED => 'failed',
 		TestingStage::HANGING => 'hanging',
+		TestingStage::ATTENTION => 'attention',
 	}
 	
 	def prepare_computer_tabs
@@ -740,7 +741,7 @@ __EOF__
 		@stages = @testing.testing_stages.sort { |a, b| a.start <=> b.start }.collect { |stage|
 			{
 				:id => stage.stage,
-				:elapsed => ((stage.end || Time.new()) - stage.start).round,
+				:elapsed => ((stage.end || Time.new()) - stage.start - stage.accumulated_idle).round,
 				:result => RESULT_MAPPING[stage.result] || 'unknown',
 				:comment => (RESULT_MAPPING[stage.result] || 'unknown') + (stage.comment ? ": #{stage.comment}" : ''),
 			}
