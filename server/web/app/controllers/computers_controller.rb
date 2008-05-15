@@ -58,7 +58,8 @@ class ComputersController < ApplicationController
 
 	def show_components
 		render :text => Computer.find(params[:id]).last_testing.components.collect { |com|
-			"#{com.model.vendor}::#{com.model.name}"
+			group=ComponentGroup.find_by_id(ComponentModel.find_by_id(com.component_model_id).component_group_id).name
+			"#{com.model.vendor}::#{com.model.name}::#{group}"
 		}.join("\n")
 	end
 
