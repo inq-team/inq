@@ -38,9 +38,14 @@ export PATH=$PATH:/usr/sbin:/sbin
 /sbin/service messagebus start
 /sbin/service haldaemon start
 /sbin/service sshd start
+/sbin/service portmap start
 
 /sbin/modprobe ipmi_si || :
 /sbin/modprobe ipmi_devintf || :
+
+# Mount NFS share containing firmwares, but do not fail
+echo -n "Trying to mount firmwares share:"
+mount -t nfs $SERVER:/inq/firmwares $SHARE_DIR/firmwares && echo_success || echo_failure
 
 echo -n 'Starting lm_sensors detection'
 $SHARE_DIR/inq-sensors-detect >/dev/null 2>/dev/null && echo_success || echo_failure
