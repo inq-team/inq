@@ -5,11 +5,16 @@ infos = text.split('processor')
 infos.shift
 
 cores = infos.map do |inf|
+	ph = unless inf.grep(/physical id/).empty?
+		inf.grep(/physical id/)[0].to_s.gsub(/^physical id.*: /, '').chomp.to_i
+	else
+		inf.split(/\n/)[0].gsub(/^\t: /, '')
+	end
 	{
 		:vendor => inf.grep(/vendor_id/)[0].to_s.gsub(/^vendor_id.*: /, '').chomp,
 		:model => inf.grep(/model name/)[0].to_s.gsub(/^model name.*: /, '').chomp,
 		:core_id => inf.grep(/core id/)[0].to_s.gsub(/^core id.*: /, '').chomp.to_i,
-		:physical_id => inf.grep(/physical id/)[0].to_s.gsub(/^physical id.*: /, '').chomp.to_i,
+		:physical_id => ph
 	}
 end
 
