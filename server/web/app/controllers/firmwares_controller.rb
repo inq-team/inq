@@ -46,4 +46,10 @@ class FirmwaresController < ApplicationController
 
 		redirect_to :action => 'index'
 	end
+
+	def live_component
+		computer = Computer.find_by_id(params[:computer])
+		@components = computer ? computer.last_testing.components.collect { |x| [x.model.name, x.model.id] } : []
+		render(:layout => false)
+	end
 end

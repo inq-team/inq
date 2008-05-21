@@ -1,8 +1,11 @@
-<% for column in Firmware.columns %>
-<p>
-	<b><%= column.name %>:</b> <%=h @firmware.send(column.name) %>
-</p>
-<% end %>
+<b>Component model:</b> <%=h ComponentModel.find_by_id(@firmware.component_model_id).name %>
+<br/>
+<b>Firmware image:</b> <%=h @firmware.image %>
+<br/>
+<b>Firmware version:</b> <%=h @firmware.version %>
+<br/>
+ID: <%=h @firmware.id %>
+<br/>
 
 <%= link_to 'Edit', :action => 'edit', :id => @firmware  %> |
 <%= link_to 'Back', :action => 'index' %>

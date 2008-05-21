@@ -2,16 +2,19 @@
 
 <table>
 	<tr>
-	<% for column in Firmware.columns %>
-		<th><%= column.name %></th>
-	<% end %>
+		<th>ID</th>
+		<th>Component model</th>
+		<th>Firmware image</th>
+		<th>Firmware version</th>
 	</tr>
 	
 <% for firmware in @firmwares %>
 	<tr>
-	<% for column in Firmware.columns %>
-		<td><%=h firmware.send(column.name) %></td>
-	<% end %>
+		<td><%=h firmware.id %></td>
+		<td><%=h ComponentModel.find_by_id(firmware.component_model_id).name %></td>
+		<td><%=h firmware.image %></td>
+		<td><%=h firmware.version %></td>
+
 		<td><%= link_to 'Show', :action => 'show', :id => firmware %></td>
 		<td><%= link_to 'Edit', :action => 'edit', :id => firmware %></td>
 		<td><%= link_to 'Destroy', { :action => 'destroy', :id => firmware }, :confirm => 'Are you sure?', :method => :delete %></td>
