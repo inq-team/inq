@@ -21,11 +21,12 @@ class FirmwaresController < ApplicationController
 	def create
 		@firmware = Firmware.new(params[:firmware])
 
-		if @firmware.save
+		if Firmware.find_by_component_model_id(@firmware.component_model_id) or !@firmware.save
+			flash[:notice] = 'Such component model is already exists.'
+			render :action => 'new'
+		else
 			flash[:notice] = 'Firmware was successfully created.'
 			redirect_to :action => 'index'
-		else
-			render :action => 'new'
 		end
 	end
 
