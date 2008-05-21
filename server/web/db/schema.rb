@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 9) do
+ActiveRecord::Schema.define(:version => 7) do
 
   create_table "audits", :force => true do |t|
     t.binary   "comparison"
@@ -61,7 +61,7 @@ ActiveRecord::Schema.define(:version => 9) do
     t.string   "doc_no",       :limit => 10
     t.integer  "order_id"
     t.datetime "last_ping"
-    t.string   "ip",           :limit => 20
+    t.string   "ip",           :limit => 15
     t.integer  "profile_id"
   end
 
@@ -69,12 +69,6 @@ ActiveRecord::Schema.define(:version => 9) do
     t.string  "name",     :limit => 60
     t.string  "info",     :limit => 100
     t.integer "isactive", :limit => 6,   :default => 1, :null => false
-  end
-
-  create_table "firmwares", :force => true do |t|
-    t.string  "version",            :null => false
-    t.string  "image",              :null => false
-    t.integer "component_model_id", :null => false
   end
 
   create_table "graphs", :force => true do |t|
@@ -85,30 +79,11 @@ ActiveRecord::Schema.define(:version => 9) do
     t.float    "value"
   end
 
-  create_table "log_data", :id => false, :force => true do |t|
-    t.integer  "log_id"
-    t.datetime "log_time"
-    t.string   "log_text",  :limit => 250
-    t.string   "log_cat",   :limit => 250
-    t.integer  "log_level",                :default => 0
-  end
-
-  create_table "macs", :id => false, :force => true do |t|
-    t.integer "current_id"
-    t.string  "mac",        :limit => 250
-  end
-
   create_table "marks", :force => true do |t|
     t.integer "testing_stage_id",                                :null => false
     t.string  "key",              :limit => 250, :default => "", :null => false
     t.float   "value_float"
     t.text    "value_str"
-  end
-
-  create_table "mb_bios", :id => false, :force => true do |t|
-    t.integer "hw_id"
-    t.string  "bios",  :limit => 250
-    t.string  "use",   :limit => 250
   end
 
   create_table "models", :force => true do |t|
@@ -120,7 +95,6 @@ ActiveRecord::Schema.define(:version => 9) do
   end
 
   add_index "models", ["name"], :name => "name"
-  add_index "models", ["name"], :name => "ft_models"
 
   create_table "order_lines", :force => true do |t|
     t.integer "order_id",                                :null => false
@@ -156,19 +130,7 @@ ActiveRecord::Schema.define(:version => 9) do
     t.boolean "is_tester",                   :default => false, :null => false
     t.boolean "is_assembler",                                   :null => false
     t.string  "password",     :limit => 40
-    t.boolean "is_student",                                     :null => false
   end
-
-  create_table "person_times", :force => true do |t|
-    t.integer  "person_id",                :null => false
-    t.integer  "shift_id",                 :null => false
-    t.datetime "start"
-    t.datetime "finish"
-    t.string   "comment",   :limit => 128
-  end
-
-  add_index "person_times", ["person_id"], :name => "person_id"
-  add_index "person_times", ["shift_id"], :name => "shift_id"
 
   create_table "profiles", :force => true do |t|
     t.text     "xml"
@@ -178,27 +140,6 @@ ActiveRecord::Schema.define(:version => 9) do
     t.datetime "timestamp",                 :null => false
   end
 
-  create_table "raid_bios", :id => false, :force => true do |t|
-    t.integer "hw_id"
-    t.string  "bios",  :limit => 250
-    t.string  "use",   :limit => 250
-  end
-
-  create_table "servers_params", :id => false, :force => true do |t|
-    t.integer "param_value", :limit => 20
-    t.integer "unisrv_id"
-    t.integer "param_id"
-  end
-
-  create_table "shifts", :force => true do |t|
-    t.date    "date",                             :null => false
-    t.integer "kind", :limit => 4, :default => 0, :null => false
-    t.integer "open", :limit => 4, :default => 1, :null => false
-  end
-
-  add_index "shifts", ["date"], :name => "date"
-  add_index "shifts", ["open"], :name => "open"
-
   create_table "stages", :primary_key => "stage_id", :force => true do |t|
     t.string  "stage_name", :limit => 250
     t.string  "stage_desc", :limit => 250
@@ -207,12 +148,12 @@ ActiveRecord::Schema.define(:version => 9) do
   end
 
   create_table "testing_stages", :force => true do |t|
-    t.integer  "testing_id",                              :null => false
+    t.integer  "testing_id",                               :null => false
     t.string   "stage",      :limit => 64
     t.datetime "start"
     t.datetime "end"
-    t.integer  "result",                   :default => 0, :null => false
-    t.text     "comment",                                 :null => false
+    t.integer  "result",                   :default => 0,  :null => false
+    t.text     "comment",                  :default => "", :null => false
   end
 
   add_index "testing_stages", ["id"], :name => "id", :unique => true
