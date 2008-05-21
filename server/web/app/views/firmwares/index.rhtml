@@ -1,0 +1,24 @@
+<h1>Listing firmwares</h1>
+
+<table>
+	<tr>
+	<% for column in Firmware.columns %>
+		<th><%= column.name %></th>
+	<% end %>
+	</tr>
+	
+<% for firmware in @firmwares %>
+	<tr>
+	<% for column in Firmware.columns %>
+		<td><%=h firmware.send(column.name) %></td>
+	<% end %>
+		<td><%= link_to 'Show', :action => 'show', :id => firmware %></td>
+		<td><%= link_to 'Edit', :action => 'edit', :id => firmware %></td>
+		<td><%= link_to 'Destroy', { :action => 'destroy', :id => firmware }, :confirm => 'Are you sure?', :method => :delete %></td>
+	</tr>
+<% end %>
+</table>
+
+<br/>
+
+<%= link_to 'New firmware', :action => 'new' %>

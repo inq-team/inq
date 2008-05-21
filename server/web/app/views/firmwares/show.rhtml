@@ -1,0 +1,8 @@
+<% for column in Firmware.columns %>
+<p>
+	<b><%= column.name %>:</b> <%=h @firmware.send(column.name) %>
+</p>
+<% end %>
+
+<%= link_to 'Edit', :action => 'edit', :id => @firmware  %> |
+<%= link_to 'Back', :action => 'index' %>
