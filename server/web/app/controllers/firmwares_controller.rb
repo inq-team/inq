@@ -57,6 +57,7 @@ class FirmwaresController < ApplicationController
 
 	def destroy
 		@firmware = Firmware.find(params[:id])
+		File.delete "#{FIRMWARES_DIR}/#{@firmware.image}"
 		@firmware.destroy
 
 		redirect_to :action => 'index'
