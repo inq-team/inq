@@ -16,6 +16,7 @@ class FirmwaresController < ApplicationController
 
 	def edit
 		@firmware = Firmware.find(params[:id])
+		flash[:notice] = 'Unentered parameters will stay default. Previous firmware image will be deleted if another one is going to be uploaded.'
 	end
 
 	def create
@@ -46,8 +47,30 @@ class FirmwaresController < ApplicationController
 
 	def update
 		@firmware = Firmware.find(params[:id])
+		new_firmware = Firmware.new(params[:firmware])
+		updated_values = params[:firmware]
+		to_be_deleted = "#{FIRMWARES_DIR}/#{@firmware.image}"
 
-		if @firmware.update_attributes(params[:firmware])
+		if new_firmware.image != ""
+			orig = new_firmware.image.original_filename.to_s
+			if File.exists?("#{FIRMWARES_DIR}/#{orig}")
+				flash[:notice] = 'Such firmware image is already exists.'
+				render :action => 'edit'
+				return
+			end
+			image_file = File.new("#{FIRMWARES_DIR}/#{orig}", "wb")
+			image_file.write(new_firmware.image.read)
+			image_file.close
+			updated_values["image"] = orig
+		end
+
+		updated_values.each_key { |x| updated_values.delete x if updated_values[x] == "" }
+
+		if Firmware.find_by_component_model_id(new_firmware.component_model_id)
+			flash[:notice] = 'Such component model is already exists.'
+			render :action => 'edit'
+		elsif @firmware.update_attributes(updated_values)
+			File.delete to_be_deleted
 			flash[:notice] = 'Firmware was successfully updated.'
 			redirect_to :action => 'index'
 		else
