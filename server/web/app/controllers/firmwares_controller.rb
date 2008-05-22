@@ -22,18 +22,26 @@ class FirmwaresController < ApplicationController
 		@firmware = Firmware.new(params[:firmware])
 
 		orig = @firmware.image.original_filename
+		if File.exists?("#{FIRMWARES_DIR}/#{orig}")
+			flash[:notice] = 'Such firmware image is already exists.'
+			render :action => 'new'
+			return
+		end
 		image_file = File.new("#{FIRMWARES_DIR}/#{orig}", "wb")
 		image_file.write(@firmware.image.read)
 		image_file.close
 		@firmware.image = orig
 
-		if Firmware.find_by_component_model_id(@firmware.component_model_id) or !@firmware.save
+		if Firmware.find_by_component_model_id(@firmware.component_model_id)
 			flash[:notice] = 'Such component model is already exists.'
+			render :action => 'new'
+		elsif !@firmware.save
+			flash[:notice] = 'An error occured during applying changes.'
 			render :action => 'new'
 		else
 			flash[:notice] = 'Firmware was successfully created.'
 			redirect_to :action => 'index'
-		end
+		end	
 	end
 
 	def update
