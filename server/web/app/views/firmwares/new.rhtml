@@ -1,6 +1,6 @@
 <h1>New firmware</h1>
 
-<% form_tag :action => 'create' do %>
+<% form_tag 'create', :multipart => true do %>
 	<%= render :partial => 'form' %>
 	<%= submit_tag "Create" %>
 <% end %>

@@ -21,6 +21,12 @@ class FirmwaresController < ApplicationController
 	def create
 		@firmware = Firmware.new(params[:firmware])
 
+		orig = @firmware.image.original_filename
+		image_file = File.new("#{FIRMWARES_DIR}/#{orig}", "wb")
+		image_file.write(@firmware.image.read)
+		image_file.close
+		@firmware.image = orig
+
 		if Firmware.find_by_component_model_id(@firmware.component_model_id) or !@firmware.save
 			flash[:notice] = 'Such component model is already exists.'
 			render :action => 'new'

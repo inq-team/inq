@@ -18,3 +18,4 @@ config.action_controller.perform_caching             = true
 # config.action_mailer.raise_delivery_errors = false
 
 TFTP_DIR = "/var/lib/tftpboot"
+FIRMWARES_DIR = "/inq/firmwares"
