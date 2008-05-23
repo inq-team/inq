@@ -1,6 +1,6 @@
 <h1>Editing firmware</h1>
 
-<% form_tag "/firmwares/update/#{@firmware.id}", :multipart => true, :id => @firmware do %>
+<% form_tag({ :action => 'update', :id => @firmware }, { :multipart => true }) do -%>
 	<%= render :partial => 'edit_form' %>
 	<%= submit_tag 'Edit' %>
 <% end %>
