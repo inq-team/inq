@@ -22,7 +22,7 @@ class FirmwaresController < ApplicationController
 	def create
 		@firmware = Firmware.new(params[:firmware])
 
-		orig = @firmware.image.original_filename
+		orig = @firmware.image.original_filename.gsub(/ /, '_')
 		if File.exists?("#{FIRMWARES_DIR}/#{orig}")
 			flash[:notice] = 'Such firmware image is already exists.'
 			render :action => 'new'
@@ -51,7 +51,7 @@ class FirmwaresController < ApplicationController
 		updated_values = params[:firmware]
 
 		if new_firmware.image != ""
-			orig = new_firmware.image.original_filename
+			orig = new_firmware.image.original_filename.gsub(/ /, '_')
 			if File.exists?("#{FIRMWARES_DIR}/#{orig}")
 				flash[:notice] = 'Such firmware image is already exists.'
 				render :action => 'edit'
