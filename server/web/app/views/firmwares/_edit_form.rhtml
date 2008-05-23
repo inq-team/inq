@@ -1,0 +1,30 @@
+<%= error_messages_for :firmware %>
+
+<!--[form:firmware]-->
+<p><label for="firmware_version">Version</label><br/>
+<%= text_field 'firmware', 'version'  %></p>
+
+<% for image in @firmware.image.split(/ /) %>
+<p><label for="firmware_image<%= @firmware.image.split(/ /).index(image).to_s %>">
+	<b>File:</b> <%= image %>
+	<%= link_to 'delete', :action => 'delete_file', :id => @firmware.id, "file" => image %>
+</label></p>
+<% end %>
+
+<p><label for="firmware_image">Add image</label><br/>
+<%= file_field "firmware", "image" %></p>
+
+<p><label for="firmware_component_model_id">Computer ID</label><br/>
+<%= text_field 'computer', 'id' %>
+</p>
+
+<p><span id="live_component"></span></p>
+
+<%= observe_field(
+	:computer_id,
+	:url => { :action => 'live_component' },
+	:update => :live_component,
+	:with => 'computer',
+	:frequency => 1.0
+) %>
+<!--[eoform:firmware]-->
