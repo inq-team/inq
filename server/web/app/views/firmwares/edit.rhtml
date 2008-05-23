@@ -2,7 +2,7 @@
 
 <% form_tag({ :action => 'update', :id => @firmware }, { :multipart => true }) do -%>
 	<%= render :partial => 'edit_form' %>
-	<%= submit_tag 'Edit' %>
+	<%= submit_tag 'Apply' %>
 <% end %>
 
 <%= link_to 'Show', :action => 'show', :id => @firmware %> |
