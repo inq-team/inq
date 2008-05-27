@@ -31,16 +31,16 @@ class FirmwaresController < ApplicationController
 		end
 		@firmware.image = orig
 
-		if Firmware.find_by_component_model_id(@firmware.component_model_id)
+		begin
+			@firmware.save!
+		rescue ActiveRecord::StatementInvalid
 			flash[:notice] = 'Such component model already exists.'
 			render :action => 'new'
-		elsif !@firmware.save
-			flash[:notice] = 'An error occured during applying changes.'
-			render :action => 'new'
-		else
-			flash[:notice] = 'Firmware was successfully created.'
-			redirect_to :action => 'index'
-		end	
+			return
+		end
+
+		flash[:notice] = 'Firmware was successfully created.'
+		redirect_to :action => 'index'
 	end
 
 	def update
