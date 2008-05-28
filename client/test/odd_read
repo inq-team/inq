@@ -16,12 +16,14 @@
 
 exit_handler()
 {
-	[ -f "$IMAGE" ] && rm -f $IMAGE
+	[ -f "$FIFOFILE" ] && rm -f $FIFOFILE
+	[ -f "$FIFOFILE.md5" ] && rm -f $FIFOFILE.md5
 	[ -f "$RESULT_FILE" ] && rm -f $RESULT_FILE
-	[ -f "$RESULT_FILE.csv" ] && rm -f "$RESULT_FILE.csv"
+	[ -f "$TMPFILE" ] && rm -f $TMPFILE
 }
 
-IMAGE=`mktemp`
+FIFOFILE=`mktemp`
+TMPFILE=`mktemp`
 RESULT_FILE=`mktemp`
 
 load_kernel_modules()
@@ -34,12 +36,24 @@ test_odd()
 {
 	local odd=$1
 
-	readcd -v dev=$odd f=$IMAGE sectors=0-$TEST_IMAGE_BLOCKS \
-		meshpoints=$MESH_POINTS >$RESULT_FILE || true
-	[ ! -s "$IMAGE" ] && dd if=$odd of=$IMAGE bs=2048 \
-		count=$TEST_IMAGE_BLOCKS >$DEBUG_TTY 2>&1 || true
+	rm $FIFOFILE
+	mkfifo $FIFOFILE
 
-	local read_md5=`md5sum -b < $IMAGE | awk '{print $1}'`
+	echo -n "Determining can we use readcd"
+	readcd -v dev=$odd f=$TMPFILE sectors=0-1 || true
+	echo_success
+	if [ ! -s "$TMPFILE" ]; then
+		read_md5=`dd if=$odd bs=2048 count=$TEST_IMAGE_BLOCKS | md5sum -b | awk '{print $1}'` || true
+	else
+		md5sum -b "$FIFOFILE" > ${FIFOFILE}.md5 &
+		readcd -v dev=$odd f=$FIFOFILE sectors=0-$TEST_IMAGE_BLOCKS meshpoints=$MESH_POINTS | while read line; do
+			speed=`echo $line | awk '{print $2}'`
+			timestamp=`date +%s`
+			echo "$TESTED_QUANTITY,$timestamp,$speed" >> "$RESULT_FILE"
+		done
+		read_md5=`cat ${FIFOFILE}.md5 | awk '{print $1}'`
+	fi
+		
 	echo "Read data MD5 checksum: $read_md5"
 	[ "$read_md5" = $TEST_IMAGE_HASH ] \
 		&& return 0 || return 1
@@ -70,26 +84,20 @@ interactive()
 			non_passed=0
 
 			eject $odd || true
-			generate_speed_results
+			send_speed_results
 		else
 			print_red_message "Drive test failed"
 		fi
 	done
 }
 
-generate_speed_results()
+send_speed_results()
 {
 	[ -s "$RESULT_FILE" ] || return 0
 	MONITORING_NAME=odd_read
 	MONITORING_ID=3
 
-	cat $RESULT_FILE | while read line; do
-		speed=`echo $line | awk '{print $2}'`
-		echo "$TESTED_QUANTITY,\"$speed\"" >> "$RESULT_FILE.csv"
-	done
-
-	monitoring_submit_multiple "$RESULT_FILE.csv"
-	rm "$RESULT_FILE.csv"
+	monitoring_submit_multiple "$RESULT_FILE"
 }
 
 load_kernel_modules
@@ -110,7 +118,7 @@ for odd in `get_odds_list`; do
 		if test_odd $odd; then
 			TESTED_QUANTITY=$(( $TESTED_QUANTITY + 1 ))
 			test_progress $TESTED_QUANTITY $ODD_QUANTITY
-			generate_speed_results
+			send_speed_results
 			eject $odd || true
 		else
 			test_failed "Bad ODD $odd"
@@ -124,6 +132,7 @@ for odd in `get_odds_list`; do
 				print_green_message "Drive test passed"
 				TESTED_QUANTITY=$(( $TESTED_QUANTITY + 1 ))
 				test_progress $TESTED_QUANTITY $ODD_QUANTITY
+				send_speed_results
 				eject $odd || true
 			else
 				print_red_message \

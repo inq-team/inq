@@ -1,6 +1,5 @@
 require 'planner/planner'
 require 'tempfile'
-require 'csv'
 
 class ComputersController < ApplicationController
 	# GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
@@ -619,16 +618,21 @@ __EOF__
 	end
 
 	def monitoring_submit_multiple
-		CSV::Reader.parse(params[:monitoring_data]) do |row|
+		@testing = Computer.find(params[:id]).last_testing
+		@monitoring_id = params[:monitoring_id].to_i
+
+		params[:monitoring_data].each_line { |l|
+			key, timestamp, value = l.split(/,/)
+
 			g = Graph.new(
-				:testing => Computer.find(params[:id]).last_testing,
-				:monitoring_id => params[:monitoring_id].to_i,
-				:timestamp => params[:timestamp] ? Time.at(params[:timestamp].to_i) : Time.now,
-				:key => row[0].data.to_i,
-				:value => row[1].data.to_f			
+				:testing => @testing,
+				:monitoring_id => @monitoring_id,
+				:timestamp => Time.at(timestamp.to_i),
+				:key => key,
+				:value => value
 			)
 			g.save!
-		end
+		}
 		head(:status => 200)
 	end
 
