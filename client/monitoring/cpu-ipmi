@@ -1,0 +1,71 @@
+#!/bin/sh -e
+# ID=2
+
+. /usr/share/inquisitor/functions-monitoring
+[ -n "$PERIOD" ] || PERIOD=60
+
+TEMP_PATTERNS='s/CPU\(.\) Diode.*| \([^ ]*\).*|.*|.*|.*|.*|.*|.*|.*|.*/\1 => \2/p;
+s/cpu\(.\)\.dietemp.*| \([^ ]*\).*|.*|.*|.*|.*|.*|.*|.*|.*/\1 => \2/p;
+s/CPU \(.\) TEMP.*| \([^ ]*\).*|.*|.*|.*|.*|.*|.*|.*|.*/\1 => \2/p;
+s/CPU\(.\) TEMP.*| \([^ ]*\).*|.*|.*|.*|.*|.*|.*|.*|.*/\1 => \2/p'
+
+VCORE_PATTERNS='s/VCORE \(.\).*| \([^ ]*\).*|.*|.*|.*|.*|.*|.*|.*|.*/\1 => \2/p;
+s/cpu\(.\)\.vcore-s0.*| \([^ ]*\).*|.*|.*|.*|.*|.*|.*|.*|.*/\1 => \2/p'
+
+strip_hash()
+{
+	local i
+	for i in `ruby -e "$1.each_pair{|k, v| puts \"#{k};#{v}\"}"`; do
+		echo "$i"
+	done
+}
+
+while true; do
+	INFO=`ipmitool sensor`
+#	INFO=`cat ipmitool_sensor_RS250_G3.log`
+	RES=
+	echo "$INFO" | sed -n "$TEMP_PATTERNS" | sed s/.*na//  | \
+	(
+	while read TEMP_PAIR; do
+		if [ -n "$TEMP_PAIR" ]; then
+			if [ -n "$RES" ]; then
+				RES="$RES, $TEMP_PAIR"
+			else
+				RES="$TEMP_PAIR"
+			fi
+		fi
+	done
+	RES="{ $RES }"
+	for TEMP_PAIR in `strip_hash "$RES"`; do
+		KEY=`echo "$TEMP_PAIR" | cut -f1 -d';'`
+		VALUE=`echo "$TEMP_PAIR" | cut -f2 -d';'`
+		[ -z "$VALUE" ] || monitoring_submit "$KEY" "$VALUE"
+#		echo "$KEY" '->' "$VALUE"
+	done
+	)
+
+	RES=
+	echo "$INFO" | sed -n "$VCORE_PATTERNS" | sed s/.*na//  | \
+	(
+	while read VCORE_PAIR; do
+		if [ -n "$VCORE_PAIR" ]; then
+			if [ -n "$RES" ]; then
+				RES="$RES, $VCORE_PAIR"
+			else
+				RES="$VCORE_PAIR"
+			fi
+		fi
+	done
+	RES="{ $RES }"
+	for VCORE_PAIR in `strip_hash "$RES"`; do
+		KEY=`echo "$VCORE_PAIR" | cut -f1 -d';'`
+		VALUE=`echo "$VCORE_PAIR" | cut -f2 -d';'`
+		KEY=$(($KEY + 100))
+		[ -z "$VALUE" ] || monitoring_submit "$KEY" "$VALUE"
+#		echo "$KEY" '->' "$VALUE"
+	done
+	)
+
+#	break
+	sleep $PERIOD
+done

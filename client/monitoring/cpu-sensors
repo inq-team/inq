@@ -1,0 +1,67 @@
+#!/bin/sh -e
+# ID=4
+
+#. /usr/share/inquisitor/functions-monitoring
+[ -n "$PERIOD" ] || PERIOD=60
+
+strip_hash()
+{
+	local i
+	for i in `ruby -e "$1.each_pair{|k, v| puts \"#{k};#{v}\"}"`; do
+		echo "$i"
+	done
+}
+
+while true; do
+	INFO=`sensors -A`
+#	INFO=`cat sensors_RS160_G3.log`
+	RES=
+	echo "$INFO" | grep -n 'Core\(.\) Temp:' | sed "s/^\(.*\):Core\(.\) Temp:/\1;\2/"  | \
+	(
+	while read PAIR; do
+		if [ -n "$PAIR" ]; then
+			LINE_NUMBER=`echo "$PAIR" | cut -f1 -d';'`
+			LINE_NUMBER=$(($LINE_NUMBER + 1))
+			CORE_NUMBER=`echo "$PAIR" | cut -f2 -d';'`
+			TEMP=`echo "$INFO" | sed -n "$LINE_NUMBER, +0 p" | sed 's/^ *+//' | sed 's/ C$//'`
+			if [ -n "$RES" ]; then
+				RES="$RES, $CORE_NUMBER => $TEMP"
+			else
+				RES="$CORE_NUMBER => $TEMP"
+			fi
+		fi
+	done
+	RES="{ $RES }"
+	for TEMP_PAIR in `strip_hash "$RES"`; do
+		KEY=`echo "$TEMP_PAIR" | cut -f1 -d';'`
+		VALUE=`echo "$TEMP_PAIR" | cut -f2 -d';'`
+		[ -z "$VALUE" ] || monitoring_submit "$KEY" "$VALUE"
+#		echo "$KEY" '->' "$VALUE"
+	done
+	)
+
+	RES=
+	echo "$INFO" | sed -n "s/^VCore \(.\): *+\(.*\) V .*$/\1 => \2/p" | \
+	(
+	while read VCORE_PAIR; do
+		if [ -n "$VCORE_PAIR" ]; then
+			if [ -n "$RES" ]; then
+				RES="$RES, $VCORE_PAIR"
+			else
+				RES="$VCORE_PAIR"
+			fi
+		fi
+	done
+	RES="{ $RES }"
+	for VCORE_PAIR in `strip_hash "$RES"`; do
+		KEY=`echo "$VCORE_PAIR" | cut -f1 -d';'`
+		VALUE=`echo "$VCORE_PAIR" | cut -f2 -d';'`
+		KEY=$(($KEY + 100))		
+		[ -z "$VALUE" ] || monitoring_submit "$KEY" "$VALUE"
+#		echo "$KEY" '->' "$VALUE"
+	done
+	)
+
+#	break
+	sleep $PERIOD
+done
