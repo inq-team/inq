@@ -22,7 +22,7 @@ body {
 	float: left;
 }
 
-#login {
+#login_box {
 	padding: 0.5em;
 	float: right;
 }
@@ -385,4 +385,14 @@ input[type=submit] {
 
 #title_bar_profile_edit {
 	display: none;
+}
+
+#login_form {
+	width: 30em;
+	background: rgb(255, 255, 192);
+	padding: 1em;
+}
+
+.username {
+	font-weight: bold;
 }

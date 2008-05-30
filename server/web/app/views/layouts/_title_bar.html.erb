@@ -6,8 +6,13 @@
 <%= link_to 'Computers', :controller => :computers %>
 <%= link_to 'Profiles', :controller => :profiles %>
 </div>
-<div id="login">
-Login
+<div id="login_box">
+<% if current_person != :false %>
+	User: <span class="username"><%= current_person.login %></span>
+	<%= link_to 'Logout', :controller => :account, :action => :logout %>
+<% else %>
+<%=	link_to 'Login', :controller => :account, :action => :login %>
+<% end %>
 </div>
 <br clear="all" />
 </div>
