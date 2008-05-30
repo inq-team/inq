@@ -19,6 +19,10 @@ class FirmwaresController < ApplicationController
 
 	def edit
 		@firmware = Firmware.find(params[:id])
+
+		# Retrieve directory containing firmwares
+		@firmware_files = Dir.entries(FIRMWARES_DIR).collect { |x| x if not x =~ /^\./ }.compact
+		@firmware_files = @firmware_files.unshift("-") # We must have dummy option
 	end
 
 	def create
@@ -67,6 +71,8 @@ class FirmwaresController < ApplicationController
 			updated_values["image"] = @firmware.image + " " + orig
 			updated_values["image"].gsub!(/^ /, '')
 		end
+
+		updated_values["image"] = params[:image_path] if params[:image_path] != "-"
 
 		updated_values.each_key { |x| updated_values.delete x if updated_values[x] == "" }
 
