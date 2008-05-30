@@ -1,4 +1,6 @@
-<% form_tag :action => 'handle_computers', :id => @order do %>
+<%
+count_done = 0
+form_tag :action => 'handle_computers', :id => @order do %>
 
 <%= javascript_tag ("
 function checkUncheckAll(theElement) {
@@ -18,23 +20,28 @@ function checkUncheckAll(theElement) {
 	<th>Model</th>
 	<th>Profile</th>
 	<th>Stage</th>
+	<th>Shelf</th>
 </tr>
-<% @computers.sort{ |a, b| a.id <=> b.id }.each { |c| %>
+<% shelves = Shelves::Config.new(DEFAULT_SHELVES_CONFIG); @computers.sort{ |a, b| a.id <=> b.id }.each { |c|
+	shl = shelves.by_ipnet(c.ip)
+%>
 <tr>
 <td style="text-align: center"><%= check_box "comp_#{c.id}", :update, :checked => true %></td>
 <td><%= link_to c.serial_no, :controller => 'computers', :action => 'show', :id => c.id %></td>
 <td><%=h c.model.name %></td>
 <td><%= c.profile ? c.profile.name : 'none' %></td>
 <%	if c.computer_stages and c.computer_stages.last %>
-<td<%= ' style="font-weight: bold"' unless c.computer_stages.last.end.nil? %>><%= c.computer_stages.last.stage %> <%= c.computer_stages.last.end.nil? ? 'now' : 'done' %></td>
+<td<%= ' style="font-weight: bold"' unless c.computer_stages.last.end.nil? %>><%= c.computer_stages.last.stage %> <%= c.computer_stages.last.end.nil? ? 'now' : 'done' %><% count_done += 1 if c.computer_stages.last.stage == 'checking' and not c.computer_stages.last.end.nil? %></td>
 <%	end %>
+<td><%= shl.full_name if shl %></td>
 </tr>
 <% } %>
 <tr>
 <th>
 	<input type="checkbox" id="checkall2" checked="checked" onclick="checkUncheckAll(this);" style="height:1.25em;width:1.25em"/>
 </th>
-<th colspan="4" style="text-align: right">
+<th>Done: <%= count_done %></th>
+<th colspan="4" style="text-align: left">
 	<%= submit_tag 'Print labels' %>
 	<%= submit_tag 'Change' %><br/>
 </th></tr>
@@ -42,7 +49,7 @@ function checkUncheckAll(theElement) {
 <tr><td colspan="2">
 New profile:<br/>
 New model:</td>
-<td colspan="3"><%= select :profile, :id, @profiles, :selected => @profile %><br/>
+<td colspan="4"><%= select :profile, :id, @profiles, :selected => @profile %><br/>
 <%= select :model, :id, @models, :selected => @model %></td>
 </tr>
 </table>
