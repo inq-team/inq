@@ -738,7 +738,7 @@ __EOF__
                         a << {  :stage => stage.stage, :person => stage.person,
                                 :start => stage.start,
                                 :end => stage.end, :elapsed => (stage.end || now) - (stage.start || now),
-				:overdue => (stage.end || now) - (stage.start || now) > stage.default_timespan,
+				:overdue => stage.default_timespan ? (stage.end || now) - (stage.start || now) > stage.default_timespan : false,
                                 :comment => stage.comment, :status => (stage.start.blank? || stage.start > now) ? :planned : stage.end ? :finished : :running
                         }
                 end.sort { |a, b| (a[:start] ? a[:start].to_f : 0) <=> (b[:start] ? b[:start].to_f : 0) }
