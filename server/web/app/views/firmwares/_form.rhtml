@@ -7,6 +7,10 @@
 <p><label for="firmware_image">Image</label><br/>
 <%= file_field "firmware", "image" %></p>
 
+<p><label for="image_path">Existing image</label><br/>
+<i>If no file is going to be uploaded, this select box'es choice will be used.</i><br/>
+<%= select_tag "image_path", options_for_select(@firmware_files) %></p>
+
 <p><label for="firmware_component_model_id">Computer ID</label><br/>
 <%= text_field 'computer', 'id' %>
 </p>

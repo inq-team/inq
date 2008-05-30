@@ -12,6 +12,9 @@ class FirmwaresController < ApplicationController
 
 	def new
 		@firmware = Firmware.new
+
+		# Retrieve directory containing firmwares
+		@firmware_files = Dir.entries(FIRMWARES_DIR).collect { |x| x if not x =~ /^\./ }.compact
 	end
 
 	def edit
@@ -21,15 +24,19 @@ class FirmwaresController < ApplicationController
 	def create
 		@firmware = Firmware.new(params[:firmware])
 
-		orig = @firmware.image.original_filename.gsub(/ /, '_')
-		begin
-			File.new("#{FIRMWARES_DIR}/#{orig}", File::CREAT|File::EXCL|File::WRONLY).write(@firmware.image.read)
-		rescue Errno::EEXIST
-			flash[:notice] = 'Such firmware image already exists.'
-			render :action => 'new'
-			return
+		if @firmware.image == ""
+			@firmware.image = params[:image_path]
+		else
+			orig = @firmware.image.original_filename.gsub(/ /, '_')
+			begin
+				File.new("#{FIRMWARES_DIR}/#{orig}", File::CREAT|File::EXCL|File::WRONLY).write(@firmware.image.read)
+			rescue Errno::EEXIST
+				flash[:notice] = 'Such firmware image already exists.'
+				render :action => 'new'
+				return
+			end
+			@firmware.image = orig
 		end
-		@firmware.image = orig
 
 		begin
 			@firmware.save!
