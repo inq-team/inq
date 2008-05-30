@@ -51,8 +51,8 @@ class Layout
 	def layout_single_record_block(el)
 		data = {}
 		datasources = el.elements.to_a('./use-data-sources/use-data-source').each do |ds|
-			d = @context.data[ds.attributes['ref']]			
-			data.merge!(d.is_a?(Array) ? d.first : d)
+			d = @context.data[ds.attributes['ref']]
+			data.merge!(d.is_a?(Array) ? d.first : d) rescue nil
 		end
 		{ :kind => :single_record_block, :data => data, :id => el.attributes['id'], :display => el.attributes['display'] }
 	end
