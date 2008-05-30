@@ -269,6 +269,13 @@ class ComputersController < ApplicationController
 		render :text => @sticker
 	end
 
+	def create_iso
+		prepare_computer_and_testing
+		out = `ssh checker \"/srv/generate_drivers_iso/generate_mount #{params[:id]} /srv/iso \\\"#{@computer.model.name}\\\"\"`
+		render :text => "<html><body><pre>#{out}</pre></body></html>"
+#		redirect_to(:action => 'sticker', :id => params[:id], :count => @copies.to_s(), :testing => @testing_number)
+	end
+
 	def log
 		prepare_computer_tabs
 		render(:layout => 'computer_tabs')
@@ -288,10 +295,15 @@ class ComputersController < ApplicationController
 			}
 			format.png {
 				png_file = Tempfile.new('graph_png')
-				data_file = Tempfile.new('graph_data')
-				Graph.find_all_by_testing_id(@testing).each { |g|
-					data_file.puts "#{g.timestamp.to_f}\t#{g.value}"
-				}
+				graphs = Graph.find_all_by_testing_id(@testing)
+				uniq_keys = graphs.map{ |x| x.key }.uniq
+				data_files_hash = {}
+				uniq_keys.each{ |x| data_files_hash[x] = Tempfile.new("graph_data_#{x}") }
+				data_files_hash.each_pair do |key, data_file|
+					graphs.select{ |x| x.key == key }.each{ |x| data_file.puts "#{x.timestamp.to_f}\t#{x.value}" }
+				end
+				plot_string = data_files_hash.map{ |x| "'#{x[1].path}' using 1:2 title \"#{(x[0] < 100) ? 'Temp' : 'VCore'}\" with lines" }.join(', ')
+				data_files_hash.each{ |x| x[1].flush }
 				chart_file = Tempfile.new('graph_chart')
 				chart_file.puts <<__EOF__
 set terminal png size 800, 400
@@ -304,12 +316,11 @@ set rmargin 5
 set tmargin 1
 set bmargin 2
 
-plot '#{data_file.path}' using 1:2 title "Value" with lines
+plot #{plot_string}
 __EOF__
 
-				data_file.flush
 				chart_file.flush
-
+				
 				system("gnuplot #{chart_file.path}")
 				send_file(png_file.path)
 
