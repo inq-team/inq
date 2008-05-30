@@ -1,0 +1,18 @@
+activeauthentication
+==========
+
+This is a basic authentication generator for rails, modified from techoweenie's wonderful acts_as_authenticated [http://technoweenie.stikipad.com/plugins/show/Acts+as+Authenticated].
+
+To use:
+
+  ./script/generate authenticated user account
+
+Add the following to your application.rb file:
+
+  include AuthenticatedSystem
+
+Add the following to your controller:
+
+  before_filter :login_required
+
+Be sure to fill in the properties in config active_directory.yml before using.
