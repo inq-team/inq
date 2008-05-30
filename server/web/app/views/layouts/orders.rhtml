@@ -15,6 +15,7 @@
 <body>
 	<%= render :partial => '/layouts/title_bar' %>
 	<p style="color: green"><%= flash[:notice] %></p>
+	<p style="color: red"><%= flash[:error] %></p>
 	<%= yield %>
 </body>
 </html>
