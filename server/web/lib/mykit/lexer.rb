@@ -71,7 +71,7 @@ class Lexer
 
 		#second run
 
-		chunks2 = chunks.collect { |r| r.split(/,|\/|\(|\)|>|<|-|\+|=/).collect { |t| t unless t.empty? }.compact }.flatten
+		chunks2 = chunks.collect { |r| r.split(/\\|,|\/|\(|\)|>|<|-|\+|=/).collect { |t| t unless t.empty? }.compact }.flatten
 		pairs2 = chunks2[0..-2].zip(chunks2[1..-1])
 		pairs3 = pairs | pairs2
 		chunks3 = chunks | chunks2
