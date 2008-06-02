@@ -1,7 +1,7 @@
 require 'digest/sha1'
 class Person < ActiveRecord::Base
 	def admin?
-		login == 'myakshin'
+		is_admin
 	end
 
 	def remember_me

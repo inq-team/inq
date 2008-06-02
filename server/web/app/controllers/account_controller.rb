@@ -5,9 +5,8 @@ require 'yaml'
 class AccountController < ApplicationController
 	layout 'orders'
 
-	# say something nice, you goof!  something sweet.
 	def index
-		redirect_to(:action => 'login') unless logged_in? || Person.count > 0
+		redirect_to(:action => 'login') unless logged_in?
 	end
 
 	def login
@@ -24,7 +23,7 @@ class AccountController < ApplicationController
 	end
   
 	def logout
-#		self.current_person.forget_me if logged_in?
+		self.current_person.forget_me if logged_in?
 		cookies.delete :auth_token
 		reset_session
 		flash[:notice] = "You have been logged out."
@@ -42,6 +41,15 @@ class AccountController < ApplicationController
 			logger.error e.inspect
 			logger.error e.backtrace
 			nil
+		end
+	end
+
+	def update
+		if current_person.update_attributes(params[:account])
+			flash[:notice] = 'My settings were successfully updated.'
+			redirect_to :action => 'index'
+		else
+			render :action => 'index'
 		end
 	end
 

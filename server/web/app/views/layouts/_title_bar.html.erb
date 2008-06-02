@@ -1,17 +1,24 @@
 <div id="topbar">
 <div id="topmenu">
-<%= link_to 'Orders', :controller => :orders %>
-<%= link_to 'Search', :controller => :orders, :action => :search %>
-<%= link_to '(Recent)', :controller => :orders, :action => :search, :date => { :start => Date.today-2, :end => Date.today } %>
-<%= link_to 'Computers', :controller => :computers %>
-<%= link_to 'Profiles', :controller => :profiles %>
+<%= link_to_unless_current 'Orders', :controller => :orders %>
+<%= link_to_unless_current 'Search', :controller => :orders, :action => :search %>
+<%= link_to_unless_current '(Recent)', :controller => :orders, :action => :search, :date => { :start => (Date.today - (logged_in? ? current_person.recent_days : 3) + 1), :end => Date.today } %>
+<%= link_to_unless_current 'Computers', :controller => :computers %>
+<% if logged_in? and current_person.admin? -%>
+|
+<%=	link_to_unless_current 'Profiles', :controller => :profiles %>
+<%=	link_to_unless_current 'Models', :controller => :models %>
+<%=	link_to_unless_current 'Firmwares', :controller => :firmwares %>
+<%=	link_to_unless_current 'Users', :controller => :people %>
+<% end %>
 </div>
 <div id="login_box">
-<% if current_person != :false %>
-	User: <span class="username"><%= current_person.login %></span>
-	<%= link_to 'Logout', :controller => :account, :action => :logout %>
+<% if logged_in? %>
+	User: <span class="username"><%= current_person.display_name %></span> |
+	<%= link_to_unless_current 'My settings', :controller => :account, :action => :index %> |
+	<%= link_to_unless_current 'Logout', :controller => :account, :action => :logout %>
 <% else %>
-<%=	link_to 'Login', :controller => :account, :action => :login %>
+<%=	link_to_unless_current 'Login', :controller => :account, :action => :login %>
 <% end %>
 </div>
 <br clear="all" />

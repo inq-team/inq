@@ -11,10 +11,7 @@
 <td><%= password_field_tag 'password' %></td>
 </tr>
 
-<tr>
-<td><label for="remember_me">Remember me:</label></td>
-<td><%= check_box_tag 'remember_me' %></td>
-</tr>
+<%= hidden_field_tag 'remember_me', '1' %>
 
 <tr>
 <td colspan="2" style="text-align: center"><%= submit_tag 'Login' %></td>
