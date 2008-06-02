@@ -1,6 +1,6 @@
 <div id="topbar">
 <div id="topmenu">
-<%= link_to_unless_current 'Orders', :controller => :orders %>
+<%= link_to_unless_current 'Orders', :controller => :orders, :manager => logged_in? ? { :name => current_person.name } : nil %>
 <%= link_to_unless_current 'Search', :controller => :orders, :action => :search %>
 <%= link_to_unless_current '(Recent)', :controller => :orders, :action => :search, :date => { :start => (Date.today - (logged_in? ? current_person.recent_days : 3) + 1), :end => Date.today } %>
 <%= link_to_unless_current 'Computers', :controller => :computers %>
