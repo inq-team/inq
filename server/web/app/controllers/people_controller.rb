@@ -2,6 +2,10 @@ class PeopleController < ApplicationController
 	layout 'orders'
 	before_filter :login_required
 
+	def authorized?
+		current_person.admin?
+	end
+
 	def index
 		list
 		render :action => 'list'
