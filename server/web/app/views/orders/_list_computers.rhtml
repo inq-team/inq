@@ -1,5 +1,6 @@
 <%
 count_done = 0
+changes_allowed = logged_in? and current_person.admin?
 form_tag :action => 'handle_computers', :id => @order do %>
 
 <%= javascript_tag ("
@@ -15,7 +16,9 @@ function checkUncheckAll(theElement) {
 ") %>
 <table class="bordered">
 <tr>
+<% if changes_allowed %>
 	<th><input type="checkbox" id="checkall1" checked="checked" onclick="checkUncheckAll(this);" style="height:1.25em;width:1.25em"/></th>
+<% end %>
 	<th>ID</th>
 	<th>Model</th>
 	<th>Profile</th>
@@ -26,7 +29,9 @@ function checkUncheckAll(theElement) {
 	shl = shelves.by_ipnet(c.ip)
 %>
 <tr>
+<% if changes_allowed %>
 <td style="text-align: center"><%= check_box "comp_#{c.id}", :update, :checked => true %></td>
+<% end %>
 <td><%= link_to c.serial_no, :controller => 'computers', :action => 'show', :id => c.id %></td>
 <td><%=h c.model.name %></td>
 <td><%= c.profile ? c.profile.name : 'none' %></td>
@@ -37,21 +42,29 @@ function checkUncheckAll(theElement) {
 </tr>
 <% } %>
 <tr>
+<% if changes_allowed %>
 <th>
 	<input type="checkbox" id="checkall2" checked="checked" onclick="checkUncheckAll(this);" style="height:1.25em;width:1.25em"/>
 </th>
+<% end %>
 <th>Done: <%= count_done %></th>
 <th colspan="4" style="text-align: left">
+<% if changes_allowed %>
 	<%= submit_tag 'Print labels' %>
 	<%= submit_tag 'Change' %><br/>
-</th></tr>
+<% end %>
+</th>
+</tr>
 
+<% if changes_allowed %>
 <tr><td colspan="2">
 New profile:<br/>
 New model:</td>
 <td colspan="4"><%= select :profile, :id, @profiles, :selected => @profile %><br/>
 <%= select :model, :id, @models, :selected => @model %></td>
 </tr>
+<% end %>
+
 </table>
 
 <% end %>

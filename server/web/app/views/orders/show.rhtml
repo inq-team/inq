@@ -43,7 +43,7 @@
 
 <% if @computers.size > 0 %>
 	<td colspan="2"><%= render :partial => 'list_computers' %></td>
-<% elsif @computers.size == 0 and @order.order_stages[-1] and @order.order_stages[-1].stage == 'acceptance' %>
+<% elsif logged_in? and current_person.admin? and @computers.size == 0 and @order.order_stages[-1] and @order.order_stages[-1].stage == 'acceptance' %>
 	<td colspan="2" class="panel"><%= render :partial => 'create_computers' %></td>
 <% end %>
 

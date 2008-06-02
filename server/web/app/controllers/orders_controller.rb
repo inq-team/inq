@@ -3,6 +3,8 @@ class OrdersController < ApplicationController
 	auto_complete_for :order, :customer
 	enable_sticker_printing
 
+	before_filter :login_required, :except => [ :index, :show, :search ]
+
 	# GET /orders
 	# GET /orders.xml
 	def index
