@@ -326,8 +326,8 @@ class OrdersController < ApplicationController
 				:include => [{ :order => :order_stages}, :computer_stages ],
 				:order => 'computer_stages.start'
 			)
-			redirect_to :action => 'show', :id => @orders[0] if @orders.size == 1 and not params[:no_redirect]
-			redirect_to :controller => 'computers', :action => 'show', :id => @computers[0] if @computers.size == 1 and not params[:no_redirect]
+			redirect_to :action => 'show', :id => @orders[0] if @orders.size == 1 and @computers.size == 0 and not params[:no_redirect]
+			redirect_to :controller => 'computers', :action => 'show', :id => @computers[0] if @orders.size == 0 and @computers.size == 1 and not params[:no_redirect]
 		end
 	end
 
