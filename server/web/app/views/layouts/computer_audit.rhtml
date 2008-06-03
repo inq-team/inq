@@ -12,19 +12,8 @@
 	<%= stylesheet_link_tag "computer_audit" %>
 </head>
 <body>
-
-	<div id="title_bar"> 
-	<div id="title_bar_link"><%= link_to(image_tag('shelves.png'), :controller => 'computers') %></div>
-	<table><tr>
-		<td id="title_bar_model"><%= @computer.model.name %></td>
-		<td id="title_bar_serial"><%= @computer.serial_no %></td>
-		<td id="title_bar_shelf"><%= @computer.shelf %></td>
-<% if @computer.order %>
-		<td id="title_bar_doc">Order: <%= link_to @computer.order.buyer_order_number, { :controller => :orders, :action => :show, :id => @computer.order } %></td>
-<% end %>
-	</tr></table>
-	</div>
-
+	<%= render :partial => '/layouts/title_bar' %>
+	<%= render :partial => '/layouts/computer_title_bar' %>	
 	<%= progress_bar(@computer_stages) %>
 	
 	<table id="testing_pane">
