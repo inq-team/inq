@@ -295,12 +295,13 @@ class ComputersController < ApplicationController
 			}
 			format.png {
 				png_file = Tempfile.new('graph_png')
-				graphs = Graph.find_all_by_testing_id(@testing)
+				graphs = Graph.find_all_by_testing_id(@testing, :order => "timestamp")
 				uniq_keys = graphs.map{ |x| x.key }.uniq
 				data_files_hash = {}
 				uniq_keys.each{ |x| data_files_hash[x] = Tempfile.new("graph_data_#{x}") }
 				data_files_hash.each_pair do |key, data_file|
-					graphs.select{ |x| x.key == key }.each{ |x| data_file.puts "#{x.timestamp.to_f}\t#{x.value}" }
+					x_min = graphs.select{ |x| x.key == key }[0].timestamp.to_f
+					graphs.select{ |x| x.key == key }.each{ |x| data_file.puts "#{x.timestamp.to_f - x_min}\t#{x.value}" }
 				end
 				plot_string = data_files_hash.map{ |x| "'#{x[1].path}' using 1:2 title \"#{(x[0] < 100) ? 'Temp' : 'VCore'}\" with lines" }.join(', ')
 				data_files_hash.each{ |x| x[1].flush }
@@ -308,13 +309,16 @@ class ComputersController < ApplicationController
 				chart_file.puts <<__EOF__
 set terminal png size 800, 400
 set output "#{png_file.path}"
+set xdata time
+set timefmt "%s"
+set format x "%H:%M"
 set key below box
 set grid
 set size 1,1
-set lmargin 7
-set rmargin 5
-set tmargin 1
-set bmargin 2
+#set lmargin 7
+#set rmargin 5
+#set tmargin 1
+#set bmargin 2
 
 plot #{plot_string}
 __EOF__
