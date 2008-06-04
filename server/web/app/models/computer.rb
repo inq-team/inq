@@ -55,6 +55,11 @@ class Computer < ActiveRecord::Base
 		end	
 	end
 
+	def ip_addresses
+		config = Shelves::Config.new(DEFAULT_SHELVES_CONFIG)
+		return config.by_ipnet(ip).get_addresses.find_all { |a| s = `/sbin/arp -n | grep #{ a }` ; !s.empty? && s !~ /incomplete/ }
+	end
+
 	def set_assembler(person_id)
 		set_stage_person('assembling', person_id)
 	end
@@ -129,6 +134,7 @@ class Computer < ActiveRecord::Base
 				last_cs.end = Time.new
 				p last_cs
 				last_cs.save!
+				sleep 1 # GREYFIX: a crude workaround for MySQL datetime 1 sec granularity to make sure that stages go in the right order
 			end
 			computer_stages << ComputerStage.new(
 				:start => Time.new(),
