@@ -326,7 +326,7 @@ __EOF__
 				chart_file.flush
 				
 				system("gnuplot #{chart_file.path}")
-				send_file(png_file.path)
+				send_file(png_file.path, :type => 'image/png')
 
 #				data_file.close!
 #				chart_file.close!
