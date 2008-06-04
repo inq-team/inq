@@ -1,0 +1,59 @@
+<script type="text/javascript">
+var GLOBAL_STAGES_COMMENTS = new Array();
+<% @computer_stages.each_with_index { |cs, i|
+	date_add = ' - '
+	date_add = cs[:start].strftime('%d.%m.%Y %H:%M') + date_add if cs[:start]
+	date_add += cs[:end] ? cs[:end].strftime('%d.%m.%Y %H:%M') : 'now'
+	tools = link_to 'History', :action => 'comment_history', :id => @computer.id, :num => i
+	tools = (link_to (cs[:comment] and not cs[:comment].empty?) ? 'Edit' : 'Add', :action => 'comment_edit', :id => @computer.id, :num => i) + ' ' + tools if logged_in?
+-%>
+GLOBAL_STAGES_COMMENTS[<%= i %>] = '<div class="tools"><%= tools %></div><b><%=h cs[:stage].capitalize if cs[:stage] %>:</b> <small>(<%= date_add %>)</small> <%=h cs[:comment] %>';
+<% } %>
+function update_comments_box(obj) {
+	var index = obj.cellIndex;
+	$('comment_body').innerHTML = GLOBAL_STAGES_COMMENTS[index];
+	var z = $('computer_stages_pointers');
+	var i = 0;
+	for(i = 0 ; i < z.cells.length ; i ++) {
+		z.cells[i].className = i == index ? 'pointer_active' : 'pointer_inactive';
+	}
+}
+//]]>
+</script>
+
+<div id="progress_bar">
+<table>
+
+<tr id="computer_stages_comment">
+	<td colspan="7" id="comment_body"><script type="text/javascript">document.write(GLOBAL_STAGES_COMMENTS[0]);</script></td>
+</tr>
+
+<tr id="computer_stages_pointers">
+	<td class="pointer_active">&nbsp;</td>
+<% (@computer_stages.size - 1).times { -%>
+	<td class="pointer_inactive">&nbsp;</td>
+<% } -%>
+</tr>
+
+<tr id="computer_stages">
+<% @computer_stages.each { |cs| %>
+	<td class="computer_stage_<%= cs[:status] %>" onmouseover="update_comments_box(this);" title="<%= cs[:stage].capitalize if cs[:stage] %>">
+		<div style="background-image: url('/images/stages/<%= cs[:stage] %>.png') ; background-position: 2px 50% ; background-repeat: no-repeat">
+			<span class="person"><%= cs[:person] ? cs[:person].name : cs[:stage].capitalize %></span>
+<% if cs[:start] or cs[:end] -%>
+			<span class="timedelta"><%= format_delta(cs[:end] || Time.new, cs[:start] || Time.new) %></span>
+<% else -%>
+			<span class="timedelta">planned</span>
+<% end -%>
+<% if cs[:overdue] -%>
+			<img alt="Overdue" class="overdue_corner" src="/images/overdue_corner.png" title="Overdue" />
+<% end; if cs[:comment] -%>
+			<img alt="Comment" class="comment_corner" src="/images/comment_corner.png" title="Comment" />
+<% end -%>
+		</div>
+	</td>
+<% } %>
+</tr>
+
+</table>
+</div>

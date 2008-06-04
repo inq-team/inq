@@ -123,10 +123,16 @@ td#title_bar_profile {
 	height: 2em;
 }
 
-tr#computer_stages_comment td {
-	text-align: left;
-	text-indent: 1em;
-	padding-top: 0.4em;
+#comment_body {
+	text-align: left !important;
+	padding-left: 1em !important;
+	padding-top: 0.4em !important;
+}
+
+.tools {
+	float: right;
+	font-size: 75%;
+	padding: 0.5em;
 }
 
 #progress_bar #computer_stages_comment .timedelta {
