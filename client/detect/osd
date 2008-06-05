@@ -16,6 +16,10 @@ detect_vendor()
 }
 
 hal-find-by-property --key storage.drive_type --string cdrom | while read L; do
+	# Skip RMM2 virtual drive on some Intel motherboards
+	hal-device "$L" | sed -n "/info.product/s/^.* = '\(.*\)' .*$/\1/gp" | 
+		grep -q "^RMM2 VDrive" && continue || true
+
 	OSD_MODEL=`hal-get-property --udi $L --key storage.model`
 	if [ -n "$OSD_MODEL" ]; then
 
@@ -61,5 +65,4 @@ hal-find-by-property --key storage.drive_type --string cdrom | while read L; do
 
 		$SHARE_DIR/add-component OSD "$OSD_VENDOR" "$OSD_MODEL" ''
 	fi
- 
 done
