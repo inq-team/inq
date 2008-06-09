@@ -87,6 +87,13 @@ class ComputersController < ApplicationController
 	end
 
 	def audit_popup
+		unless logged_in?
+			login_required; return
+		end
+		unless current_person.tester?
+			access_denied; return
+		end
+
 		prepare_computer_and_testing
 		@confirmation = params[:confirmation].to_i
 		@comment = params[:comment] || ''
@@ -94,7 +101,14 @@ class ComputersController < ApplicationController
 		render(:layout => 'popup')
 	end
 
-	def audit_confirmation		
+	def audit_confirmation
+		unless logged_in?
+			login_required; return
+		end
+		unless current_person.tester?
+			access_denied; return
+		end
+
 		prepare_computer_and_testing
 		@confirmation = params[:confirmation].to_i 
 		@comment = params[:comment] || ''
@@ -108,8 +122,7 @@ class ComputersController < ApplicationController
 		@audit.confirmation = @confirmation
 		@audit.confirmation_date = Time.new
 		@audit.comment = @comment
-		#TODO: add
-		# @audit.person = ... ?
+		@audit.person_id = current_person.id
 		unless @audit.save
 			flash[:error] = @audit.errors
 			render(:layout => 'popup', :action =>  'audit_popup')
@@ -120,6 +133,13 @@ class ComputersController < ApplicationController
 	end
 
 	def check_audit
+		unless logged_in?
+			login_required; return
+		end
+		unless current_person.tester?
+			access_denied; return
+		end
+
 		prepare_computer_and_testing
 		check = @testing && @testing.audit && @testing.audit.confirmation || !@computer.order
                 respond_to() do |format|
@@ -146,6 +166,13 @@ class ComputersController < ApplicationController
 	end
 
 	def audit
+		unless logged_in?
+			login_required; return
+		end
+		unless current_person.tester?
+			access_denied; return
+		end
+
 		prepare_computer_tabs
 		@close = params[:close]
 		if cached = @testing.audit
@@ -158,6 +185,13 @@ class ComputersController < ApplicationController
 	end
 
 	def audit_comparison
+		unless logged_in?
+			login_required; return
+		end
+		unless current_person.tester?
+			access_denied; return
+		end
+
 		prepare_computer_and_testing
                 @testing ? @components = @testing.components : @components = []
 		@components.each { |c| c.model.group.name = Mykit::Keywords::GROUP_TRANS[c.model.group.name] if c.model.group and Mykit::Keywords::GROUP_TRANS[c.model.group.name] }
@@ -176,6 +210,13 @@ class ComputersController < ApplicationController
 	end
 
 	def force_audit
+		unless logged_in?
+			login_required; return
+		end
+		unless current_person.tester?
+			access_denied; return
+		end
+
 		prepare_computer_tabs
                 @testing ? @components = @testing.components : @components = []
 		@components.each { |c| c.model.group.name = Mykit::Keywords::GROUP_TRANS[c.model.group.name] if c.model.group and Mykit::Keywords::GROUP_TRANS[c.model.group.name] }
@@ -722,6 +763,27 @@ __EOF__
 		redirect_to :action => 'hw', :id => params[:id], :testing => @testing_number
 	end
 
+	def comment_edit
+		prepare_computer_tabs
+		@num = params[:num]
+		render(:layout => 'computer_plain')
+	end
+
+	def comment_update
+		prepare_computer_tabs
+		cs = @computer_stages[params[:num].to_i][:entity]
+		cs.comment = params[:comment]
+		cs.comment_by = current_person
+		cs.save!
+		redirect_to :action => 'hw', :id => params[:id], :testing => @testing_number
+	end
+
+	def comment_history
+		prepare_computer_tabs
+		@stage = @computer_stages[params[:num].to_i][:entity]
+		render(:layout => 'computer_plain')
+	end
+
 	private
 	
 	RESULT_MAPPING = {
@@ -739,13 +801,17 @@ __EOF__
 
 		now = Time.new
 		@computer_stages = (@computer.computer_stages + (@computer.order ? @computer.order.order_stages.find_all { |stage| stage.stage != 'manufacturing' } : [])).inject([]) do |a, stage|
-                        a << {  :stage => stage.stage, :person => stage.person,
-                                :start => stage.start,
-                                :end => stage.end, :elapsed => (stage.end || now) - (stage.start || now),
+			a << {
+				:stage => stage.stage, :person => stage.person,
+				:start => stage.start,
+				:end => stage.end,
+				:elapsed => (stage.end || now) - (stage.start || now),
 				:overdue => stage.default_timespan ? (stage.end || now) - (stage.start || now) > stage.default_timespan : false,
-                                :comment => stage.comment, :status => (stage.start.blank? || stage.start > now) ? :planned : stage.end ? :finished : :running
-                        }
-                end.sort { |a, b| (a[:start] ? a[:start].to_f : 0) <=> (b[:start] ? b[:start].to_f : 0) }
+				:comment => stage.comment,
+				:status => (stage.start.blank? || stage.start > now) ? :planned : stage.end ? :finished : :running,
+				:entity => stage,
+			}
+		end.sort { |a, b| (a[:start] ? a[:start].to_f : 0) <=> (b[:start] ? b[:start].to_f : 0) }
 
 		['ordering', 'warehouse', 'acceptance', 'assembling', 'testing', 'checking', 'packaging'].each do |stage_name|
 			unless @computer_stages.find { |stage| stage[:stage] == stage_name }

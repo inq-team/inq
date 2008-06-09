@@ -4,6 +4,10 @@ class Person < ActiveRecord::Base
 		is_admin
 	end
 
+	def tester?
+		is_tester
+	end
+
 	def remember_me
 		self.remember_token_expires_at = 2.weeks.from_now
 		self.remember_token = Digest::SHA1.hexdigest("inq--#{self.login}--#{self.remember_token_expires_at}")

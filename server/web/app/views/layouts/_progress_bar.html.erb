@@ -6,8 +6,12 @@ var GLOBAL_STAGES_COMMENTS = new Array();
 	date_add = ' - '
 	date_add = cs[:start].strftime('%d.%m.%Y %H:%M') + date_add if cs[:start]
 	date_add += cs[:end] ? cs[:end].strftime('%d.%m.%Y %H:%M') : 'now'
-	tools = link_to 'History', :action => 'comment_history', :id => @id, :num => i
-	tools = (link_to (cs[:comment] and not cs[:comment].empty?) ? 'Edit' : 'Add', :action => 'comment_edit', :id => @id, :num => i) + ' ' + tools if logged_in?
+	if cs[:entity]
+		tools = link_to 'History', :action => 'comment_history', :id => @id, :num => i
+		tools = (link_to (cs[:comment] and not cs[:comment].empty?) ? 'Edit' : 'Add', :action => 'comment_edit', :id => @id, :num => i) + ' ' + tools if logged_in?
+	else
+		tools = '&nbsp;'
+	end
 -%>
 GLOBAL_STAGES_COMMENTS[<%= i %>] = '<div class="tools"><%= tools %></div><b><%=h cs[:stage].capitalize if cs[:stage] %>:</b> <small>(<%= date_add %>)</small> <%=h cs[:comment] %>';
 <% } %>
