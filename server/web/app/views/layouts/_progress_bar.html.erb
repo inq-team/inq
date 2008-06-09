@@ -1,11 +1,13 @@
 <script type="text/javascript">
 var GLOBAL_STAGES_COMMENTS = new Array();
-<% @computer_stages.each_with_index { |cs, i|
+<% @computer_stages = @order_stages unless @computer_stages
+@id = @computer ? @computer.id : @order.id
+@computer_stages.each_with_index { |cs, i|
 	date_add = ' - '
 	date_add = cs[:start].strftime('%d.%m.%Y %H:%M') + date_add if cs[:start]
 	date_add += cs[:end] ? cs[:end].strftime('%d.%m.%Y %H:%M') : 'now'
-	tools = link_to 'History', :action => 'comment_history', :id => @computer.id, :num => i
-	tools = (link_to (cs[:comment] and not cs[:comment].empty?) ? 'Edit' : 'Add', :action => 'comment_edit', :id => @computer.id, :num => i) + ' ' + tools if logged_in?
+	tools = link_to 'History', :action => 'comment_history', :id => @id, :num => i
+	tools = (link_to (cs[:comment] and not cs[:comment].empty?) ? 'Edit' : 'Add', :action => 'comment_edit', :id => @id, :num => i) + ' ' + tools if logged_in?
 -%>
 GLOBAL_STAGES_COMMENTS[<%= i %>] = '<div class="tools"><%= tools %></div><b><%=h cs[:stage].capitalize if cs[:stage] %>:</b> <small>(<%= date_add %>)</small> <%=h cs[:comment] %>';
 <% } %>
@@ -42,7 +44,9 @@ function update_comments_box(obj) {
 			<span class="person"><%= cs[:person] ? cs[:person].name : cs[:stage].capitalize %></span>
 <% if cs[:start] or cs[:end] -%>
 			<span class="timedelta"><%= format_delta(cs[:end] || Time.new, cs[:start] || Time.new) %></span>
-<% else -%>
+<% elsif cs[:progress] -%>
+			<span class="timedelta"><%=h cs[:progress] %></span>
+<% elsif cs[:status] == :planned -%>
 			<span class="timedelta">planned</span>
 <% end -%>
 <% if cs[:overdue] -%>

@@ -27,18 +27,13 @@ class OrdersController < ApplicationController
 	def show
 		@order = Order.find(params[:id])
 		@computers = Computer.find_all_by_order_id(@order.id, :include => [:model, :profile, :computer_stages], :order => 'computers.id, computer_stages.start')
-		@computer_stage_order = ['assembling', 'testing', 'checking', 'packaging']
-		@st_comp_qty = @computer_stage_order.inject({}) do |h, stage|
-			h.merge({ stage => @computers.find_all { |c| s = c.last_computer_stage ; s && (s.stage == stage) && s.end.blank? }.size })
-		end
-		@profiles = Profile.find(:all).sort{ |a, b| a.timestamp <=> b.timestamp }.map{ |p| [p.name, p.id] }.unshift(['--', 0])
-		@models = Model.find(:all).sort{ |a, b| a.name <=> b.name }.map{ |m| [m.name, m.id] }.unshift(['--', 0])
+
+		@profiles = Profile.find(:all, :order => 'timestamp').map{ |p| [p.name, p.id] }.unshift(['--', 0])
+		@models = Model.find(:all, :order => :name).map { |x| [x.name, x.id] }
 
 		@qty = @computers.size
 
-                if @qty == 0 then
-                        @models = Model.find(:all, :order => :name).map { |x| [x.name, x.id] }
-
+		if @qty == 0 then
                         # Guess quantity of computers to create
                         @default_qty = @order.order_lines.map { |x| x.qty }.min
                         @default_qty = 1 if @default_qty.nil?
@@ -69,8 +64,15 @@ class OrdersController < ApplicationController
 
                         # Prepare profiles list
                         @profiles = Profile.list_for_model(@default_model).map { |x| [x.name, x.id] }
+		else
+			@models = @models.unshift(['--', 0])
                 end
 
+		# ==============================================================
+		# Prepare stages progress bar
+		# ==============================================================
+
+		# Existing order stages
                 now = Time.new
                 @order_stages = @order.order_stages.find_all { |s| s.stage != 'manufacturing' }.inject([]) do |a, stage|
 			aa = {
@@ -83,27 +85,44 @@ class OrdersController < ApplicationController
 			a << aa
                 end.sort { |a, b| (a[:start] ? a[:start].to_f : 0) <=> (b[:start] ? b[:start].to_f : 0) }
 
-                ['ordering', 'warehouse', 'acceptance'].each do |stage_name|
-                        unless @order_stages.find { |stage| stage[:stage] == stage_name }
-                                @order_stages << { :stage => stage_name, :status => :planned }
-                        end
-                end 
+		# Planned order stages
+		['ordering', 'warehouse', 'acceptance'].each { |stage_name|
+			@order_stages << {
+				:stage => stage_name,
+				:status => :planned
+			} unless @order_stages.find { |stage| stage[:stage] == stage_name }
+		}
 
-		['assembling', 'testing', 'checking', 'packaging'].each do |stage| 
-#			in_process = @computers.find_all { |c| s = c.last_computer_stage ; s && s.stage == stage && s.end.blank? }
-			in_process = Computer.stage_in_process(@order.id, stage)
-#			done = @computers.find_all { |c| c.computer_stages.find_by_stage(stage, :conditions => "end is not null") }
-			done = Computer.stage_done(@order.id, stage)
-			count = in_process.size
-			passed = done.size
-			h = { :stage => stage, :progress => { :value => count > 0 ? count : passed, :total => @qty },
-                                :status => @qty == 0 ? :planned : passed == @qty ? :finished : count == 0 ? :planned : :running
-                        }
-			h.delete(:progress) if [:planned, :finished].include?(h[:status])
-			h[:blank] = 0 if h[:status] == :finished
-			h[:computer_list] = { :computers => in_process, :detail => :computer_stage } if h[:status] == :running
+		# Calculate computer stage breakup
+		in_progress_by_stage = {}
+		done_by_stage = {}
+		@computers.each { |c|
+			unique_cs = []
+			c.computer_stages.each { |st|
+				next if unique_cs.include?(st.stage)
+				in_progress_by_stage[st.stage] ||= 0
+				done_by_stage[st.stage] ||= 0
+				st.end ? done_by_stage[st.stage] += 1 : in_progress_by_stage[st.stage] += 1
+				unique_cs << st.stage
+			}
+		}
+
+		# Computer stages
+		['assembling', 'testing', 'checking', 'packaging'].each { |stage|
+			h = { :stage => stage }
+			if done_by_stage[stage] == @qty
+				h[:status] = :finished
+			elsif in_progress_by_stage[stage] and in_progress_by_stage[stage] > 0
+				h[:status] = :running
+				h[:progress] = "#{in_progress_by_stage[stage]} / #{@qty}"
+			elsif done_by_stage[stage] and done_by_stage[stage] > 0
+				h[:status] = :running
+				h[:progress] = "#{done_by_stage[stage]} / #{@qty}"
+			else
+				h[:status] = :planned
+			end
 			@order_stages << h
-                end
+		}
 
 		respond_to do |format|
 			format.html # show.rhtml
