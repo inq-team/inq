@@ -50,7 +50,7 @@
 		</td>
 
 
-		<td id="testing_plan"><div class="testing_border">
+		<td id="testing_plan">
 			<table>
 				<tr><th class="testing_stage_name">Stage</th><th class="testing_stage_span">Elapsed</th></tr>
 			<% if @testing and @testing.test_start %>
@@ -74,11 +74,11 @@
 				<div class="testing_profile">Profile: <%= link_to @testing.profile.name, { :controller => :profiles, :action => :show, :id => @testing.profile } %></div>
 			<% end %>
 			
-		</div></td> 
+		</td> 
 
-		<td id="content"><div class="testing_border">
+		<td id="content">
 			<%= yield %>		
-		</div></td> 
+		</td> 
 	</tr></table>
 
 </body>

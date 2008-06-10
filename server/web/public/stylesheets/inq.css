@@ -216,19 +216,10 @@ td.computer_stage_running div {
 	height: 1.7em;
 }
 
-.testing_border {
-	border: 0.3em solid ! important;
-	height: 100%;
-}
-
 td#testing_plan {
+	border: 0.3em solid ! important;
 	border-right: none;
 	width: 18em;
-	height: 100%;
-}
-
-#testing_plan > .testing_border {
-	border-right: 0px ! important;
 }
 
 #testing_plan table .testing_stage_name {
@@ -243,7 +234,7 @@ td#testing_plan {
 }
 
 td#content {
-	height: 100%;
+	border: 0.3em solid ! important;
 	width: 53.7em;
 }
 
