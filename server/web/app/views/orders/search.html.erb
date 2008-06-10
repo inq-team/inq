@@ -11,13 +11,13 @@
 		<table cellspacing="4" cellpadding="0">
 			<tr>
 				<td>Computer #:</td>
-				<td><%= text_field_tag 'computer_serial', nil, :style => 'width:100%', :value => @computer_serial.to_s %></td>
+				<td><%= text_field_tag 'computer_serial', nil, :style => 'width: 20em', :value => @computer_serial.to_s %></td>
 				<td>Model:</td>
 				<td><%= select :model, :id, @models, { :selected => @model_id } %></td>
 			</tr>
 			<tr>
 				<td>Order #:</td>
-				<td><%= text_field_tag 'number', nil, :style => 'width:100%', :value => @number.to_s %></td>
+				<td><%= text_field_tag 'number', nil, :style => 'width: 20em', :value => @number.to_s %></td>
 				<td>Date:</td>
 				<td>
 					<%= date_field 'date', 'start', :value => @start_date.to_s, :size => '8' %>
@@ -27,9 +27,9 @@
 			</tr>
 			<tr>
 				<td>Customer:</td>
-				<td><%= text_field_with_auto_complete 'order', 'customer', :style => 'width:100%', :value => @customer.to_s %></td>
+				<td><%= text_field_with_auto_complete 'order', 'customer', :style => 'width: 20em', :value => @customer.to_s %></td>
 				<td>Manager:</td>
-				<td><%= text_field_with_auto_complete 'order', 'manager', :style => 'width:100%', :value => @manager.to_s %></td>
+				<td><%= text_field_with_auto_complete 'order', 'manager', :style => 'width: 20em', :value => @manager.to_s %></td>
  			</tr>
 		</table>
 		<%= submit_tag 'Search', :style => 'margin: 1em' %>
