@@ -766,6 +766,7 @@ __EOF__
 	def comment_edit
 		prepare_computer_tabs
 		@num = params[:num]
+		@comment = @computer_stages[params[:num].to_i][:entity].comment
 		render(:layout => 'computer_plain')
 	end
 
