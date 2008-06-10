@@ -63,7 +63,7 @@ a img {
 
 #title_bar_serial {
 	font-weight: bold;
-	width: 18em;
+	width: 8.6em;
 }
 
 #title_bar_shelf {
@@ -71,12 +71,12 @@ a img {
 }
 
 td#title_bar_doc {
-	width: 32em;
+	width: 26.6em;
 	border: none;
 }
 
-td#title_bar_profile {
-	width: 32em;
+td#title_bar_profile_show {
+	width: 17.6em;
 }
 
 #title_bar_link {
@@ -267,7 +267,7 @@ td#testings_tabs {
 }
 
 #info_tabs td {
-	width: 9.4em; 
+	width: 9.63em; 
 	text-align: center;
 	vertical-align: middle;
 	border-right: 0.2em solid ! important;
