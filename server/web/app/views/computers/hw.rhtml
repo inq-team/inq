@@ -19,10 +19,3 @@
 		</tr>
 	<% end %>
 </table>
-
-<%= javascript_tag(<<_EOF_
-        Event.observe(window, 'load', function () {
-                Rico.Corner.round($$('div.hint').first());
-        });
-_EOF_
-) %>
