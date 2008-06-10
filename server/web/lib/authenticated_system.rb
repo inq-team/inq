@@ -105,7 +105,6 @@ module AuthenticatedSystem
         user.remember_me
         self.current_person = user
         cookies[:auth_token] = { :value => self.current_person.remember_token , :expires => self.current_person.remember_token_expires_at }
-        flash[:notice] = "Logged in successfully"
       end
     end
 
