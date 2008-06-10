@@ -6,7 +6,7 @@ td#content {
 	width: 62.5em;
 }
 
-.testing_border, #selected_testing_tab, #testing_pane td table td, #testing_pane td table th {
+td#testing_plan, td#content, #selected_testing_tab, #testing_pane td table td, #testing_pane td table th {
         border-color: #559F7D ! important;
 }
 
