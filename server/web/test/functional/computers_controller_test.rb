@@ -278,10 +278,11 @@ class ComputersControllerTest < Test::Unit::TestCase
 
 	def test_boot_from_image
 		# Create temporary "BIOS-image" file and pxelinux.cfg directory
-		tmpfile = rand(100).to_s
-		f = File.new("#{TFTP_DIR}/#{tmpfile}", "w")
-		f.close
 		FileUtils.mkdir("#{TFTP_DIR}/pxelinux.cfg")
+		FileUtils.mkdir("#{TFTP_DIR}/firmwares")
+		tmpfile = rand(100).to_s
+		f = File.new("#{TFTP_DIR}/firmwares/#{tmpfile}", "w")
+		f.close
 
 		post :boot_from_image, :id => 20, :image => tmpfile
 		macs = assigns['macs']
@@ -289,7 +290,7 @@ class ComputersControllerTest < Test::Unit::TestCase
 
 		needed = "#pxelinux.cfg/01-00-e0-81-5d-4f-37 pxelinux.cfg/01-00-e0-81-5d-4f-38\n";
 		needed = needed + "default firmware\nlabel firmware\n";
-		needed = needed + " kernel memdisk\n append initrd=#{tmpfile} \n"
+		needed = needed + " kernel memdisk\n append initrd=firmwares/#{tmpfile} \n"
 
 		file = File.open("#{TFTP_DIR}/pxelinux.cfg/01-00-e0-81-5d-4f-37")
 		got = ""
@@ -309,8 +310,9 @@ class ComputersControllerTest < Test::Unit::TestCase
 
 		FileUtils.rm("#{TFTP_DIR}/pxelinux.cfg/01-00-e0-81-5d-4f-37")
 		FileUtils.rm("#{TFTP_DIR}/pxelinux.cfg/01-00-e0-81-5d-4f-38")
-		FileUtils.rm("#{TFTP_DIR}/#{tmpfile}")
+		FileUtils.rm("#{TFTP_DIR}/firmwares/#{tmpfile}")
 		FileUtils.rmdir("#{TFTP_DIR}/pxelinux.cfg")
+		FileUtils.rmdir("#{TFTP_DIR}/firmwares")
 	end
 
 	def test_firmware

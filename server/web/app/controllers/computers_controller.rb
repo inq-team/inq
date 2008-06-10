@@ -706,7 +706,7 @@ __EOF__
 		@macs.collect! { |mac| mac.gsub(/:/,'-') }
 
 		to_delete = @macs.collect { |mac| "pxelinux.cfg/01-" + mac }.join(" ")
-		add_options = File.size("#{TFTP_DIR}/#{image}") == 16777216 ? "floppy c=16 s=32 h=64" : ""
+		add_options = File.size("#{TFTP_DIR}/firmwares/#{image}") == 16777216 ? "floppy c=16 s=32 h=64" : ""
 
 		@macs.each { |mac|
 			cfgfile = File.new("#{TFTP_DIR}/pxelinux.cfg/01-#{mac}", "w")
@@ -715,7 +715,7 @@ __EOF__
 default firmware
 label firmware
  kernel memdisk
- append initrd=#{image} #{add_options}
+ append initrd=firmwares/#{image} #{add_options}
 __EOF__
 			cfgfile.close
 		}

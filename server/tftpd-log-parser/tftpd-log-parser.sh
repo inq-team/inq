@@ -26,7 +26,7 @@ while read line; do
 	filename=`echo $line | sed -n '/SENT/ s/^.*: SENT \(.*\) to .*$/\1/gp'`
 
 	if `echo $filename | grep -q "pxelinux\.cfg\/01-"`; then
-		rm `sed -n "s/^#//;1 p" $filename`
+		rm firmwares/`sed -n "s/^#//;1 p" $filename`
 	else
 		[ -k "$filename" ] && rm $filename
 	fi
