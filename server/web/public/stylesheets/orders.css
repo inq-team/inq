@@ -2,6 +2,7 @@
 
 .order_staging {
         border-collapse: collapse;
+	width: 100%;
 }
 
 .order_staging td {
