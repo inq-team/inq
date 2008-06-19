@@ -81,8 +81,9 @@ echo 'Starting monitorings'
 for I in $SHARE_DIR/monitoring/*; do
 	echo -n "Starting `basename $I`"
 	. $I &
+	echo_success
 done
-echo 'Ьonitorings were started'
+echo 'Monitorings were started'
 
 # ===========================================================================
 # Run all tests
