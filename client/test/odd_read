@@ -95,7 +95,7 @@ send_speed_results()
 {
 	[ -s "$RESULT_FILE" ] || return 0
 	MONITORING_NAME=odd_read
-	MONITORING_ID=3
+	MONITORING_ID=6
 
 	monitoring_submit_multiple "$RESULT_FILE"
 }
