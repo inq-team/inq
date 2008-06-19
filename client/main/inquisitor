@@ -74,6 +74,17 @@ watchdog_start
 submit_components $HOME/components.xml
 
 # ===========================================================================
+# Starting monitorings
+# ===========================================================================
+
+echo 'Starting monitorings'
+for I in $SHARE_DIR/monitoring/*; do
+	echo -n "Starting `basename $I`"
+	. $I &
+done
+echo 'Ьonitorings were started'
+
+# ===========================================================================
 # Run all tests
 # ===========================================================================
 
