@@ -337,7 +337,7 @@ class ComputersController < ApplicationController
 			format.png {
 				png_file = Tempfile.new('graph_png')
 				monitoring_ids = Graph.find_all_by_testing_id(@testing, :select => 'DISTINCT monitoring_id').map{ |x| x[:monitoring_id] }
-				plot_script = "set terminal png size 800, 400
+				plot_script = "set terminal png size 800, #{(monitoring_ids.size < 3) ? (300 * monitoring_ids.size) : 600}
 set output \"#{png_file.path}\"
 set multiplot layout #{monitoring_ids.size}, 1
 set xdata time
