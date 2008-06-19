@@ -1,0 +1,48 @@
+#!/bin/sh -e
+# ID=1
+# TITLE=CPU-TEMP(ipmi)
+# MEASUREMENT=temp
+
+. /usr/share/inquisitor/functions-monitoring
+[ -n "$PERIOD" ] || PERIOD=30
+
+TEMP_PATTERNS='s/CPU\(.\) Diode.*| \([^ ]*\).*|.*|.*|.*|.*|.*|.*|.*|.*/\1 => \2/p;
+s/cpu\(.\)\.dietemp.*| \([^ ]*\).*|.*|.*|.*|.*|.*|.*|.*|.*/\1 => \2/p;
+s/CPU \(.\) TEMP.*| \([^ ]*\).*|.*|.*|.*|.*|.*|.*|.*|.*/\1 => \2/p;
+s/CPU\(.\) TEMP.*| \([^ ]*\).*|.*|.*|.*|.*|.*|.*|.*|.*/\1 => \2/p'
+
+strip_hash()
+{
+	local i
+	for i in `ruby -e "$1.each_pair{|k, v| puts \"#{k};#{v}\"}"`; do
+		echo "$i"
+	done
+}
+
+while true; do
+	INFO=`ipmitool sensor`
+#	INFO=`cat data/ipmitool_sensor_RS250_G3.log`
+	RES=
+	echo "$INFO" | sed -n "$TEMP_PATTERNS" | sed s/.*na//  | \
+	(
+	while read TEMP_PAIR; do
+		if [ -n "$TEMP_PAIR" ]; then
+			if [ -n "$RES" ]; then
+				RES="$RES, $TEMP_PAIR"
+			else
+				RES="$TEMP_PAIR"
+			fi
+		fi
+	done
+	RES="{ $RES }"
+	for TEMP_PAIR in `strip_hash "$RES"`; do
+		KEY=`echo "$TEMP_PAIR" | cut -f1 -d';'`
+		VALUE=`echo "$TEMP_PAIR" | cut -f2 -d';'`
+		[ -z "$VALUE" ] || monitoring_submit "$KEY" "$VALUE"
+#		echo "$KEY" '->' "$VALUE"
+	done
+	)
+
+#	break
+	sleep $PERIOD
+done
