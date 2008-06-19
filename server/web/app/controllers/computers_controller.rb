@@ -336,36 +336,45 @@ class ComputersController < ApplicationController
 			}
 			format.png {
 				png_file = Tempfile.new('graph_png')
-				graphs = Graph.find_all_by_testing_id(@testing, :order => "timestamp")
-				uniq_keys = graphs.map{ |x| x.key }.uniq
-				data_files_hash = {}
-				uniq_keys.each{ |x| data_files_hash[x] = Tempfile.new("graph_data_#{x}") }
-				data_files_hash.each_pair do |key, data_file|
-					x_min = graphs.select{ |x| x.key == key }[0].timestamp.to_f
-					graphs.select{ |x| x.key == key }.each{ |x| data_file.puts "#{x.timestamp.to_f - x_min}\t#{x.value}" }
-				end
-				plot_string = data_files_hash.map{ |x| "'#{x[1].path}' using 1:2 title \"#{(x[0] < 100) ? 'Temp' : 'VCore'}\" with lines" }.join(', ')
-				data_files_hash.each{ |x| x[1].flush }
-				chart_file = Tempfile.new('graph_chart')
-				chart_file.puts <<__EOF__
-set terminal png size 800, 400
-set output "#{png_file.path}"
+				monitoring_ids = Graph.find_all_by_testing_id(@testing, :select => 'DISTINCT monitoring_id').map{ |x| x[:monitoring_id] }
+				plot_script = "set terminal png size 800, 400
+set output \"#{png_file.path}\"
+set multiplot layout #{monitoring_ids.size}, 1
 set xdata time
-set timefmt "%s"
-set format x "%H:%M"
+set timefmt \"%s\"
+set format x \"%H:%M\"
 set key below box
-set grid
-set size 1,1
-#set lmargin 7
-#set rmargin 5
-#set tmargin 1
-#set bmargin 2
+set grid"
 
-plot #{plot_string}
-__EOF__
+				data_files_hash = {}
 
-				chart_file.flush
+				monitoring_ids.each do |monitoring_id|
+					uniq_keys = Graph.find_all_by_testing_id_and_monitoring_id(@testing, monitoring_id, :select => 'DISTINCT graphs.key').map{ |x| x[:key] }
+					data_files_hash[monitoring_id] = {} if data_files_hash[monitoring_id].nil?
+					uniq_keys.each{ |key| data_files_hash[monitoring_id][key] = Tempfile.new('data') }
+					
+					data_files_hash[monitoring_id].each_pair do |key, data_file|
+						x_min = Graph.find_by_testing_id_and_monitoring_id(@testing, monitoring_id, :select => 'MIN(timestamp)')[:timestamp].to_f
+						graphs = Graph.find_all_by_testing_id_and_monitoring_id_and_key(@testing, monitoring_id, key, :order => 'timestamp')
+						graphs.each{ |x| data_file.puts "#{x.timestamp.to_f - x_min}\t#{x.value}" }
+					end
+					
+					data_files_hash[monitoring_id].each_pair{ |k, f| f.flush }
+
+#					require 'planner/planner'
+					line_title = $MONITORINGS.find{|x| x[1][:id] == monitoring_id }[1][:measurement]
+					plot_title = $MONITORINGS.find{|x| x[1][:id] == monitoring_id }[1][:title]
+#					title = 'temp'
+					plot_string = "set title \"#{plot_title}\"\n" + 'plot' + data_files_hash[monitoring_id].map{ |x| "'#{x[1].path}' using 1:2 title \"#{line_title} #{x[0]}\" with lines" }.join(', ')
+					plot_script += "\n"
+					plot_script += plot_string
+					plot_script += "\n"									
+				end
 				
+				chart_file = Tempfile.new('chart')
+				chart_file.puts(plot_script)
+				chart_file.flush
+
 				system("gnuplot #{chart_file.path}")
 				send_file(png_file.path, :type => 'image/png')
 
