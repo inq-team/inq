@@ -1,6 +1,6 @@
 #!/bin/sh -ef
 # NAME=Whetstone
-# DESCRIPTION=Whetstone floating-point calculations benchmark
+# DESCRIPTION=Whetstone is a synthetic computing benchmark intended to be representative of system floating-pont processing performance. Written on C language version of this benchmark is used. It runs affinited to each CPU, specified loop count is given to process. Performance result measured in MIPS.
 # DESTROYS_HDD=false
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1

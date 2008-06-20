@@ -1,6 +1,6 @@
 #!/bin/sh -ef
 # NAME=Stream
-# DESCRIPTION=STREAM memory throughput benchmark
+# DESCRIPTION=The STREAM benchmark is a simple synthetic benchmark program that measures sustainable memory bandwidth (in MB/s) and the corresponding computation rate for simple vector kernels. Written on C language and optimized for single processor systems version of this benchmark is used.
 # DESTROYS_HDD=false
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
