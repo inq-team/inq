@@ -1,6 +1,6 @@
 #!/bin/sh -ef
 # NAME=FDD read/write
-# DESCRIPTION=Floppy drive read/write test
+# DESCRIPTION=This is simple test for determining floppy drive workability. It will ask user to insert floppy into drives, then following writing of random data, reading (prohibiting cache usage) and comparing  will make a decision about drive.
 # DESTROYS_HDD=false
 # IS_INTERACTIVE=true
 # POWEROFF_DURING_TEST=false

@@ -1,6 +1,6 @@
 #!/bin/sh -ef
 # NAME=HDD array stress
-# DESCRIPTION=HDD array stress test
+# DESCRIPTION=HDD array is a stress test that causes high load on HDD array subsystem. First of all, it creates optimally configured arrays (if possible, otherwise it will use single hard drives) using einarc's raid-wizard-optimal utility. Then, after creating filesystem, it will perform compilation of big source code on each array. It will distribute specified test duration time among created arrays. Compilation, as in hdd-passthrough test, goes with 16 simultaneous jobs (by default). Test ends successfully if there will be no errors in filesystem creation and source code compilation in loop during specified time amount. Usually this test starts after CPU, memory and hdd-passthrough ones, and in case of failing (considering successful previous tests finishing) we can make conclusion about broken RAID controller.
 # DESTROYS_HDD=true
 # IS_INTERACTIVE=false
 # POWEROFF_DURING_TEST=false

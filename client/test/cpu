@@ -1,6 +1,6 @@
 #!/bin/sh -e
 # NAME=CPU burn
-# DESCRIPTION=Basic CPU burn test makes CPU execute instructions that rapidly increase process temperature in infinite loop. Test makes special care This test  CPU itself or 
+# DESCRIPTION=Basic CPU burn test makes CPU execute instructions that rapidly increase processor temperature in infinite loop. Test makes special care about used instruction set (to make load as high as possible).
 # DESTROYS_HDD=false
 # IS_INTERACTIVE=false
 # POWEROFF_DURING_TEST=false
@@ -14,9 +14,7 @@
 exit_handler()
 {
 	for I in $TMP_DIR/*.pid; do
-		if [ -f "$I" ]; then
-			stop_background "$I"
-		fi
+		[ -f "$I" ] && stop_background "$I"
 	done
 	[ -d "$TMP_DIR" ] && rmdir "$TMP_DIR"
 }
