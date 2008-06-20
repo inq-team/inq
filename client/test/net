@@ -1,6 +1,6 @@
 #!/bin/sh -ef
 # NAME=Network interface
-# DESCRIPTION=Network interfaces testing
+# DESCRIPTION=This test must load every network interface in system and measure it's download speed. Main requirement: all network interfaces must be connected to one common network. Testing sequence is: 1) Detect and remember what interface is default (from what we are booted up (as common)); 2) Consecutively choosing each interface, check if it's MAC address doesn't exist in "exclude macs" test parameter, then either skip it, continuing with another one, or continue to test current inteface; 3) Bring testing interface up, configuring network on it and setting it as a default gateway; 4) Bring down all other interfaces; 5) Get test file from specified URL, measuring download speed; 6) Calculate it's checksum and compare with needed (specified by test parameter). Here, test can fail if an error occurs, otherwise it submits speed benchmarking result and continues to test remaining interfaces; 7) After all interfaces (except the first one) are tested, default interface starts testing: there is no real need in it, when we are booting from network - but it is a simplest way to restore default parameters.
 # DESTROYS_HDD=false
 # IS_INTERACTIVE=false
 # POWEROFF_DURING_TEST=false
@@ -95,10 +95,10 @@ GATEWAY=`ip route | grep default | awk '{print $(NF-2)}'`
 LOCAL_IP=`get_interface_ipaddr $FIRST_NIC`
 
 for i in `seq 0 $(( $NIC_QUANTITY - 1 ))`; do
-if [ "$FIRST_NIC" -ne $i ]; then
-	echo "Testing NIC eth${i}..."
-	test_nic $i
-fi
+	if [ "$FIRST_NIC" -ne $i ]; then
+		echo "Testing NIC eth${i}..."
+		test_nic $i
+	fi
 done
 
 echo "Testing default NIC..."

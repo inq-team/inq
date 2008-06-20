@@ -1,6 +1,6 @@
 #!/bin/sh -e
 # NAME=USB Flash Drive
-# DESCRIPTION=USB Flash Drive working ability test with speed measurement
+# DESCRIPTION=This test also acts like a benchmark. It can check workability of USB port, USB storage device and also gives read/write speed measurements. Main parameter for this test is needed USB flash drives number. First of all, it checks if they are already plugged in, then either it automatically starts testing or asks user to plug needed number of devices in. Test itself is quiet simple: it randomly chooses writing position (increasing drive lifetime), writes specified number of blocks, calculating their checksum. At this step we also get writing speed measurement. After clearing cache we read this blocks to calculate checksum, get read speed measurement and decide if this drive works correctly.
 # DESTROYS_HDD=true
 # IS_INTERACTIVE=true
 # POWEROFF_DURING_TEST=false
