@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------------*/
 /* Program: Stream                                                       */
-/* Revision: $Id: stream_omp.c,v 5.3 2003/10/20 16:57:37 mccalpin Exp mccalpin $ */
+/* Revision: $Id: stream.c,v 5.8 2007/02/19 23:57:39 mccalpin Exp mccalpin $ */
 /* Original code developed by John D. McCalpin                           */
 /* Programmers: John D. McCalpin                                         */
 /*              Joe R. Zagar                                             */
@@ -8,7 +8,7 @@
 /* This program measures memory transfer rates in MB/s for simple        */
 /* computational kernels coded in C.                                     */
 /*-----------------------------------------------------------------------*/
-/* Copyright 1991-2003: John D. McCalpin                                 */
+/* Copyright 1991-2005: John D. McCalpin                                 */
 /*-----------------------------------------------------------------------*/
 /* License:                                                              */
 /*  1. You are free to use this program and/or to redistribute           */
@@ -55,7 +55,7 @@
  */
 
 # define N	2000000
-# define NTIMES	100
+# define NTIMES	10
 # define OFFSET	0
 
 /*
@@ -113,6 +113,9 @@ extern void tuned_STREAM_Scale(double scalar);
 extern void tuned_STREAM_Add();
 extern void tuned_STREAM_Triad(double scalar);
 #endif
+#ifdef _OPENMP
+extern int omp_get_num_threads();
+#endif
 int
 main()
     {
@@ -123,6 +126,8 @@ main()
 
     /* --- SETUP --- determine precision and check timing --- */
 
+    printf(HLINE);
+    printf("STREAM version $Revision: 5.8 $\n");
     printf(HLINE);
     BytesPerWord = sizeof(double);
     printf("This system uses %d bytes per DOUBLE PRECISION word.\n",
@@ -137,12 +142,21 @@ main()
 
 #ifdef _OPENMP
     printf(HLINE);
-#pragma omp parallel private(k)
+#pragma omp parallel 
     {
-    k = omp_get_num_threads();
-    printf ("Number of Threads requested = %i\n",k);
+#pragma omp master
+	{
+	    k = omp_get_num_threads();
+	    printf ("Number of Threads requested = %i\n",k);
+        }
     }
 #endif
+
+    printf(HLINE);
+#pragma omp parallel
+    {
+    printf ("Printing one line per active thread....\n");
+    }
 
     /* Get initial value for system clock. */
 #pragma omp parallel for
@@ -157,9 +171,11 @@ main()
     if  ( (quantum = checktick()) >= 1) 
 	printf("Your clock granularity/precision appears to be "
 	    "%d microseconds.\n", quantum);
-    else
+    else {
 	printf("Your clock granularity appears to be "
 	    "less than one microsecond.\n");
+	quantum = 1;
+    }
 
     t = mysecond();
 #pragma omp parallel for
@@ -240,7 +256,7 @@ main()
     
     printf("Function      Rate (MB/s)   Avg time     Min time     Max time\n");
     for (j=0; j<4; j++) {
-	avgtime[j] = avgtime[j]/(double)NTIMES;
+	avgtime[j] = avgtime[j]/(double)(NTIMES-1);
 
 	printf("%s%11.4f  %11.4f  %11.4f  %11.4f\n", label[j],
 	       1.0E-06 * bytes[j]/mintime[j],
@@ -346,7 +362,9 @@ void checkSTREAMresults ()
 	printf ("        Observed  : %f %f %f \n",asum,bsum,csum);
 #endif
 
+#ifndef abs
 #define abs(a) ((a) >= 0 ? (a) : -(a))
+#endif
 	epsilon = 1.e-8;
 
 	if (abs(aj-asum)/asum > epsilon) {
