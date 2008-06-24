@@ -1,5 +1,7 @@
 #!/bin/sh -e
 # ID=5
+# TITLE=HDD-SMART
+# MEASUREMENT=temp
 
 . /usr/share/inquisitor/functions-monitoring
 [ -n "$PERIOD" ] || PERIOD=60
