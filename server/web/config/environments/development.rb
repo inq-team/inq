@@ -18,5 +18,5 @@ config.action_view.debug_rjs                         = true
 config.action_mailer.raise_delivery_errors = false
 config.action_controller.session_store = :memory_store
 
-TFTP_DIR = "/tmp"
-FIRMWARES_DIR = "/tmp"
+TFTP_DIR = "/srv/tftpboot"
+FIRMWARES_DIR = "/inq/firmwares"
