@@ -17,5 +17,5 @@ config.action_controller.perform_caching             = true
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false
 
-TFTP_DIR = "/var/lib/tftpboot"
+TFTP_DIR = "/srv/tftpboot"
 FIRMWARES_DIR = "/inq/firmwares"
