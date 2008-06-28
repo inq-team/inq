@@ -1,6 +1,6 @@
 #!/bin/sh -ef
 # NAME=Bonnie
-# DESCRIPTION=This test uses bonnie++ benchmark to test hard drives (with ext2 filesystem) performance. There are two sections to the program's operations, but we are using only first one: the  IO throughput in a fashion that is designed to simulate some types of database applications. It uses double memory sized single test file. As a benchmark's results we get output/rewrite/input of char/block speed and CPU load.
+# DESCRIPTION=This test uses bonnie++ benchmark to test hard drives performance. For every hard drive in a system, test formats it using ext2 filesystem and then runs bonnie++ benchmark. Test measures the IO throughput in situations that simulate some types of database applications. It uses a single test file size to twice the amount of RAM. Benchmark reports output/rewrite/input of char/block speed and CPU load.
 # DESTROYS_HDD=true
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
