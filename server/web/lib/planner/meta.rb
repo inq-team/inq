@@ -55,7 +55,8 @@ $TESTS = {"gprs-modem"=>
        :default=>"120",
        :comment=>"Time between progress updates, sec"}},
    :name=>"HDD array stress",
-   :description=>"HDD array stress test",
+   :description=>
+    "HDD array is a stress test that causes high load on HDD array subsystem. First of all, it creates optimally configured arrays (if possible, otherwise it will use single hard drives) using einarc's raid-wizard-optimal utility. Then it creates a filesystem on each array and unpacks and compiles there a large source tree for a specified time. Test distributes specified test duration among created arrays equally. Compilation, as in hdd-passthrough test, goes with 16 simultaneous jobs (by default). Test would end successfully if there wouldn't be any errors in filesystem creation and source code compilation runs. Usually this test starts after the CPU burning, memory and hdd-passthrough ones, and thus failing of this test (considering successful previous tests) usually identifies a broken RAID controller.",
    :version=>"0.1",
    :depends=>["CPU", "HDD", "Memory", "Mainboard", "Disk Controller"],
    :destroys_hdd=>true},
@@ -82,7 +83,8 @@ $TESTS = {"gprs-modem"=>
    :poweroff_during_test=>false,
    :var=>{},
    :name=>"Stream",
-   :description=>"STREAM memory throughput benchmark",
+   :description=>
+    "The STREAM benchmark is a simple synthetic benchmark program that measures sustainable memory bandwidth (in MiB/s) and the corresponding computation rate for simple vector kernels. A version written in C language and optimized for single processor systems is used.",
    :version=>"0.1",
    :depends=>["Memory"],
    :destroys_hdd=>false},
@@ -93,7 +95,8 @@ $TESTS = {"gprs-modem"=>
     {"DURATION"=>
       {:type=>"int", :default=>"30", :comment=>"Benchmark duration (sec)"}},
    :name=>"Dhrystone",
-   :description=>"Dhrystone integer calculations benchmark",
+   :description=>
+    "A synthetic computing benchmark that measures CPU integer performance. Inquisitor uses a C version and runs the specified number of loops, testing each CPU separately, with testing process running affined to particular CPU. Performance rating is in terms of MIPS.",
    :version=>"0.1",
    :depends=>["CPU"],
    :destroys_hdd=>false},
@@ -114,7 +117,8 @@ $TESTS = {"gprs-modem"=>
        :default=>"1024",
        :comment=>"Blocksize used for reading and writing by dd, KiB"}},
    :name=>"USB Flash Drive",
-   :description=>"USB Flash Drive working ability test with speed measurement",
+   :description=>
+    "This test allows to check the working ability of USB ports and/or plugged USB storage devices. A user has to plug the USB storage devices (such as USB flash drives) in every USB port of system under test. A number of USB storage drives is passed then as a COUNT parameter to this test script. First of all, it checks if a required number of USB devices is plugged in: the test won't start if it's not so. This way, a non-working USB port would be diagnosed. The test itself does the following for every detected USB storage device: it writes a number of blocks wit random data (start position is choosen randomly to increase an USB drive's lifetime) and remembers their checksum, then it clears the disk cache and reads these blocks back, calculating checksum. If checksums match, USB device and port work properly. This test also acts as a benchmark: it measures write and read speeds. This metric can be used  to diagnose bad ports/USB devices (due to speed lower than required minimum).",
    :version=>"0.1",
    :depends=>["USB"],
    :destroys_hdd=>true},
@@ -150,7 +154,7 @@ $TESTS = {"gprs-modem"=>
    :name=>"ODD read",
    :description=>"Optical Disc Drive read test",
    :version=>"0.1",
-   :depends=>["OSD"],
+   :depends=>["ODD"],
    :destroys_hdd=>false},
  "gprs-modem-dialup"=>
   {:is_interactive=>false,
@@ -219,7 +223,8 @@ $TESTS = {"gprs-modem"=>
        :default=>"1440",
        :comment=>"Size of testing floppy, KiB"}},
    :name=>"FDD read/write",
-   :description=>"Floppy drive read/write test",
+   :description=>
+    "A simple test to determine wheter the floppy drive work or not. It asks a user to insert a floppy disk into drive, then writes some random data on a diskette, clears the cache, reads the data back and compares it to what was written. Process repeats for every FDD available.",
    :version=>"0.1",
    :depends=>["Floppy"],
    :destroys_hdd=>false},
@@ -245,7 +250,8 @@ $TESTS = {"gprs-modem"=>
        :default=>"805414334eb1d3ff4fdca507ec82098f",
        :comment=>"MD5 checksum for checking"}},
    :name=>"Network interface",
-   :description=>"Network interfaces testing",
+   :description=>
+    "This test must load every network interface in system and measure it's download speed. Main requirement: all network interfaces must be connected to one common network. Testing sequence is: 1) Detect and remember what interface is default (from what we are booted up (as common)); 2) Consecutively choosing each interface, check if it's MAC address doesn't exist in \"exclude macs\" test parameter, then either skip it, continuing with another one, or continue to test current inteface; 3) Bring testing interface up, configuring network on it and setting it as a default gateway; 4) Bring down all other interfaces; 5) Get test file from specified URL, measuring download speed; 6) Calculate it's checksum and compare with needed (specified by test parameter). Here, test can fail if an error occurs, otherwise it submits speed benchmarking result and continues to test remaining interfaces; 7) After all interfaces (except the first one) are tested, default interface starts testing: there is no real need in it, when we are booting from network - but it is a simplest way to restore default parameters.",
    :version=>"0.2",
    :depends=>["NIC"],
    :destroys_hdd=>false},
@@ -313,7 +319,7 @@ $TESTS = {"gprs-modem"=>
        :comment=>"Number of tests per disc to average for result"}},
    :name=>"HDD speed benchmark: hdparm",
    :description=>
-    "This benchmark runs on all hard drives in the system sequentally. Every hard drive is benchmarked for buffered speed and cached speed using basic hdparm test several times. The results for every HDD are averaged and submitted as benchmark results.",
+    "This benchmark runs on all hard drives in the system sequentially. Every hard drive is benchmarked for the buffered speed and the cached speed using basic hdparm -t and -T tests for several times. The results for every HDD are averaged and presented as benchmark results.",
    :version=>"0.1",
    :depends=>["Disk Controller", "HDD"],
    :destroys_hdd=>false},
@@ -353,20 +359,10 @@ $TESTS = {"gprs-modem"=>
        :comment=>"Tarball file containing stress test tree"}},
    :name=>"HDD passthrough",
    :description=>
-    "HDD passthrough is a stress test that imposes heavy load on main system components. First, it tries to make all HDDs present in system to appear as separate device nodes - it checks all available RAID controllers, deletes all arrays / disk groups and creates passthrough devices to access individual HDDs if required. Second, it runs badblocks test on every available HDD, separating them in groups for simultaneous badblocks (8 HDDs doing badblocks simultaneously by default). Third, it makes a ramdisk filesystem and starts infinite compilation loop in memory, doing so with 16 simulatenous jobs (by default). Test ends successfully after both 1) minimal required stress time passes, 2) all HDDs get checked with badblocks. Test would fail if any bad blocks would be detected on any HDD. Test will usually hang or crash the system on unstable hardware.",
+    "HDD passthrough is a stress test that imposes heavy load on main system components. First, it tries to make all HDDs present in the system to appear as separate device nodes - it checks all available RAID controllers, deletes all arrays / disk groups and creates passthrough devices to access individual HDDs if required. Second, it runs badblocks test on every available HDD, running them simulatenously in groups of 8 HDDs by default. Third, it makes a ramdisk filesystem and starts infinite compilation loop in memory, doing so with 16 simultaneous jobs (by default). Test ends successfully after both 1) minimal required stress time passes, 2) all HDDs are checked with badblocks. Test would fail if any bad blocks would be detected on any HDD. Test will usually hang or crash the system on the unstable hardware.",
    :version=>"0.1",
    :depends=>["CPU", "HDD", "Memory", "Mainboard", "Disk Controller"],
    :destroys_hdd=>true},
- "hdd-smart"=>
-  {:is_interactive=>false,
-   :poweroff_during_test=>false,
-   :var=>{},
-   :name=>"HDD SMART",
-   :description=>
-    "This test starts internal SMART tests for every HDD available. These tests usually put heavy load on drive with lots of internal block reading/writing operations, though it's all done transparently by HDD's firmware in background. This test does not destroy any data on HDDs.",
-   :version=>"0.1",
-   :depends=>["HDD", "Disk Controller"],
-   :destroys_hdd=>false},
  "cpu"=>
   {:is_interactive=>false,
    :poweroff_during_test=>false,
@@ -375,8 +371,9 @@ $TESTS = {"gprs-modem"=>
       {:type=>"int",
        :default=>"1800",
        :comment=>"Total time of CPU testing, sec"}},
-   :name=>"CPU burning",
-   :description=>"CPU burn-in testing",
+   :name=>"CPU burn",
+   :description=>
+    "Basic CPU burn test makes the CPUs execute instructions that rapidly increase processor's temperature in an infinite loop. Test makes special care about used instruction set (to make load as high as possible).",
    :version=>"0.1",
    :depends=>["CPU"],
    :destroys_hdd=>false},
@@ -399,7 +396,8 @@ $TESTS = {"gprs-modem"=>
        :comment=>
         "Filter in only devices with this idProduct (match all if empty)"}},
    :name=>"USB presence",
-   :description=>"Tests presence of designated USB device",
+   :description=>
+    "Tests the presence of designated USB devices. It checks for a count of USB devices that match specified idVendor and idProduct and gives a success if they're equal to COUNT parameter or failure if they're not.",
    :version=>"0.1",
    :depends=>["USB"],
    :destroys_hdd=>false},
@@ -408,7 +406,8 @@ $TESTS = {"gprs-modem"=>
    :poweroff_during_test=>false,
    :var=>{},
    :name=>"Bonnie",
-   :description=>"Bonnie HDD performance benchmark",
+   :description=>
+    "This test uses bonnie++ benchmark to test hard drives (with ext2 filesystem) performance. There are two sections to the program's operations, but we are using only first one: the  IO throughput in a fashion that is designed to simulate some types of database applications. It uses double memory sized single test file. As a benchmark's results we get output/rewrite/input of char/block speed and CPU load.",
    :version=>"0.1",
    :depends=>["HDD"],
    :destroys_hdd=>true},
@@ -417,7 +416,8 @@ $TESTS = {"gprs-modem"=>
    :poweroff_during_test=>false,
    :var=>{"LOOPS"=>{:type=>"int", :default=>"20000", :comment=>"Loop count"}},
    :name=>"Whetstone",
-   :description=>"Whetstone floating-point calculations benchmark",
+   :description=>
+    "A synthetic computing benchmark that measures CPU floating-point performance. Inquisitor uses a C version and runs the specified number of loops, testing each CPU separately, with testing process running affined to particular CPU. Performance rating is in terms of MIPS.",
    :version=>"0.1",
    :depends=>["CPU"],
    :destroys_hdd=>false},
@@ -439,7 +439,7 @@ $TESTS = {"gprs-modem"=>
    :var=>{},
    :name=>"DB to Detects comparison",
    :description=>
-    "Pauses testing until comparison has been completed on application server",
+    "Pauses testing until comparison has been completed on the application server.",
    :version=>"0.1",
    :depends=>
     ["BMC",
@@ -466,5 +466,12 @@ $TESTS = {"gprs-modem"=>
    :depends=>["CPU", "Memory", "Mainboard"],
    :destroys_hdd=>false}}
 
-$MONITORINGS = [nil, "hdd-smart"]
+$MONITORINGS = {"cpu-vcore-ipmi"=>{:title=>"CPU-VCORE(ipmi)", :measurement=>"vcore", :id=>3},
+ "cpu-temp-ipmi"=>{:title=>"CPU-TEMP(ipmi)", :measurement=>"temp", :id=>1},
+ "odd-read"=>{:title=>"ODD-READ", :measurement=>"speed", :id=>6},
+ "hdd-smart"=>{:title=>"HDD-SMART", :measurement=>"temp", :id=>5},
+ "cpu-temp-sensors"=>
+  {:title=>"CPU-TEMP(sensors)", :measurement=>"temp", :id=>2},
+ "cpu-vcore-sensors"=>
+  {:title=>"CPU-VCORE(sensors)", :measurement=>"vcore", :id=>4}}
 
