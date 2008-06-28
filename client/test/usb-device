@@ -1,6 +1,6 @@
 #!/bin/sh -e
 # NAME=USB presence
-# DESCRIPTION=Tests presence of designated USB device. Specyfying Vendor and Product IDs test counts total USB devices number, giving failure or success depending on input parameter.
+# DESCRIPTION=Tests the presence of designated USB devices. It checks for a count of USB devices that match specified idVendor and idProduct and gives a success if they're equal to COUNT parameter or failure if they're not.
 # DESTROYS_HDD=false
 # IS_INTERACTIVE=false
 # POWEROFF_DURING_TEST=false
