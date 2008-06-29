@@ -45,8 +45,8 @@ endif
 # Misc targets
 #===============================================================================
 
-clean:
-	rm -Rf $(WORKDIR) $(REPO)
+clean: repo-clean
+	rm -Rf $(WORKDIR)
 	CONFIG=$(CONFIG) $(MAKE) -C client clean
 
 # Files with metadata, gathered from client modules

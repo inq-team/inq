@@ -67,3 +67,7 @@ update-package-remote:
 	ssh $(DEPLOY_HOST) -- sudo chroot $(DEPLOY_PATH) rpm -U /$(PACKAGE_RPM)
 	ssh $(DEPLOY_HOST) -- sudo rm -f $(DEPLOY_PATH)/$(PACKAGE_RPM)
 endif
+
+repo-clean:
+	if [ -d $(WORKDIR)/chroot ]; then hsh-rmchroot $(WORKDIR); fi
+	rm -f $(REPO)/$(TARGET)/RPMS.hasher/$(PACKAGE_RPM)
