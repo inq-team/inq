@@ -93,3 +93,4 @@ ipmitool
 readcd
 schedutils
 syslog-ng
+memtest86+

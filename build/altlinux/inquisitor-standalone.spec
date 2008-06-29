@@ -8,7 +8,7 @@
 
 Name: inquisitor-standalone
 Version: 3.0
-Release: alt0.beta2
+Release: alt0.rc
 URL: http://www.inquisitor.ru/
 
 Summary: Hardware detection, testing and monitoring system (demo standalone version)
@@ -52,6 +52,9 @@ sed -i '/^export HOME/ d' client/main/global.in
 #%ruby_sitearchdir/raid
 
 %changelog
+* Wed Apr 09 2008 Mikhail Yakshin <greycat@altlinux.ru> 3.0-alt0.rc
+- 3.0-rc release
+
 * Tue Feb 26 2008 Mikhail Yakshin <greycat@altlinux.org> 3.0-alt0.beta2
 - Initial build
 

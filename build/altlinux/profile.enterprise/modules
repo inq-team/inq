@@ -170,3 +170,4 @@ yellowfin.ko
 vfat.ko
 reiserfs.ko
 ext3.ko
+ahci.ko
