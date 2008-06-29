@@ -10,9 +10,11 @@ if [ -z "$PLANNER" ]; then
 	show_usage()
 	{
 		echo -n 'Inquisitor test: '
+		sed -ne '/^# *NAME=/ s/# *NAME=//p' <$0
+		echo "A part of Inquisitor platform, version $INQ_VERSION"
+		echo
 		sed -ne '/^# *DESCRIPTION=/ s/# *DESCRIPTION=//p' <$0
 		cat <<__EOF__
-A part of Inquisitor platform, version ${INQ_VERSION}
 
 Usage: [variables] $0 [options]
 
@@ -35,7 +37,7 @@ __EOF__
 	show_version()
 	{
 		echo -n 'Inquisitor test: '
-		sed -ne '/^# *DESCRIPTION=/ s/# *DESCRIPTION=//p' <$0
+		sed -ne '/^# *NAME=/ s/# *NAME=//p' <$0
 		cat <<__EOF__
 A part of Inquisitor platform, version ${INQ_VERSION}
 
