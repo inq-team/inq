@@ -1,0 +1,74 @@
+#!/bin/sh -ef
+# NAME=HDD SMART
+# DESCRIPTION=Simple test for SMART capable hard drives. At first it tries to find is there any SMART capable and correctly working with it drives. Test uses standard smartmontools package. Next, it starts long time full SMART testing on every capable drive and waits for their completion. If everything in SMART log seems good tests passes successfully.
+# DESTROYS_HDD=false
+# IS_INTERACTIVE=false
+# POWEROFF_DURING_TEST=false
+# VERSION=0.1
+# TAGS=hdd
+# DEPENDS=HDD,Disk Controller
+# VAR=LOGTIME:int:120:Time between progress updates, sec
+
+print_red_message "!!! THIS IS DEVELOPMENT VERSION !!!"
+
+. /usr/share/inquisitor/functions-test
+
+exit_handler()
+{
+	[ -f "$INFOFILE" ] && rm $INFOFILE
+}
+
+INFOFILE=`mktemp`
+
+HDD_QUANTITY=`get_harddrives_list | wc -l`
+if [ "$HDD_QUANTITY" -eq 0 ]; then
+	test_succeeded "No HDDs"
+	exit 0
+fi
+
+# Initial basic tests
+SMART_CAPABLE_HDDS=0
+for dev in `get_harddrives_list`; do
+	echo -n "Initial $dev test"
+	[ `smartctl -i $dev | egrep "SMART support is: (Available|Disabled)" | wc -l` -eq 2 ] &&
+		smartctl -s on $dev >$DEBUG_TTY ||
+			continue
+
+	smartctl -a $dev > $INFOFILE
+
+	grep -q "SMART overall-health self-assessment test result: PASSED" $INFOFILE ||
+		test_failed "Initial test on $dev failed"
+	echo_success
+
+	SMART_CAPABLE_HDDS=$(( $SMART_CAPABLE_HDDS + 1 ))
+done
+
+if [ $SMART_CAPABLE_HDDS -eq 0 ]; then
+	test_succeeded "No SMART capable HDDs"
+	exit 0
+fi
+
+# Long time tests
+for dev in `get_harddrives_list`; do
+	smartctl -t long $dev
+done
+
+TESTED_QUANTITY=0
+for dev in `get_harddrives_list`; do
+	echo -n "Long $dev test completion waiting"
+	while [ -n `smartctl -a $dev |
+		grep "Self-test execution status:" |
+		grep "Self-test routine in progress..."` ]; do
+			sleep $LOGTIME
+	done
+	echo_success
+
+	smartctl -a $dev > $INFOFILE
+	[ -z "`fgrep -A 2 'without error or no self-test has ever' $INFOFILE`" ] &&
+		test_failed "Long test on $dev failed"
+
+	TESTED_QUANTITY=$(( $TESTED_QUANTITY + 1 ))
+	test_progress $TESTED_QUANTITY $HDD_QUANTITY
+done
+
+test_succeeded
