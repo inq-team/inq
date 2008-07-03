@@ -54,12 +54,12 @@
 			<table>
 				<tr><th class="testing_stage_name">Stage</th><th class="testing_stage_span">Elapsed</th></tr>
 			<% if @testing and @testing.test_start %>
-				<tr><td class="testing_stages_start" colspan="2"><%= @testing.test_start.strftime('%d.%m.%Y %H:%M') %></td></tr>
+				<tr><td class="testing_stages_start" colspan="2"><%= link_to @testing.test_start.strftime('%d.%m.%Y %H:%M'), {:controller => :computers, :action => :graph, :id => @computer, :testing => @testing_number} %></td></tr>
 			<% end %>
 			<% if @stages %>
-				<% @stages.each { |stage| %>
+				<% @stages.each_with_index { |stage, index| %>
 				<tr class='testing_stage_<%= stage[:result] %>'>
-					<td class="testing_stage_name" title="<%= stage[:comment] %>"><%= stage[:id] %></td>
+					<td class="testing_stage_name" title="<%= stage[:comment] %>"><%= link_to stage[:id], {:controller => :computers, :action => :graph, :id => @computer, :testing => @testing_number, :from => stage[:started].nil? ? nil : stage[:started].to_f , :to => stage[:started].nil? ? nil : (stage[:started] + stage[:elapsed]).to_f } %></td>
 					<td class="testing_stage_span"><%= sprintf("%02i:%02i:%02i", stage[:elapsed]/3600, stage[:elapsed]%3600/60, stage[:elapsed]%3600%60) if stage[:elapsed] %></td>
 				</tr>
 			<% } %>

@@ -330,6 +330,7 @@ class ComputersController < ApplicationController
 
 	def graph
 		prepare_computer_tabs
+	
 		respond_to { |format|
 			format.html {
 				render(:layout => 'computer_tabs')
@@ -337,14 +338,11 @@ class ComputersController < ApplicationController
 			format.png {
 				png_file = Tempfile.new('graph_png')
 				monitoring_ids = Graph.find_all_by_testing_id(@testing, :select => 'DISTINCT monitoring_id').map{ |x| x[:monitoring_id] }
-				plot_script = "set terminal png size 800, #{(monitoring_ids.size < 3) ? (300 * monitoring_ids.size) : 600}
+				plot_script = "set terminal png size 800, #{monitoring_ids.size * 300}
 set output \"#{png_file.path}\"
 set multiplot layout #{monitoring_ids.size}, 1
 set xdata time
-set timefmt \"%s\"
-set format x \"%H:%M\"
-set key below box
-set grid"
+set timefmt \"%s\""
 
 				data_files_hash = {}
 
@@ -353,19 +351,37 @@ set grid"
 					data_files_hash[monitoring_id] = {} if data_files_hash[monitoring_id].nil?
 					uniq_keys.each{ |key| data_files_hash[monitoring_id][key] = Tempfile.new('data') }
 					
+					format_x = '%H:%M'
 					data_files_hash[monitoring_id].each_pair do |key, data_file|
-						x_min = Graph.find_by_testing_id_and_monitoring_id(@testing, monitoring_id, :select => 'MIN(timestamp)')[:timestamp].to_f
-						graphs = Graph.find_all_by_testing_id_and_monitoring_id_and_key(@testing, monitoring_id, key, :order => 'timestamp')
-						graphs.each{ |x| data_file.puts "#{x.timestamp.to_f - x_min}\t#{x.value}" }
+						x_min = @testing.test_start
+						unless @from_time.nil? or @to_time.nil?
+							cond = ['timestamp >= ? AND timestamp <= ?', Time.at(@from_time), Time.at(@to_time)]
+							x_min = @from_time
+							if (@to_time - @from_time).round < 9
+								format_x = '%H:%M:%S'
+							end
+						else
+							cond = ['timestamp >= ?', x_min]
+						end
+						
+						plot_script += "\nset format x \"#{format_x}\"
+set key below box
+set grid"						
+						
+						graphs = Graph.find_all_by_testing_id_and_monitoring_id_and_key(@testing, monitoring_id, key, :conditions => cond, :order => 'timestamp')
+						graphs.each{ |x| data_file.puts "#{x.timestamp.to_f - x_min.to_f}\t#{x.value}" }
 					end
 					
 					data_files_hash[monitoring_id].each_pair{ |k, f| f.flush }
 
 #					require 'planner/planner'
-					line_title = $MONITORINGS.find{|x| x[1][:id] == monitoring_id }[1][:measurement]
-					plot_title = $MONITORINGS.find{|x| x[1][:id] == monitoring_id }[1][:title]
+					line_title = (($MONITORINGS.find{|x| x[1][:id] == monitoring_id }||[])[1]||{})[:measurement]
+					plot_title = (($MONITORINGS.find{|x| x[1][:id] == monitoring_id }||[])[1]||{})[:title]
+					
+					line_title = 'ln_ttl' unless line_title
+					plot_title = 'plt_ttl' unless plot_title
 #					title = 'temp'
-					plot_string = "set title \"#{plot_title}\"\n" + 'plot' + data_files_hash[monitoring_id].map{ |x| "'#{x[1].path}' using 1:2 title \"#{line_title} #{x[0]}\" with lines" }.join(', ')
+					plot_string = "set title \"#{plot_title}\"\n" + 'plot ' + data_files_hash[monitoring_id].map{ |x| "'#{x[1].path}' using 1:2 title \"#{line_title} #{x[0]}\" with lines" }.join(', ')
 					plot_script += "\n"
 					plot_script += plot_string
 					plot_script += "\n"									
@@ -837,6 +853,7 @@ __EOF__
 			{
 				:id => stage.stage,
 				:elapsed => ((stage.end || Time.new()) - stage.start - stage.accumulated_idle).round,
+				:started => stage.start + stage.accumulated_idle,
 				:result => RESULT_MAPPING[stage.result] || 'unknown',
 				:comment => (RESULT_MAPPING[stage.result] || 'unknown') + (stage.comment ? ": #{stage.comment}" : ''),
 			}
@@ -853,6 +870,7 @@ __EOF__
 				}
 			}
 		end
+		
 	end
 
 	def prepare_computer_and_testing
@@ -864,6 +882,9 @@ __EOF__
 		end
 		@testing_number = params[:testing] ? params[:testing].to_i() : @sorted_testings.size - 1
 		@testing = @sorted_testings[@testing_number]
+		
+		@from_time = params[:from].to_f if params[:from]
+		@to_time = params[:to].to_f if params[:to]
 	end
 
 	def dump_comparison(comparison)
