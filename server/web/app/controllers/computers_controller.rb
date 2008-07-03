@@ -354,7 +354,7 @@ set timefmt \"%s\""
 					format_x = '%H:%M'
 					data_files_hash[monitoring_id].each_pair do |key, data_file|
 						x_min = @testing.test_start
-						unless @from_time.nil? or @to_time.nil?
+						unless (@from_time == 0) or (@to_time == 0)
 							cond = ['timestamp >= ? AND timestamp <= ?', Time.at(@from_time), Time.at(@to_time)]
 							x_min = @from_time
 							if (@to_time - @from_time).round < 9
