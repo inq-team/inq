@@ -59,7 +59,7 @@
 			<% if @stages %>
 				<% @stages.each_with_index { |stage, index| %>
 				<tr class='testing_stage_<%= stage[:result] %>'>
-					<td class="testing_stage_name" title="<%= stage[:comment] %>"><%= link_to stage[:id], {:controller => :computers, :action => :graph, :id => @computer, :testing => @testing_number, :from => stage[:started].nil? ? nil : stage[:started].to_f , :to => stage[:started].nil? ? nil : (stage[:started] + stage[:elapsed]).to_f } %></td>
+					<td class="testing_stage_name" title="<%= stage[:comment] %>"><%= link_to stage[:id], {:controller => :computers, :action => :graph, :id => @computer, :testing => @testing_number, :from => stage[:started].nil? ? nil : stage[:started].to_f , :to => stage[:finished].nil? ? nil : stage[:finished].to_f } %></td>
 					<td class="testing_stage_span"><%= sprintf("%02i:%02i:%02i", stage[:elapsed]/3600, stage[:elapsed]%3600/60, stage[:elapsed]%3600%60) if stage[:elapsed] %></td>
 				</tr>
 			<% } %>

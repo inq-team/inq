@@ -853,6 +853,7 @@ __EOF__
 			{
 				:id => stage.stage,
 				:elapsed => ((stage.end || Time.new()) - stage.start - stage.accumulated_idle).round,
+				:finished => (stage.end || Time.new)
 				:started => stage.start + stage.accumulated_idle,
 				:result => RESULT_MAPPING[stage.result] || 'unknown',
 				:comment => (RESULT_MAPPING[stage.result] || 'unknown') + (stage.comment ? ": #{stage.comment}" : ''),
