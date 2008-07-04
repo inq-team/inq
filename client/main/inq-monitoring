@@ -5,14 +5,16 @@
 . $SHARE_DIR/communication
 
 COMPUTER_ID=
-echo 'Trying self id by macs...'
-. $SHARE_DIR/self-id/mac
+echo -n 'Trying self id by macs...'
+COMPUTER_ID=`get_id_by_macs \`get-macs\``
 if [ -n "$COMPUTER_ID" ]; then
-	echo_succes
+	echo_success
 else
-	. $SHARE_DIR/self-id/manual
+	echo_failure
+	echo -n "Enter serial number: "
+	read COMPUTER_ID
 	if [ -n "$COMPUTER_ID" ]; then
-		echo_succes
+		echo_success
 	else
 		echo_failure
 		exit 1
