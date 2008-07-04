@@ -146,7 +146,7 @@ monitoring_start()
 monitoring_stop()
 {
 	if [ -r "$HOME/monitoring_$1.pid" ]; then
-		kill `cat $HOME/monitoring_$1.pid` || :
+		kill `cat $HOME/monitoring_$1.pid` 2>$DEBUG_TTY || :
 		rm -f $HOME/monitoring_$1.pid
 	fi
 }
