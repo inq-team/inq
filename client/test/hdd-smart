@@ -9,8 +9,6 @@
 # DEPENDS=HDD,Disk Controller
 # VAR=LOGTIME:int:120:Time between progress updates, sec
 
-print_red_message "!!! THIS IS DEVELOPMENT VERSION !!!"
-
 . /usr/share/inquisitor/functions-test
 
 exit_handler()
@@ -30,10 +28,10 @@ fi
 SMART_CAPABLE_HDDS=0
 for dev in `get_harddrives_list`; do
 	echo -n "Initial $dev test"
-	[ `smartctl -i $dev | egrep "SMART support is: (Available|Disabled)" | wc -l` -eq 2 ] &&
-		smartctl -s on $dev >$DEBUG_TTY ||
-			continue
+	[ `smartctl -i $dev | egrep "SMART support is: (Available|Enabled)" | wc -l` -eq 2 -o \
+	  `smartctl -i $dev | egrep "SMART support is: (Available|Disabled)" | wc -l` -eq 2 ] || continue
 
+	smartctl -s on $dev >$DEBUG_TTY
 	smartctl -a $dev > $INFOFILE
 
 	grep -q "SMART overall-health self-assessment test result: PASSED" $INFOFILE ||
@@ -50,15 +48,15 @@ fi
 
 # Long time tests
 for dev in `get_harddrives_list`; do
-	smartctl -t long $dev
+	smartctl -t long $dev >$DEBUG_TTY
 done
 
 TESTED_QUANTITY=0
 for dev in `get_harddrives_list`; do
 	echo -n "Long $dev test completion waiting"
-	while [ -n `smartctl -a $dev |
-		grep "Self-test execution status:" |
-		grep "Self-test routine in progress..."` ]; do
+	while [ -n "`smartctl -a $dev |
+		grep 'Self-test execution status:' |
+		grep 'Self-test routine in progress...'`" ]; do
 			sleep $LOGTIME
 	done
 	echo_success
