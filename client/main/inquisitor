@@ -80,7 +80,7 @@ submit_components $HOME/components.xml
 echo 'Starting monitorings'
 for I in $SHARE_DIR/monitoring/*; do
 	echo -n "Starting `basename $I`"
-	. $I &
+	monitoring_start $I
 	echo_success
 done
 echo 'Monitorings were started'
