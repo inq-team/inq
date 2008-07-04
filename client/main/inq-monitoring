@@ -1,0 +1,28 @@
+#!/bin/sh
+
+. /etc/inquisitor/global
+. $SHARE_DIR/functions
+. $SHARE_DIR/communication
+
+COMPUTER_ID=
+echo 'Trying self id by macs...'
+. $SHARE_DIR/self-id/mac
+if [ -n "$COMPUTER_ID" ]; then
+	echo_succes
+else
+	. $SHARE_DIR/self-id/manual
+	if [ -n "$COMPUTER_ID" ]; then
+		echo_succes
+	else
+		echo_failure
+		exit 1
+	fi	
+fi
+	
+export COMPUTER_ID
+
+# Starting monitorings
+for I in $SHARE_DIR/monitoring/*; do
+	echo -n "Starting `basename $I`"
+	monitoring_start $I
+done
