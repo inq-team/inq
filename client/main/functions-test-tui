@@ -1,0 +1,175 @@
+#!/bin/sh
+# Functions to process if test was called manually.
+# Implements text UI for test, based on test metainformation.
+
+# Set up temporary UI exit handler: this one would be used to delete UI
+# temporary files, would be disabled right after UI stage.
+ui_exit_handler()
+{
+	local rc=$?
+	trap - EXIT
+	ui_cleanup
+	exit $rc
+}
+
+# Real cleanup function
+ui_cleanup()
+{
+	[ -f "$UI_TMP/var-src" ] && rm -f "$UI_TMP/var-src"
+	[ -f "$UI_TMP/var-key" ] && rm -f "$UI_TMP/var-key"
+	[ -f "$UI_TMP/var-value" ] && rm -f "$UI_TMP/var-value"
+	[ -f "$UI_TMP/dialog" ] && rm -f "$UI_TMP/dialog"
+	[ -d "$UI_TMP" ] && rmdir "$UI_TMP"
+}
+trap ui_exit_handler HUP PIPE INT QUIT TERM EXIT
+UI_TMP=`mktemp -d`
+
+show_usage()
+{
+	echo "Inquisitor test: $HUMAN_NAME"
+	echo "A part of Inquisitor platform, version $INQ_VERSION"
+	echo
+	sed -ne '/^# *DESCRIPTION=/ s/# *DESCRIPTION=//p' <$0
+	cat <<__EOF__
+
+Usage: [variables] $0 [options]
+
+Options:
+  -h, --help            display this help and exit
+  -V, --version         output version information and exit
+
+Variables:
+__EOF__
+	# Parse all the variables from test script
+	sed -ne '/^# *VAR=/ s/^# *VAR=//p' <$0 | while read L; do
+		printf '  %-20s  %s (%s)\n' "`echo $L | cut -f1 -d:`" "`echo $L | cut -f4 -d:`" "`echo $L | cut -f3 -d:`"
+	done
+	echo
+	grep -q "^# *DESTROYS_HDD=true" $0 && echo 'WARNING! This test would destroy the contents of all your hard drives!'
+	grep -q "^# *POWEROFF_DURING_TEST=true" $0 && echo 'WARNING! This test would end in a poweroff of system under test!'
+	exit 0
+}
+
+show_version()
+{
+	echo "Inquisitor test: $HUMAN_NAME"
+	cat <<__EOF__
+A part of Inquisitor platform, version ${INQ_VERSION}
+
+Copyright (C) 2004-2008 by Inquisitor team
+This is free software.  You may redistribute copies of it under the terms of
+the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.
+There is NO WARRANTY, to the extent permitted by law.
+__EOF__
+	exit 0
+}
+
+HUMAN_NAME=`sed -ne '/^# *NAME=/ s/# *NAME=//p' <$0`
+
+# Parse command-line options
+TEMP=`getopt -n ${0##*/} -o h,V -l help,version -- "$@"` || show_usage
+eval set -- "$TEMP"
+
+while :; do
+	case "$1" in
+	-h|--help) show_usage
+		;;
+	-V|--version) show_version
+		;;
+	--) shift; break
+		;;
+	*) show_usage
+		;;
+	esac
+	shift
+done
+
+# It seems that we're about to run test
+
+# Set up default TEST_NAME, if not set already
+[ -n "$TEST_NAME" ] || TEST_NAME=`basename $0`
+
+# Fill up default variable values, if they're not set up yet.
+#
+# Generates "var-src" file with "export KEY=VALUE" strings that would be
+# sourced to set up variables.
+#
+# Also generates "var-key" file with "export VAR" strings that would be
+# joined with values later to apply values set by a user in a form
+# dialog.
+TEST_FILENAME="$SHARE_DIR/test/"`basename $0`
+sed -ne '/^# *VAR=/ s/^# *VAR=\(.*\):\(.*\):\(.*\):\(.*\)$/\1	\3/p' <$TEST_FILENAME | while read kv; do
+	k=`echo "$kv" | cut -f1`
+	v=`echo "$kv" | cut -f2`
+	env | egrep -q "^$k=" || echo "export $k=$v"
+	echo "export $k" >&2
+done >"$UI_TMP/var-src" 2>"$UI_TMP/var-key"
+. "$UI_TMP/var-src"
+
+# Do a general parameter editor/confirmation dialog in curses
+returncode=0
+while [ "$returncode" != 1 ] && [ "$returncode" != 250 ]; do
+
+	# Set up parameter editor dialog: fixed part
+	cat >"$UI_TMP/dialog" <<__EOF__
+		--help-button
+		--help-status
+		--item-help
+		--backtitle "Inquisitor v$INQ_VERSION"
+		--title "$HUMAN_NAME"
+		--form "Here is a possible piece of a configuration program."
+		20 70 0
+__EOF__
+
+	# Set up parameter editor dialog: variable part
+	i=1
+	sed -ne '/^# *VAR=/ s/^# *VAR=\(.*\):\(.*\):\(.*\):\(.*\)$/\1	\4/p' <$TEST_FILENAME | while read kv; do
+		k=`echo "$kv" | cut -f1`
+		help=`echo "$kv" | cut -f2`
+		value=`env | sed -ne "/^$k=/ s/^.*=//p;"`
+		echo "\"$k\" $i 1 \"$value\" $i 20 44 0 \"$help\" \\"
+		i=$(($i+1))
+	done >>"$UI_TMP/dialog"
+
+	# Call dialog: we need to get exitstatus
+	set +e
+	dialog --file "$UI_TMP/dialog" 2>"$UI_TMP/var-value"
+	returncode=$?
+	set -e
+
+	# Kill that annoying HELP first line, if it happened
+	[ "$returncode" = 2 ] && sed -i 1d "$UI_TMP/var-value"
+
+	# Apply returned values
+	paste -d= "$UI_TMP/var-key" "$UI_TMP/var-value" >"$UI_TMP/var-src"
+	. "$UI_TMP/var-src"
+
+	case $returncode in
+	0)
+		break;
+		;;
+	2)
+		DESCRIPTION=`sed -ne '/^# *DESCRIPTION=/ s/# *DESCRIPTION=//p' <$0`
+		dialog \
+			--clear \
+			--backtitle "Inquisitor v$INQ_VERSION" \
+			--title "$HUMAN_NAME" \
+			--msgbox "$DESCRIPTION" 20 70
+		;;
+	*)
+		exit
+		;;
+	esac
+done
+
+# Override communications functions with empty ones
+test_promise_time() { return 0; }
+test_stage_progress() { return 0; }
+benchmark_submit_float() { printf "BENCHMARK: %-40s%s" "$1" "$2"; }
+benchmark_submit_string() { printf "BENCHMARK: %-40s%s" "$1" "$2"; }
+test_succeeded() { echo "$@" >&2; exit 0; }
+test_failed() { echo "$@" >&2; exit 1; }
+
+# Remove temporary UI exit handler, clean up temp files
+trap - EXIT
+ui_cleanup

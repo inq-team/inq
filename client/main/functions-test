@@ -1,105 +1,16 @@
 #!/bin/sh
 # Obligatory functions to process before every test.
 
+. /etc/inquisitor/global
+. $SHARE_DIR/functions
+. $SHARE_DIR/communication
+
 if [ -z "$PLANNER" ]; then
-	# Running in free state; need to get all variable for test
-	. /etc/inquisitor/global
-	. $SHARE_DIR/functions
-	. $SHARE_DIR/communication
-
-	show_usage()
-	{
-		echo -n 'Inquisitor test: '
-		sed -ne '/^# *NAME=/ s/# *NAME=//p' <$0
-		echo "A part of Inquisitor platform, version $INQ_VERSION"
-		echo
-		sed -ne '/^# *DESCRIPTION=/ s/# *DESCRIPTION=//p' <$0
-		cat <<__EOF__
-
-Usage: [variables] $0 [options]
-
-Options:
-  -h, --help            display this help and exit
-  -V, --version         output version information and exit
-
-Variables:
-__EOF__
-		# Parse all the variables from test script
-		sed -ne '/^# *VAR=/ s/^# *VAR=//p' <$0 | while read L; do
-			printf '  %-20s  %s (%s)\n' "`echo $L | cut -f1 -d:`" "`echo $L | cut -f4 -d:`" "`echo $L | cut -f3 -d:`"
-		done
-		echo
-		grep -q "^# *DESTROYS_HDD=true" $0 && echo 'WARNING! This test would destroy the contents of all your hard drives!'
-		grep -q "^# *POWEROFF_DURING_TEST=true" $0 && echo 'WARNING! This test would end in a poweroff of system under test!'
-		exit 0
-	}
-
-	show_version()
-	{
-		echo -n 'Inquisitor test: '
-		sed -ne '/^# *NAME=/ s/# *NAME=//p' <$0
-		cat <<__EOF__
-A part of Inquisitor platform, version ${INQ_VERSION}
-
-Copyright (C) 2004-2008 by Inquisitor team
-This is free software.  You may redistribute copies of it under the terms of
-the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.
-There is NO WARRANTY, to the extent permitted by law.
-__EOF__
-		exit 0
-	}
-
-	# Parse command-line options
-	TEMP=`getopt -n ${0##*/} -o h,V -l help,version -- "$@"` || show_usage
-	eval set -- "$TEMP"
-
-	while :; do
-		case "$1" in
-		-h|--help) show_usage
-			;;
-		-V|--version) show_version
-			;;
-		--) shift; break
-			;;
-		*) show_usage
-			;;
-		esac
-		shift
-	done
-
-	if [ -z "$TEST_NAME" ]; then
-		TEST_NAME=`basename $0`
-		TEST_FILENAME="$SHARE_DIR/test/"`basename $0`
-		for var in `sed -ne '/^# *VAR=/ s/^# *VAR=\(.*\):\(.*\):\(.*\):\(.*\)$/\1=\3/p' <$TEST_FILENAME`; do
-			env | grep -q `echo $var | awk -F= '{print $1}'` || eval "$var"
-		done
-	fi
-
-	# Override communications functions with empty ones
-	test_promise_time() { return 0; }
-	test_stage_progress() { return 0; }
-	benchmark_submit_float()
-	{
-		printf "BENCHMARK: %-40s%s" "$1" "$2"
-	}
-	benchmark_submit_string()
-	{
-		printf "BENCHMARK: %-40s%s" "$1" "$2"
-	}
-	test_succeeded()
-	{
-		echo "$@" >&2
-		exit 0
-	}
-	test_failed()
-	{
-		echo "$@" >&2
-		exit 1
-	}
+	# Running in free state; need to get all variables for the test
+	. $SHARE_DIR/functions-test-tui
 else
-	. /etc/inquisitor/global
-	. $SHARE_DIR/functions
-	. $SHARE_DIR/communication
+	# Called by scheduler; will use handle #4 to output test data to
+	# be correctly grabbed by run_test
 
 	test_succeeded()
 	{
