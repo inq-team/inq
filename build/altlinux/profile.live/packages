@@ -75,8 +75,8 @@ MPlayer
 mencoder
 time
 etcnet
-design-bootsplash-server
-design-bootloader-livecd-server
+#design-bootsplash-compact
+design-bootloader-livecd-compact
 #tenebrae-sw
 #inquisitor-movie
 ruby-jttui
