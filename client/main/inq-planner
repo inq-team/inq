@@ -1,8 +1,0 @@
-#!/usr/bin/env ruby
-
-require 'open-uri'
-require 'rexml/document'
-
-computer_id = ENV['COMPUTER_ID']
-
-puts(REXML::Document.new(open("#{ ENV['REST_SERVER'] }/computers/plan/#{ ENV['COMPUTER_ID'] }.xml").read()).root.elements['script'].text())
