@@ -1,4 +1,7 @@
 #!/bin/sh
+# NAME=HDD detect
+# DESCRIPTION=Detect HDDs using einarc, smartctl and hal-device
+# DEPENDS=HDD
 
 einarc_detect()
 {
@@ -27,6 +30,10 @@ hdd_detected()
 			if [ -n "`cat "$HOME/einarc_detects.log" | grep "$ID"`" ]; then
 				return 0
 				break
+			fi
+			if [ "`hal-get-property --udi "$udi" --key info.bus 2>/dev/null`" = 'usb' ]; then
+				return 0;
+				break;
 			fi
 		fi
 	done

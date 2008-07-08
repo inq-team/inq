@@ -1,6 +1,7 @@
 #!/bin/sh
-
-#SHARE_DIR=$HOME
+# NAME=Disk controller detect
+# DESCRIPTION=Detect disk controolers througth eianrc and hal-device with required priority 
+# DEPENDS=Disk Controller
 
 einarc_detect()
 {
@@ -15,8 +16,8 @@ einarc_detect()
 			'lsi_megcli') CTRL_VENDOR='LSI';;
 			'adaptec_aaccli') CTRL_VENDOR='Adaptec';;
 		esac		
-		echo 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" "$CTRL_SERIAL" - eianrc >> $HOME/debug.log
-#		echo 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" "$CTRL_SERIAL" - eianrc
+		echo 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" "$CTRL_SERIAL" - einarc >> $HOME/debug.log
+#		echo 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" "$CTRL_SERIAL" - einarc
 		$SHARE_DIR/add-component 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" "$CTRL_SERIAL"
 	done
 }

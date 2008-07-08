@@ -1,4 +1,7 @@
 #!/bin/sh
+# NAME=CPU detect
+# DESCRIPTION=Detect CPUs using /proc/cpuinfo
+# DEPENDS=CPU
 
 PROCESSORS=`ruby -e "text = File.read('/proc/cpuinfo')
 infos = text.split('processor')

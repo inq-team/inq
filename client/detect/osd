@@ -1,4 +1,7 @@
 #!/bin/sh
+# NAME=OSD detect
+# DESCRIPTION=Detect OSDs using hal-device and try guess correct vendor
+# DEPENDS=OSD
 
 strip_vendor()
 {

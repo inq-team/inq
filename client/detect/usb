@@ -1,4 +1,7 @@
 #!/bin/sh -e
+# NAME=USB devices detect
+# DESCRIPTION=Detect some devices that plugged in USB bus
+# DEPENDS=USB
 
 for I in /sys/bus/usb/devices/*; do
 	if [ -r "$I/manufacturer" ]; then
