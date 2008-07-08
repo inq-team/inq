@@ -1,6 +1,6 @@
 #!/bin/sh
 # NAME=lshw to xml converter
-# DESCRIPTION=Convert lshw output to required XML document
+# DESCRIPTION=Convert lshw output to required XML document.
 # DEPENDS=Video,NIC,Fire Wire
 
 lshw -xml |

@@ -1,6 +1,6 @@
 #!/bin/sh
 # NAME=BMC detect
-# DESCRIPTION=Get bmc information througth ipmitool
+# DESCRIPTION=Get BMC information through ipmitool
 # DEPENDS=BMC
 
 manufacturer=`ipmitool mc info | sed -n '/Manufacturer Name/s/^.*: \(.*\)$/\1/gp'` || true

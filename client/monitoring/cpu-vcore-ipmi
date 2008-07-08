@@ -1,7 +1,7 @@
 #!/bin/sh -e
 # ID=3
 # NAME=CPU-VCORE(ipmi)
-# DESCRIPTION=This monitoring uses ipmitool for getting cpu's vcore
+# DESCRIPTION=This monitoring uses ipmitool for getting CPU's vcore.
 # MEASUREMENT=vcore
 
 . /usr/share/inquisitor/functions-monitoring

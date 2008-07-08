@@ -1,6 +1,6 @@
 #!/bin/sh
 # NAME=IPMI parser
-# DESCRIPTION=Get some devices info using ipmitool
+# DESCRIPTION=Get some devices info using ipmitool.
 # DEPENDS=Chassis,Mainboard,Platform,Power Supply,SCSI Backplane
 
 # ===========================================================================

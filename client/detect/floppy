@@ -1,6 +1,6 @@
 #!/bin/sh
 # NAME=Floppy detect
-# DESCRIPTION=Detect floppy drive using hal-device
+# DESCRIPTION=Detect floppy drives using hal-device.
 # DEPENDS=Floppy
 
 if [ `hal-find-by-property --key=storage.drive_type --string floppy | wc -l` -eq 0 ]; then

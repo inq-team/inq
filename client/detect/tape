@@ -1,6 +1,6 @@
 #!/bin/sh
 # NAME=Tape detect
-# DESCRIPTION=Detect tape using hal-device
+# DESCRIPTION=Detect tape using hal-device.
 # DEPENDS=Tape drive
 
 for UDI in `hal-find-by-property --key scsi.type --string tape`; do

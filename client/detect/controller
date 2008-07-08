@@ -1,6 +1,6 @@
 #!/bin/sh
 # NAME=Disk controller detect
-# DESCRIPTION=Detect disk controolers througth eianrc and hal-device with required priority 
+# DESCRIPTION=Detect disk controllers through einarc and hal-device with required priority.
 # DEPENDS=Disk Controller
 
 einarc_detect()

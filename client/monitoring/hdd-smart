@@ -1,7 +1,7 @@
 #!/bin/sh -e
 # ID=5
 # NAME=HDD-SMART
-# DESCRIPTION=This monitoring gets temperature of hard disks
+# DESCRIPTION=This monitoring gets temperature of hard disks.
 # MEASUREMENT=temp
 
 . /usr/share/inquisitor/functions-monitoring
