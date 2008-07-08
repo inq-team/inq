@@ -15,7 +15,8 @@ $TESTS = {"gprs-modem"=>
        :default=>"/dev/ttyUSB0",
        :comment=>"Name of device to test"}},
    :name=>"USB GPRS modem",
-   :description=>"Test GPRS modem, connected using USB",
+   :description=>
+    "This simple test can determine connected USB modem workability. It sets modem/port speed to 115200bps, checks for proper answer on AT-commands and retrieves it's IMEI number.",
    :version=>"0.1",
    :destroys_hdd=>false},
  "memory"=>
@@ -72,16 +73,6 @@ $TESTS = {"gprs-modem"=>
    :version=>"0.1",
    :depends=>["CPU"],
    :destroys_hdd=>false},
- "stream"=>
-  {:is_interactive=>false,
-   :poweroff_during_test=>false,
-   :var=>{},
-   :name=>"Stream",
-   :description=>
-    "The STREAM benchmark is a simple synthetic benchmark program that measures sustainable memory bandwidth (in MiB/s) and the corresponding computation rate for simple vector kernels. A version written in C language and optimized for single processor systems is used.",
-   :version=>"0.1",
-   :depends=>["Memory"],
-   :destroys_hdd=>false},
  "mencoder"=>
   {:is_interactive=>false,
    :poweroff_during_test=>false,
@@ -122,6 +113,16 @@ $TESTS = {"gprs-modem"=>
    :version=>"0.1",
    :depends=>["USB"],
    :destroys_hdd=>true},
+ "stream"=>
+  {:is_interactive=>false,
+   :poweroff_during_test=>false,
+   :var=>{},
+   :name=>"Stream",
+   :description=>
+    "The STREAM benchmark is a simple synthetic benchmark program that measures sustainable memory bandwidth (in MiB/s) and the corresponding computation rate for simple vector kernels. A version written in C language and optimized for single processor systems is used.",
+   :version=>"0.1",
+   :depends=>["Memory"],
+   :destroys_hdd=>false},
  "firmware"=>
   {:is_interactive=>false,
    :poweroff_during_test=>true,
@@ -210,7 +211,8 @@ $TESTS = {"gprs-modem"=>
        :default=>"6fa7786eef2e11d36e8bc1663679f161",
        :comment=>"Default image for comparison hash"}},
    :name=>"ODD read",
-   :description=>"Optical Disc Drive read test",
+   :description=>
+    "This test checks for workability and correct optical discs reading of ODDs. It detects if disc is already loaded and tries to run test non-interactively (without any humans nearby). It reads needed number of blocks (trying readcd or dd), calculates their checksums and compares with specified. So, we can determine either drives works fine or not. Also, simultaneously it acts as a monitoring, measuring disc reading speed.",
    :version=>"0.1",
    :depends=>["ODD"],
    :destroys_hdd=>false},
@@ -255,6 +257,30 @@ $TESTS = {"gprs-modem"=>
    :version=>"0.2",
    :depends=>["NIC"],
    :destroys_hdd=>false},
+ "hdd-smart"=>
+  {:is_interactive=>false,
+   :poweroff_during_test=>false,
+   :var=>
+    {"LOGTIME"=>
+      {:type=>"int",
+       :default=>"120",
+       :comment=>"Time between progress updates, sec"}},
+   :name=>"HDD SMART",
+   :description=>
+    "Simple test for SMART capable hard drives. At first it tries to find is there any SMART capable and correctly working with it drives. Test uses standard smartmontools package. Next, it starts long time full SMART testing on every capable drive and waits for their completion. If everything in SMART log seems good tests passes successfully.",
+   :version=>"0.1",
+   :depends=>["HDD", "Disk Controller"],
+   :destroys_hdd=>false},
+ "unixbench"=>
+  {:is_interactive=>false,
+   :poweroff_during_test=>false,
+   :var=>{},
+   :name=>"UnixBench",
+   :description=>
+    "This test is a general-purpose benchmark designed to provide a basic evaluation of the performance of a Unix-like system. It runs a set of tests to evaluate various aspects of system performance, and then generates a set of scores. Here, we are using UnixBench version 5 (multi-CPU aware branch) without 2D/3D graphics benchmarks.",
+   :version=>"0.1",
+   :depends=>["CPU", "Memory", "Mainboard"],
+   :destroys_hdd=>false},
  "hdparm"=>
   {:is_interactive=>false,
    :poweroff_during_test=>false,
@@ -268,6 +294,23 @@ $TESTS = {"gprs-modem"=>
     "This benchmark runs on all hard drives in the system sequentially. Every hard drive is benchmarked for the buffered speed and the cached speed using basic hdparm -t and -T tests for several times. The results for every HDD are averaged and presented as benchmark results.",
    :version=>"0.1",
    :depends=>["Disk Controller", "HDD"],
+   :destroys_hdd=>false},
+ "gprs-modem-level"=>
+  {:is_interactive=>false,
+   :poweroff_during_test=>false,
+   :var=>
+    {"CHAT_TIMEOUT"=>
+      {:type=>"int",
+       :default=>"5",
+       :comment=>"Timeout for waiting for answer"},
+     "DEV"=>
+      {:type=>"string",
+       :default=>"/dev/ttyUSB0",
+       :comment=>"Name of device to test"}},
+   :name=>"USB GPRS modem signal level",
+   :description=>
+    "Measure signal level, received by GPRS modem, connected via USB",
+   :version=>"0.1",
    :destroys_hdd=>false},
  "hdd-passthrough"=>
   {:is_interactive=>false,
@@ -300,46 +343,6 @@ $TESTS = {"gprs-modem"=>
    :version=>"0.1",
    :depends=>["CPU", "HDD", "Memory", "Mainboard", "Disk Controller"],
    :destroys_hdd=>true},
- "hdd-smart"=>
-  {:is_interactive=>false,
-   :poweroff_during_test=>false,
-   :var=>
-    {"LOGTIME"=>
-      {:type=>"int",
-       :default=>"120",
-       :comment=>"Time between progress updates, sec"}},
-   :name=>"HDD SMART",
-   :description=>
-    "Simple test for SMART capable hard drives. At first it tries to find is there any SMART capable and correctly working with it drives. Test uses standard smartmontools package. Next, it starts long time full SMART testing on every capable drive and waits for their completion. If everything in SMART log seems good tests passes successfully.",
-   :version=>"0.1",
-   :depends=>["HDD", "Disk Controller"],
-   :destroys_hdd=>false},
- "gprs-modem-level"=>
-  {:is_interactive=>false,
-   :poweroff_during_test=>false,
-   :var=>
-    {"CHAT_TIMEOUT"=>
-      {:type=>"int",
-       :default=>"5",
-       :comment=>"Timeout for waiting for answer"},
-     "DEV"=>
-      {:type=>"string",
-       :default=>"/dev/ttyUSB0",
-       :comment=>"Name of device to test"}},
-   :name=>"USB GPRS modem signal level",
-   :description=>
-    "Measure signal level, received by GPRS modem, connected via USB",
-   :version=>"0.1",
-   :destroys_hdd=>false},
- "unixbench"=>
-  {:is_interactive=>false,
-   :poweroff_during_test=>false,
-   :var=>{},
-   :name=>"Unixbench",
-   :description=>"UNIX Bench Multi-CPU benchmark",
-   :version=>"0.1",
-   :depends=>["CPU", "Memory", "Mainboard"],
-   :destroys_hdd=>false},
  "odd_write"=>
   {:is_interactive=>true,
    :poweroff_during_test=>false,
@@ -372,8 +375,9 @@ $TESTS = {"gprs-modem"=>
       {:type=>"string",
        :default=>"iso/testimage.iso",
        :comment=>"ISO image path (absolute or relative)"}},
-   :name=>"odd_write",
-   :description=>"Optical Disc Drive write test",
+   :name=>"ODD write",
+   :description=>
+    "This test is needed to record discs and at the same time to check corectness of this operation. It can detect if rewritable/recordable media is already inserted and tries to continue non-interactively. After detecting maximal writing speed (it can be forced by an option), blanking if it is rewritable non-blank media, it records specified ISO image. Then, it reads it to compare it's checksum with original one. After all of this we can make a conclusion about drives quality.",
    :version=>"0.1",
    :depends=>["ODD"],
    :destroys_hdd=>false},
@@ -401,18 +405,6 @@ $TESTS = {"gprs-modem"=>
    :version=>"0.1",
    :depends=>["CPU"],
    :destroys_hdd=>false},
- "flash"=>
-  {:is_interactive=>false,
-   :poweroff_during_test=>false,
-   :var=>
-    {"SIZE_LIMIT"=>
-      {:type=>"int",
-       :default=>"2048",
-       :comment=>"That is less than this amount is an IDE flash, MiB"}},
-   :name=>"Flash disk",
-   :description=>"Flash disk badblocks test",
-   :version=>"0.1",
-   :destroys_hdd=>true},
  "usb-device"=>
   {:is_interactive=>false,
    :poweroff_during_test=>false,
@@ -437,6 +429,18 @@ $TESTS = {"gprs-modem"=>
    :version=>"0.1",
    :depends=>["USB"],
    :destroys_hdd=>false},
+ "flash"=>
+  {:is_interactive=>false,
+   :poweroff_during_test=>false,
+   :var=>
+    {"SIZE_LIMIT"=>
+      {:type=>"int",
+       :default=>"2048",
+       :comment=>"That is less than this amount is an IDE flash, MiB"}},
+   :name=>"Flash disk",
+   :description=>"Flash disk badblocks test",
+   :version=>"0.1",
+   :destroys_hdd=>true},
  "bonnie"=>
   {:is_interactive=>false,
    :poweroff_during_test=>false,
@@ -447,15 +451,6 @@ $TESTS = {"gprs-modem"=>
    :version=>"0.1",
    :depends=>["HDD"],
    :destroys_hdd=>true},
- "bytemark"=>
-  {:is_interactive=>false,
-   :poweroff_during_test=>false,
-   :var=>{},
-   :name=>"BYTEmark",
-   :description=>"BYTEmark native mode benchmark",
-   :version=>"0.1",
-   :depends=>["CPU", "Memory", "Mainboard"],
-   :destroys_hdd=>false},
  "db_comparison"=>
   {:is_interactive=>false,
    :poweroff_during_test=>false,
@@ -478,6 +473,16 @@ $TESTS = {"gprs-modem"=>
      "Platform",
      "USB",
      "Video"],
+   :destroys_hdd=>false},
+ "bytemark"=>
+  {:is_interactive=>false,
+   :poweroff_during_test=>false,
+   :var=>{},
+   :name=>"BYTEmark test suite",
+   :description=>
+    "The BYTEmark benchmark test suite is used to determine how the processor, its caches and coprocessors influence overall system performance. Its measurements can indicate problems with the processor subsystem and (since the processor is a major influence on overall system performance) give us an idea of how well a given system will perform. The BYTEmark test suite is especially valuable since it lets us directly compare computers with different processors and operating systems. The code used in BYTEmark tests simulates some of the real-world operations used by popular office and technical applications. Tests include: numeric and string sort, bitfield working, fourier and assignment manipulations, huffman, IDEA, LU decomposition, neural net.",
+   :version=>"0.1",
+   :depends=>["CPU", "Memory", "Mainboard"],
    :destroys_hdd=>false}}
 
 $MONITORINGS = {"cpu-vcore-ipmi"=>{:name=>"CPU-VCORE(ipmi)", :measurement=>"vcore", :id=>3},
