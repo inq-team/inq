@@ -1,6 +1,6 @@
 #!/bin/sh
 # NAME=MEMORY detect
-# DESCRIPTION=Detect DIMMs using SPD, IPMI, DMI, /proc
+# DESCRIPTION=Detect DIMMs using SPD, IPMI, DMI, /proc.
 # DEPENDS=Memory
 
 detect_mem_quantity()
