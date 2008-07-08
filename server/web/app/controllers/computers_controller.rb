@@ -357,7 +357,7 @@ set timefmt \"%s\""
 						unless (@from_time == 0) or (@to_time == 0)
 							cond = ['timestamp >= ? AND timestamp <= ?', Time.at(@from_time), Time.at(@to_time)]
 							x_min = @from_time
-							if (@to_time - @from_time).round < 9
+							if (@to_time - @from_time).round < 500
 								format_x = '%H:%M:%S'
 							end
 						else
@@ -369,14 +369,14 @@ set key below box
 set grid"						
 						
 						graphs = Graph.find_all_by_testing_id_and_monitoring_id_and_key(@testing, monitoring_id, key, :conditions => cond, :order => 'timestamp')
-						graphs.each{ |x| data_file.puts "#{x.timestamp.to_f - x_min.to_f}\t#{x.value}" }
+						graphs.each{ |x| data_file.puts "#{x.timestamp.to_f + 14400}\t#{x.value}" }
 					end
 					
 					data_files_hash[monitoring_id].each_pair{ |k, f| f.flush }
 
 #					require 'planner/planner'
 					line_title = (($MONITORINGS.find{|x| x[1][:id] == monitoring_id }||[])[1]||{})[:measurement]
-					plot_title = (($MONITORINGS.find{|x| x[1][:id] == monitoring_id }||[])[1]||{})[:title]
+					plot_title = (($MONITORINGS.find{|x| x[1][:id] == monitoring_id }||[])[1]||{})[:name]
 					
 					line_title = 'ln_ttl' unless line_title
 					plot_title = 'plt_ttl' unless plot_title

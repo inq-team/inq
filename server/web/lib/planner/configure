@@ -49,13 +49,14 @@ Dir.new(MONITORINGS_DIR).each { |entry|
 	next unless FileTest.file?("#{MONITORINGS_DIR}/#{entry}")
 	
 	monitorings[entry] = m = {
-		:title => nil,
+		:id => nil,
+		:name => nil,
 		:measurement => nil
 	}	
 	
 	File.open("#{MONITORINGS_DIR}/#{entry}", 'r').each_line { |l|
 		m[:id] = $1.to_i if l =~ /^# ID=(.*)$/
-		m[:title] = $1 if l =~ /^# TITLE=(.*)$/
+		m[:name] = $1 if l =~ /^# NAME=(.*)$/
 		m[:measurement] = $1 if l =~ /^# MEASUREMENT=(.*)$/
 	}
 }

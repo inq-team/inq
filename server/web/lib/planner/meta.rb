@@ -60,6 +60,28 @@ $TESTS = {"gprs-modem"=>
    :version=>"0.1",
    :depends=>["CPU", "HDD", "Memory", "Mainboard", "Disk Controller"],
    :destroys_hdd=>true},
+ "dhrystone"=>
+  {:is_interactive=>false,
+   :poweroff_during_test=>false,
+   :var=>
+    {"DURATION"=>
+      {:type=>"int", :default=>"30", :comment=>"Benchmark duration (sec)"}},
+   :name=>"Dhrystone",
+   :description=>
+    "A synthetic computing benchmark that measures CPU integer performance. Inquisitor uses a C version and runs the specified number of loops, testing each CPU separately, with testing process running affined to particular CPU. Performance rating is in terms of MIPS.",
+   :version=>"0.1",
+   :depends=>["CPU"],
+   :destroys_hdd=>false},
+ "stream"=>
+  {:is_interactive=>false,
+   :poweroff_during_test=>false,
+   :var=>{},
+   :name=>"Stream",
+   :description=>
+    "The STREAM benchmark is a simple synthetic benchmark program that measures sustainable memory bandwidth (in MiB/s) and the corresponding computation rate for simple vector kernels. A version written in C language and optimized for single processor systems is used.",
+   :version=>"0.1",
+   :depends=>["Memory"],
+   :destroys_hdd=>false},
  "mencoder"=>
   {:is_interactive=>false,
    :poweroff_during_test=>false,
@@ -77,28 +99,6 @@ $TESTS = {"gprs-modem"=>
    :description=>"Mencoder encoding time benchmark",
    :version=>"0.1",
    :depends=>["CPU", "Memory", "Mainboard"],
-   :destroys_hdd=>false},
- "stream"=>
-  {:is_interactive=>false,
-   :poweroff_during_test=>false,
-   :var=>{},
-   :name=>"Stream",
-   :description=>
-    "The STREAM benchmark is a simple synthetic benchmark program that measures sustainable memory bandwidth (in MiB/s) and the corresponding computation rate for simple vector kernels. A version written in C language and optimized for single processor systems is used.",
-   :version=>"0.1",
-   :depends=>["Memory"],
-   :destroys_hdd=>false},
- "dhrystone"=>
-  {:is_interactive=>false,
-   :poweroff_during_test=>false,
-   :var=>
-    {"DURATION"=>
-      {:type=>"int", :default=>"30", :comment=>"Benchmark duration (sec)"}},
-   :name=>"Dhrystone",
-   :description=>
-    "A synthetic computing benchmark that measures CPU integer performance. Inquisitor uses a C version and runs the specified number of loops, testing each CPU separately, with testing process running affined to particular CPU. Performance rating is in terms of MIPS.",
-   :version=>"0.1",
-   :depends=>["CPU"],
    :destroys_hdd=>false},
  "usb-flash-drive"=>
   {:is_interactive=>true,
@@ -130,31 +130,6 @@ $TESTS = {"gprs-modem"=>
    :description=>"Firmware reflashing",
    :version=>"0.1",
    :depends=>["Mainboard", "Disk Controller"],
-   :destroys_hdd=>false},
- "odd_read"=>
-  {:is_interactive=>true,
-   :poweroff_during_test=>false,
-   :var=>
-    {"MESH_POINTS"=>
-      {:type=>"int",
-       :default=>"1024",
-       :comment=>"Points for meshes for monitoring drive's speed"},
-     "TEST_IMAGE_BLOCKS"=>
-      {:type=>"int",
-       :default=>"332800",
-       :comment=>"This images size in blocks (2048 bytes each)"},
-     "FORCE_NON_INTERACTIVE"=>
-      {:type=>"boolean",
-       :default=>"false",
-       :comment=>"Force non-interactive mode for already prepared system"},
-     "TEST_IMAGE_HASH"=>
-      {:type=>"string",
-       :default=>"6fa7786eef2e11d36e8bc1663679f161",
-       :comment=>"Default image for comparison hash"}},
-   :name=>"ODD read",
-   :description=>"Optical Disc Drive read test",
-   :version=>"0.1",
-   :depends=>["ODD"],
    :destroys_hdd=>false},
  "gprs-modem-dialup"=>
   {:is_interactive=>false,
@@ -214,6 +189,31 @@ $TESTS = {"gprs-modem"=>
    :description=>"Test GPRS modem, connected using USB",
    :version=>"0.2",
    :destroys_hdd=>false},
+ "odd_read"=>
+  {:is_interactive=>true,
+   :poweroff_during_test=>false,
+   :var=>
+    {"MESH_POINTS"=>
+      {:type=>"int",
+       :default=>"1024",
+       :comment=>"Points for meshes for monitoring drive's speed"},
+     "TEST_IMAGE_BLOCKS"=>
+      {:type=>"int",
+       :default=>"332800",
+       :comment=>"This images size in blocks (2048 bytes each)"},
+     "FORCE_NON_INTERACTIVE"=>
+      {:type=>"boolean",
+       :default=>"false",
+       :comment=>"Force non-interactive mode for already prepared system"},
+     "TEST_IMAGE_HASH"=>
+      {:type=>"string",
+       :default=>"6fa7786eef2e11d36e8bc1663679f161",
+       :comment=>"Default image for comparison hash"}},
+   :name=>"ODD read",
+   :description=>"Optical Disc Drive read test",
+   :version=>"0.1",
+   :depends=>["ODD"],
+   :destroys_hdd=>false},
  "fdd"=>
   {:is_interactive=>true,
    :poweroff_during_test=>false,
@@ -255,6 +255,91 @@ $TESTS = {"gprs-modem"=>
    :version=>"0.2",
    :depends=>["NIC"],
    :destroys_hdd=>false},
+ "hdparm"=>
+  {:is_interactive=>false,
+   :poweroff_during_test=>false,
+   :var=>
+    {"AVG_SAMPLES"=>
+      {:type=>"int",
+       :default=>"5",
+       :comment=>"Number of tests per disc to average for result"}},
+   :name=>"HDD speed benchmark: hdparm",
+   :description=>
+    "This benchmark runs on all hard drives in the system sequentially. Every hard drive is benchmarked for the buffered speed and the cached speed using basic hdparm -t and -T tests for several times. The results for every HDD are averaged and presented as benchmark results.",
+   :version=>"0.1",
+   :depends=>["Disk Controller", "HDD"],
+   :destroys_hdd=>false},
+ "hdd-passthrough"=>
+  {:is_interactive=>false,
+   :poweroff_during_test=>false,
+   :var=>
+    {"JOBS"=>
+      {:type=>"int",
+       :default=>"16",
+       :comment=>
+        "Number of parallely running jobs during stress test tree compile"},
+     "DISK_GROUP_SIZE"=>
+      {:type=>"int",
+       :default=>"8",
+       :comment=>"Number of disks per group for testing"},
+     "MINIMAL_STRESS_TIME"=>
+      {:type=>"int",
+       :default=>"600",
+       :comment=>"Minimal time of stress testing"},
+     "RAMDISK_SIZE"=>
+      {:type=>"int",
+       :default=>"400",
+       :comment=>"Size of memory disk for stress tree building, MB"},
+     "STRESS_TREE"=>
+      {:type=>"string",
+       :default=>"linux-2.6.22.5-31-stress.tar.gz",
+       :comment=>"Tarball file containing stress test tree"}},
+   :name=>"HDD passthrough",
+   :description=>
+    "HDD passthrough is a stress test that imposes heavy load on main system components. First, it tries to make all HDDs present in the system to appear as separate device nodes - it checks all available RAID controllers, deletes all arrays / disk groups and creates passthrough devices to access individual HDDs if required. Second, it runs badblocks test on every available HDD, running them simulatenously in groups of 8 HDDs by default. Third, it makes a ramdisk filesystem and starts infinite compilation loop in memory, doing so with 16 simultaneous jobs (by default). Test ends successfully after both 1) minimal required stress time passes, 2) all HDDs are checked with badblocks. Test would fail if any bad blocks would be detected on any HDD. Test will usually hang or crash the system on the unstable hardware.",
+   :version=>"0.1",
+   :depends=>["CPU", "HDD", "Memory", "Mainboard", "Disk Controller"],
+   :destroys_hdd=>true},
+ "hdd-smart"=>
+  {:is_interactive=>false,
+   :poweroff_during_test=>false,
+   :var=>
+    {"LOGTIME"=>
+      {:type=>"int",
+       :default=>"120",
+       :comment=>"Time between progress updates, sec"}},
+   :name=>"HDD SMART",
+   :description=>
+    "Simple test for SMART capable hard drives. At first it tries to find is there any SMART capable and correctly working with it drives. Test uses standard smartmontools package. Next, it starts long time full SMART testing on every capable drive and waits for their completion. If everything in SMART log seems good tests passes successfully.",
+   :version=>"0.1",
+   :depends=>["HDD", "Disk Controller"],
+   :destroys_hdd=>false},
+ "gprs-modem-level"=>
+  {:is_interactive=>false,
+   :poweroff_during_test=>false,
+   :var=>
+    {"CHAT_TIMEOUT"=>
+      {:type=>"int",
+       :default=>"5",
+       :comment=>"Timeout for waiting for answer"},
+     "DEV"=>
+      {:type=>"string",
+       :default=>"/dev/ttyUSB0",
+       :comment=>"Name of device to test"}},
+   :name=>"USB GPRS modem signal level",
+   :description=>
+    "Measure signal level, received by GPRS modem, connected via USB",
+   :version=>"0.1",
+   :destroys_hdd=>false},
+ "unixbench"=>
+  {:is_interactive=>false,
+   :poweroff_during_test=>false,
+   :var=>{},
+   :name=>"Unixbench",
+   :description=>"UNIX Bench Multi-CPU benchmark",
+   :version=>"0.1",
+   :depends=>["CPU", "Memory", "Mainboard"],
+   :destroys_hdd=>false},
  "odd_write"=>
   {:is_interactive=>true,
    :poweroff_during_test=>false,
@@ -292,77 +377,6 @@ $TESTS = {"gprs-modem"=>
    :version=>"0.1",
    :depends=>["ODD"],
    :destroys_hdd=>false},
- "gprs-modem-level"=>
-  {:is_interactive=>false,
-   :poweroff_during_test=>false,
-   :var=>
-    {"CHAT_TIMEOUT"=>
-      {:type=>"int",
-       :default=>"5",
-       :comment=>"Timeout for waiting for answer"},
-     "DEV"=>
-      {:type=>"string",
-       :default=>"/dev/ttyUSB0",
-       :comment=>"Name of device to test"}},
-   :name=>"USB GPRS modem signal level",
-   :description=>
-    "Measure signal level, received by GPRS modem, connected via USB",
-   :version=>"0.1",
-   :destroys_hdd=>false},
- "hdparm"=>
-  {:is_interactive=>false,
-   :poweroff_during_test=>false,
-   :var=>
-    {"AVG_SAMPLES"=>
-      {:type=>"int",
-       :default=>"5",
-       :comment=>"Number of tests per disc to average for result"}},
-   :name=>"HDD speed benchmark: hdparm",
-   :description=>
-    "This benchmark runs on all hard drives in the system sequentially. Every hard drive is benchmarked for the buffered speed and the cached speed using basic hdparm -t and -T tests for several times. The results for every HDD are averaged and presented as benchmark results.",
-   :version=>"0.1",
-   :depends=>["Disk Controller", "HDD"],
-   :destroys_hdd=>false},
- "unixbench"=>
-  {:is_interactive=>false,
-   :poweroff_during_test=>false,
-   :var=>{},
-   :name=>"Unixbench",
-   :description=>"UNIX Bench Multi-CPU benchmark",
-   :version=>"0.1",
-   :depends=>["CPU", "Memory", "Mainboard"],
-   :destroys_hdd=>false},
- "hdd-passthrough"=>
-  {:is_interactive=>false,
-   :poweroff_during_test=>false,
-   :var=>
-    {"JOBS"=>
-      {:type=>"int",
-       :default=>"16",
-       :comment=>
-        "Number of parallely running jobs during stress test tree compile"},
-     "DISK_GROUP_SIZE"=>
-      {:type=>"int",
-       :default=>"8",
-       :comment=>"Number of disks per group for testing"},
-     "MINIMAL_STRESS_TIME"=>
-      {:type=>"int",
-       :default=>"600",
-       :comment=>"Minimal time of stress testing"},
-     "RAMDISK_SIZE"=>
-      {:type=>"int",
-       :default=>"400",
-       :comment=>"Size of memory disk for stress tree building, MB"},
-     "STRESS_TREE"=>
-      {:type=>"string",
-       :default=>"linux-2.6.22.5-31-stress.tar.gz",
-       :comment=>"Tarball file containing stress test tree"}},
-   :name=>"HDD passthrough",
-   :description=>
-    "HDD passthrough is a stress test that imposes heavy load on main system components. First, it tries to make all HDDs present in the system to appear as separate device nodes - it checks all available RAID controllers, deletes all arrays / disk groups and creates passthrough devices to access individual HDDs if required. Second, it runs badblocks test on every available HDD, running them simulatenously in groups of 8 HDDs by default. Third, it makes a ramdisk filesystem and starts infinite compilation loop in memory, doing so with 16 simultaneous jobs (by default). Test ends successfully after both 1) minimal required stress time passes, 2) all HDDs are checked with badblocks. Test would fail if any bad blocks would be detected on any HDD. Test will usually hang or crash the system on the unstable hardware.",
-   :version=>"0.1",
-   :depends=>["CPU", "HDD", "Memory", "Mainboard", "Disk Controller"],
-   :destroys_hdd=>true},
  "cpu"=>
   {:is_interactive=>false,
    :poweroff_during_test=>false,
@@ -377,6 +391,28 @@ $TESTS = {"gprs-modem"=>
    :version=>"0.1",
    :depends=>["CPU"],
    :destroys_hdd=>false},
+ "whetstone"=>
+  {:is_interactive=>false,
+   :poweroff_during_test=>false,
+   :var=>{"LOOPS"=>{:type=>"int", :default=>"20000", :comment=>"Loop count"}},
+   :name=>"Whetstone",
+   :description=>
+    "A synthetic computing benchmark that measures CPU floating-point performance. Inquisitor uses a C version and runs the specified number of loops, testing each CPU separately, with testing process running affined to particular CPU. Performance rating is in terms of MIPS.",
+   :version=>"0.1",
+   :depends=>["CPU"],
+   :destroys_hdd=>false},
+ "flash"=>
+  {:is_interactive=>false,
+   :poweroff_during_test=>false,
+   :var=>
+    {"SIZE_LIMIT"=>
+      {:type=>"int",
+       :default=>"2048",
+       :comment=>"That is less than this amount is an IDE flash, MiB"}},
+   :name=>"Flash disk",
+   :description=>"Flash disk badblocks test",
+   :version=>"0.1",
+   :destroys_hdd=>true},
  "usb-device"=>
   {:is_interactive=>false,
    :poweroff_during_test=>false,
@@ -411,28 +447,15 @@ $TESTS = {"gprs-modem"=>
    :version=>"0.1",
    :depends=>["HDD"],
    :destroys_hdd=>true},
- "whetstone"=>
+ "bytemark"=>
   {:is_interactive=>false,
    :poweroff_during_test=>false,
-   :var=>{"LOOPS"=>{:type=>"int", :default=>"20000", :comment=>"Loop count"}},
-   :name=>"Whetstone",
-   :description=>
-    "A synthetic computing benchmark that measures CPU floating-point performance. Inquisitor uses a C version and runs the specified number of loops, testing each CPU separately, with testing process running affined to particular CPU. Performance rating is in terms of MIPS.",
+   :var=>{},
+   :name=>"BYTEmark",
+   :description=>"BYTEmark native mode benchmark",
    :version=>"0.1",
-   :depends=>["CPU"],
+   :depends=>["CPU", "Memory", "Mainboard"],
    :destroys_hdd=>false},
- "flash"=>
-  {:is_interactive=>false,
-   :poweroff_during_test=>false,
-   :var=>
-    {"SIZE_LIMIT"=>
-      {:type=>"int",
-       :default=>"2048",
-       :comment=>"That is less than this amount is an IDE flash, MiB"}},
-   :name=>"Flash disk",
-   :description=>"Flash disk badblocks test",
-   :version=>"0.1",
-   :destroys_hdd=>true},
  "db_comparison"=>
   {:is_interactive=>false,
    :poweroff_during_test=>false,
@@ -455,23 +478,14 @@ $TESTS = {"gprs-modem"=>
      "Platform",
      "USB",
      "Video"],
-   :destroys_hdd=>false},
- "bytemark"=>
-  {:is_interactive=>false,
-   :poweroff_during_test=>false,
-   :var=>{},
-   :name=>"BYTEmark",
-   :description=>"BYTEmark native mode benchmark",
-   :version=>"0.1",
-   :depends=>["CPU", "Memory", "Mainboard"],
    :destroys_hdd=>false}}
 
-$MONITORINGS = {"cpu-vcore-ipmi"=>{:title=>"CPU-VCORE(ipmi)", :measurement=>"vcore", :id=>3},
- "cpu-temp-ipmi"=>{:title=>"CPU-TEMP(ipmi)", :measurement=>"temp", :id=>1},
- "odd-read"=>{:title=>"ODD-READ", :measurement=>"speed", :id=>6},
- "hdd-smart"=>{:title=>"HDD-SMART", :measurement=>"temp", :id=>5},
+$MONITORINGS = {"cpu-vcore-ipmi"=>{:name=>"CPU-VCORE(ipmi)", :measurement=>"vcore", :id=>3},
+ "cpu-temp-ipmi"=>{:name=>"CPU-TEMP(ipmi)", :measurement=>"temp", :id=>1},
+ "odd-read"=>{:name=>"ODD-READ", :measurement=>"speed", :id=>6},
+ "hdd-smart"=>{:name=>"HDD-SMART", :measurement=>"temp", :id=>5},
  "cpu-temp-sensors"=>
-  {:title=>"CPU-TEMP(sensors)", :measurement=>"temp", :id=>2},
+  {:name=>"CPU-TEMP(sensors)", :measurement=>"temp", :id=>2},
  "cpu-vcore-sensors"=>
-  {:title=>"CPU-VCORE(sensors)", :measurement=>"vcore", :id=>4}}
+  {:name=>"CPU-VCORE(sensors)", :measurement=>"vcore", :id=>4}}
 

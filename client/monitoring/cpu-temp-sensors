@@ -1,6 +1,7 @@
 #!/bin/sh -e
 # ID=2
-# TITLE=CPU-TEMP(sensors)
+# NAME=CPU-TEMP(sensors)
+# DESCRIPTION=This monitoring uses sensors for getting cpu's temperature
 # MEASUREMENT=temp
 
 . /usr/share/inquisitor/functions-monitoring
