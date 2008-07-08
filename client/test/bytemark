@@ -1,6 +1,6 @@
 #!/bin/sh -ef
-# NAME=BYTEmark
-# DESCRIPTION=BYTEmark native mode benchmark
+# NAME=BYTEmark test suite
+# DESCRIPTION=The BYTEmark benchmark test suite is used to determine how the processor, its caches and coprocessors influence overall system performance. Its measurements can indicate problems with the processor subsystem and (since the processor is a major influence on overall system performance) give us an idea of how well a given system will perform. The BYTEmark test suite is especially valuable since it lets us directly compare computers with different processors and operating systems. The code used in BYTEmark tests simulates some of the real-world operations used by popular office and technical applications. Tests include: numeric and string sort, bitfield working, fourier and assignment manipulations, huffman, IDEA, LU decomposition, neural net.
 # DESTROYS_HDD=false
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1

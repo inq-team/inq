@@ -1,6 +1,6 @@
 #!/bin/sh -ef
-# NAME=odd_write
-# DESCRIPTION=Optical Disc Drive write test
+# NAME=ODD write
+# DESCRIPTION=This test is needed to record discs and at the same time to check corectness of this operation. It can detect if rewritable/recordable media is already inserted and tries to continue non-interactively. After detecting maximal writing speed (it can be forced by an option), blanking if it is rewritable non-blank media, it records specified ISO image. Then, it reads it to compare it's checksum with original one. After all of this we can make a conclusion about drives quality.
 # DESTROYS_HDD=false
 # IS_INTERACTIVE=true
 # POWEROFF_DURING_TEST=false

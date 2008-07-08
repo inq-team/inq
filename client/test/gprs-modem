@@ -1,6 +1,6 @@
 #!/bin/sh -ef
 # NAME=USB GPRS modem
-# DESCRIPTION=Test GPRS modem, connected using USB
+# DESCRIPTION=This simple test can determine connected USB modem workability. It sets modem/port speed to 115200bps, checks for proper answer on AT-commands and retrieves it's IMEI number.
 # DESTROYS_HDD=false
 # IS_INTERACTIVE=false
 # POWEROFF_DURING_TEST=false
