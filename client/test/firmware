@@ -1,12 +1,12 @@
 #!/bin/sh -e
 # NAME=Firmware reflashing
-# DESCRIPTION=Firmware reflashing
+# DESCRIPTION=This test is a part of rather complex Inquisitor's firmware reflashing system. This part do following things: 1) Gets a list of components related only to this computer and need to be reflashed. There are needed firmware/flash version and corresponding reflashing image also; 2) Test parses each entity and, depending of component, tries to retrieve it's version (BIOS version through DMI, disk controller's through einarc, for example); 3) Compares it with retrieved from server needed value and if they are not differ - proceed with need component; else - there are two ways: either to reflash it under current GNU/Linux session (to reflash disk controllers with einarc for example), or to ask server to create network bootable file with needed reflasher image; then reboot. After reboot computer will boot up reflasher image (as a rule it is some kind of DOS with batch files and flashers). Server will delete it after boot, to allow Inquisitor booting again. Firmware test will test all of components again and again in cycle until everything's versions will be equal to needed ones. After this test succeeds. Sometimes some component's version can not be detected and human must manually somehow check it and allow test to continue.
 # DESTROYS_HDD=false
 # IS_INTERACTIVE=true
 # POWEROFF_DURING_TEST=true
 # VERSION=0.1
 # TAGS=bios,firmware
-# DEPENDS=Mainboard,Disk Controller
+# DEPENDS=Mainboard,Disk Controller,BMC
 
 # UNTESTED DEVELOPMENT VERSION!
 
@@ -19,11 +19,12 @@ exit_handler()
 
 FIRMWARES=`mktemp`
 
+# Get needed firmwares list for current testing computer from server
 get_needed_firmwares_list > $FIRMWARES
 [ ! -s $FIRMWARES ] && test_succeeded "No firmwares needed to be updated"
 
+# Parse each component
 cat $FIRMWARES | while read component; do
-	# Parse each component
 	type=`echo $component | awk -F :: '{print $1}'`
 	version=`echo $component | awk -F :: '{print $2}'`
 	firmware_file=`echo $component | awk -F :: '{print $3}'`
@@ -49,6 +50,7 @@ cat $FIRMWARES | while read component; do
 			fi
 		else
 			einarc_module=`einarc -l | awk '{print $1}' | sed -n '1p'`
+			# Check if there is more than one controller
 			if [ `einarc -l | grep "$einarc_module" | wc -l` -gt 1 ]; then
 				print_red_message "There are more than one disk controller of ony type installed"
 				print_red_message "Currently only some controllers can be flashed automatically"

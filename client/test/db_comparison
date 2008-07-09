@@ -5,7 +5,7 @@
 # IS_INTERACTIVE=false
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
-# DEPENDS=BMC,CPU,Chassis,Disk Controller,Floppy,HDD,Mainboard,Memory,NIC,OSD,Platform,USB,Video
+# DEPENDS=BMC,CPU,Chassis,Disk Controller,Floppy,HDD,Mainboard,Memory,NIC,OSD,Platform,USB,Video,ODD,GPRS Modem,USB Mass Storage
 # TAGS=
 
 . /usr/share/inquisitor/functions-test
