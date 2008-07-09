@@ -6,7 +6,7 @@
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=benchmark,usb,usb-storage
-# DEPENDS=USB
+# DEPENDS=USB, USB Mass Storage
 # VAR=SIZE:int:20:Size of test file to be written, Blocksizes
 # VAR=BLOCKSIZE:int:1024:Blocksize used for reading and writing by dd, KiB
 # VAR=COUNT:int:2:There should be this many devices

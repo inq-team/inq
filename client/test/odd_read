@@ -5,7 +5,7 @@
 # IS_INTERACTIVE=true
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
-# TAGS=odd
+# TAGS=odd,monitoring
 # DEPENDS=ODD
 # VAR=TEST_IMAGE_HASH:string:6fa7786eef2e11d36e8bc1663679f161:Default image for comparison hash
 # VAR=TEST_IMAGE_BLOCKS:int:332800:This images size in blocks (2048 bytes each)
@@ -36,6 +36,8 @@ test_odd()
 {
 	local odd=$1
 
+	# We are using FIFO file to read CD, calculate it's checksum
+	# and retrieve speed measurements.
 	rm $FIFOFILE
 	mkfifo $FIFOFILE
 
@@ -43,6 +45,7 @@ test_odd()
 	readcd -v dev=$odd f=$TMPFILE sectors=0-1 || true
 	echo_success
 	if [ ! -s "$TMPFILE" ]; then
+		# So, we can not use readcd. No speed measurement then
 		read_md5=`dd if=$odd bs=2048 count=$TEST_IMAGE_BLOCKS | md5sum -b | awk '{print $1}'` || true
 	else
 		md5sum -b "$FIFOFILE" > ${FIFOFILE}.md5 &

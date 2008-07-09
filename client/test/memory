@@ -16,6 +16,8 @@ FREE_MEMORY=$(( `grep "^MemFree:" /proc/meminfo | awk '{print $2}'` - 65536 ))
 TOTAL_SUBSTAGES=$(( 16 * $TEST_LOOPS ))
 COMPLETED_SUBSTAGES=0
 
+# Currently we are not talking with OOM killer at all
+
 exit_handler()
 {
 	[ -d "/proc/$MEMTEST_PID" ] && kill $MEMTEST_PID

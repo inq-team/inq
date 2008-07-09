@@ -16,6 +16,7 @@
 
 exit_handler()
 {
+	# If we succeeded detecting first NIC, IP and gateway detection
 	if [ -n "$FIRST_NIC" -a -n "$LOCAL_IP" -a -n "$GATEWAY" ]; then
 		ifconfig eth${FIRST_NIC} up
 		sleep 5
@@ -23,6 +24,7 @@ exit_handler()
 		ip route replace default via $GATEWAY dev eth${FIRST_NIC}
 		sleep 5
 
+		# Link down all other NICs
 		for i in `seq 0 $(( $NIC_QUANTITY - 1 ))`; do
 			if [ $i -ne "$FIRST_NIC" ]; then
 				ip link set eth${i} down
@@ -102,6 +104,6 @@ for i in `seq 0 $(( $NIC_QUANTITY - 1 ))`; do
 done
 
 echo "Testing default NIC..."
-test_nic $FIRST_NIC #to restore startup parameters
+test_nic $FIRST_NIC # To restore startup parameters
 
 test_succeeded

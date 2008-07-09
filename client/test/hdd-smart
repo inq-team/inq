@@ -6,7 +6,7 @@
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=hdd
-# DEPENDS=HDD,Disk Controller
+# DEPENDS=HDD
 # VAR=LOGTIME:int:120:Time between progress updates, sec
 
 . /usr/share/inquisitor/functions-test
@@ -28,9 +28,12 @@ fi
 SMART_CAPABLE_HDDS=0
 for dev in `get_harddrives_list`; do
 	echo -n "Initial $dev test"
+	# Check smarctl's output to recognize if this device can use
+	# SMART at all?
 	[ `smartctl -i $dev | egrep "SMART support is: (Available|Enabled)" | wc -l` -eq 2 -o \
 	  `smartctl -i $dev | egrep "SMART support is: (Available|Disabled)" | wc -l` -eq 2 ] || continue
 
+	# Turn SMART on and retrieve all information
 	smartctl -s on $dev >$DEBUG_TTY
 	smartctl -a $dev > $INFOFILE
 
@@ -48,6 +51,7 @@ fi
 
 # Long time tests
 for dev in `get_harddrives_list`; do
+	# Run long time SMART's test
 	smartctl -t long $dev >$DEBUG_TTY
 done
 

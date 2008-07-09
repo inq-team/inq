@@ -6,6 +6,7 @@
 # POWEROFF_DURING_TEST=false
 # VERSION=0.2
 # TAGS=usb,gprs
+# DEPENDS=USB, GPRS Modem
 # VAR=DEV:string:/dev/ttyUSB0:Name of device to test
 # VAR=APN:string:internet.mts.ru:Cell service provider's Internet APN
 # VAR=PPPD_USERNAME:string:mts:Cell service provider's pppd username

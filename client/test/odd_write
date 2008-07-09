@@ -29,10 +29,11 @@ test_read()
 
 	hash=`readcd -v dev=$odd f=- sectors=0-$TEST_IMAGE_BLOCKS retries=8 | \
 		md5sum -b | awk '{print $1}'`
+	# If readcd doesn't work
 	[ -z "$hash" ] && {hash=`dd if=$odd bs=2048 count=$TEST_IMAGE_BLOCKS | \
 		md5sum -b | awk '{print $1}'` || true}
 
-	echo "Read data MD5 checksum: $hash"
+	echo "Read data MD5 checksum: $hash" # Useful thing
 	[ "$hash" = "$TEST_IMAGE_MD5" ] && return 0 || return 1
 }
 
@@ -47,7 +48,7 @@ test_write()
 	print_green_message "Writing..."
 	cdrecord dev=$odd driveropts=burnfree speed=$SPEED -delay 2 -\
 		-data $TEST_IMAGE && return 0 || return 1
-	print_green_message "Writing done"
+	print_green_message "Writing finished"
 }
 
 check_writeable_disc()
@@ -55,8 +56,7 @@ check_writeable_disc()
 	local odd=$1
 
 	if cdrecord dev=$odd -atip | grep -q 'Is erasable'; then
-		print_green_message \
-			"Rewritable media already inserted, not ejecting"
+		print_green_message "Rewritable media already inserted, not ejecting"
 	else
 		print_green_message "Insert writable media..."
 		eject $odd || true

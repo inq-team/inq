@@ -1,5 +1,5 @@
 #!/bin/sh -ef
-# NAME=Bonnie
+# NAME=HDD speed benchmark: Bonnie
 # DESCRIPTION=This test uses bonnie++ benchmark to test hard drives performance. For every hard drive in a system, test formats it using ext2 filesystem and then runs bonnie++ benchmark. Test measures the IO throughput in situations that simulate some types of database applications. It uses a single test file size to twice the amount of RAM. Benchmark reports output/rewrite/input of char/block speed and CPU load.
 # DESTROYS_HDD=true
 # POWEROFF_DURING_TEST=false
@@ -13,7 +13,7 @@ exit_handler()
 {
 	[ -f "$RESULT_FILE" ] && rm -fr "$RESULT_FILE"
 	if [ -d "$SCRATCH_DIRECTORY" ]; then
-		umount -f $SCRATCH_DIRECTORY
+		umount -f $SCRATCH_DIRECTORY || true
 		rmdir $SCRATCH_DIRECTORY
 	fi
 }
@@ -25,39 +25,43 @@ perform_benchmark()
 {
 	DRIVE=$1
 
+	# Default GNU/Linux filesystem for benchmarking
 	mke2fs -m0 -F $DRIVE >$DEBUG_TTY 2>&1
 	mount $DRIVE $SCRATCH_DIRECTORY
 
+	# Currently we are using single huge file
 	bonnie++ -u root -d $SCRATCH_DIRECTORY -s $TEST_FILE_SIZE \
-		-n 1 -m benchmark > ${RESULT_FILE} 2>&1
+		-n 1 -m benchmark > $RESULT_FILE 2>&1
 	
 	benchmark_submit_float "HDD $DRIVE output char speed" \
-	`sed -n '$p' < ${RESULT_FILE} | awk -F, '{print $3}'`
+	`sed -n '$p' < $RESULT_FILE | awk -F, '{print $3}'`
 
 	benchmark_submit_float "HDD $DRIVE output char CPU load" \
-	`sed -n '$p' < ${RESULT_FILE} | awk -F, '{print $4}'`
+	`sed -n '$p' < $RESULT_FILE | awk -F, '{print $4}'`
 
 	benchmark_submit_float "HDD $DRIVE output block speed" \
-	`sed -n '$p' < ${RESULT_FILE} | awk -F, '{print $5}'`
+	`sed -n '$p' < $RESULT_FILE | awk -F, '{print $5}'`
 
 	benchmark_submit_float "HDD $DRIVE output block CPU load" \
-	`sed -n '$p' < ${RESULT_FILE} | awk -F, '{print $6}'`
+	`sed -n '$p' < $RESULT_FILE | awk -F, '{print $6}'`
 
 	benchmark_submit_float "HDD $DRIVE rewrite speed" \
-	`sed -n '$p' < ${RESULT_FILE} | awk -F, '{print $7}'`
+	`sed -n '$p' < $RESULT_FILE | awk -F, '{print $7}'`
 
 	benchmark_submit_float "HDD $DRIVE rewrite CPU load" \
-	`sed -n '$p' < ${RESULT_FILE} | awk -F, '{print $8}'`
+	`sed -n '$p' < $RESULT_FILE | awk -F, '{print $8}'`
 
 	benchmark_submit_float "HDD $DRIVE input char speed" \
-	`sed -n '$p' < ${RESULT_FILE} | awk -F, '{print $9}'`
+	`sed -n '$p' < $RESULT_FILE | awk -F, '{print $9}'`
 
 	benchmark_submit_float "HDD $DRIVE input char CPU load" \
-	`sed -n '$p' < ${RESULT_FILE} | awk -F, '{print $10}'`
+	`sed -n '$p' < $RESULT_FILE | awk -F, '{print $10}'`
 
 	umount $SCRATCH_DIRECTORY
 }
 
+# We need double memory size test file, otherwise bonnie++ won't start
+# at all
 TOTAL_MEMORY=$(( `grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024 ))
 TEST_FILE_SIZE=$(($TOTAL_MEMORY * 2))
 

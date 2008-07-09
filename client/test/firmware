@@ -2,7 +2,7 @@
 # NAME=Firmware reflashing
 # DESCRIPTION=Firmware reflashing
 # DESTROYS_HDD=false
-# IS_INTERACTIVE=false
+# IS_INTERACTIVE=true
 # POWEROFF_DURING_TEST=true
 # VERSION=0.1
 # TAGS=bios,firmware

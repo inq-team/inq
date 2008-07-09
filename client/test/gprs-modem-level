@@ -1,11 +1,12 @@
 #!/bin/sh -ef
 # NAME=USB GPRS modem signal level
-# DESCRIPTION=Measure signal level, received by GPRS modem, connected via USB
+# DESCRIPTION=This very simple benchmark intended to reset modem and send special AT-command to get signal level. As it (level) can strongly vary, human can repeat this test as much as he want.
 # DESTROYS_HDD=false
-# IS_INTERACTIVE=false
+# IS_INTERACTIVE=true
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
-# TAGS=usb,gprs
+# TAGS=usb,gprs,benchmark
+# DEPENDS=USB, GPRS Modem
 # VAR=DEV:string:/dev/ttyUSB0:Name of device to test
 # VAR=CHAT_TIMEOUT:int:5:Timeout for waiting for answer
 
@@ -28,13 +29,15 @@ while true; do
 	chat -t $CHAT_TIMEOUT -Vs '' AT OK-AT-OK AT+CSQ OK <$DEV >$DEV \
 		2>$TMP_DIR/level || test_failed 'Getting signal level'
 	LEVEL=`sed -ne '/^\+CSQ: / { s/^\+CSQ: //; p; }' <$TMP_DIR/level`
-	echo "GPRS level: $LEVEL"
+	print_green_message "GPRS level: $LEVEL"
 	echo -n 'Press ENTER to retry, enter "y" to complete the test: '
+	require_attention
 	read L
+	dismiss_attention
 	[ "$L" = y ] && break || :
 done
 echo_success
 
-benchmark_submit_float 'GPRS level' "$LEVEL"
+benchmark_submit_float 'GPRS signal level' "$LEVEL"
 
 test_succeeded

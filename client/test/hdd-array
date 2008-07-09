@@ -62,9 +62,11 @@ prepare_array_for_test()
 {
 	local array=$1
 
+	# Create and mount filesystem on which we will work
 	mke2fs -m0 -F $array >$DEBUG_TTY 2>&1 || test_failed "Disk write error"
 	mount -t ext2 $array $MOUNTPOINT
 
+	# Extract sources for compilation
 	cd "$SHARE_DIR"
 	tar xvf "$STRESS_TREE" -C "$MOUNTPOINT" >$DEBUG_TTY 2>&1 || test_failed "Untaring error"
 
@@ -72,7 +74,8 @@ prepare_array_for_test()
 	tree_name=`basename "$STRESS_TREE" .tar.gz`
 	cd $tree_name
 
-	# Is it linux source?
+	# Is it linux source? We have to touch some files for proper
+	# Makefile working.
 	if echo "$tree_name" | grep '^linux' ; then
 		find . -print | xargs touch >/dev/null 2>&1 || true
 		touch .config include/linux/autoconf.h >/dev/null 2>&1 || true
@@ -81,7 +84,11 @@ prepare_array_for_test()
 
 # Making arrays
 if raid-wizard-optimal; then
-	sleep 10
+	sleep 10 # We have to use such dirty hack, because einarc's
+	         # operations are not waiting for real commands
+		 # completion. So, for example, we can get hard drives
+		 # appearing for kernel (in dmesg) during several
+		 # seconds.
 	HDD_QUANTITY=`get_harddrives_list | wc -l`
 	if [ "$HDD_QUANTITY" -eq 0 ]; then
 		test_succeeded "No HDDs"
@@ -89,7 +96,8 @@ if raid-wizard-optimal; then
 	fi
 	TIME_PER_ARRAY=$(( $TESTTIME / $HDD_QUANTITY ))
 
-	# TEMPORARY checking for correct number of JOBS
+	# Temporary checking for correct number of JOBS
+	# This need caused by small memory amount computers
 	TOTAL_MEMORY=$(( `grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024 ))
 	[ "$TOTAL_MEMORY" -lt 512 ] && JOBS=4 || true
 

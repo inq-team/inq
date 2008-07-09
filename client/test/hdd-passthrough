@@ -42,13 +42,19 @@ fi
 badblocks_test()
 {
 	raid-wizard-clear
-	sleep 10
-	$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list` || echo "hdd-badblocks.rb failed" > "$ERROR_FILE"
+	sleep 10 # We have to use such dirty hack, because einarc's
+	         # operations are not waiting for real commands
+		 # completion. So, for example, we can get hard drives
+		 # appearing for kernel (in dmesg) during several
+		 # seconds.
+	$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list` ||
+		echo "hdd-badblocks.rb failed" > "$ERROR_FILE"
 
 	I=0
 	while raid-wizard-passthrough $DISK_GROUP_SIZE $I; do
-		sleep 10
-		$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list` || echo "hdd-badblocks.rb #$i failed" > "$ERROR_FILE"
+		sleep 10 # Dirty hack again
+		$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list` ||
+			echo "hdd-badblocks.rb #$i failed" > "$ERROR_FILE"
 		I=$(( $I + 1 ))
 	done
 
@@ -62,8 +68,11 @@ badblocks_test()
 
 stress_test()
 {
-	mount -t tmpfs -o size=${RAMDISK_SIZE}M tmpfs $MOUNTPOINT || echo "Ramdisk creation failed" > "$ERROR_FILE"
+	# Use tmpfs, as it is fully appopriate for our task
+	mount -t tmpfs -o size=${RAMDISK_SIZE}M tmpfs $MOUNTPOINT ||
+		echo "Ramdisk creation failed" > "$ERROR_FILE"
 	
+	# Extract sources for compilation
 	cd "$SHARE_DIR"
 	tar xzf "$STRESS_TREE" -C "$MOUNTPOINT" >$DEBUG_TTY 2>&1 || 
 		echo "Untaring failed" > $ERROR_FILE
@@ -72,7 +81,8 @@ stress_test()
 	tree_name=`basename "$STRESS_TREE" .tar.gz`
 	cd $tree_name
 	
-	# Is it linux source?
+	# Is it linux source? We have to touch some files for proper
+	# Makefile working.
 	if echo "$tree_name" | grep '^linux' ; then
 		find . -print | xargs touch >$DEBUG_TTY 2>&1 || true
 		touch .config include/linux/autoconf.h >/dev/null 2>&1 || true
@@ -87,9 +97,11 @@ stress_test()
 
 START_TIME=`date "+%s"`
 
+# Run badblocks and compilation processes simultaneously
 badblocks_test &
 BADBLOCKS_PID=$!
 stress_test &
 
+# Wait their completion and check if there are any errors
 wait || true
 [ -s "$ERROR_FILE" ] && test_failed "`sed -n '1p' <$ERROR_FILE`" || test_succeeded

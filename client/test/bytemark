@@ -16,7 +16,6 @@ exit_handler()
 
 WORKING_DIR=`mktemp -d`
 
-echo -n "Running BYTEmark benchmark..."
 cd $WORKING_DIR
 cp $SHARE_DIR/test/additional/NNET.DAT .
 cp $SHARE_DIR/test/additional/COM.DAT .
@@ -51,6 +50,5 @@ benchmark_submit_float "Memory Index" `grep "MEMORY INDEX" < result | \
 	awk '{print $4}'`
 
 cd $HOME
-echo_success
 
 test_succeeded
