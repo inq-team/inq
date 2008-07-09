@@ -243,7 +243,7 @@ subnet_for_dev()
 	echo "$(( ip >> 24 )).$(( (ip >> 16) & 255 )).$(( (ip >> 8) & 255 )).$(( ip & 255 ))/$mask"
 }
 
-get_harddrives_list()
+get_hdds_list()
 {
 	for UDI in `hal-find-by-property --key=storage.drive_type --string disk`; do
 		[ `hal-get-property --udi "$UDI" --key storage.bus` = "usb" ] && continue
@@ -266,6 +266,11 @@ get_fdds_list()
 	for UDI in `hal-find-by-property --key=storage.drive_type --string floppy`; do
 		hal-get-property --udi "$UDI" --key block.device
 	done
+}
+
+get_nics_list()
+{
+	cat /proc/net/dev | grep eth
 }
 
 get_interface_ipaddr()
@@ -305,4 +310,13 @@ hard_shutdown()
 	sleep 10
 	echo 1 > /proc/sys/kernel/sysrq
 	echo o > /proc/sysrq-trigger
+}
+
+test_succeed_if_no()
+{
+	local quantity=`get_$1_list | wc -l`
+	if [ "$quantity" -eq 0 ]; then
+		test_succeeded "No `echo $1 | sed -n 's/^\(.*\)s$/\1/pg' | tr a-z A-Z`s found"
+		exit 0
+	fi
 }

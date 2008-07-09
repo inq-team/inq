@@ -72,10 +72,7 @@ interactive()
 }
 
 FDD_QUANTITY=`get_fdds_list | wc -l`
-if [ "$FDD_QUANTITY" -eq 0 ]; then
-	test_succeeded "No FDDs found"
-	exit 0
-fi
+test_succeed_if_no fdds
 
 # Generate test image
 if dd if=/dev/urandom of=$TEST_IMAGE bs=1024 count=$FLOPPY_SIZE \

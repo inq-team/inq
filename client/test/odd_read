@@ -106,10 +106,7 @@ send_speed_results()
 load_kernel_modules
 
 ODD_QUANTITY=`get_odds_list | wc -l`
-if [ "$ODD_QUANTITY" -eq 0 ]; then
-	test_succeeded "No ODDs found"
-	exit 0
-fi
+test_succeed_if_no odds
 
 TESTED_QUANTITY=0
 

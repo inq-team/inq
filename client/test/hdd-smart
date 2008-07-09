@@ -18,15 +18,11 @@ exit_handler()
 
 INFOFILE=`mktemp`
 
-HDD_QUANTITY=`get_harddrives_list | wc -l`
-if [ "$HDD_QUANTITY" -eq 0 ]; then
-	test_succeeded "No HDDs"
-	exit 0
-fi
+test_succeed_if_no hdds
 
 # Initial basic tests
 SMART_CAPABLE_HDDS=0
-for dev in `get_harddrives_list`; do
+for dev in `get_hdds_list`; do
 	echo -n "Initial $dev test"
 	# Check smarctl's output to recognize if this device can use
 	# SMART at all?
@@ -50,13 +46,13 @@ if [ $SMART_CAPABLE_HDDS -eq 0 ]; then
 fi
 
 # Long time tests
-for dev in `get_harddrives_list`; do
+for dev in `get_hdds_list`; do
 	# Run long time SMART's test
 	smartctl -t long $dev >$DEBUG_TTY
 done
 
 TESTED_QUANTITY=0
-for dev in `get_harddrives_list`; do
+for dev in `get_hdds_list`; do
 	echo -n "Long $dev test completion waiting"
 	while [ -n "`smartctl -a $dev |
 		grep 'Self-test execution status:' |

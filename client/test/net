@@ -87,11 +87,9 @@ test_nic()
 	benchmark_submit_float "NIC eth${nic_number} download speed" $speed
 }
 
-NIC_QUANTITY=`cat /proc/net/dev | grep eth | wc -l`
-if [ "$NIC_QUANTITY" -eq 0 ]; then
-	test_succeeded "No NICs found"
-	exit 0
-fi
+NIC_QUANTITY=`get_nics_list | wc -l`
+test_succeed_if_no nics
+
 FIRST_NIC=`ip route | grep default | awk '{print $NF}' | sed 's/eth//'`
 GATEWAY=`ip route | grep default | awk '{print $(NF-2)}'`
 LOCAL_IP=`get_interface_ipaddr $FIRST_NIC`

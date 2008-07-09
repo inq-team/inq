@@ -47,13 +47,13 @@ badblocks_test()
 		 # completion. So, for example, we can get hard drives
 		 # appearing for kernel (in dmesg) during several
 		 # seconds.
-	$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list` ||
+	$SHARE_DIR/hdd-badblocks.rb `get_hdds_list` ||
 		echo "hdd-badblocks.rb failed" > "$ERROR_FILE"
 
 	I=0
 	while raid-wizard-passthrough $DISK_GROUP_SIZE $I; do
 		sleep 10 # Dirty hack again
-		$SHARE_DIR/hdd-badblocks.rb `get_harddrives_list` ||
+		$SHARE_DIR/hdd-badblocks.rb `get_hdds_list` ||
 			echo "hdd-badblocks.rb #$i failed" > "$ERROR_FILE"
 		I=$(( $I + 1 ))
 	done

@@ -89,11 +89,8 @@ if raid-wizard-optimal; then
 		 # completion. So, for example, we can get hard drives
 		 # appearing for kernel (in dmesg) during several
 		 # seconds.
-	HDD_QUANTITY=`get_harddrives_list | wc -l`
-	if [ "$HDD_QUANTITY" -eq 0 ]; then
-		test_succeeded "No HDDs"
-		exit 0
-	fi
+	HDD_QUANTITY=`get_hdds_list | wc -l`
+	test_succeed_if_no hdds
 	TIME_PER_ARRAY=$(( $TESTTIME / $HDD_QUANTITY ))
 
 	# Temporary checking for correct number of JOBS
@@ -104,7 +101,7 @@ if raid-wizard-optimal; then
 	TOTAL_START=`date "+%s"`
 	test_promise_time $TESTTIME
 
-	for i in `get_harddrives_list`; do
+	for i in `get_hdds_list`; do
 		array_stress_check $i
 	done
 

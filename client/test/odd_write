@@ -132,10 +132,7 @@ interactive()
 load_kernel_modules
 
 ODD_QUANTITY=`get_odds_list | wc -l`
-if [ "$ODD_QUANTITY" -eq 0 ]; then
-	test_succeeded "No FDDs found"
-	exit 0
-fi
+test_succeed_if_no odds
 
 # Replace relative path with an absolute one
 if echo "$TEST_IMAGE" | grep -q "^\/"; then

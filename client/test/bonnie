@@ -65,7 +65,7 @@ perform_benchmark()
 TOTAL_MEMORY=$(( `grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024 ))
 TEST_FILE_SIZE=$(($TOTAL_MEMORY * 2))
 
-for BLOCK_DEV in `get_harddrives_list`; do
+for BLOCK_DEV in `get_hdds_list`; do
 	echo -n "HDD $BLOCK_DEV"
 	perform_benchmark $BLOCK_DEV
 	echo_success

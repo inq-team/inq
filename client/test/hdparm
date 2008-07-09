@@ -10,7 +10,7 @@
 
 . /usr/share/inquisitor/functions-test
 
-for BLOCK_DEV in `get_harddrives_list`; do
+for BLOCK_DEV in `get_hdds_list`; do
 	echo -n "HDD $BLOCK_DEV "
 
 	# Perform AVG_SAMPLES tests, calculate sum
