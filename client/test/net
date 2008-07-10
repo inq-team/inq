@@ -8,7 +8,7 @@
 # TAGS=net
 # DEPENDS=NIC
 # VAR=TIMEOUT:int:15:Wait timeout while test file retrieving, sec
-# VAR=URL:string:3000/test_file:Relative to server PORT:URL to be fetched and checked
+# VAR=URL:string:3000/test_file:Relative to server PORT-URL to be fetched and checked
 # VAR=MD5:string:805414334eb1d3ff4fdca507ec82098f:MD5 checksum for checking
 # VAR=EXCLUDE_MAC:string::Exclude NICs with MAC addresses that match this regexp from testing
 
