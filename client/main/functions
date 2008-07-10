@@ -289,7 +289,7 @@ check_writeable_odd()
 
 check_readable_odd()
 {
-	if readcd dev=$1 -fulltoc | grep -q 'TOC len' >$DEBUG_TTY 2>&1; then
+	if readcd dev=$1 f=/dev/null -fulltoc | grep -q 'TOC len' >$DEBUG_TTY 2>&1; then
 		echo "true"
 	else
 		echo "false"
