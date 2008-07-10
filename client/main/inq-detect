@@ -4,7 +4,7 @@
 . $SHARE_DIR/functions
 
 # Preload necessary modules
-lsmod | grep -q "^eeprom" || modprobe eeprom
+need_kernel_module eeprom
 
 # Save detection logs
 dmidecode >$HOME/dmi.log

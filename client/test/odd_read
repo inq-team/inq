@@ -26,12 +26,6 @@ FIFOFILE=`mktemp`
 TMPFILE=`mktemp`
 RESULT_FILE=`mktemp`
 
-load_kernel_modules()
-{
-	modprobe ide-cd || true
-	sleep 5
-}
-
 test_odd()
 {
 	local odd=$1
@@ -103,7 +97,7 @@ send_speed_results()
 	monitoring_submit_multiple "$RESULT_FILE"
 }
 
-load_kernel_modules
+need_kernel_module ide-cd
 
 ODD_QUANTITY=`get_odds_list | wc -l`
 test_succeed_if_no odds

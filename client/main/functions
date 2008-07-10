@@ -320,3 +320,13 @@ test_succeed_if_no()
 		exit 0
 	fi
 }
+
+need_kernel_module()
+{
+	if ! lsmod | grep -q "^$1"; then
+		echo -n "Loading $1 kernel module..."
+		modprobe $1 || true
+		sleep 10
+		echo_success
+	fi
+}

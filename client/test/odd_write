@@ -16,12 +16,6 @@
 
 . /usr/share/inquisitor/functions-test
 
-load_kernel_modules()
-{
-	modprobe ide-cd || true
-	sleep 5
-}
-
 test_read()
 {
 	local odd=$1
@@ -129,7 +123,7 @@ interactive()
 	done
 }
 
-load_kernel_modules
+need_kernel_module ide-cd
 
 ODD_QUANTITY=`get_odds_list | wc -l`
 test_succeed_if_no odds
