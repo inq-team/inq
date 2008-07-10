@@ -122,10 +122,10 @@ dismiss_attention()
 
 get_needed_firmwares_list()
 {
-	print_green_message "Needed firmwares list is available only in Enterprise version!"
+	print_green_message "get_needed_firmwares_list() is available only in Enterprise version!"
 }
 
 boot_from_image()
 {
-	print_green_message "Boot from image is availabble only in Enterprise version!"
+	print_green_message "boot_from_image() is available only in Enterprise version!"
 }
