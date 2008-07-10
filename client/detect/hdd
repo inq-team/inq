@@ -21,17 +21,17 @@ hdd_detected()
 {
 	local udi="$1"
 	while [ -n "$udi" ]; do
-		if udi=`hal-get-property --udi "$udi" --key info.parent 2>/dev/null`; then
-			PCI_VENDOR_ID=`hal-get-property --udi "$udi" --key pci.vendor_id --hex 2>/dev/null`
-			PCI_PRODUCT_ID=`hal-get-property --udi "$udi" --key pci.product_id --hex 2>/dev/null`
-			PCI_SUBVENDOR_ID=`hal-get-property --udi "$udi" --key pci.subsys_vendor_id --hex 2>/dev/null`
-			PCI_SUBPRODUCT_ID=`hal-get-property --udi "$udi" --key pci.subsys_product_id --hex 2>/dev/null`
+		if udi=`hal-get-property --udi "$udi" --key info.parent 2>$DEBUG_TTY`; then
+			PCI_VENDOR_ID=`hal-get-property --udi "$udi" --key pci.vendor_id --hex 2>$DEBUG_TTY`
+			PCI_PRODUCT_ID=`hal-get-property --udi "$udi" --key pci.product_id --hex 2>$DEBUG_TTY`
+			PCI_SUBVENDOR_ID=`hal-get-property --udi "$udi" --key pci.subsys_vendor_id --hex 2>$DEBUG_TTY`
+			PCI_SUBPRODUCT_ID=`hal-get-property --udi "$udi" --key pci.subsys_product_id --hex 2>$DEBUG_TTY`
 			ID="$PCI_VENDOR_ID:$PCI_PRODUCT_ID:$PCI_SUBVENDOR_ID:$PCI_SUBPRODUCT_ID"
 			if [ -n "`cat "$HOME/einarc_detects.log" | grep "$ID"`" ]; then
 				return 0
 				break
 			fi
-			if [ "`hal-get-property --udi "$udi" --key info.bus 2>/dev/null`" = 'usb' ]; then
+			if [ "`hal-get-property --udi "$udi" --key info.bus 2>$DEBUG_TTY`" = 'usb' ]; then
 				return 0;
 				break;
 			fi

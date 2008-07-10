@@ -73,16 +73,15 @@ strip_vendor()
 hal_detect()
 {
 	for UDI in `$SHARE_DIR/hal-searcher --key pci.device_class --value 1`; do
-		CTRL_PCI_VENDOR_ID=`hal-get-property --udi "$UDI" --key pci.vendor_id --hex 2>/dev/null`
-		CTRL_PCI_PRODUCT_ID=`hal-get-property --udi "$UDI" --key pci.product_id --hex 2>/dev/null`
-		CTRL_PCI_SUBVENDOR_ID=`hal-get-property --udi "$UDI" --key pci.subsys_vendor_id --hex 2>/dev/null`
-		CTRL_PCI_SUBPRODUCT_ID=`hal-get-property --udi "$UDI" --key pci.subsys_product_id --hex 2>/dev/null`
+		CTRL_PCI_VENDOR_ID=`hal-get-property --udi "$UDI" --key pci.vendor_id --hex 2>$DEBUG_TTY`
+		CTRL_PCI_PRODUCT_ID=`hal-get-property --udi "$UDI" --key pci.product_id --hex 2>$DEBUG_TTY`
+		CTRL_PCI_SUBVENDOR_ID=`hal-get-property --udi "$UDI" --key pci.subsys_vendor_id --hex 2>$DEBUG_TTY`
+		CTRL_PCI_SUBPRODUCT_ID=`hal-get-property --udi "$UDI" --key pci.subsys_product_id --hex 2>$DEBUG_TTY`
 		if ! ctrl_detected "$CTRL_PCI_VENDOR_ID:$CTRL_PCI_PRODUCT_ID:$CTRL_PCI_SUBVENDOR_ID:$CTRL_PCI_SUBPRODUCT_ID"; then
 			CTRL_VENDOR=`hal-get-property --udi "$UDI" --key pci.vendor`
 			CTRL_MODEL=`hal-get-property --udi "$UDI" --key info.product`
 			strip_vendor "$CTRL_VENDOR"
 			echo 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" '' - hal >> $HOME/debug.log
-#			echo 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" '' - hal
 			$SHARE_DIR/add-component 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" ''
 		fi
 	done

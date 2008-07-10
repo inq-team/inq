@@ -5,6 +5,7 @@
 # MEASUREMENT=vcore
 
 . /usr/share/inquisitor/functions-monitoring
+
 [ -n "$PERIOD" ] || PERIOD=60
 
 strip_hash()

@@ -9,9 +9,9 @@ need_kernel_module eeprom
 # Save detection logs
 dmidecode >$HOME/dmi.log
 $SHARE_DIR/decode-dimms.pl >$HOME/spd.log
-ipmitool fru 2>/dev/null >$HOME/fru.log || true
+ipmitool fru 2>$DEBUG_TTY >$HOME/fru.log || true
 lspci >$HOME/lspci.log
-lshw 2>/dev/null >$HOME/lshw.log
+lshw 2>$DEBUG_TTY >$HOME/lshw.log
 rm -f $HOME/einarc_detects.log
 touch $HOME/einarc_detects.log
 einarc -l | cut -f1 | while read TYPE; do
