@@ -20,7 +20,7 @@ test_descriptions()
 
 result_list()
 {
-	ls -1 /home | sed "s/\(.*\)/\"\1\" 'File'/"
+	ls -1 /home | sed "/\.pid$/d; s/\(.*\)/\"\1\" 'File'/"
 }
 
 while true; do
