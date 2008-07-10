@@ -13,7 +13,7 @@ exit_handler()
 {
 	[ -f "$RESULT_FILE" ] && rm -fr "$RESULT_FILE"
 	if [ -d "$SCRATCH_DIRECTORY" ]; then
-		umount -f $SCRATCH_DIRECTORY || true
+		umount -f $SCRATCH_DIRECTORY >/dev/null || true
 		rmdir $SCRATCH_DIRECTORY
 	fi
 }
@@ -64,6 +64,8 @@ perform_benchmark()
 # at all
 TOTAL_MEMORY=$(( `grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024 ))
 TEST_FILE_SIZE=$(($TOTAL_MEMORY * 2))
+
+test_succeed_if_no hdds
 
 for BLOCK_DEV in `get_hdds_list`; do
 	echo -n "HDD $BLOCK_DEV"

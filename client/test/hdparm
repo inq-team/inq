@@ -10,6 +10,8 @@
 
 . /usr/share/inquisitor/functions-test
 
+test_succeed_if_no hdds
+
 for BLOCK_DEV in `get_hdds_list`; do
 	echo -n "HDD $BLOCK_DEV "
 
