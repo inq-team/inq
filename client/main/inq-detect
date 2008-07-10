@@ -3,6 +3,9 @@
 . /etc/inquisitor/global
 . $SHARE_DIR/functions
 
+# Preload necessary modules
+lsmod | grep -q "^eeprom" || modprobe eeprom
+
 # Save detection logs
 dmidecode >$HOME/dmi.log
 $SHARE_DIR/decode-dimms.pl >$HOME/spd.log
