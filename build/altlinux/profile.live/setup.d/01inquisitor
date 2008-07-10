@@ -33,7 +33,12 @@ ${COLOR_GREEN}inq-detect${COLOR_NORMAL} - execute detects only
 ${COLOR_GREEN}/usr/share/inquisitor/test/${COLOR_YELLOW}STAGE${COLOR_NORMAL} - execute particular test ${COLOR_YELLOW}STAGE${COLOR_NORMAL}, one of:
 ${COLOR_BLUE}
 __EOF__
-ls -C /usr/share/inquisitor/test >>/etc/motd
+
+# Dirty things we are doing here to get beautiful output without junk
+TMPDIR=`mktemp -d`
+cp /usr/share/inquisitor/test/* $TMPDIR 2>/dev/null
+ls -C $TMPDIR >>/etc/motd
+rm -fr $TMPDIR 2>/dev/null
 
 echo "${COLOR_NORMAL}" >>/etc/motd
 
