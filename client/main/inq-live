@@ -76,7 +76,7 @@ __EOF__
 			cat <<__EOF__ >$HOME/test_script
 PLANNER=1 TEST_NAME=cpu TESTTIME=1800 run_test cpu
 PLANNER=1 TEST_NAME=memory TEST_LOOPS=1 LOGTIME=120 run_test memory
-PLANNER=1 TEST_NAME=hdd-passthrough DISK_GROUP_SIZE=8 run_test hdd-passthrough
+PLANNER=1 TEST_NAME=hdd-passthrough DISK_GROUP_SIZE=8 MINIMAL_STRESS_TIME=600 STRESS_TREE=linux-2.6.22.5-31-stress.tar.gz RAMDISK_SIZE=400 JOBS=16 run_test hdd-passthrough
 PLANNER=1 TEST_NAME=hdd-array JOBS=16 TIMEOUT=3600 STRESS_TREE=/usr/share/inquisitor/linux-2.6.22.5-31-stress.tar.gz LOGTIME=120 run_test hdd-array
 PLANNER=1 TEST_NAME=net URL=3000/test_file.html TIMEOUT=30 MD5=ca658fd4159bc35698edf9a1cdd70876 run_test net
 PLANNER=1 TEST_NAME=fdd FLOPPY_SIZE=1440 run_test fdd

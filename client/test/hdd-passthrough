@@ -4,7 +4,7 @@
 # DESTROYS_HDD=true
 # IS_INTERACTIVE=false
 # POWEROFF_DURING_TEST=false
-# VERSION=0.1
+# VERSION=0.2
 # TAGS=hdd,stress
 # DEPENDS=CPU,HDD,Memory,Mainboard,Disk Controller
 # VAR=DISK_GROUP_SIZE:int:8:Number of disks per group for testing
