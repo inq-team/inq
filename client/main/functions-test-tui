@@ -109,7 +109,6 @@ done >"$UI_TMP/var-src" 2>"$UI_TMP/var-key"
 # Do a general parameter editor/confirmation dialog in curses
 returncode=0
 while [ "$returncode" != 1 ] && [ "$returncode" != 250 ]; do
-
 	# Set up parameter editor dialog: fixed part
 	cat >"$UI_TMP/dialog" <<__EOF__
 		--help-button
@@ -123,6 +122,8 @@ __EOF__
 
 	# Set up parameter editor dialog: variable part
 	i=1
+	# Are there any test's variables existence
+	[ -z "`sed -ne '/^# *VAR=/ s/^# *VAR=\(.*\):\(.*\):\(.*\):\(.*\)$/\1   \4/p' <$TEST_FILENAME`" ] && break
 	sed -ne '/^# *VAR=/ s/^# *VAR=\(.*\):\(.*\):\(.*\):\(.*\)$/\1	\4/p' <$TEST_FILENAME | while read kv; do
 		k=`echo "$kv" | cut -f1`
 		help=`echo "$kv" | cut -f2`
