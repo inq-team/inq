@@ -104,3 +104,28 @@ monitoring_submit()
 {
 	echo "`date +%s`	$2" >>$HOME/monitoring_${MONITORING_NAME}_$1.txt
 }
+
+monitoring_submit_multiple()
+{
+	cat $1 >>$HOME/monitoring_${MONITORING_NAME}.txt
+}
+
+require_attention()
+{
+	true
+}
+
+dismiss_attention()
+{
+	true
+}
+
+get_needed_firmwares_list()
+{
+	print_green_message "Needed firmwares list is available only in Enterprise version!"
+}
+
+boot_from_image()
+{
+	print_green_message "Boot from image is availabble only in Enterprise version!"
+}
