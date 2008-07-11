@@ -19,7 +19,7 @@ WORKING_DIR=`mktemp -d`
 cd $WORKING_DIR
 cp $SHARE_DIR/test/additional/NNET.DAT .
 cp $SHARE_DIR/test/additional/COM.DAT .
-nbench > result
+nbench | tee result >$DEBUG_TTY
 
 benchmark_submit_float "Numeric sort" `grep "NUMERIC SORT" < result | \
 	awk '{print $4}'`
