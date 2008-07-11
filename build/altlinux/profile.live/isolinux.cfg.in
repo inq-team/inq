@@ -14,5 +14,5 @@ label QEMU
 	kernel alt0/vmlinuz
 	append initrd=alt0/full.cz live fastboot automatic=method:cdrom stagename=altlinux/livecd showopts console=tty0 console=ttyS0,115200n8
 label harddisk
-	kernel alt0/vmlinuz
-	append SLX=0x202 showopts
+	localboot 0x80
+	append SLX=0x80
