@@ -1,12 +1,12 @@
 #!/bin/sh -ef
-# NAME=Dhrystone
+# NAME=CPU benchmark: Dhrystone
 # DESCRIPTION=A synthetic computing benchmark that measures CPU integer performance. Inquisitor uses a C version and runs the specified number of loops, testing each CPU separately, with testing process running affined to particular CPU. Performance rating is in terms of MIPS.
 # DESTROYS_HDD=false
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=benchmark,cpu
 # DEPENDS=CPU
-# VAR=DURATION:int:30:Benchmark duration (sec)
+# VAR=DURATION:int:300:Benchmark duration (sec)
 
 . /usr/share/inquisitor/functions-test
 

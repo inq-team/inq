@@ -1,6 +1,6 @@
 #!/bin/sh
 # NAME=HDD detect
-# DESCRIPTION=Detect HDDs using einarc, smartctl and hal-device.
+# DESCRIPTION=Detect hard drives using einarc, smartctl and hal-device.
 # DEPENDS=HDD
 
 einarc_detect()

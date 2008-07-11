@@ -5,4 +5,5 @@
 
 lshw -xml |
 	sed 's/[[:cntrl:]]//g' |
-	xsltproc $SHARE_DIR/lshw.xslt - > ~/components.xml
+	xsltproc $SHARE_DIR/lshw.xslt - |
+	sed '/^ *$/d' > ~/components.xml

@@ -36,7 +36,7 @@ test_odd()
 	mkfifo $FIFOFILE
 
 	echo -n "Determining can we use readcd"
-	readcd -v dev=$odd f=$TMPFILE sectors=0-1 || true
+	readcd -v dev=$odd f=$TMPFILE sectors=0-1 >$DEBUG_TTY 2>&1 || true
 	echo_success
 	if [ ! -s "$TMPFILE" ]; then
 		# So, we can not use readcd. No speed measurement then

@@ -1,6 +1,6 @@
 default hwcheck
 prompt 1
-timeout 30
+timeout 100
 gfxboot bootlogo
 display boot.msg
 implicit 1

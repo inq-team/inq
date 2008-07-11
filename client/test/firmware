@@ -20,7 +20,7 @@ exit_handler()
 FIRMWARES=`mktemp`
 
 # Get needed firmwares list for current testing computer from server
-get_needed_firmwares_list > $FIRMWARES
+get_needed_firmwares_list > $FIRMWARES || test_failed "Unable to get needed firmwares list"
 [ ! -s $FIRMWARES ] && test_succeeded "No firmwares needed to be updated"
 
 # Parse each component
@@ -105,7 +105,7 @@ cat $FIRMWARES | while read component; do
 	print_red_message "Necessary $type firmware version does not found!"
 	print_red_message "Found \"$current_version\", instead of \"$version\""
 	print_red_message "Going to reflash with \"$firmware_file\""
-	boot_from_image "$firmware_file"
+	boot_from_image "$firmware_file" || test_failed "Unable to boot from image"
 	sleep 30
 	hard_reboot
 done

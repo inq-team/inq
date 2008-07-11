@@ -1,5 +1,5 @@
 #!/bin/sh -e
-# NAME=HDD speed benchmark: hdparm
+# NAME=HDD benchmark: Hdparm
 # DESCRIPTION=This benchmark runs on all hard drives in the system sequentially. Every hard drive is benchmarked for the buffered speed and the cached speed using basic hdparm -t and -T tests for several times. The results for every HDD are averaged and presented as benchmark results.
 # DESTROYS_HDD=false
 # POWEROFF_DURING_TEST=false

@@ -16,11 +16,9 @@ class Communication
 	def method_missing(m, *args)
 		cmd = "#{m} " + args.map { |a| "'#{a}'" }.join(' ')
 		if @sh then
-#			puts cmd
 			@sh.puts(cmd)
 		else
 			cmd = "export COMPUTER_ID=#{ENV['COMPUTER_ID']} && . /etc/inquisitor/global && . $SHARE_DIR/functions && . $SHARE_DIR/communication && #{cmd} >$DEBUG_TTY 2>&1"
-#			puts cmd
 			system(cmd)
 		end
 	end

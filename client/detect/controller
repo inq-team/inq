@@ -17,7 +17,6 @@ einarc_detect()
 			'adaptec_aaccli') CTRL_VENDOR='Adaptec';;
 		esac		
 		echo 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" "$CTRL_SERIAL" - einarc >> $HOME/debug.log
-#		echo 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" "$CTRL_SERIAL" - einarc
 		$SHARE_DIR/add-component 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" "$CTRL_SERIAL"
 	done
 }

@@ -166,8 +166,8 @@ done
 # Override communication's functions with empty ones
 test_promise_time() { return 0; }
 test_stage_progress() { return 0; }
-benchmark_submit_float() { printf "\nBENCHMARK: %-40s%s" "$1" "$2"; }
-benchmark_submit_string() { printf "\nBENCHMARK: %-40s%s" "$1" "$2"; }
+benchmark_submit_float() { printf "\nBENCHMARK: %-40s%s\n" "$1" "$2"; }
+benchmark_submit_string() { printf "\nBENCHMARK: %-40s%s\n" "$1" "$2"; }
 test_succeeded() { echo "Test comment: $@" >&2; exit 0; }
 test_failed() { echo "Test comment: $@" >&2; exit 1; }
 

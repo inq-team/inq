@@ -1,6 +1,6 @@
 #!/bin/sh
 # NAME=OSD detect
-# DESCRIPTION=Detect OSDs using hal-device and try to guess correct vendor name.
+# DESCRIPTION=Detect optical disk drives using hal-device and try to guess correct vendor name.
 # DEPENDS=OSD
 
 strip_vendor()

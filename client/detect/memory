@@ -1,5 +1,5 @@
 #!/bin/sh
-# NAME=MEMORY detect
+# NAME=Memory detect
 # DESCRIPTION=Detect DIMMs using SPD, IPMI, DMI, /proc.
 # DEPENDS=Memory
 

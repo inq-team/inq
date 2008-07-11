@@ -1,5 +1,5 @@
 #!/bin/sh -ef
-# NAME=Memory test: memtester
+# NAME=Memory test: Memtester
 # DESCRIPTION=This memory test is performed without reboot, under control of live full-featured OS, using user-space memtester program. Test takes special precautions and tries to lock maximum possible amount of memory for memtester. memtester tests memory using standard read-write-check method using 16 patterns.
 # DESTROYS_HDD=false
 # IS_INTERACTIVE=false

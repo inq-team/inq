@@ -1,5 +1,5 @@
 #!/bin/sh -ef
-# NAME=HDD speed benchmark: Bonnie
+# NAME=HDD benchmark: Bonnie
 # DESCRIPTION=This test uses bonnie++ benchmark to test hard drives performance. For every hard drive in a system, test formats it using ext2 filesystem and then runs bonnie++ benchmark. Test measures the IO throughput in situations that simulate some types of database applications. It uses a single test file size to twice the amount of RAM. Benchmark reports output/rewrite/input of char/block speed and CPU load.
 # DESTROYS_HDD=true
 # POWEROFF_DURING_TEST=false
@@ -26,12 +26,16 @@ perform_benchmark()
 	DRIVE=$1
 
 	# Default GNU/Linux filesystem for benchmarking
+	echo -n "Preparing $DRIVE drive..."
 	mke2fs -m0 -F $DRIVE >$DEBUG_TTY 2>&1
 	mount $DRIVE $SCRATCH_DIRECTORY
+	echo_success
 
 	# Currently we are using single huge file
+	echo -n "Performing benchmark..."
 	bonnie++ -u root -d $SCRATCH_DIRECTORY -s $TEST_FILE_SIZE \
-		-n 1 -m benchmark > $RESULT_FILE 2>&1
+		-n 1 -m benchmark 2>&1 | tee $RESULT_FILE >$DEBUG_TTY
+	echo_success
 	
 	benchmark_submit_float "HDD $DRIVE output char speed" \
 	`sed -n '$p' < $RESULT_FILE | awk -F, '{print $3}'`
@@ -68,9 +72,7 @@ TEST_FILE_SIZE=$(($TOTAL_MEMORY * 2))
 test_succeed_if_no hdds
 
 for BLOCK_DEV in `get_hdds_list`; do
-	echo -n "HDD $BLOCK_DEV"
 	perform_benchmark $BLOCK_DEV
-	echo_success
 done
 
 test_succeeded

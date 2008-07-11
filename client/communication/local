@@ -122,10 +122,18 @@ dismiss_attention()
 
 get_needed_firmwares_list()
 {
-	print_green_message "get_needed_firmwares_list() is available only in Enterprise version!"
+	print_red_message "get_needed_firmwares_list() is not available in LiveCD version"
+	false
 }
 
 boot_from_image()
 {
-	print_green_message "boot_from_image() is available only in Enterprise version!"
+	print_red_message "boot_from_image() is not available in LiveCD version"
+	false
+}
+
+check_audit()
+{
+	print_red_message "check_audit() is not available in LiveCD version"
+	false
 }

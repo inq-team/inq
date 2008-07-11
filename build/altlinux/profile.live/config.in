@@ -5,7 +5,7 @@ CODENAME="ALT Linux base"
 VERSION="@@INQ_VERSION@@"
 THEME=compact
 KERNEL=kernel-image-std-smp
-LANGS="ru_RU"
+LANGS="en_US"
 ARCH=@@TARGET@@
 
 OUT=altlinux
