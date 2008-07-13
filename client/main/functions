@@ -1,10 +1,10 @@
 #!/bin/sh
+# Common functions for most Inquisitor shell script needs.
 #
-# Functions defined in this file are used by many rc scripts.
-# 
-# Author:	Miquel van Smoorenburg, <miquels@drinkel.nl.mugnet.org>
-# Hacked by:	Greg Galloway and Marc Ewing
-# Changed by:	Dmitry V. Levin
+# This file includes all functions that are generic and can be called
+# from multiple different modules. For functions specific to one
+# particular kind of a *module* (for example, for "test" modules),
+# see "functions-*module*" file, i.e. "functions-test".
 
 # Set the initial default search path for use by startup scripts.
 export PATH="/sbin:/usr/sbin:/usr/local/sbin:/bin:/usr/bin:/usr/local/bin:/usr/X11R6/bin"
@@ -15,6 +15,7 @@ ALERT_PASSED='0 65535 0'
 
 . $SHARE_DIR/outformat
 
+# Prints success marker @[ DONE ]@ in success color to stdout.
 echo_success()
 {
 	MOVE_TO_COL
@@ -25,6 +26,7 @@ echo_success()
 	echo ' ]'
 }
 
+# Prints failure marker @[FAILED]@ in failure color to stdout.
 echo_failure()
 {
 	MOVE_TO_COL
@@ -35,6 +37,7 @@ echo_failure()
 	echo ']'
 }
 
+# Prints skipped marker @[ SKIP ]@ in warning color to stdout.
 echo_skipped()
 {
 	MOVE_TO_COL
@@ -45,6 +48,7 @@ echo_skipped()
 	echo ']'
 }
 
+# Prints passed marker @[PASSED]@ in warning color to stdout.
 echo_passed()
 {
 	MOVE_TO_COL
@@ -55,6 +59,7 @@ echo_passed()
 	echo ']'
 }
 
+# Prints running test marker @[CALLED]@ in warning color to stdout.
 echo_running()
 {
 	MOVE_TO_COL
@@ -95,7 +100,7 @@ test_progress()
 	test_stage_progress $COMPLETE $TOTAL
 }
 
-# Issues a managed test run; should be called by a planner.
+# Issues a managed test run; should be called by a scheduler.
 #
 # Input:
 # $1 - script in test directory to run
@@ -296,6 +301,8 @@ check_readable_odd()
 	fi
 }
 
+# Waits for 10 seconds and forces hard reboot sequence using procfs
+# system request.
 hard_reboot()
 {
 	print_red_message "Forcing hard reboot now!"
@@ -304,6 +311,8 @@ hard_reboot()
 	echo b > /proc/sysrq-trigger
 }
 
+# Waits for 10 seconds and forces hard shutdown (usually a poweroff)
+# sequence using procfs system request.
 hard_shutdown()
 {
 	print_red_message "Forcing hard shutdown now!"
