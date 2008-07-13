@@ -78,7 +78,7 @@ Dir.new(DETECTS_DIR).each { |entry|
 	File.open("#{DETECTS_DIR}/#{entry}", 'r').each_line { |l|
 		m[:name] = $1 if l =~ /^# NAME=(.*)$/
 		m[:description] = $1 if l =~ /^# DESCRIPTION=(.*)$/
-		m[:depends] = $1 if l =~ /^# DEPENDS=(.*)$/
+		m[:depends] = $1.split(/ *, */) if l =~ /^# DEPENDS=(.*)$/
 	}
 }
 
