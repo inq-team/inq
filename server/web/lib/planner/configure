@@ -8,6 +8,7 @@ require 'ostruct'
 
 TESTS_DIR='../../../../client/test'
 MONITORINGS_DIR='../../../../client/monitoring'
+DETECTS_DIR='../../../../client/detect'
 
 tests = {}
 
@@ -51,13 +52,33 @@ Dir.new(MONITORINGS_DIR).each { |entry|
 	monitorings[entry] = m = {
 		:id => nil,
 		:name => nil,
+		:description => nil,
 		:measurement => nil
 	}	
 	
 	File.open("#{MONITORINGS_DIR}/#{entry}", 'r').each_line { |l|
 		m[:id] = $1.to_i if l =~ /^# ID=(.*)$/
 		m[:name] = $1 if l =~ /^# NAME=(.*)$/
+		m[:description] = $1 if l =~ /^# DESCRIPTION=(.*)$/
 		m[:measurement] = $1 if l =~ /^# MEASUREMENT=(.*)$/
+	}
+}
+
+detects = {}
+
+Dir.new(DETECTS_DIR).each { |entry|
+	next unless FileTest.file?("#{DETECTS_DIR}/#{entry}")
+
+	detects[entry] = m = {
+		:name => nil,
+		:description => nil,
+		:depends => nil
+	}
+
+	File.open("#{DETECTS_DIR}/#{entry}", 'r').each_line { |l|
+		m[:name] = $1 if l =~ /^# NAME=(.*)$/
+		m[:description] = $1 if l =~ /^# DESCRIPTION=(.*)$/
+		m[:depends] = $1 if l =~ /^# DEPENDS=(.*)$/
 	}
 }
 
@@ -67,5 +88,6 @@ File.open('meta.rb', 'w') { |out|
 
 $TESTS = #{tests.pretty_inspect}
 $MONITORINGS = #{monitorings.pretty_inspect}
+$DETECTS = #{detects.pretty_inspect}
 __EOF__
 }
