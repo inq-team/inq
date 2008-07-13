@@ -42,6 +42,10 @@ metadata:
 	cd server/web/lib/planner && ./configure
 	cd ../web && ./generate-from-metadata
 
+# Generate API documentation for the website
+doc:
+	cd ../web && ./generate-api-doc
+
 #===============================================================================
 # Client image deployment
 #===============================================================================
