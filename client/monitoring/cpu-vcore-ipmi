@@ -1,8 +1,8 @@
 #!/bin/sh -e
 # ID=3
-# NAME=CPU-VCORE(ipmi)
-# DESCRIPTION=This monitoring uses ipmitool for getting CPU's vcore.
-# MEASUREMENT=vcore
+# NAME=CPU core voltage (ipmi)
+# DESCRIPTION=This monitoring uses ipmitool for getting CPU's core voltage.
+# MEASUREMENT=voltage
 
 . /usr/share/inquisitor/functions-monitoring
 [ -n "$PERIOD" ] || PERIOD=60

@@ -1,5 +1,5 @@
 #!/bin/sh -e
 # ID=6
-# NAME=ODD-READ
+# NAME=ODD read speed
 # DESCRIPTION=This is not a real monitoring: it runs only once during odd_read test, that submits drive speed. You can view actual code in client/test/odd_read in generate_speed_results function.
 # MEASUREMENT=speed

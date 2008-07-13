@@ -493,35 +493,37 @@ $TESTS = {"gprs-modem"=>
    :depends=>["CPU", "Memory", "Mainboard"]}}
 
 $MONITORINGS = {"cpu-vcore-ipmi"=>
-  {:name=>"CPU-VCORE(ipmi)",
-   :measurement=>"vcore",
-   :description=>"This monitoring uses ipmitool for getting CPU's vcore.",
+  {:name=>"CPU core voltage (ipmi)",
+   :measurement=>"voltage",
+   :description=>
+    "This monitoring uses ipmitool for getting CPU's core voltage.",
    :id=>3},
  "cpu-temp-ipmi"=>
-  {:name=>"CPU-TEMP(ipmi)",
-   :measurement=>"temp",
+  {:name=>"CPU temperature (ipmi)",
+   :measurement=>"temperature",
    :description=>
     "This monitoring uses ipmitool for getting CPU's temperature.",
    :id=>1},
  "odd-read"=>
-  {:name=>"ODD-READ",
+  {:name=>"ODD read speed",
    :measurement=>"speed",
    :description=>
     "This is not a real monitoring: it runs only once during odd_read test, that submits drive speed. You can view actual code in client/test/odd_read in generate_speed_results function.",
    :id=>6},
  "hdd-smart"=>
-  {:name=>"HDD-SMART",
-   :measurement=>"temp",
-   :description=>"This monitoring gets temperature of hard disks.",
+  {:name=>"HDD temperature",
+   :measurement=>"temperature",
+   :description=>
+    "This monitoring uses hard drive's SMART to get its temperature.",
    :id=>5},
  "cpu-temp-sensors"=>
-  {:name=>"CPU-TEMP(sensors)",
-   :measurement=>"temp",
+  {:name=>"CPU temperature (sensors)",
+   :measurement=>"temperature",
    :description=>"This monitoring uses sensors for getting CPU's temperature.",
    :id=>2},
  "cpu-vcore-sensors"=>
-  {:name=>"CPU-VCORE(sensors)",
-   :measurement=>"vcore",
+  {:name=>"CPU core voltage (sensors)",
+   :measurement=>"voltage",
    :description=>"This monitoring uses sensors for getting CPU's vcore.",
    :id=>4}}
 

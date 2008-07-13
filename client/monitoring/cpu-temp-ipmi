@@ -1,8 +1,8 @@
 #!/bin/sh -e
 # ID=1
-# NAME=CPU-TEMP(ipmi)
+# NAME=CPU temperature (ipmi)
 # DESCRIPTION=This monitoring uses ipmitool for getting CPU's temperature.
-# MEASUREMENT=temp
+# MEASUREMENT=temperature
 
 . /usr/share/inquisitor/functions-monitoring
 [ -n "$PERIOD" ] || PERIOD=30

@@ -1,8 +1,8 @@
 #!/bin/sh -e
 # ID=5
-# NAME=HDD-SMART
-# DESCRIPTION=This monitoring gets temperature of hard disks.
-# MEASUREMENT=temp
+# NAME=HDD temperature
+# DESCRIPTION=This monitoring uses hard drive's SMART to get its temperature.
+# MEASUREMENT=temperature
 
 . /usr/share/inquisitor/functions-monitoring
 [ -n "$PERIOD" ] || PERIOD=60
