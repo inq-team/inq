@@ -8,7 +8,7 @@ include ../../../Makefile.config
 ##############################################################################
 SHELL = /bin/sh
 CC=gcc
-OPTON = -O3 -fomit-frame-pointer -fforce-addr -ffast-math -Wall
+OPTON = -s -O2 -fomit-frame-pointer -fforce-addr -ffast-math -Wall
 CFLAGS = -DTIME -Wall -pedantic -ansi
 
 # local directories

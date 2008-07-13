@@ -2,7 +2,7 @@ include ../../../Makefile.config
 
 default: nbench
 CC = gcc
-CFLAGS = -s -static -Wall -O3 -fomit-frame-pointer -funroll-loops
+CFLAGS = -s -static -Wall -O2 -fomit-frame-pointer -funroll-loops
 MACHINE=
 DEFINES= -DLINUX $(NO_UNAME)
 
