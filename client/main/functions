@@ -261,7 +261,7 @@ get_odds_list()
 	for UDI in `hal-find-by-capability --capability storage.cdrom`; do
 		hal-device "$UDI" |
 		sed -n "/info.product/s/^.* = '\(.*\)' .*$/\1/gp" |
-		grep -q "^RMM2 VDrive" ||
+		egrep -q "(RMM2 VDrive|Virtual)" ||
 		hal-get-property --udi "$UDI" --key block.device
 	done
 }
