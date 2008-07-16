@@ -91,6 +91,7 @@ NIC_QUANTITY=`get_nics_list | wc -l`
 test_succeed_if_no nics
 
 FIRST_NIC=`ip route | grep default | awk '{print $NF}' | sed 's/eth//'`
+[ -z "$FIRST_NIC" ] && test_succeeded "Network is not configured"
 GATEWAY=`ip route | grep default | awk '{print $(NF-2)}'`
 LOCAL_IP=`get_interface_ipaddr $FIRST_NIC`
 
