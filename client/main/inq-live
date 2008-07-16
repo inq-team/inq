@@ -67,6 +67,7 @@ PLANNER=1 TEST_NAME=memory TEST_LOOPS=1 LOGTIME=120 run_test memory
 PLANNER=1 TEST_NAME=hdd-smart LOGTIME=120 run_test fdd
 PLANNER=1 TEST_NAME=fdd FLOPPY_SIZE=1440 run_test fdd
 __EOF__
+		echo "/usr/bin/inq-live" >>$HOME/test_script
 		inquisitor
 		;;
 	Full)
@@ -80,6 +81,7 @@ PLANNER=1 TEST_NAME=hdd-passthrough DISK_GROUP_SIZE=8 MINIMAL_STRESS_TIME=600 ST
 PLANNER=1 TEST_NAME=hdd-array JOBS=16 TIMEOUT=3600 STRESS_TREE=/usr/share/inquisitor/linux-2.6.22.5-31-stress.tar.gz LOGTIME=120 run_test hdd-array
 PLANNER=1 TEST_NAME=fdd FLOPPY_SIZE=1440 run_test fdd
 __EOF__
+			echo "/usr/bin/inq-live" >>$HOME/test_script
 			inquisitor
 		else
 			continue
@@ -94,6 +96,7 @@ PLANNER=1 TEST_NAME=hdparm AVG_SAMPLES=5 run_test hdparm
 PLANNER=1 TEST_NAME=unixbench run_test unixbench
 PLANNER=1 TEST_NAME=bytemark run_test bytemark
 __EOF__
+		echo "/usr/bin/inq-live" >>$HOME/test_script
 		inquisitor
 		;;
 	Benchmark-RW)
@@ -108,6 +111,7 @@ PLANNER=1 TEST_NAME=bonnie run_test bonnie
 PLANNER=1 TEST_NAME=unixbench run_test unixbench
 PLANNER=1 TEST_NAME=bytemark run_test bytemark
 __EOF__
+			echo "/usr/bin/inq-live" >>$HOME/test_script
 			inquisitor
 		else
 			continue
