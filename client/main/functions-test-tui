@@ -168,8 +168,18 @@ test_promise_time() { return 0; }
 test_stage_progress() { return 0; }
 benchmark_submit_float() { printf "\nBENCHMARK: %-40s%s\n" "$1" "$2"; }
 benchmark_submit_string() { printf "\nBENCHMARK: %-40s%s\n" "$1" "$2"; }
-test_succeeded() { echo "Test successfully finished!\nTest comment: $@" >&2; exit 0; }
-test_failed() { echo "Test failed!\nTest comment: $@" >&2; exit 1; }
+test_succeeded()
+{
+	print_green_message "Test successfully finished"
+	echo "Test comment: $@" >&2
+	exit 0
+}
+test_failed()
+{
+	print_red_message "Test failed"
+	echo "Test comment: $@" >&2
+	exit 1
+}
 
 # Remove temporary UI exit handler, clean up temp files
 trap - EXIT
