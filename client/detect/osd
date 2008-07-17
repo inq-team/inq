@@ -31,7 +31,25 @@ hal-find-by-property --key storage.drive_type --string cdrom | while read L; do
 			OSD_MODEL=MSI-8152
 		fi
 
-		OSD_MODEL=`echo $OSD_MODEL | sed 's,CD-RW/DVD-ROM,,g;s/CD-ROM//g;s/COMBO //;s/DVDRW//g;s/DVD-ROM//g;s,DVD+/-RW,,g;s,DVD/CDRW,,g;s,DVD-RAM,,g;s,DVD-RW,,g;s/Slimtype COMBO //g;s/Slimtype DVDRW //g;s,CDW/DVD,,g;s,CD-RW,,g;s,CD/DVDW ,,g;s,RW/DVD,,g;s,DVD_RW,,g;s/^  *//;s/  *$//;'`
+		OSD_MODEL=`echo $OSD_MODEL |
+			   sed 's,CD-RW/DVD-ROM,,g; \
+			   	s/CD-ROM//g; \
+				s/COMBO //g; \
+				s/DVDRW//g; \
+				s/DVD-ROM//g; \
+				s,DVD+/-RW,,g; \
+				s,DVD/CDRW,,g; \
+				s,DVD-RAM,,g; \
+				s,DVD-RW,,g; \
+				s/Slimtype COMBO //g; \
+				s/Slimtype DVDRW //g; \
+				s,CDW/DVD,,g; \
+				s,CD-RW,,g; \
+				s,CD/DVDW ,,g; \
+				s,RW/DVD,,g; \
+				s,DVD_RW,,g; \
+				s/^  *//; \
+				s/  *$//'`
 
 		strip_vendor 'ASUS ' ASUS
 		strip_vendor 'HL-DT-ST ' LG

@@ -3,6 +3,6 @@
 # DESCRIPTION=Convert lshw output to required XML document.
 # DEPENDS=Video,NIC,Fire Wire
 
-lshw -xml |
+lshw `cat $HOME/lshw_dmi_p` -xml |
 	sed 's/[[:cntrl:]]//g' |
 	xsltproc $SHARE_DIR/lshw.xslt - > ~/components.xml

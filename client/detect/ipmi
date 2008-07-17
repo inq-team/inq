@@ -8,7 +8,7 @@
 # ===========================================================================
 
 if FRU_INFO=`cat $HOME/fru.log | grep -A13 'Builtin FRU Device'`; then
-	#Detecting chassis
+	# Detecting chassis
 	CHASSIS_VENDOR=`echo "$FRU_INFO" | sed -n 's/ Product Manufacturer *: //p'`
 	CHASSIS_TYPE=`echo "$FRU_INFO" | sed -n 's/ Chassis Type *: //p' | sed 's/Unspecified//'`
 	CHASSIS_PART_NUM=`echo "$FRU_INFO" | sed -n 's/ Chassis Part Number *: //p' | sed 's/Unspecified//'`
@@ -23,19 +23,19 @@ if FRU_INFO=`cat $HOME/fru.log | grep -A13 'Builtin FRU Device'`; then
 		$SHARE_DIR/add-component Chassis "$CHASSIS_VENDOR" "$CHASSIS_MODEL" "$CHASSIS_SERIAL"
 	fi
 	
-	#detecting mainboard
+	# Detecting mainboard
 	MB_VENDOR=`echo "$FRU_INFO" | sed -n 's/ Board Mfg *: //p'`
 	MB_PRODUCT=`echo "$FRU_INFO" | sed -n 's/ Board Product *: //p'`
 	MB_PART_NUM=`echo "$FRU_INFO" | sed -n 's/ Board Part Number *: //p'`
 	MB_SERIAL=`echo "$FRU_INFO" | sed -n 's/ Board Serial *: //p'`
 	MB_MODEL="$MB_PRODUCT / $MB_PART_NUM"
 
-	#if mainboard model exist
+	# If mainboard model exists
 	if [ -n "$MB_PRODUCT" ] || [ -n "$MB_PART_NUM" ]; then
 		echo Mainboard "$MB_VENDOR" "$MB_MODEL" "$MB_SERIAL" ' - ipmi' >> $HOME/debug.log
 		$SHARE_DIR/add-component Mainboard "$MB_VENDOR" "$MB_MODEL" "$MB_SERIAL"
 	else
-		#if ipmi detect of MB failed
+		# If IPMI detection of MB failed
 		if MB_INFO=`cat $HOME/lshw.log | grep -A5 'description: Motherboard'`; then
 			#detecting mainboard from lshw
 			MB_VENDOR=`echo "$MB_INFO" | sed -n 's/ *vendor: //p'`
@@ -46,7 +46,7 @@ if FRU_INFO=`cat $HOME/fru.log | grep -A13 'Builtin FRU Device'`; then
 		fi
 	fi
 	
-	#detecting platform
+	# Detecting platform
 	PLATFORM_VENDOR=`echo "$FRU_INFO" | sed -n 's/ Product Manufacturer *: //p'`
 	PLATFORM_PRODUCT=`echo "$FRU_INFO" | sed -n 's/ Product Name *: //p'`
 	PLATFORM_PART_NUM=`echo "$FRU_INFO" | sed -n 's/ Product Part Number *: //p'`
@@ -63,10 +63,10 @@ if FRU_INFO=`cat $HOME/fru.log | grep -A13 'Builtin FRU Device'`; then
 fi
 
 # ===========================================================================
-# Parsig additional info from ipmi
+# Parsing additional info from IPMI
 # ===========================================================================
 
-#detectuing power supply
+# Detecting power supply
 if PS_INFO=`cat $HOME/fru.log | grep -A9 'ps\.vpd'`; then
 	PS_VENDOR=`echo "$PS_INFO" | sed -n 's/ Product Manufacturer *: //p'`
 	PS_MODEL=`echo "$PS_INFO" | sed -n 's/ Product Part Number *: //p'`
@@ -74,7 +74,7 @@ if PS_INFO=`cat $HOME/fru.log | grep -A9 'ps\.vpd'`; then
 	$SHARE_DIR/add-component 'Power Supply' "$PS_VENDOR" "$PS_MODEL" "$PS_SERIAL"
 fi
 
-#detecting backplane
+# Detecting backplane
 if BP_INFO=`cat $HOME/fru.log | grep -A9 'scsibp\.vpd'`; then
 	BP_VENDOR=`echo "$BP_INFO" | sed -n 's/ Product Manufacturer *: //p'`
 	BP_MODEL=`echo "$BP_INFO" | sed -n 's/ Product Part Number *: //p'`

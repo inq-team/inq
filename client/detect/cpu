@@ -30,7 +30,21 @@ physicals.each { |ph|
 
 echo "$PROCESSORS" | while read I; do
 	eval "$I"
-	CPU_VENDOR=`echo "$CPU_VENDOR" | sed 's/^vendor: \([^;]*\);.*$/\1/' | sed 's/Genuine//g;s/Authentic//g;'`
-	CPU_MODEL=`echo "$CPU_MODEL" | sed 's/^.*model: \([^;]*\);.*$/\1/' | sed 's/(R)//g;s/(tm)//g;s/processor//ig;s/CPU//g;s/Intel//g;s/AMD//g;s/Genuine/Core Solo/;s/@ //;s/  */ /g;s/^ *//g;'`
+	CPU_VENDOR=`echo "$CPU_VENDOR" |
+		    sed 's/^vendor: \([^;]*\);.*$/\1/' |
+		    sed 's/Genuine//g;
+		    	 s/Authentic//g;'`
+	CPU_MODEL=`echo "$CPU_MODEL" |
+		   sed 's/^.*model: \([^;]*\);.*$/\1/' |
+		   sed 's/(R)//g; \
+		   	s/(tm)//g; \
+			s/processor//ig; \
+			s/CPU//g; \
+			s/Intel//g; \
+			s/AMD//g; \
+			s/Genuine/Core Solo/; \
+			s/@ //; \
+			s/  */ /g; \
+			s/^ *//g;'`
 	$SHARE_DIR/add-component CPU "$CPU_VENDOR" "$CPU_MODEL" ''	
 done
