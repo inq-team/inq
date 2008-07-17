@@ -1,0 +1,44 @@
+#!/usr/bin/env ruby
+
+class Thermo
+	SENSOR_QTY = 16
+
+	attr_reader :sensor_data, :sensor_value
+
+	def initialize
+		@f = File.open('/dev/ttyUSB0', 'r+')
+		@sensor_data = Array.new(SENSOR_QTY)
+		@sensor_value = Array.new(SENSOR_QTY)
+	end
+
+	def acquire
+		buf = '   '
+		buf[0] = 0xDE
+		buf[1] = 0x00
+		buf[2] = 0x84
+		send(buf)
+
+		3.times { @f.getc }
+		SENSOR_QTY.times { |i|
+			@sensor_data[i] = @f.read(8)
+			cpc = @sensor_data[i][7].to_f
+			crm = @sensor_data[i][6].to_f
+			trd = @sensor_data[i][0] / 2.0
+			@sensor_value[i] = trd - 0.25 + ((cpc - crm) / cpc)
+			@sensor_value[i] = -2 if @sensor_value[i].nan?
+		}
+		@f.getc
+	end
+
+	def send(buf)
+		@f.write(buf)
+	end
+	
+	def display
+		puts @sensor_value.join("\t")
+	end
+end
+
+t = Thermo.new
+t.acquire
+t.display
