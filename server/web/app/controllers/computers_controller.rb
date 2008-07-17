@@ -431,7 +431,7 @@ set grid"
 				:model => c.elements['model'] && c.elements['model'].text || '',
 				:serial => c.elements['serial'] && c.elements['serial'].text || '',
 				:variance => variance += 1
-			}
+			} if c.elements['model'].text && c.elements['vendor'].text
 		}
 		if need_new_testing(@computer.testings.last, components)
 			# BAD: component_group_id column used here directly
