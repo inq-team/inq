@@ -22,7 +22,6 @@ strip_hash()
 
 while true; do
 	INFO=`ipmitool sensor`
-#	INFO=`cat data/ipmitool_sensor_RS250_G3.log`
 	RES=
 	echo "$INFO" | sed -n "$TEMP_PATTERNS" | sed s/.*na//  | \
 	(
@@ -44,6 +43,5 @@ while true; do
 	done
 	)
 
-#	break
 	sleep $PERIOD
 done

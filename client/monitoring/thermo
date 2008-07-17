@@ -1,0 +1,23 @@
+#!/bin/sh -e
+# ID=7
+# NAME=FTDI thermometer
+# DESCRIPTION=This monitoring gets all temperature measurements from FTDI-based USB thermometer.
+# MEASUREMENT=temperature
+
+. /usr/share/inquisitor/functions-monitoring
+[ -n "$PERIOD" ] || PERIOD=20
+
+[ -e "/dev/ttyUSB0" ] || exit 0
+thermo-init
+
+while true; do
+	sleep $PERIOD
+	I=0
+	for sensor in `thermo-acquire`; do
+		# -2 temperature means sensor unexistence
+		[ "$sensor" = "-2" ] && continue
+
+		monitoring_submit $I $sensor
+		I=$(( $I + 1 ))
+	done
+done

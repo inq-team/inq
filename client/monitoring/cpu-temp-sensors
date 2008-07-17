@@ -17,7 +17,6 @@ strip_hash()
 
 while true; do
 	INFO=`sensors -A`
-#	INFO=`cat data/sensors_RACK_305AW.log`
 	RES=
 	echo "$INFO" | grep -n 'Core\(.\) Temp:' | sed "s/^\(.*\):Core\(.\) Temp:/\1;\2/"  | \
 	(
@@ -64,6 +63,5 @@ while true; do
 	done
 	)
 
-#	break
 	sleep $PERIOD
 done
