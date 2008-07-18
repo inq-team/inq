@@ -15,9 +15,7 @@ while true; do
 	I=0
 	for sensor in `thermo-acquire`; do
 		# -2 temperature means sensor unexistence
-		[ "$sensor" = "-2" ] && continue
-
-		monitoring_submit $I $sensor
+		[ "$sensor" = "-2" ] || monitoring_submit $I $sensor
 		I=$(( $I + 1 ))
 	done
 done
