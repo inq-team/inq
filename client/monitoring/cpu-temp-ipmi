@@ -8,9 +8,9 @@
 [ -n "$PERIOD" ] || PERIOD=30
 
 TEMP_PATTERNS='s/CPU\(.\) Diode.*| \([^ ]*\).*|.*|.*|.*|.*|.*|.*|.*|.*/\1 => \2/p;
-s/cpu\(.\)\.dietemp.*| \([^ ]*\).*|.*|.*|.*|.*|.*|.*|.*|.*/\1 => \2/p;
-s/CPU \(.\) TEMP.*| \([^ ]*\).*|.*|.*|.*|.*|.*|.*|.*|.*/\1 => \2/p;
-s/CPU\(.\) TEMP.*| \([^ ]*\).*|.*|.*|.*|.*|.*|.*|.*|.*/\1 => \2/p'
+	       s/cpu\(.\)\.dietemp.*| \([^ ]*\).*|.*|.*|.*|.*|.*|.*|.*|.*/\1 => \2/p;
+	       s/CPU \(.\) TEMP.*| \([^ ]*\).*|.*|.*|.*|.*|.*|.*|.*|.*/\1 => \2/p;
+	       s/CPU\(.\) TEMP.*| \([^ ]*\).*|.*|.*|.*|.*|.*|.*|.*|.*/\1 => \2/p'
 
 strip_hash()
 {
@@ -23,7 +23,7 @@ strip_hash()
 while true; do
 	INFO=`ipmitool sensor`
 	RES=
-	echo "$INFO" | sed -n "$TEMP_PATTERNS" | sed s/.*na//  | \
+	echo "$INFO" | sed -n "$TEMP_PATTERNS" | sed 's/.*na//' | \
 	(
 	while read TEMP_PAIR; do
 		if [ -n "$TEMP_PAIR" ]; then

@@ -374,13 +374,11 @@ set grid"
 					
 					data_files_hash[monitoring_id].each_pair{ |k, f| f.flush }
 
-#					require 'planner/planner'
 					line_title = (($MONITORINGS.find{|x| x[1][:id] == monitoring_id }||[])[1]||{})[:measurement]
 					plot_title = (($MONITORINGS.find{|x| x[1][:id] == monitoring_id }||[])[1]||{})[:name]
 					
 					line_title = 'ln_ttl' unless line_title
 					plot_title = 'plt_ttl' unless plot_title
-#					title = 'temp'
 					plot_string = "set title \"#{plot_title}\"\n" + 'plot ' + data_files_hash[monitoring_id].map{ |x| "'#{x[1].path}' using 1:2 title \"#{line_title} #{x[0]}\" with lines" }.join(', ')
 					plot_script += "\n"
 					plot_script += plot_string

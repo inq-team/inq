@@ -140,7 +140,8 @@ run_test()
 monitoring_start()
 {
 	monitoring_stop $1
-	$SHARE_DIR/monitoring/$1 &
+	cd $SHARE_DIR/monitoring
+	./$1 &
 	echo $! >$HOME/monitoring_$1.pid
 }
 

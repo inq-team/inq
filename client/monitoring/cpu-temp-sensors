@@ -18,7 +18,7 @@ strip_hash()
 while true; do
 	INFO=`sensors -A`
 	RES=
-	echo "$INFO" | grep -n 'Core\(.\) Temp:' | sed "s/^\(.*\):Core\(.\) Temp:/\1;\2/"  | \
+	echo "$INFO" | grep -n 'Core\(.\) Temp:' | sed 's/^\(.*\):Core\(.\) Temp:/\1;\2/'  | \
 	(
 	while read PAIR; do
 		if [ -n "$PAIR" ]; then
@@ -43,7 +43,7 @@ while true; do
 	)
 
 	RES=
-	echo "$INFO" | sed -n "s/^temp\(.\):.*+\(.*\) C .*$/\1 => \2/p" | \
+	echo "$INFO" | sed -n 's/^temp\(.\):.*+\(.*\) C .*$/\1 => \2/p' | \
 	(
 	while read TEMP_PAIR; do
 		if [ -n "$TEMP_PAIR" ]; then
