@@ -22,7 +22,7 @@ Manager: <%= select :manager, :name, @managers, :selected => @selected_manager %
 					<td class="order_cell">
 						<a href=<%= url_for(:action => 'show', :controller => 'orders', :id => o) %>>
 							<div class="order_number"><%=h o.buyer_order_number %></div>
-							<div class="title" title="<%=h o.title %>"><%=h truncate(o.title, 35).gsub(/\//, ' / ').gsub(/\\/, ' \ ') %></div>
+							<div class="title" title="<%=h o.title %>"><%=h truncate(o.title, 35).gsub(/\//, ' / ').gsub(/\\/, ' \ ') if truncate(o.title, 35) %></div>
 							<div class="customer" title="<%=h o.customer %>"><%=h truncate(o.customer, 22) %></div>
 <%						if i == 3 or i == 4 or i == 5 %>
 							<div class="computers"><% qt = o.comp_qty.to_i > 7 ? 1 : o.comp_qty.to_i; qt.times { %><%= image_tag 'computer.png', :style => 'vertical-align: middle' %><% } %><%= "&times;#{o.comp_qty}" if o.comp_qty.to_i > 7 %></div>
