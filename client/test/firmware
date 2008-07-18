@@ -62,7 +62,7 @@ cat $FIRMWARES | while read component; do
 					for adapter_num in `einarc -l | grep "$einarc_module" | awk '{print $2}'`; do
 						current_version=`einarc -t "$einarc_module" -a $adapter_num adapter info |
 							sed -n '/Firmware version/s/^Firmware version\s*\(.*\)$/\1/pg'`
-						if [ "$current_version" = $version ]; then
+						if [ "$current_version" = "$version" ]; then
 							true
 						else
 							print_green_message "Trying to update firmware on $adapter_num adapter..."
@@ -82,7 +82,7 @@ cat $FIRMWARES | while read component; do
 			else
 				current_version=`einarc -t "$einarc_module" adapter info |
 					sed -n '/Firmware version/s/^Firmware version\s*\(.*\)$/\1/pg'`
-				if [ "$current_version" = $version ]; then
+				if [ "$current_version" = "$version" ]; then
 					true
 				else
 					print_green_message "Trying to update firmware..."
@@ -92,7 +92,7 @@ cat $FIRMWARES | while read component; do
 						sleep 30
 						hard_reboot
 					else
-						current_version="Unable to update firmware via einarc."
+						print_red_message "Failed to update firmware via einarc"
 					fi
 				fi
 			fi
@@ -101,7 +101,7 @@ cat $FIRMWARES | while read component; do
 	esac
 
 	# Reboot with necessary reflasher
-	[ "$current_version" != $version ] || continue
+	[ "$current_version" != "$version" ] || continue
 	print_red_message "Necessary $type firmware version does not found!"
 	print_red_message "Found \"$current_version\", instead of \"$version\""
 	print_red_message "Going to reflash with \"$firmware_file\""
