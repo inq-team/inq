@@ -1,6 +1,6 @@
 .EXPORT_ALL_VARIABLES:
 
-SUBDIRS=watchdog wait-string einarc stream-mem whetstone dhrystone bytemark unixbench hdd-badblocks bindings memtester thermo
+SUBDIRS=wait-string einarc bytemark unixbench hdd-badblocks bindings memtester thermo
 
 include ../../Makefile.config
 
