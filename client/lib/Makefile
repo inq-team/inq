@@ -1,6 +1,6 @@
 .EXPORT_ALL_VARIABLES:
 
-SUBDIRS=wait-string einarc bytemark unixbench hdd-badblocks bindings memtester thermo
+SUBDIRS=wait-string einarc hdd-badblocks bindings thermo
 
 include ../../Makefile.config
 
