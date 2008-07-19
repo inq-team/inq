@@ -116,7 +116,7 @@ while [ "$returncode" != 1 ] && [ "$returncode" != 250 ]; do
 		--item-help
 		--backtitle "Inquisitor v$INQ_VERSION"
 		--title "$HUMAN_NAME"
-		--form "Here is a possible piece of a configuration program."
+		--form 'Configurable parameters for this test:'
 		20 70 0
 __EOF__
 
@@ -147,7 +147,8 @@ __EOF__
 
 	case $returncode in
 	0)
-		break;
+		clear
+		break
 		;;
 	2)
 		DESCRIPTION=`sed -ne '/^# *DESCRIPTION=/ s/# *DESCRIPTION=//p' <$0`
