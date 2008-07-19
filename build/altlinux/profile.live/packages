@@ -97,3 +97,6 @@ memtest86+
 stream-mem
 dhrystone
 whetstone
+unixbench
+bytemark
+memtester
