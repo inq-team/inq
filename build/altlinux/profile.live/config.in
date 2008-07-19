@@ -3,8 +3,7 @@ ORIGIN="Inquisitor"
 SUITE="Live CD"
 CODENAME="ALT Linux base"
 VERSION="@@INQ_VERSION@@"
-THEME=compact
-KERNEL=kernel-image-std-smp
+THEME=inquisitor-livecd
 LANGS="en_US"
 ARCH=@@TARGET@@
 
