@@ -88,7 +88,7 @@ __EOF__
 		cat <<__EOF__ >$HOME/test_script
 PLANNER=1 TEST_NAME=whetstone LOOPS=200000 run_test whetstone
 PLANNER=1 TEST_NAME=dhrystone DURATION=300 run_test dhrystone
-PLANNER=1 TEST_NAME=stream run_test dhrystone
+PLANNER=1 TEST_NAME=stream run_test stream
 PLANNER=1 TEST_NAME=hdparm AVG_SAMPLES=5 run_test hdparm
 PLANNER=1 TEST_NAME=unixbench run_test unixbench
 PLANNER=1 TEST_NAME=bytemark run_test bytemark
@@ -101,7 +101,7 @@ __EOF__
 			cat <<__EOF__ >$HOME/test_script
 PLANNER=1 TEST_NAME=whetstone LOOPS=200000 run_test whetstone
 PLANNER=1 TEST_NAME=dhrystone DURATION=300 run_test dhrystone
-PLANNER=1 TEST_NAME=stream run_test dhrystone
+PLANNER=1 TEST_NAME=stream run_test stream
 PLANNER=1 TEST_NAME=hdparm AVG_SAMPLES=5 run_test hdparm
 PLANNER=1 TEST_NAME=bonnie run_test bonnie
 PLANNER=1 TEST_NAME=unixbench run_test unixbench
