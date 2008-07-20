@@ -2,6 +2,7 @@
 
 . /etc/inquisitor/global
 
+export TERM=linux
 DIALOG=dialog
 
 test_descriptions()
@@ -40,7 +41,7 @@ while true; do
 	retval=$?
 	exec 3>&-
 
-	clear
+	reset
 
 	case $retval in
 	0)
@@ -65,12 +66,11 @@ PLANNER=1 TEST_NAME=memory TEST_LOOPS=1 LOGTIME=120 run_test memory
 PLANNER=1 TEST_NAME=hdd-smart LOGTIME=120 run_test fdd
 PLANNER=1 TEST_NAME=fdd FLOPPY_SIZE=1440 run_test fdd
 __EOF__
-		echo "/usr/bin/inq-live" >>$HOME/test_script
 		inquisitor
 		;;
 	Full)
 		if $DIALOG --backtitle 'Inquisitor Live: Full tests loop' --title 'WARNING!' --clear --yesno 'This is a full test that will overwrite all the contents of your hard drives! Are you sure you want to run this test?' 8 60; then
-			clear
+			reset
 			cat <<__EOF__ >$HOME/test_script
 PLANNER=1 TEST_NAME=cpu TESTTIME=1800 run_test cpu
 PLANNER=1 TEST_NAME=memory TEST_LOOPS=1 LOGTIME=120 run_test memory
@@ -79,7 +79,6 @@ PLANNER=1 TEST_NAME=hdd-passthrough DISK_GROUP_SIZE=8 MINIMAL_STRESS_TIME=600 ST
 PLANNER=1 TEST_NAME=hdd-array JOBS=16 TIMEOUT=3600 STRESS_TREE=/usr/share/inquisitor/linux-2.6.22.5-31-stress.tar.gz LOGTIME=120 run_test hdd-array
 PLANNER=1 TEST_NAME=fdd FLOPPY_SIZE=1440 run_test fdd
 __EOF__
-			echo "/usr/bin/inq-live" >>$HOME/test_script
 			inquisitor
 		else
 			continue
@@ -94,12 +93,11 @@ PLANNER=1 TEST_NAME=hdparm AVG_SAMPLES=5 run_test hdparm
 PLANNER=1 TEST_NAME=unixbench run_test unixbench
 PLANNER=1 TEST_NAME=bytemark run_test bytemark
 __EOF__
-		echo "/usr/bin/inq-live" >>$HOME/test_script
 		inquisitor
 		;;
 	Benchmark-RW)
 		if $DIALOG --backtitle 'Inquisitor Live: Destructive benchmark test loop' --title 'WARNING!' --clear --yesno 'This is test run will overwrite all the contents of your hard drives! Are you sure you want to run this test?' 8 60; then
-			clear
+			reset
 			cat <<__EOF__ >$HOME/test_script
 PLANNER=1 TEST_NAME=whetstone LOOPS=200000 run_test whetstone
 PLANNER=1 TEST_NAME=dhrystone DURATION=300 run_test dhrystone
@@ -109,7 +107,6 @@ PLANNER=1 TEST_NAME=bonnie run_test bonnie
 PLANNER=1 TEST_NAME=unixbench run_test unixbench
 PLANNER=1 TEST_NAME=bytemark run_test bytemark
 __EOF__
-			echo "/usr/bin/inq-live" >>$HOME/test_script
 			inquisitor
 		else
 			continue
@@ -123,7 +120,7 @@ __EOF__
 		retval=$?
 		exec 3>&-
 		if [ "$retval" = 0 ]; then
-			clear
+			reset
 			echo "Running test '$RESULT'"
 			$SHARE_DIR/test/$RESULT
 		else
@@ -141,7 +138,7 @@ __EOF__
 		retval=$?
 		exec 3>&-
 		if [ "$retval" = 0 ]; then
-			clear
+			reset
 			$DIALOG --clear --backtitle "Inquisitor Live: View test results: $RESULT" --textbox "$HOME/$RESULT" 0 0
 			continue
 		else
@@ -157,7 +154,7 @@ __EOF__
 		retval=$?
 		exec 3>&-
 		if [ "$retval" = 0 ]; then
-			clear
+			reset
 			echo 'Saving test results...'
 			find $HOME -maxdepth 1 -type f | xargs tar -cvzf "$RESULT"
 			echo 'Saving complete'
