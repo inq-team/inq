@@ -98,5 +98,3 @@ print_green_message "TESTING FINISHED"
 print_green_message "================"
 
 testing_finished
-
-bash
