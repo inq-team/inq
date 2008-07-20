@@ -152,7 +152,7 @@ __EOF__
 	case $returncode in
 	0)
 		# Workaround for messing up terminal in dialog while running under init
-		reset
+		reset -Q
 		break
 		;;
 	2)

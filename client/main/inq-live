@@ -41,7 +41,7 @@ while true; do
 	retval=$?
 	exec 3>&-
 
-	reset
+	reset -Q
 
 	case $retval in
 	0)
@@ -70,7 +70,7 @@ __EOF__
 		;;
 	Full)
 		if $DIALOG --backtitle 'Inquisitor Live: Full tests loop' --title 'WARNING!' --clear --yesno 'This is a full test that will overwrite all the contents of your hard drives! Are you sure you want to run this test?' 8 60; then
-			reset
+			reset -Q
 			cat <<__EOF__ >$HOME/test_script
 PLANNER=1 TEST_NAME=cpu TESTTIME=1800 run_test cpu
 PLANNER=1 TEST_NAME=memory TEST_LOOPS=1 LOGTIME=120 run_test memory
@@ -97,7 +97,7 @@ __EOF__
 		;;
 	Benchmark-RW)
 		if $DIALOG --backtitle 'Inquisitor Live: Destructive benchmark test loop' --title 'WARNING!' --clear --yesno 'This is test run will overwrite all the contents of your hard drives! Are you sure you want to run this test?' 8 60; then
-			reset
+			reset -Q
 			cat <<__EOF__ >$HOME/test_script
 PLANNER=1 TEST_NAME=whetstone LOOPS=200000 run_test whetstone
 PLANNER=1 TEST_NAME=dhrystone DURATION=300 run_test dhrystone
@@ -120,7 +120,7 @@ __EOF__
 		retval=$?
 		exec 3>&-
 		if [ "$retval" = 0 ]; then
-			reset
+			reset -Q
 			echo "Running test '$RESULT'"
 			$SHARE_DIR/test/$RESULT
 		else
@@ -138,7 +138,7 @@ __EOF__
 		retval=$?
 		exec 3>&-
 		if [ "$retval" = 0 ]; then
-			reset
+			reset -Q
 			$DIALOG --clear --backtitle "Inquisitor Live: View test results: $RESULT" --textbox "$HOME/$RESULT" 0 0
 			continue
 		else
@@ -154,7 +154,7 @@ __EOF__
 		retval=$?
 		exec 3>&-
 		if [ "$retval" = 0 ]; then
-			reset
+			reset -Q
 			echo 'Saving test results...'
 			find $HOME -maxdepth 1 -type f | xargs tar -cvzf "$RESULT"
 			echo 'Saving complete'
