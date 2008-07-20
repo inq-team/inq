@@ -109,6 +109,11 @@ done >"$UI_TMP/var-src" 2>"$UI_TMP/var-key"
 # Do a general parameter editor/confirmation dialog in curses
 returncode=0
 while [ "$returncode" != 1 ] && [ "$returncode" != 250 ]; do
+	# Cancel dialogs if there's no variables
+	if ! grep -q '^# *VAR=' $TEST_FILENAME; then
+		break
+	fi
+
 	# Set up parameter editor dialog: fixed part
 	cat >"$UI_TMP/dialog" <<__EOF__
 		--help-button
@@ -116,14 +121,13 @@ while [ "$returncode" != 1 ] && [ "$returncode" != 250 ]; do
 		--item-help
 		--backtitle "Inquisitor v$INQ_VERSION"
 		--title "$HUMAN_NAME"
-		--form 'Configurable parameters for this test:'
+		--form "Configurable parameters for this test:"
 		20 70 0
 __EOF__
 
 	# Set up parameter editor dialog: variable part
 	i=1
-	# Are there any test's variables existence
-	[ -z "`sed -ne '/^# *VAR=/ s/^# *VAR=\(.*\):\(.*\):\(.*\):\(.*\)$/\1   \4/p' <$TEST_FILENAME`" ] && break
+
 	sed -ne '/^# *VAR=/ s/^# *VAR=\(.*\):\(.*\):\(.*\):\(.*\)$/\1	\4/p' <$TEST_FILENAME | while read kv; do
 		k=`echo "$kv" | cut -f1`
 		help=`echo "$kv" | cut -f2`
@@ -147,7 +151,8 @@ __EOF__
 
 	case $returncode in
 	0)
-		clear
+		# Workaround for messing up terminal in dialog while running under init
+		reset
 		break
 		;;
 	2)
