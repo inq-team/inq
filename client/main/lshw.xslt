@@ -34,6 +34,14 @@
 	</component>
 </xsl:template>
 
+<xsl:template match="//node[description='InfiniBand']">
+	<component>
+		<type>InfiniBand</type>
+		<vendor><xsl:value-of select="vendor"/></vendor>
+		<model><xsl:value-of select="product"/></model>
+	</component>
+</xsl:template>
+
 <xsl:template match="text()"/>
 
 </xsl:stylesheet>
