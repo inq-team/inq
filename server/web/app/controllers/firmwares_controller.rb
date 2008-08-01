@@ -97,7 +97,8 @@ class FirmwaresController < ApplicationController
 
 	def live_component
 		computer = Computer.find_by_id(params[:computer])
-		@components = computer ? computer.last_testing.components.collect { |x| [x.model.name, x.model.id] } : []
+		@components = computer ? computer.last_testing.components.collect { |x| ["#{x.model.group.name}: #{x.model.vendor} #{x.model.name}", x.model.id] } : []
+#		@components = computer ? computer.last_testing.components.collect { |x| [x.model.name, x.model.id] } : []
 		render(:layout => false)
 	end
 
