@@ -7,7 +7,7 @@
 <div class="form_head">Search</div>
 <div class="form_body">
 	<% form_tag  'search', :method => :get do %>
-		<center>
+		<div align="center">
 		<table cellspacing="4" cellpadding="0">
 			<tr>
 				<td><label for="computer_serial">Computer #:</label></td>
@@ -33,7 +33,7 @@
  			</tr>
 		</table>
 		<%= submit_tag 'Search', :style => 'margin: 1em' %>
-		</center>
+		</div>
 	<% end %>
 </div>
 	<div id="results">
@@ -44,14 +44,28 @@
 		<table>
 		<% @orders.to_a.each do |ord| %>
 			<tr><td class="order_cell" width="30%">
-				<a href="<%= url_for(:action => 'show', :controller => 'orders', :id => ord) %>">
-					<div class="order_number"><%=h ord.buyer_order_number %></div>
-					<div class="title"><%=h ord.title.gsub(/\//, ' / ').gsub(/\\/, ' \ ') %></div>
-<% if ord.order_stages.first and ord.order_stages.first.start %>
-					<div class="date"><%= ord.order_stages.first.start.strftime('%Y-%m-%d') %></div>
-<% end %>
-					<div class="customer" title="<%=h ord.customer %>"><%=h truncate(ord.customer, 50) %></div>
-				</a>
+				<div class="order_number">
+					<a href="<%= url_for(:action => 'show', :controller => 'orders', :id => ord) %>">
+						<%=h ord.buyer_order_number %>
+					</a>
+				</div>
+				<div class="title">
+					<a href="<%= url_for(:action => 'show', :controller => 'orders', :id => ord) %>">
+						<%=h ord.title.gsub(/\//, ' / ').gsub(/\\/, ' \ ') %>
+					</a>
+				</div>
+				<% if ord.order_stages.first and ord.order_stages.first.start %>
+					<div class="date">
+						<a href="<%= url_for(:action => 'show', :controller => 'orders', :id => ord) %>">
+							<%= ord.order_stages.first.start.strftime('%Y-%m-%d') %>
+						</a>
+					</div>
+				<% end %>
+				<div class="customer" title="<%=h ord.customer %>">
+					<a href="<%= url_for(:action => 'show', :controller => 'orders', :id => ord) %>">
+						<%=h truncate(ord.customer, 50) %>
+					</a>
+				</div>
 			</td>
 			<td class="computer_cell" width="70%">
 				<% ord.computers.each { |c| %>
