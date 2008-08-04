@@ -1,6 +1,6 @@
 #!/bin/sh -e
-# NAME=DD
-# DESCRIPTION=Actually this is not a real test. It can be used to write prepared raw disk image using DD utility.
+# NAME=Partimage
+# DESCRIPTION=Actually this is not a real test. It can be used to write prepared raw disk image using Partimage utility.
 # DESTROYS_HDD=true
 # IS_INTERACTIVE=false
 # POWEROFF_DURING_TEST=false
@@ -15,13 +15,8 @@
 
 . /usr/share/inquisitor/functions-test
 
-# Perform writing itself
+# Perform disk image restoring itself
 cd $SHARE_DIR/firmwares
-dd if="$IF" of=/dev/"$OF" bs=$BLOCKSIZE count=$COUNT skip=$SKIP || test_failed 'DD failed'
-
-# Call sfdisk to reread partition table if it was written,
-# otherwise it is not dangerous operation.
-sleep 5
-sfdisk -R /dev/"$OF"
+partimage restore --batch /dev/"$TARGET" "$SOURCE" || test_failed 'Partimage failed'
 
 test_succeeded
