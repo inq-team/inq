@@ -1,4 +1,4 @@
-<form method="get" style="text-align: right; padding: 0.2em">
+<form method="get" style="text-align: right; padding: 0.2em" action="/orders">
 Manager: <%= select :manager, :name, @managers, :selected => @selected_manager %>
 <input type="submit" value="&gt;&gt;" />
 </form>
@@ -17,18 +17,38 @@ Manager: <%= select :manager, :name, @managers, :selected => @selected_manager %
 		<% @staging.each_with_index { |ost, i| %>
 		<td style="vertical-align: top<%= '; border-right: none' if i == 6 %>">
 			<table width="100%">
+				<%= '<tr><td>&nbsp;</td></tr>' if ost.length == 0 %>
 				<%	ost.each { |o| %>
 				<tr>
 					<td class="order_cell">
-						<a href=<%= url_for(:action => 'show', :controller => 'orders', :id => o) %>>
-							<div class="order_number"><%=h o.buyer_order_number %></div>
-							<div class="title" title="<%=h o.title %>"><%=h truncate(o.title, 35).gsub(/\//, ' / ').gsub(/\\/, ' \ ') if truncate(o.title, 35) %></div>
-							<div class="customer" title="<%=h o.customer %>"><%=h truncate(o.customer, 22) %></div>
+						<a href="<%= url_for(:action => 'show', :controller => 'orders', :id => o) %>">
+						<div class="order_number">
+							<a href="<%= url_for(:action => 'show', :controller => 'orders', :id => o) %>">
+								<%=h o.buyer_order_number %>
+							</a>
+						</div>
+						<div class="title" title="<%=h o.title %>">
+							<a href="<%= url_for(:action => 'show', :controller => 'orders', :id => o) %>">
+								<%=h truncate(o.title, 35).gsub(/\//, ' / ').gsub(/\\/, ' \ ') if truncate(o.title, 35) %>
+							</a>
+						</div>
+						<div class="customer" title="<%=h o.customer %>">
+							<a href="<%= url_for(:action => 'show', :controller => 'orders', :id => o) %>">
+								<%=h truncate(o.customer, 22) %>
+							</a>
+						</div>
 <%						if i == 3 or i == 4 or i == 5 %>
-							<div class="computers"><% qt = o.comp_qty.to_i > 7 ? 1 : o.comp_qty.to_i; qt.times { %><%= image_tag 'computer.png', :style => 'vertical-align: middle' %><% } %><%= "&times;#{o.comp_qty}" if o.comp_qty.to_i > 7 %></div>
+							<div class="computers">
+								<a href="<%= url_for(:action => 'show', :controller => 'orders', :id => o) %>">
+									<% qt = o.comp_qty.to_i > 7 ? 1 : o.comp_qty.to_i; qt.times { %><%= image_tag 'computer.png', :style => 'vertical-align: middle' %><% } %><%= "&times;#{o.comp_qty}" if o.comp_qty.to_i > 7 %>
+								</a>
+							</div>
 <%						end %>
-							<div class="timer"><%= format_delta1(o.from_delay.to_i) %></div>
-						</a>
+						<div class="timer">
+							<a href="<%= url_for(:action => 'show', :controller => 'orders', :id => o) %>">
+								<%= format_delta1(o.from_delay.to_i) %>
+							</a>
+						</div>
 					</td>
 				</tr>
 				<%	} %>
