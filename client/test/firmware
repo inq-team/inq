@@ -7,6 +7,7 @@
 # VERSION=0.1
 # TAGS=bios,firmware
 # DEPENDS=Mainboard,Disk Controller,BMC
+# VAR=FORCE_FIRMWARES_LIST:string::Forced firmwares list over that sended by server. Newlines replaced by twice doubledots
 
 . /usr/share/inquisitor/functions-test
 
@@ -19,6 +20,11 @@ FIRMWARES=`mktemp`
 
 # Get needed firmwares list for current testing computer from server
 get_needed_firmwares_list > $FIRMWARES || test_failed "Unable to get needed firmwares list"
+[ -z "$FORCE_FIRMWARES_LIST" ] || perl -e '@s=split("::",$ENV{FORCE_FIRMWARES_LIST});
+					   for($i=1; $i<$#s+2; $i+=3){
+					   	print "$s[$i-1]::$s[$i]::$s[$i+1]\n" unless $s[$i-1] =~ /^$/;
+					   };' > $FIRMWARES
+
 [ ! -s $FIRMWARES ] && test_succeeded "No firmwares needed to be updated"
 
 # Parse each component
