@@ -97,7 +97,7 @@ if raid-wizard-optimal; then
 	# Temporary checking for correct number of JOBS
 	# This need caused by small memory amount computers
 	TOTAL_MEMORY=$(( `grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024 ))
-	[ "$TOTAL_MEMORY" -lt 512 ] && JOBS=4 || true
+	[ "$TOTAL_MEMORY" -lt 600 ] && JOBS=4 || true
 
 	TOTAL_START=`date "+%s"`
 	test_promise_time $TESTTIME
