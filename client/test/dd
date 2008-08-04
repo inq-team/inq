@@ -1,0 +1,27 @@
+#!/bin/sh -e
+# NAME=DD
+# DESCRIPTION=Actually this is not a real test. It can be used to write prepared raw disk image.
+# DESTROYS_HDD=true
+# IS_INTERACTIVE=false
+# POWEROFF_DURING_TEST=false
+# VERSION=0.1
+# TAGS=
+# DEPENDS=HDD,Disk Controller
+# VAR=IF:string:raw_disk_image:Absolute of relative path to source raw disk image to be written
+# VAR=OF:string:sda:Target device name that will be overwritten
+# VAR=BLOCKSIZE:int:1024:Blocksize, KiB
+# VAR=SKIP:int:0:Number of blocks to skip
+# VAR=COUNT:int:1024:Number of blocks to be written
+
+. /usr/share/inquisitor/functions-test
+
+# Perform writing itself
+cd $SHARE_DIR/firmwares
+dd if="$IF" of=/dev/"$OF" bs=$BLOCKSIZE count=$COUNT skip=$SKIP || test_failed 'DD failed'
+
+# Call sfdisk to reread partition table if it was written,
+# otherwise it is not dangerous operation.
+sleep 5
+sfdisk -R /dev/"$OF"
+
+test_succeeded
