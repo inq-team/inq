@@ -8,8 +8,6 @@
 # TAGS=bios,firmware
 # DEPENDS=Mainboard,Disk Controller,BMC
 
-# UNTESTED DEVELOPMENT VERSION!
-
 . /usr/share/inquisitor/functions-test
 
 exit_handler()
@@ -28,6 +26,8 @@ cat $FIRMWARES | while read component; do
 	type=`echo $component | awk -F :: '{print $1}'`
 	version=`echo $component | awk -F :: '{print $2}'`
 	firmware_file=`echo $component | awk -F :: '{print $3}'`
+
+	echo "Current component: $type"
 
 	# Detect version
 	case $type in
@@ -101,7 +101,12 @@ cat $FIRMWARES | while read component; do
 	esac
 
 	# Reboot with necessary reflasher
-	[ "$current_version" != "$version" ] || continue
+	if [ "$current_version" = "$version" ]; then
+		echo "Needed version \"$version\" found"
+		continue
+	else
+		true
+	fi
 	print_red_message "Necessary $type firmware version does not found!"
 	print_red_message "Found \"$current_version\", instead of \"$version\""
 	print_red_message "Going to reflash with \"$firmware_file\""
