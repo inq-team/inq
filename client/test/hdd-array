@@ -11,6 +11,7 @@
 # VAR=LOGTIME:int:120:Time between progress updates, sec
 # VAR=JOBS:int:16:Number of parallely running jobs during compile
 # VAR=STRESS_TREE:string:linux-2.6.22.5-31-stress.tar.gz:Tarball file containing stress test tree
+# VAR=MINIMAL_DRIVE_SIZE:int:2048:That is less than this amount is an flash device, MiB
 
 . /usr/share/inquisitor/functions-test
 
@@ -102,6 +103,8 @@ if raid-wizard-optimal; then
 	test_promise_time $TESTTIME
 
 	for i in `get_hdds_list`; do
+		drive_size=`cat /sys/block/$i/size`
+		[ "$drive_size" -lt "$MINIMAL_DRIVE_SIZE" ] && continue
 		array_stress_check $i
 	done
 
