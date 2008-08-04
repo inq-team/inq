@@ -3,12 +3,12 @@
 <tr><td class="panel">
 	<h1>Name: <%= @profile.name ? @profile.name : 'n/a' %></h1>
 	<div class="content">
-	<pre><code><%=h @text %></code></pre>
-	<p><b>Model: </b><%= @profile.model ? @profile.model.name : 'n/a' %></p>
-	<p><b>Feature: </b><%= @profile.feature ? @profile.feature : 'n/a' %></p>
-</div>
-</td></td>
+		<pre><code><%=h @text %></code></pre>
+		<p><b>Model: </b><%= @profile.model ? @profile.model.name : 'n/a' %></p>
+		<p><b>Feature: </b><%= @profile.feature ? @profile.feature : 'n/a' %></p>
+	</div>
+</td></tr>
 </table>
 
-<font size=4><%= link_to 'Edit', :action => 'edit', :id => @profile %> |
+<font size="4"><%= link_to 'Edit', :action => 'edit', :id => @profile %> |
 <%= link_to 'Back', :action => 'index' %></font>
