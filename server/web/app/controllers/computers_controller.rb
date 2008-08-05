@@ -166,7 +166,7 @@ class ComputersController < ApplicationController
 	end
 
 	def compare_fast
-		reffilenames = ['/tmp/refcomp.yml']
+		reffilenames = ["#{TFTP_DIR}/refcomp.yml"]
 		for file_name in reffilenames
 			unless File.exist?(file_name)
 				head(:status => 500)
