@@ -167,7 +167,7 @@ class ComputersController < ApplicationController
 
 	def compare_fast
 		reffilenames = (params[:files] || '').split(',').map{|fn| "#{TFTP_DIR}/#{fn}"}
-
+		
 		for file_name in reffilenames
 			unless File.exist?(file_name)
 				head(:status => 500)
@@ -184,7 +184,8 @@ class ComputersController < ApplicationController
 		excluded = (params[:excluded] || '').split(',').map{|x| x.to_i }
 		excluded.each{|e| source.delete(e) }
 		
-		for ref in reffilenames.map{|fn| File.open(fn) }.map{|f| YAML::load(f) }			
+		for ref in reffilenames.map{|fn| File.open(fn) }.map{|f| YAML::load(f) }
+			excluded.each{|e| ref.delete(e) }
 			if ref != source
 				head(:status => 500)
 				return
