@@ -159,3 +159,8 @@ boot_from_image()
 		return 1
 	fi
 }
+
+compare_fast()
+{
+	curl -sf "$REST_SERVER/computers/compare_fast/$COMPUTER_ID.xml"
+}

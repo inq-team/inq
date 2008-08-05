@@ -1,0 +1,17 @@
+#!/bin/sh -e
+# NAME=Reference XML to Detects comparison.
+# DESCRIPTION=Compare detects with pre-generated XML.
+# DESTROYS_HDD=false
+# IS_INTERACTIVE=false
+# POWEROFF_DURING_TEST=false
+# VERSION=0.1
+# DEPENDS=BMC,CPU,Chassis,Disk Controller,Floppy,HDD,Mainboard,Memory,NIC,OSD,Platform,USB,Video,ODD,GPRS Modem,USB Mass Storage
+# TAGS=
+
+. /usr/share/inquisitor/functions-test
+
+if compare_fast; then
+ test_succeeded
+else
+ test_failed
+fi
