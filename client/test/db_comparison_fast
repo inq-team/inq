@@ -7,8 +7,8 @@
 # VERSION=0.1
 # DEPENDS=BMC,CPU,Chassis,Disk Controller,Floppy,HDD,Mainboard,Memory,NIC,OSD,Platform,USB,Video,ODD,GPRS Modem,USB Mass Storage
 # TAGS=
-# VAR=FILENAMES::Reference files
-# VAR=EXCLUDED_MODELS::Excluded component models from comparison
+# VAR=FILENAMES:string::Reference files
+# VAR=EXCLUDED_MODELS:string::Excluded component models from comparison
 
 . /usr/share/inquisitor/functions-test
 
