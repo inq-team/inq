@@ -166,46 +166,28 @@ class ComputersController < ApplicationController
 	end
 
 	def compare_fast
-		REFFILES = ['refcomp.xml']
-		for file_name in REFFILES
+		reffilenames = ['/tmp/refcomp.yml']
+		for file_name in reffilenames
 			unless File.exist?(file_name)
 				head(:status => 500)
 				return
 			end
 		end
-		
+
 		components = Computer.find(params[:id]).last_testing.components
-		components.each { |c| c.model.group.name = Mykit::Keywords::GROUP_TRANS[c.model.group.name] if c.model.group and Mykit::Keywords::GROUP_TRANS[c.model.group.name] }
 		source = {}
 		for c in components
 			 source[c.component_model_id] = components.find_all{|x| x.component_model_id == c.component_model_id }.size
 		end
-		
-		list = REXML::Element.new 'components'
-		for k, v in source
-			comp = REXML::Element.new 'component'
-			comp.add_element 'model'
-			comp.elements['model'].text = k
-			comp.add_element 'qty'
-			comp.elements['qty'].text = v
-			list.add_element comp
-		end
-		doc = REXML::Document.new
-		doc.add_element list
-		doc_text = ''
-		doc.write(doc_text, 0)
-		
-		for file in REFILE.map{|f| File.new(f) }
-			refdoc = REXML::Document.new(file)
-			refdoc_text = ''
-			refdoc.write(refdoc_text, 0)
-			if doc_text != refdoc_text
+
+		for ref in reffilenames.map{|fn| File.open(fn) }.map{|f| YAML::load(f) }			
+			if ref != source
 				head(:status => 500)
 				return
 			end
 		end
-		
-		head(:ok)
+
+		head :ok
 	end
 
 	def audit
