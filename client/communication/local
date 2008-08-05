@@ -137,3 +137,9 @@ check_audit()
 	print_red_message "check_audit() is not available in LiveCD version"
 	false
 }
+
+compare_fast()
+{
+	print_red_message "compare_fast() is not available in LiveCD version"
+	false
+}

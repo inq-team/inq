@@ -1,5 +1,5 @@
 #!/bin/sh -e
-# NAME=Reference XML to Detects comparison.
+# NAME=Reference XML to Detects comparison
 # DESCRIPTION=Compare detects with pre-generated XML.
 # DESTROYS_HDD=false
 # IS_INTERACTIVE=false
@@ -11,7 +11,7 @@
 . /usr/share/inquisitor/functions-test
 
 if compare_fast; then
- test_succeeded
+	test_succeeded
 else
- test_failed
+	test_failed
 fi
