@@ -1,6 +1,6 @@
 .EXPORT_ALL_VARIABLES:
 
-SUBDIRS=wait-string einarc hdd-badblocks bindings thermo
+SUBDIRS=wait-string einarc hdd-badblocks bindings thermo inq-reboot inq-shutdown
 
 include ../../Makefile.config
 

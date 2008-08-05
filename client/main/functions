@@ -308,8 +308,7 @@ hard_reboot()
 {
 	print_red_message "Forcing hard reboot now!"
 	sleep 10
-	echo 1 > /proc/sys/kernel/sysrq
-	echo b > /proc/sysrq-trigger
+	inq-reboot
 }
 
 # Waits for 10 seconds and forces hard shutdown (usually a poweroff)
@@ -318,8 +317,7 @@ hard_shutdown()
 {
 	print_red_message "Forcing hard shutdown now!"
 	sleep 10
-	echo 1 > /proc/sys/kernel/sysrq
-	echo o > /proc/sysrq-trigger
+	inq-shutdown
 }
 
 test_succeed_if_no()
