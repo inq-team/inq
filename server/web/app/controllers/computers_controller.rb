@@ -71,7 +71,7 @@ class ComputersController < ApplicationController
 
 	def show
 		@computer = Computer.find(params[:id])
-                @sorted_testings = @computer.testings
+		@sorted_testings = @computer.testings
 		if @sorted_testings
 			@testing_number = params[:testing] ? params[:testing].to_i() : @sorted_testings.size - 1
 			redirect_to(:action => 'hw', :id => params[:id], :testing => @testing_number)
@@ -142,15 +142,15 @@ class ComputersController < ApplicationController
 
 		prepare_computer_and_testing
 		check = @testing && @testing.audit && @testing.audit.confirmation || !@computer.order
-                respond_to() do |format|
-                        format.html { 
+		respond_to() do |format|
+			format.html { 
 				if check
 					redirect_to(:action => @computer.order ? 'audit' : 'show', :id => @computer, :testing => @testing_number) 
 				else
 					head :status => 404
 				end
 			}
-                        format.xml { 
+			format.xml { 
 				if check
 					render(:xml => @testing.audit ? @testing.audit.to_xml() : "<thursday_hack />")
 				else
@@ -162,7 +162,7 @@ class ComputersController < ApplicationController
 					page << (check ? 'window.close();' : ';')
 				end
 			}
-                end
+		end
 	end
 
 	def compare_fast
@@ -232,14 +232,14 @@ class ComputersController < ApplicationController
 		end
 
 		prepare_computer_and_testing
-                @testing ? @components = @testing.components : @components = []
+		@testing ? @components = @testing.components : @components = []
 		@components.each { |c| c.model.group.name = Mykit::Keywords::GROUP_TRANS[c.model.group.name] if c.model.group and Mykit::Keywords::GROUP_TRANS[c.model.group.name] }
 		lines = @computer.order.order_lines
 		unless lines.blank?
 			min = lines.inject(lines.first.qty) { |i, j| i > j.qty ? j.qty : i } 
 			lines.each { |l| l.qty /= min }	
 		end
-                @items = lines.inject({}) { |h, l| h.merge({ l => Mykit::Parser.parse(l.name, l.sku) }) } 
+		@items = lines.inject({}) { |h, l| h.merge({ l => Mykit::Parser.parse(l.name, l.sku) }) } 
 		@comparison = Mykit::Comparison.compare(@items, @components)
 		@audit = Audit.new
 		@audit.comparison = dump_comparison(@comparison)
@@ -257,14 +257,14 @@ class ComputersController < ApplicationController
 		end
 
 		prepare_computer_tabs
-                @testing ? @components = @testing.components : @components = []
+		@testing ? @components = @testing.components : @components = []
 		@components.each { |c| c.model.group.name = Mykit::Keywords::GROUP_TRANS[c.model.group.name] if c.model.group and Mykit::Keywords::GROUP_TRANS[c.model.group.name] }
 		lines = @computer.order.order_lines
 		unless lines.blank?
 			min = lines.inject(lines.first.qty) { |i, j| i > j.qty ? j.qty : i } 
 			lines.each { |l| l.qty /= min }	
 		end
-                @items = lines.inject({}) { |h, l| h.merge({ l => Mykit::Parser.parse(l.name, l.sku) }) } 
+		@items = lines.inject({}) { |h, l| h.merge({ l => Mykit::Parser.parse(l.name, l.sku) }) } 
 		@comparison = Mykit::Comparison.compare(@items, @components)
 		@forced = 0
 		render(:action => 'audit_cached', :layout => 'computer_audit')
@@ -287,7 +287,7 @@ class ComputersController < ApplicationController
 	def print_sticker_compat
 		@computer = Computer.find(params[:id])
 		@testing_number = params[:testing].to_i()
-                @sorted_testings = @computer.testings
+		@sorted_testings = @computer.testings
 		@testing = @sorted_testings[@testing_number]			
 		count = params[:count].to_i()
 	
@@ -316,7 +316,7 @@ class ComputersController < ApplicationController
 			sticker.send_to_printer(srv, prn)
 						
 			#if sticker.send_to_printer(srv, prn)
- 				flash[:notice] = "Sent sticker to printer <strong class='printer'>#{srv}:#{prn}</strong>"
+				flash[:notice] = "Sent sticker to printer <strong class='printer'>#{srv}:#{prn}</strong>"
 			#else
 			#	flash[:error] = "Printer <strong class='printer'>#{srv}:#{ prn }</strong> reported errors."
 			#end
@@ -325,19 +325,19 @@ class ComputersController < ApplicationController
 	end
 
 	def print_sticker_profile
-                lib = Sticker::Library.new
-                @profiles = lib.by_scope('computer')
+		lib = Sticker::Library.new
+		@profiles = lib.by_scope('computer')
 		@profile = @profiles[DEFAULT_STICKER_PROFILE_FIXME]
 		if @profile
 			prepare_computer_and_testing
 	                @copies = params[:count].to_i 
 			print_sticker(DEFAULT_STICKER_PROFILE_FIXME, @copies)
-                        flash[:notice] = "Sent sticker to printer <strong class='printer'>#{@profile.printers.first.class}</strong>"
+			flash[:notice] = "Sent sticker to printer <strong class='printer'>#{@profile.printers.first.class}</strong>"
 		else
 			flash[:error] = "Profile not specified"
 		end
 		redirect_to(:action => 'sticker', :id => params[:id], :count => @copies.to_s(), :testing => @testing_number)
-        end
+	end
 
 	def print_warranty
 		lib = Sticker::Library.new
@@ -558,7 +558,7 @@ set grid"
 		name = params[:stage]
 		comment = params[:comment] || ""
 		raise "Event not supported: #{ event }." unless [:start, :finish, :fail, :require_attention, :dismiss_attention].include?(event)
-                testing = @computer.testings.last
+		testing = @computer.testings.last
 		stage = testing.testing_stages.last
 		case event
 		when :start
@@ -802,7 +802,7 @@ __EOF__
 	def label_epassport
 		@computer = Computer.find(params[:id])
 		@testing_number = params[:testing].to_i()
-                @sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
+		@sorted_testings = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }
 		@current_testing = @sorted_testings[@testing_number]
 		
 		t = if @computer.model.id == 67
@@ -913,7 +913,7 @@ __EOF__
 
 	def prepare_computer_and_testing
 		@computer = Computer.find(params[:id])
-                @sorted_testings = @computer.testings
+		@sorted_testings = @computer.testings
 		if @sorted_testings.empty?
 			@testing_number = 0
 			return
