@@ -11,7 +11,7 @@
 # VAR=OF:string:sda:Target device name that will be overwritten
 # VAR=BLOCKSIZE:int:1024:Blocksize, KiB
 # VAR=SKIP:int:0:Number of blocks to skip
-# VAR=COUNT:int:1024:Number of blocks to be written
+# VAR=COUNT:int:1024:Number of blocks to be written. If zero is specified then this parameter won't be used
 
 . /usr/share/inquisitor/functions-test
 
@@ -21,8 +21,10 @@ cd $SHARE_DIR/firmwares
 [ -e "$IF" ] || test_failed 'Source file does not exist'
 [ -b "/dev/$OF" ] || test_failed 'Target device is not block device'
 
+[ "$COUNT" -eq 0 ] && COUNT_ARG="" || COUNT_ARG="count=$COUNT"
+
 # Perform writing itself
-dd if="$IF" of=/dev/"$OF" bs=$BLOCKSIZE count=$COUNT skip=$SKIP || test_failed 'DD failed'
+dd if="$IF" of=/dev/"$OF" bs=$BLOCKSIZE $COUNT_ARG skip=$SKIP || test_failed 'DD failed'
 
 # Call sfdisk to reread partition table if it was written,
 # otherwise it is not dangerous operation.
