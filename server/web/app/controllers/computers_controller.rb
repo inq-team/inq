@@ -193,6 +193,15 @@ class ComputersController < ApplicationController
 		
 		head :ok
 	end
+	
+	def list_components
+		components = Computer.find(params[:id]).last_testing.components
+		source = {}
+		for c in components
+			 source[c.component_model_id] = components.find_all{|x| x.component_model_id == c.component_model_id }.size
+		end
+		render :text => source.to_yaml		
+	end
 
 	def audit
 		unless logged_in?
