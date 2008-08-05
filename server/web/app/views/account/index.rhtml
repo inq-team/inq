@@ -1,36 +1,34 @@
 <% form_for :account, current_person, :url => { :action => 'update' } do |f| %>
 
 <table>
-
 <tr>
-<td>Login:</td>
-<td><%= f.text_field :login, :disabled => true %></td>
+	<td>Login:</td>
+	<td><%= f.text_field :login, :disabled => true %></td>
 </tr>
 
 <tr>
-<td>Display name:</td>
-<td><%= f.text_field :display_name, :disabled => true %></td>
+	<td>Display name:</td>
+	<td><%= f.text_field :display_name, :disabled => true %></td>
 </tr>
 
 <tr>
-<td>Localized name:</td>
-<td><%= f.text_field :name %></td>
+	<td>Localized name:</td>
+	<td><%= f.text_field :name %></td>
 </tr>
 
 <tr>
-<td>ID:</td>
-<td><%= f.text_field :id, :disabled => true %></td>
+	<td>ID:</td>
+	<td><%= f.text_field :id, :disabled => true %></td>
 </tr>
 
 <tr>
-<td>Recent search, days:</td>
-<td><%= f.text_field :recent_days %></td>
-</td>
-
-<tr>
-<td colspan="2"><%= f.submit "Save" %></td>
+	<td>Recent search, days:</td>
+	<td><%= f.text_field :recent_days %></td>
 </tr>
 
+<tr>
+	<td colspan="2"><%= f.submit "Save" %></td>
+</tr>
 </table>
 
 <% end %>

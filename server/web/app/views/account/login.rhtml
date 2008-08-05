@@ -2,20 +2,20 @@
 <% form_tag do -%>
 <table id="login_form">
 <tr>
-<td><label for="login">Login:</label></td>
-<td><%= text_field_tag 'login' %></td>
+	<td><label for="login">Login:</label></td>
+	<td><%= text_field_tag 'login' %></td>
 </tr>
 
 <tr>
-<td><label for="password">Password:</label></td>
-<td><%= password_field_tag 'password' %></td>
+	<td><label for="password">Password:</label></td>
+	<td><%= password_field_tag 'password' %></td>
 </tr>
 
-<%= hidden_field_tag 'remember_me', '1' %>
-
 <tr>
-<td colspan="2" style="text-align: center"><%= submit_tag 'Login' %></td>
+	<td colspan="2" style="text-align: center"><%= submit_tag 'Login' %></td>
 </tr>
 </table>
+
+<%= hidden_field_tag 'remember_me', '1' %>
 <% end -%>
 </center>
