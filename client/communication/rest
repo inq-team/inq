@@ -162,5 +162,5 @@ boot_from_image()
 
 compare_fast()
 {
-	curl -sf "$REST_SERVER/computers/compare_fast/$COMPUTER_ID.xml"
+	curl -sf "$REST_SERVER/computers/compare_fast/$COMPUTER_ID.xml?files=$FILENAMES&excluded=$EXCLUDED"
 }

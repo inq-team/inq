@@ -166,7 +166,8 @@ class ComputersController < ApplicationController
 	end
 
 	def compare_fast
-		reffilenames = ["#{TFTP_DIR}/refcomp.yml"]
+		reffilenames = params[:files].split(',')
+		
 		for file_name in reffilenames
 			unless File.exist?(file_name)
 				head(:status => 500)
@@ -179,6 +180,9 @@ class ComputersController < ApplicationController
 		for c in components
 			 source[c.component_model_id] = components.find_all{|x| x.component_model_id == c.component_model_id }.size
 		end
+		
+		excluded = params[:excluded].split(',')
+		excluded.each{|e| source.delete(e) }
 
 		for ref in reffilenames.map{|fn| File.open(fn) }.map{|f| YAML::load(f) }			
 			if ref != source
