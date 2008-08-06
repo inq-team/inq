@@ -178,7 +178,7 @@ class ComputersController < ApplicationController
 		model_ids = Computer.find(params[:id]).last_testing.components.map{|x| x.component_model_id }
 		source = {}
 		for m in model_ids
-			sources[m] ? sources[m] = 1 : sources[m] += 1
+			source[m].nil? ? source[m] = 1 : source[m] += 1
 		end
 	
 		excluded = (params[:excluded] || '').split(',').map{|x| x.to_i }
@@ -199,7 +199,7 @@ class ComputersController < ApplicationController
 		model_ids = Computer.find(params[:id]).last_testing.components.map{|x| x.component_model_id }
 		source = {}
 		for m in model_ids
-			sources[m] ? sources[m] = 1 : sources[m] += 1
+			source[m].nil? ? source[m] = 1 : source[m] += 1
 		end
 		render :text => source.to_yaml
 	end
