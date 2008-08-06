@@ -1,0 +1,70 @@
+#!/bin/sh -e
+# NAME=HDD benchmark: IOzone
+# DESCRIPTION=This benchmark measures the speed of sequential I/O to actual files. It generates and measures a variety of file operations.
+# DESTROYS_HDD=true
+# POWEROFF_DURING_TEST=false
+# VERSION=0.1
+# TAGS=benchmark,hdd
+# DEPENDS=HDD
+# VAR=FILESYSTEMS:string:ext2:Space-separated list of filesystems on what drive will be benchmarked
+# VAR=TEST_FILE_SIZE:int:0:Size of test file, MiB. If set to zero - double memory amount size will be used
+
+# !!! Untested development version !!!
+
+. /usr/share/inquisitor/functions-test
+
+exit_handler()
+{
+	[ -f "$RESULT_FILE" ] && rm -fr "$RESULT_FILE"
+	if [ -d "$SCRATCH_DIRECTORY" ]; then
+		umount -f $SCRATCH_DIRECTORY >/dev/null || true
+		rmdir $SCRATCH_DIRECTORY
+	fi
+}
+
+RESULT_FILE=`mktemp`
+SCRATCH_DIRECTORY=`mktemp -d`
+
+perform_benchmark()
+{
+	local drive=$1
+
+	for fs in $FILESYSTEMS; do
+		benchmark_drive "$drive" "$fs"
+	done
+}
+
+benchmark_drive()
+{
+	local drive=$1
+	local filesystem=$2
+
+	echo -n "Preparing $drive drive..."
+	mkfs.$filesystem $drive >$DEBUG_TTY 2>&1 ||
+	mkfs.$filesystem -f $drive >$DEBUG_TTY 2>&1 ||
+	mkfs.$filesystem --force $drive >$DEBUG_TTY 2>&1 ||
+	mkfs.$filesystem -F $drive >$DEBUG_TTY 2>&1 || test_failed 'Filesystem creation failed'
+
+	mount $drive $SCRATCH_DIRECTORY
+	echo_success
+
+	echo -n "Performing benchmark..."
+	iozone -a -g "$TEST_FILE_SIZE"m -f $SCRATCH_DIRECTORY/iozone_testfile | tee $RESULT_FILE
+	echo_success
+	
+	benchmark_submit_string "Drive: $drive FS: $filesystem" \
+	"`perl -ne 'print if /^\s+random/ .. /^$/' < $RESULT_FILE | sed -n '$d; s/^ *//g; 3,$p'`"
+
+	umount $SCRATCH_DIRECTORY
+}
+
+test_succeed_if_no hdds
+
+TOTAL_MEMORY=$(( `grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024 ))
+[ ! $TEST_FILE_SIZE -eq 0 ] || TEST_FILE_SIZE=$(($TOTAL_MEMORY * 2))
+
+for BLOCK_DEV in `get_hdds_list`; do
+	perform_benchmark $BLOCK_DEV
+done
+
+test_succeeded

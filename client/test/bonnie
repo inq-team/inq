@@ -65,53 +65,53 @@ benchmark_drive()
 	# 14,271,0,24479us,34686us,58995us,16505us,342us,141ms,847ms,2292us,
 	# 273ms,776ms,78187us,823ms
 
-	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Write char speed" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $8}'`
-	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Write char CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $9}'`
-	benchmark_submit_string "Bonnie: drive: $drive fs: $filesystem Write char latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $37}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Write char speed" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $8}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Write char CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $9}'`
+	benchmark_submit_string "Drive: $drive FS: $filesystem Write char latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $37}'`
 
-	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Write block speed" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $10}'`
-	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Write block CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $11}'`
-	benchmark_submit_string "Bonnie: drive: $drive fs: $filesystem Write block latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $38}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Write block speed" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $10}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Write block CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $11}'`
+	benchmark_submit_string "Drive: $drive FS: $filesystem Write block latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $38}'`
 
-	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Rewrite speed" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $12}'`
-	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Rewrite CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $13}'`
-	benchmark_submit_string "Bonnie: drive: $drive fs: $filesystem Rewrite latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $39}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Rewrite speed" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $12}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Rewrite CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $13}'`
+	benchmark_submit_string "Drive: $drive FS: $filesystem Rewrite latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $39}'`
 
-	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Read char speed" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $14}'`
-	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Read char CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $15}'`
-	benchmark_submit_string "Bonnie: drive: $drive fs: $filesystem Read char latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $40}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Read char speed" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $14}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Read char CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $15}'`
+	benchmark_submit_string "Drive: $drive FS: $filesystem Read char latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $40}'`
 
-	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Read block speed" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $16}'`
-	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Read block CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $17}'`
-	benchmark_submit_string "Bonnie: drive: $drive fs: $filesystem Read block latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $41}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Read block speed" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $16}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Read block CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $17}'`
+	benchmark_submit_string "Drive: $drive FS: $filesystem Read block latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $41}'`
 
-	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Random seeks time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $18}'`
-	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Random seeks CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $19}'`
-	benchmark_submit_string "Bonnie: drive: $drive fs: $filesystem Random seeks latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $42}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Random seeks time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $18}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Random seeks CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $19}'`
+	benchmark_submit_string "Drive: $drive FS: $filesystem Random seeks latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $42}'`
 
-	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Sequential file create time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $25}'`
-	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Sequential file create CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $26}'`
-	benchmark_submit_string "Bonnie: drive: $drive fs: $filesystem Sequential file create latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $43}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Sequential file create time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $25}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Sequential file create CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $26}'`
+	benchmark_submit_string "Drive: $drive FS: $filesystem Sequential file create latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $43}'`
 
-	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Sequential file read time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $27}'`
-	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Sequential file read CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $28}'`
-	benchmark_submit_string "Bonnie: drive: $drive fs: $filesystem Sequential file read latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $44}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Sequential file read time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $27}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Sequential file read CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $28}'`
+	benchmark_submit_string "Drive: $drive FS: $filesystem Sequential file read latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $44}'`
 
-	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Sequential file delete time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $29}'`
-	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Sequential file delete CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $30}'`
-	benchmark_submit_string "Bonnie: drive: $drive fs: $filesystem Sequential file delete latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $45}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Sequential file delete time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $29}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Sequential file delete CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $30}'`
+	benchmark_submit_string "Drive: $drive FS: $filesystem Sequential file delete latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $45}'`
 
-	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Random file create time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $31}'`
-	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Random file create CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $32}'`
-	benchmark_submit_string "Bonnie: drive: $drive fs: $filesystem Random file create latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $46}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Random file create time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $31}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Random file create CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $32}'`
+	benchmark_submit_string "Drive: $drive FS: $filesystem Random file create latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $46}'`
 
-	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Random file read time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $33}'`
-	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Random file read CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $34}'`
-	benchmark_submit_string "Bonnie: drive: $drive fs: $filesystem Random file read latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $47}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Random file read time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $33}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Random file read CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $34}'`
+	benchmark_submit_string "Drive: $drive FS: $filesystem Random file read latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $47}'`
 
-	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Random file delete time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $35}'`
-	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Random file delete CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $36}'`
-	benchmark_submit_string "Bonnie: drive: $drive fs: $filesystem Random file delete latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $48}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Random file delete time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $35}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Random file delete CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $36}'`
+	benchmark_submit_string "Drive: $drive FS: $filesystem Random file delete latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $48}'`
 
 	umount $SCRATCH_DIRECTORY
 }
