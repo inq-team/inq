@@ -175,10 +175,10 @@ class ComputersController < ApplicationController
 			end
 		end
 
-		components = Computer.find(params[:id]).last_testing.components
+		model_ids = Computer.find(params[:id]).last_testing.components.map{|x| x.component_model_id }
 		source = {}
-		for c in components
-			 source[c.component_model_id] = components.find_all{|x| x.component_model_id == c.component_model_id }.size
+		for m in model_ids
+			sources[m] ? sources[m] = 1 : sources[m] += 1
 		end
 	
 		excluded = (params[:excluded] || '').split(',').map{|x| x.to_i }
@@ -196,12 +196,12 @@ class ComputersController < ApplicationController
 	end
 	
 	def list_components
-		components = Computer.find(params[:id]).last_testing.components
+		model_ids = Computer.find(params[:id]).last_testing.components.map{|x| x.component_model_id }
 		source = {}
-		for c in components
-			 source[c.component_model_id] = components.find_all{|x| x.component_model_id == c.component_model_id }.size
+		for m in model_ids
+			sources[m] ? sources[m] = 1 : sources[m] += 1
 		end
-		render :text => source.to_yaml		
+		render :text => source.to_yaml
 	end
 
 	def audit
