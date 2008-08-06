@@ -1,11 +1,16 @@
-#!/bin/sh -ef
+#!/bin/sh -e
 # NAME=HDD benchmark: Bonnie
-# DESCRIPTION=This test uses bonnie++ benchmark to test hard drives performance. For every hard drive in a system, test formats it using ext2 filesystem and then runs bonnie++ benchmark. Test measures the IO throughput in situations that simulate some types of database applications. It uses a single test file size to twice the amount of RAM. Benchmark reports output/rewrite/input of char/block speed and CPU load.
+# DESCRIPTION=This test uses bonnie++ benchmark to test hard drives performance on different filesystems. For every hard drive in a system, test sequently creates specified filesystems on it and then runs bonnie++ benchmark itself. There are two sections to the program’s operations. The first is to test the IO throughput in a fashion that is designed to simulate some types of database applications. The  second is to test creation, reading, and deleting many small files in a fashion similar to the usage patterns of programs such as Squid or INN. Bonnie++ tests some of them and for each test gives a result of the amount of work done per second and the percentage of CPU time this took.
 # DESTROYS_HDD=true
 # POWEROFF_DURING_TEST=false
-# VERSION=0.1
+# VERSION=0.2
 # TAGS=benchmark,hdd
 # DEPENDS=HDD
+# VAR=FILESYSTEMS:string:ext2 ext3 vfat reiserfs xfs:Space-separated list of filesystems to be benchmarked
+# VAR=NUMBER_OF_FILES:int:2:The number of files for the file creation test. This is measured in multiples of 1024 files
+# VAR=MINIMAL_FILE_SIZE:int:10:Minimal files size, KiB
+# VAR=MAXIMAL_FILE_SIZE:int:1024:Maximal files size, KiB
+# VAR=DIRECTORIES_NUMBER:int:256:Number of directories to randomly distribute test files among them
 
 . /usr/share/inquisitor/functions-test
 
@@ -23,51 +28,93 @@ SCRATCH_DIRECTORY=`mktemp -d`
 
 perform_benchmark()
 {
-	DRIVE=$1
+	local drive=$1
 
-	# Default GNU/Linux filesystem for benchmarking
-	echo -n "Preparing $DRIVE drive..."
-	mke2fs -m0 -F $DRIVE >$DEBUG_TTY 2>&1
-	mount $DRIVE $SCRATCH_DIRECTORY
+	for fs in $FILESYSTEMS; do
+		benchmark_drive "$drive" "$fs"
+	done
+}
+
+benchmark_drive()
+{
+	local drive=$1
+	local filesystem=$2
+
+	# We have to use -f/--force/-F options to force filesystem
+	# creation on a partition that already contains one. As a rule
+	# this flags are used.
+	echo -n "Preparing $drive drive..."
+	mkfs.$filesystem $drive >$DEBUG_TTY 2>&1 ||
+	mkfs.$filesystem -f $drive >$DEBUG_TTY 2>&1 ||
+	mkfs.$filesystem --force $drive >$DEBUG_TTY 2>&1 ||
+	mkfs.$filesystem -F $drive >$DEBUG_TTY 2>&1 || test_failed 'Filesystem creation failed'
+
+	mount $drive $SCRATCH_DIRECTORY
 	echo_success
 
-	# Currently we are using single huge file
 	echo -n "Performing benchmark..."
-	bonnie++ -u root -d $SCRATCH_DIRECTORY -s $TEST_FILE_SIZE \
-		-n 1 -m benchmark 2>&1 | tee $RESULT_FILE >$DEBUG_TTY
+	TOTAL_TEST_FILES_SIZE=$(( `echo $MAXIMAL_FILE_SIZE | sed -n 's/^\([0-9]*\).$/\1/p'` * $NUMBER_OF_FILES ))
+	bonnie++ -u root -r 0 -d $SCRATCH_DIRECTORY -s $TOTAL_TEST_FILES_SIZE \
+		-n $NUMBER_OF_FILES:$MAXIMAL_FILE_SIZE:$MINIMAL_FILE_SIZE:$DIRECTORIES_NUMBER \
+		-m benchmark 2>&1 | tee $RESULT_FILE >$DEBUG_TTY
 	echo_success
 	
-	benchmark_submit_float "HDD $DRIVE output char speed" \
-	`sed -n '$p' < $RESULT_FILE | awk -F, '{print $3}'`
+	# Example CSV output
+	# 1.93c,1.93c,smatveev,1,1218007303,200M,,517,99,56805,13,35644,9,1220,
+	# 99,+++++,+++,6683,57,1,1048576,,,256,53,7,1268,61,+++++,+++,44,5,294,
+	# 14,271,0,24479us,34686us,58995us,16505us,342us,141ms,847ms,2292us,
+	# 273ms,776ms,78187us,823ms
 
-	benchmark_submit_float "HDD $DRIVE output char CPU load" \
-	`sed -n '$p' < $RESULT_FILE | awk -F, '{print $4}'`
+	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Write char speed" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $8}'`
+	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Write char CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $9}'`
+	benchmark_submit_string "Bonnie: drive: $drive fs: $filesystem Write char latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $37}'`
 
-	benchmark_submit_float "HDD $DRIVE output block speed" \
-	`sed -n '$p' < $RESULT_FILE | awk -F, '{print $5}'`
+	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Write block speed" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $10}'`
+	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Write block CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $11}'`
+	benchmark_submit_string "Bonnie: drive: $drive fs: $filesystem Write block latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $38}'`
 
-	benchmark_submit_float "HDD $DRIVE output block CPU load" \
-	`sed -n '$p' < $RESULT_FILE | awk -F, '{print $6}'`
+	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Rewrite speed" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $12}'`
+	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Rewrite CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $13}'`
+	benchmark_submit_string "Bonnie: drive: $drive fs: $filesystem Rewrite latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $39}'`
 
-	benchmark_submit_float "HDD $DRIVE rewrite speed" \
-	`sed -n '$p' < $RESULT_FILE | awk -F, '{print $7}'`
+	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Read char speed" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $14}'`
+	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Read char CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $15}'`
+	benchmark_submit_string "Bonnie: drive: $drive fs: $filesystem Read char latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $40}'`
 
-	benchmark_submit_float "HDD $DRIVE rewrite CPU load" \
-	`sed -n '$p' < $RESULT_FILE | awk -F, '{print $8}'`
+	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Read block speed" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $16}'`
+	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Read block CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $17}'`
+	benchmark_submit_string "Bonnie: drive: $drive fs: $filesystem Read block latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $41}'`
 
-	benchmark_submit_float "HDD $DRIVE input char speed" \
-	`sed -n '$p' < $RESULT_FILE | awk -F, '{print $9}'`
+	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Random seeks time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $18}'`
+	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Random seeks CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $19}'`
+	benchmark_submit_string "Bonnie: drive: $drive fs: $filesystem Random seeks latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $42}'`
 
-	benchmark_submit_float "HDD $DRIVE input char CPU load" \
-	`sed -n '$p' < $RESULT_FILE | awk -F, '{print $10}'`
+	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Sequential file create time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $25}'`
+	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Sequential file create CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $26}'`
+	benchmark_submit_string "Bonnie: drive: $drive fs: $filesystem Sequential file create latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $43}'`
+
+	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Sequential file read time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $27}'`
+	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Sequential file read CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $28}'`
+	benchmark_submit_string "Bonnie: drive: $drive fs: $filesystem Sequential file read latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $44}'`
+
+	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Sequential file delete time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $29}'`
+	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Sequential file delete CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $30}'`
+	benchmark_submit_string "Bonnie: drive: $drive fs: $filesystem Sequential file delete latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $45}'`
+
+	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Random file create time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $31}'`
+	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Random file create CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $32}'`
+	benchmark_submit_string "Bonnie: drive: $drive fs: $filesystem Random file create latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $46}'`
+
+	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Random file read time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $33}'`
+	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Random file read CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $34}'`
+	benchmark_submit_string "Bonnie: drive: $drive fs: $filesystem Random file read latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $47}'`
+
+	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Random file delete time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $35}'`
+	benchmark_submit_float "Bonnie: drive: $drive fs: $filesystem Random file delete CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $36}'`
+	benchmark_submit_string "Bonnie: drive: $drive fs: $filesystem Random file delete latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $48}'`
 
 	umount $SCRATCH_DIRECTORY
 }
-
-# We need double memory size test file, otherwise bonnie++ won't start
-# at all
-TOTAL_MEMORY=$(( `grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024 ))
-TEST_FILE_SIZE=$(($TOTAL_MEMORY * 2))
 
 test_succeed_if_no hdds
 
