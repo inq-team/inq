@@ -40,10 +40,10 @@ benchmark_drive()
 	local filesystem=$2
 
 	echo -n "Preparing $drive drive..."
-	mkfs.$filesystem $drive >$DEBUG_TTY 2>&1 ||
+	mkfs.$filesystem -F $drive >$DEBUG_TTY 2>&1 ||
 	mkfs.$filesystem -f $drive >$DEBUG_TTY 2>&1 ||
 	mkfs.$filesystem --force $drive >$DEBUG_TTY 2>&1 ||
-	mkfs.$filesystem -F $drive >$DEBUG_TTY 2>&1 || test_failed 'Filesystem creation failed'
+	mkfs.$filesystem $drive >$DEBUG_TTY 2>&1 || test_failed 'Filesystem creation failed'
 
 	mount $drive $SCRATCH_DIRECTORY
 	echo_success
