@@ -42,6 +42,7 @@ class ComputersController < ApplicationController
 		testing = @computer.testings.last
 		testing.components << Component.new(
 			:serial => params[:serial],
+			:version => params[:version],
 			:model => ComponentModel.find_or_create_by_name_and_vendor_and_component_group_id(params[:model], params[:vendor], ComponentGroup.find_or_create_by_name(params[:type]).id)
 		)
 		if @computer.save
@@ -467,6 +468,7 @@ set grid"
 				:vendor => c.elements['vendor'] && c.elements['vendor'].text || '',
 				:model => c.elements['model'] && c.elements['model'].text || '',
 				:serial => c.elements['serial'] && c.elements['serial'].text || '',
+				:version => c.elements['version'] && c.elements['version'].text || '',
 				:variance => variance += 1
 			} if c.elements['model'].text || c.elements['vendor'].text
 		}
@@ -478,6 +480,7 @@ set grid"
 				:components => components.collect() { |h|
 					Component.new(
 						:serial => h[:serial],
+						:version => h[:version],
 						:model => ComponentModel.find_or_create_by_name_and_vendor_and_component_group_id(
 							h[:model],
 							h[:vendor],
@@ -510,7 +513,8 @@ set grid"
 				:type => c.elements['type'] ? c.elements['type'].text : '',
 				:vendor => c.elements['vendor'] ? c.elements['vendor'].text : '',
 				:model => c.elements['model'] ? c.elements['model'].text : '',
-				:serial => c.elements['serial'] ? c.elements['serial'].text : ''
+				:serial => c.elements['serial'] ? c.elements['serial'].text : '',
+				:version => c.elements['version'] ? c.elements['version'].text : ''
 			}
 		}
 
@@ -518,6 +522,7 @@ set grid"
 		components.each { |h|
 			t.components << Component.new(
 				:serial => h[:serial],
+				:version => h[:version],
 				:model => ComponentModel.find_or_create_by_name_and_vendor_and_component_group_id(
 					h[:model],
 					h[:vendor],
@@ -949,7 +954,13 @@ __EOF__
 		ccp = components.dup
 		return true unless testing.components.inject(true) { |b, cmp|
 			b && ccp.delete(ccp.find() { |h|
-				(h[:vendor] == cmp.model.vendor && h[:model] == cmp.model.name) || (!h[:serial].blank? && h[:serial] == cmp.serial)
+				(h[:vendor] == cmp.model.vendor && h[:model] == cmp.model.name) ||
+				(!h[:serial].blank? && h[:serial] == cmp.serial) ||
+				(!h[:version].blank? && h[:version] == cmp.serial)
+				#(
+				#	(!h[:serial].blank? && h[:serial] == cmp.serial) ||
+				#	(!h[:version]? && h[:version] == cmp.serial)
+				#)
 			})
 		}
 		return false
