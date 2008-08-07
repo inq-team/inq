@@ -23,8 +23,8 @@ finalize()
 		mount /media/usbdisk >/dev/null 2>&1 && echo_success || echo_failure
 		echo
 		if mount | grep -q "/media/usbdisk"; then
-			pushd ~/
-				tar -cjf /media/usbdisk/`cat ~/old-full-serial | tr "/" "."`-`cat ~/publish/PROFILE`.tar.bz2 publish
+			pushd $HOME/
+				tar -cjf /media/usbdisk/`cat $HOME/old-full-serial | tr "/" "."`-`cat $HOME/publish/PROFILE`.tar.bz2 publish
 			popd
 			echo -n "Unmount USB Flash:"
 			umount /media/usbdisk >/dev/null 2>&1 && echo_success || echo_failure

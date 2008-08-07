@@ -5,4 +5,4 @@
 
 lshw `cat $HOME/lshw_dmi_p` -xml |
 	sed 's/[[:cntrl:]]//g' |
-	xsltproc $SHARE_DIR/lshw.xslt - > ~/components.xml
+	xsltproc $SHARE_DIR/lshw.xslt - > $HOME/components.xml
