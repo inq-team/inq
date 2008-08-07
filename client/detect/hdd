@@ -6,13 +6,12 @@
 einarc_detect()
 {
 	einarc -l | cut -f1 | while read TYPE; do
-		einarc -t  "$TYPE" physical list | while read L; do
+		einarc -t "$TYPE" physical list | while read L; do
 			HDD_VENDOR=`echo "$L" | cut -f2 | cut -f1 -d' '`
 			HDD_MODEL=`echo "$L" | cut -f2 | cut -f2 -d' '`
 			HDD_SERIAL=`echo "$L" | cut -f4`
-			HDD_VERSION=""
+			HDD_VERSION="" # Einarc currently doesn't support HDD version retrieving
 			echo HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" ' - einarc' >> $HOME/debug.log
-#			echo HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" ' - einarc'
 			$SHARE_DIR/add-component HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" "$HDD_VERSION"
 		done
 	done

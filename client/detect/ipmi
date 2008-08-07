@@ -4,7 +4,7 @@
 # DEPENDS=Chassis,Mainboard,Platform,Power Supply,SCSI Backplane
 
 # ===========================================================================
-# Parsing base info from ipmi
+# Parsing base info from IPMI
 # ===========================================================================
 
 if FRU_INFO=`cat $HOME/fru.log | grep -A13 'Builtin FRU Device'`; then
@@ -13,7 +13,6 @@ if FRU_INFO=`cat $HOME/fru.log | grep -A13 'Builtin FRU Device'`; then
 	CHASSIS_TYPE=`echo "$FRU_INFO" | sed -n 's/ Chassis Type *: //p' | sed 's/Unspecified//'`
 	CHASSIS_PART_NUM=`echo "$FRU_INFO" | sed -n 's/ Chassis Part Number *: //p' | sed 's/Unspecified//'`
 	CHASSIS_SERIAL=`echo "$FRU_INFO"| sed -n 's/ Chassis Serial *: //p'`
-	CHASSIS_VERSION=""
 	if [ -z "$CHASSIS_TYPE" ] || [ -z "$CHASSIS_PART_NUM" ]; then
 		SEP=''
 	else
@@ -21,16 +20,18 @@ if FRU_INFO=`cat $HOME/fru.log | grep -A13 'Builtin FRU Device'`; then
 	fi
 	CHASSIS_MODEL="$CHASSIS_TYPE$SEP$CHASSIS_PART_NUM"
 	if [ -n "$CHASSIS_TYPE" ] || [ -n "$CHASSIS_PART_NUM" ]; then
-		$SHARE_DIR/add-component Chassis "$CHASSIS_VENDOR" "$CHASSIS_MODEL" "$CHASSIS_SERIAL" "$CHASSIS_VERSION"
+		$SHARE_DIR/add-component Chassis "$CHASSIS_VENDOR" "$CHASSIS_MODEL" "$CHASSIS_SERIAL" ""
 	fi
 	
 	# Detecting mainboard
+	# Motherboard's version is BIOS version in Inquisitor
 	MB_VENDOR=`echo "$FRU_INFO" | sed -n 's/ Board Mfg *: //p'`
 	MB_PRODUCT=`echo "$FRU_INFO" | sed -n 's/ Board Product *: //p'`
 	MB_PART_NUM=`echo "$FRU_INFO" | sed -n 's/ Board Part Number *: //p'`
 	MB_SERIAL=`echo "$FRU_INFO" | sed -n 's/ Board Serial *: //p'`
 	MB_MODEL="$MB_PRODUCT / $MB_PART_NUM"
 	MB_VERSION="`grep -A 3 "BIOS Information" $HOME/dmi.log | sed -n '/Version:/s/^.*Version: \(.*\)$/\1/pg'`"
+	[ ! -z "$MB_VERSION" ] || MB_VERSION=`grep -A 5 "description: BIOS" < lshw.log | sed -n 's/^ *version: \(.*\)$/\1/p'`
 
 	# If mainboard model exists
 	if [ -n "$MB_PRODUCT" ] || [ -n "$MB_PART_NUM" ]; then
@@ -39,11 +40,12 @@ if FRU_INFO=`cat $HOME/fru.log | grep -A13 'Builtin FRU Device'`; then
 	else
 		# If IPMI detection of MB failed
 		if MB_INFO=`cat $HOME/lshw.log | grep -A5 'description: Motherboard'`; then
-			#detecting mainboard from lshw
+			# Detecting mainboard from lshw
 			MB_VENDOR=`echo "$MB_INFO" | sed -n 's/ *vendor: //p'`
 			MB_MODEL=`echo "$MB_INFO" | sed -n 's/ *product: //p'`
 			MB_SERIAL=`echo "$MB_INFO" | sed -n 's/ *serial: //p'`
-			MB_VERSION=""
+			MB_VERSION="`grep -A 3 "BIOS Information" $HOME/dmi.log | sed -n '/Version:/s/^.*Version: \(.*\)$/\1/pg'`"
+			[ ! -z "$MB_VERSION" ] || MB_VERSION=`grep -A 5 "description: BIOS" < lshw.log | sed -n 's/^ *version: \(.*\)$/\1/p'`
 			echo Mainboard "$MB_VENDOR" "$MB_MODEL" "$MB_SERIAL" ' - lshw' >> $HOME/debug.log
 			$SHARE_DIR/add-component Mainboard "$MB_VENDOR" "$MB_MODEL" "$MB_SERIAL" "$MB_VERSION"
 		fi
@@ -54,7 +56,7 @@ if FRU_INFO=`cat $HOME/fru.log | grep -A13 'Builtin FRU Device'`; then
 	PLATFORM_PRODUCT=`echo "$FRU_INFO" | sed -n 's/ Product Name *: //p'`
 	PLATFORM_PART_NUM=`echo "$FRU_INFO" | sed -n 's/ Product Part Number *: //p'`
 	PLATFORM_SERIAL=`echo "$FRU_INFO" | sed -n 's/ Product Serial *: //p'`
-	PLATFORM_VERSION=""
+	PLATFORM_VERSION=`echo "$FRU_INFO" | sed -n 's/ Product Version *: //p'`
 	if [ -z "$PLATFORM_PRODUCT" ] || [ -z "$PLATFORM_PART_NUM" ]; then
 		SEP=''
 	else
@@ -74,8 +76,8 @@ fi
 if PS_INFO=`cat $HOME/fru.log | grep -A9 'ps\.vpd'`; then
 	PS_VENDOR=`echo "$PS_INFO" | sed -n 's/ Product Manufacturer *: //p'`
 	PS_MODEL=`echo "$PS_INFO" | sed -n 's/ Product Part Number *: //p'`
+	PS_VERSION=`echo "$PS_INFO" | sed -n 's/ Product Version *: //p'`
 	PS_SERIAL=`echo "$PS_INFO" | sed -n 's/ Product Serial *: //p'`
-	PS_VERSION=""
 	$SHARE_DIR/add-component 'Power Supply' "$PS_VENDOR" "$PS_MODEL" "$PS_SERIAL"
 fi
 
@@ -83,7 +85,7 @@ fi
 if BP_INFO=`cat $HOME/fru.log | grep -A9 'scsibp\.vpd'`; then
 	BP_VENDOR=`echo "$BP_INFO" | sed -n 's/ Product Manufacturer *: //p'`
 	BP_MODEL=`echo "$BP_INFO" | sed -n 's/ Product Part Number *: //p'`
+	BP_VERSION=`echo "$BP_INFO" | sed -n 's/ Product Version *: //p'`
 	BP_SERIAL=`echo "$BP_INFO" | sed -n 's/ Product Serial *: //p'`
-	BP_VERSION=""
 	$SHARE_DIR/add-component 'SCSI Backplane' "$BP_VENDOR" "$BP_MODEL" "$BP_SERIAL" "$BP_VERSION"
 fi
