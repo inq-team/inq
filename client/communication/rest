@@ -21,10 +21,12 @@ plan_test_script()
 test_stage_advance()
 {
 	local stage=$1
-	local event=$2
-	local comment=`echo -n "$3" | ruby -e 'require "cgi"; print CGI::escape($stdin.read)'`
+	local type=$2
+	local version=$3
+	local event=$4
+	local comment=`echo -n "$5" | ruby -e 'require "cgi"; print CGI::escape($stdin.read)'`
 
-	curl -sf "$REST_SERVER/computers/advance/$COMPUTER_ID.xml?stage=$stage&event=$event&comment=$comment" >/dev/null
+	curl -sf "$REST_SERVER/computers/advance/$COMPUTER_ID.xml?stage=$stage&type=$type&version=$version&event=$event&comment=$comment" >/dev/null
 }
 
 test_stage_progress()

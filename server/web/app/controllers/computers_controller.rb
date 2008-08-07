@@ -556,13 +556,19 @@ set grid"
 		@computer = Computer.find(params[:id])
 		event = params[:event].to_sym() || :start
 		name = params[:stage]
+		type = params[:type]
+		version = params[:version]
 		comment = params[:comment] || ""
 		raise "Event not supported: #{ event }." unless [:start, :finish, :fail, :require_attention, :dismiss_attention].include?(event)
 		testing = @computer.testings.last
 		stage = testing.testing_stages.last
 		case event
 		when :start
-			testing.testing_stages << TestingStage.new(:start => Time.new(), :comment => comment, :stage => name)
+			testing.testing_stages << TestingStage.new(:start => Time.new(),
+								   :comment => comment,
+								   :stage => name,
+								   :test_type => type,
+								   :test_version => version)
 			z = testing
 		when :finish, :fail
 			stage.comment = comment
@@ -580,7 +586,7 @@ set grid"
 			z = stage
 		end
 		if z.save
-			flash[:notice] = 'Stage #{stage}(#{event},"#{comment}") successfully updated.'
+			flash[:notice] = 'Stage #{stage}(#{event},"#{type} #{version}","#{comment}") successfully updated.'
 			respond_to() do |format|
 				format.html { redirect_to(:action => 'show', :id => @computer) }
 				format.xml { render(:xml => testing.to_xml()) }

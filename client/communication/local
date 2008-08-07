@@ -41,10 +41,12 @@ plan_test_script()
 test_stage_advance()
 {
 	local stage=$1
-	local event=$2
-	local comment=`echo -n "$3" | ruby -e 'require "cgi"; print CGI::escape($stdin.read)'`
+	local type=$2
+	local version=$3
+	local event=$4
+	local comment=`echo -n "$5" | ruby -e 'require "cgi"; print CGI::escape($stdin.read)'`
 
-	echo -n "Test $stage	$event" >>$HOME/stages.txt
+	echo -n "Test $stage Type: $type $version	$event" >>$HOME/stages.txt
 	[ -z "$comment" ] || echo -n "	($comment)" >>$HOME/stages.txt
 	echo "	`date`" >>$HOME/stages.txt
 }
