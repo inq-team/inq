@@ -957,10 +957,6 @@ __EOF__
 				(h[:vendor] == cmp.model.vendor && h[:model] == cmp.model.name) ||
 				(!h[:serial].blank? && h[:serial] == cmp.serial) ||
 				(!h[:version].blank? && h[:version] == cmp.serial)
-				#(
-				#	(!h[:serial].blank? && h[:serial] == cmp.serial) ||
-				#	(!h[:version]? && h[:version] == cmp.serial)
-				#)
 			})
 		}
 		return false
