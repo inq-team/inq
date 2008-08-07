@@ -30,7 +30,7 @@ if FRU_INFO=`cat $HOME/fru.log | grep -A13 'Builtin FRU Device'`; then
 	MB_PART_NUM=`echo "$FRU_INFO" | sed -n 's/ Board Part Number *: //p'`
 	MB_SERIAL=`echo "$FRU_INFO" | sed -n 's/ Board Serial *: //p'`
 	MB_MODEL="$MB_PRODUCT / $MB_PART_NUM"
-	MB_VERSION=""
+	MB_VERSION="`grep -A 3 "BIOS Information" $HOME/dmi.log | sed -n '/Version:/s/^.*Version: \(.*\)$/\1/pg'`"
 
 	# If mainboard model exists
 	if [ -n "$MB_PRODUCT" ] || [ -n "$MB_PART_NUM" ]; then

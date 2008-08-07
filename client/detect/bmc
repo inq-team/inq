@@ -7,7 +7,7 @@ manufacturer=`ipmitool mc info | sed -n '/Manufacturer Name/s/^.*: \(.*\)$/\1/gp
 if [ -n "$manufacturer" ]; then
 	device=`ipmitool mc info | sed -n '/Product ID/s/^.*: \(.*\)$/\1/gp'` || true
 	serial=`ipmitool lan print | grep "MAC Address" | awk '{print $NF}'` || true
-	version=""
+	version="`ipmitool mc info | grep "Firmware Revision" | awk '{print $NF}'`"
 	$SHARE_DIR/add-component "BMC" "$manufacturer" "$device" "$serial" "$version"
 else
 	true
