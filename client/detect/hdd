@@ -10,9 +10,10 @@ einarc_detect()
 			HDD_VENDOR=`echo "$L" | cut -f2 | cut -f1 -d' '`
 			HDD_MODEL=`echo "$L" | cut -f2 | cut -f2 -d' '`
 			HDD_SERIAL=`echo "$L" | cut -f4`
+			HDD_VERSION=""
 			echo HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" ' - einarc' >> $HOME/debug.log
 #			echo HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" ' - einarc'
-			$SHARE_DIR/add-component HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL"
+			$SHARE_DIR/add-component HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" "$HDD_VERSION"
 		done
 	done
 }
@@ -64,6 +65,7 @@ hal_detect()
 			HDD_VENDOR=`hal-get-property --udi "$UDI" --key storage.vendor`
 			HDD_SERIAL=`smartctl -d ata -a $HDD_DEV |
 				    sed -ne '/^Serial Number:/ s/^Serial Number: *//p'`
+			HDD_VERSION=""
 
 			detect_vendor '^ST.*' 'Seagate'
 			detect_vendor '^D...-.*' 'IBM'
@@ -89,8 +91,7 @@ hal_detect()
 			strip_vendor 'Hitachi ' 'Hitachi'
 		
 			echo HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" ' - hal' >> $HOME/debug.log
-#			echo HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" ' - hal'
-			$SHARE_DIR/add-component HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL"
+			$SHARE_DIR/add-component HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" "$HDD_VERSION"
 		fi	
 	done
 }

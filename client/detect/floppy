@@ -11,12 +11,14 @@ else
 			vendor=`hal-get-property --udi "$UDI" --key storage.vendor`
 			model=`hal-get-property --udi "$UDI" --key storage.model`
 			serial=`hal-get-property --udi "$UDI" --key storage.serial`
+			version=""
 		else
 			vendor="PC Floppy Drive"
 			model="1.44 Floppy Drive"
 			serial=""
+			version=""
 		fi
 
-		$SHARE_DIR/add-component "Floppy" "$vendor" "$model" "$serial"
+		$SHARE_DIR/add-component "Floppy" "$vendor" "$model" "$serial" "$version"
 	done
 fi

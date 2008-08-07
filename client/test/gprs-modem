@@ -46,6 +46,6 @@ chat -t $CHAT_TIMEOUT -Vs '' AT OK-AT-OK AT+GSN OK <$DEV >$DEV 2>$TMP_DIR/imei \
 IMEI=`sed -ne '/^[0-9][0-9]*$/ p' <$TMP_DIR/imei`
 print_green_message "IMEI: $IMEI"
 
-$SHARE_DIR/add-component 'GPRS Modem' 'SIMCOM_Ltd' 'SIMCOM_SIM100S' "$IMEI"
+$SHARE_DIR/add-component 'GPRS Modem' 'SIMCOM_Ltd' 'SIMCOM_SIM100S' "$IMEI" ""
 
 test_succeeded

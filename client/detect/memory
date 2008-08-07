@@ -25,7 +25,7 @@ spd_detect()
 		MEM_SERIAL=`echo "$MEM_INFO" | sed -n 's/^Assembly Serial Number *0x//p' | head -n1 | sed 's/ *$//'`
 		MEM_MODEL="$MEM_SIZE $MEM_SPEED $MEM_TYPE"
 		echo Memory "$MEM_VENDOR" "$MEM_MODEL" "$MEM_SERIAL" ' - decode-dimms.pl' >> $HOME/debug.log
-		$SHARE_DIR/add-component Memory "$MEM_VENDOR" "$MEM_MODEL" "$MEM_SERIAL"
+		$SHARE_DIR/add-component Memory "$MEM_VENDOR" "$MEM_MODEL" "$MEM_SERIAL" ""
 	done
 }
 
@@ -38,7 +38,7 @@ fru_detect()
 			MEM_MODEL=`echo "$MEM_INFO" | sed -n 's/ Board Product *: //p' | head -n1`
 			MEM_SERIAL=`echo "$MEM_INFO" | sed -n 's/ Product Serial *: //p' | head -n1 | sed 's/ *$//'`
 			echo Memory "$MEM_VENDOR" "$MEM_MODEL" "$MEM_SERIAL" ' - ipmi' >> $HOME/debug.log
-			$SHARE_DIR/add-component Memory "$MEM_VENDOR" "$MEM_MODEL" "$MEM_SERIAL"
+			$SHARE_DIR/add-component Memory "$MEM_VENDOR" "$MEM_MODEL" "$MEM_SERIAL" ""
 		fi
 	done	
 }
@@ -54,7 +54,7 @@ dmi_detect()
 			MEM_VENDOR=`echo "$MEM_INFO" | sed -n 's/^.*Manufacturer: //p' | sed 's/Manufacturer[0-9]*//;s/Not Specified//'`
 			MEM_SERIAL=`echo "$MEM_INFO" | sed -n 's/^.*Serial Number: //p'| sed 's/SerNum[0-9]*//;s/Not Specified//'`
 			echo Memory "$MEM_VENDOR" "$MEM_SIZE $MEM_TYPE $MEM_SPEED" "$MEM_SERIAL" ' - dmi' >> $HOME/debug.log 
-			$SHARE_DIR/add-component Memory "$MEM_VENDOR" "$MEM_SIZE $MEM_TYPE $MEM_SPEED" "$MEM_SERIAL"
+			$SHARE_DIR/add-component Memory "$MEM_VENDOR" "$MEM_SIZE $MEM_TYPE $MEM_SPEED" "$MEM_SERIAL" ""
 		fi
 	done	
 }
@@ -74,7 +74,7 @@ else
 			PROC_MEM_SIZE=`cat /proc/meminfo | sed -n 's/MemTotal: *//p' | sed -n 's/ kB$//p'`
 			PROC_MEM_SIZE=$(( $PROC_MEM_SIZE / 1024 ))
 			echo Memory '' "$PROC_MEM_SIZE MB" '' - proc >> $HOME/debug.log
-			$SHARE_DIR/add-component Memory '' "$PROC_MEM_SIZE MB" ''
+			$SHARE_DIR/add-component Memory '' "$PROC_MEM_SIZE MB" "" ""
 		fi
 	fi
 fi

@@ -83,7 +83,9 @@ hal-find-by-property --key storage.drive_type --string cdrom | while read L; do
 		detect_vendor 'DV-28E-V' TEAC
 
 		OSD_MODEL=`echo $OSD_MODEL | sed 's/^  *//;s/  *$//;'`
+		OSD_SERIAL=""
+		OSD_VERSION=""
 
-		$SHARE_DIR/add-component OSD "$OSD_VENDOR" "$OSD_MODEL" ''
+		$SHARE_DIR/add-component OSD "$OSD_VENDOR" "$OSD_MODEL" "$OSD_SERIAL" "$OSD_VERSION"
 	fi
 done

@@ -46,5 +46,5 @@ echo "$PROCESSORS" | while read I; do
 			s/@ //; \
 			s/  */ /g; \
 			s/^ *//g;'`
-	$SHARE_DIR/add-component CPU "$CPU_VENDOR" "$CPU_MODEL" ''	
+	$SHARE_DIR/add-component CPU "$CPU_VENDOR" "$CPU_MODEL" "" ""
 done
