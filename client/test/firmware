@@ -37,12 +37,8 @@ cat $FIRMWARES | while read component; do
 
 	# Detect version
 	case $type in
-	"BMC")
-		current_version=`ipmitool mc info | grep "Firmware Revision" | awk '{print $NF}'`
-		;;
-	"Mainboard")
-		current_version=`grep -A 3 "BIOS Information" $HOME/dmi.log | 
-					sed -n '/Version:/s/^.*Version: \(.*\)$/\1/pg'`
+	*)
+		current_version=`component_version "$type"`
 		;;
 	"Disk Controller")
 		if [ `einarc -l | wc -l` -eq 0 ]; then
@@ -66,8 +62,7 @@ cat $FIRMWARES | while read component; do
 					current_version=$version
 				else
 					for adapter_num in `einarc -l | grep "$einarc_module" | awk '{print $2}'`; do
-						current_version=`einarc -t "$einarc_module" -a $adapter_num adapter info |
-							sed -n '/Firmware version/s/^Firmware version\s*\(.*\)$/\1/pg'`
+						current_version=`component_version "Disk Controller"`
 						if [ "$current_version" = "$version" ]; then
 							true
 						else
@@ -86,8 +81,7 @@ cat $FIRMWARES | while read component; do
 					hard_reboot
 				fi
 			else
-				current_version=`einarc -t "$einarc_module" adapter info |
-					sed -n '/Firmware version/s/^Firmware version\s*\(.*\)$/\1/pg'`
+				current_version=`component_version "Disk Controller"`
 				if [ "$current_version" = "$version" ]; then
 					true
 				else

@@ -347,5 +347,5 @@ need_kernel_module()
 component_version()
 {
 	COMPONENT_GROUP=$1
-	xsltproc --stringparam group $COMPONENT_GROUP $SHARE_DIR/get_component_version.xslt $HOME/components.xml
+	xsltproc --stringparam group "$COMPONENT_GROUP" $SHARE_DIR/get_component_version.xslt $HOME/components.xml
 }
