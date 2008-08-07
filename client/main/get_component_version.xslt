@@ -6,6 +6,7 @@
 <xsl:template match='//component'>
 	<xsl:if test='type = $group'>
 		<xsl:value-of select="version" />
+		<xsl:text>&#10;</xsl:text>
 	</xsl:if>
 </xsl:template>
 
