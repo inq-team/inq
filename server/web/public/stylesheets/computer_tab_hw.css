@@ -38,6 +38,10 @@ td#info_tabs table tr td#info_tab_hw a{
 	width: 17.6em;
 }
 
+.component_version {
+	width: 7.6em;
+}
+
 .component_name {
 	width: 26.6em;
 }
