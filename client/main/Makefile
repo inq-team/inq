@@ -13,7 +13,8 @@ SHARE_NOEXEC_FILES=\
 	functions-test-tui \
 	functions-monitoring \
 	outformat \
-	lshw.xslt
+	lshw.xslt \
+	get_component_version.xslt
 ETC_FILES=\
 	global \
 	overlaytab \

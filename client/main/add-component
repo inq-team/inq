@@ -36,5 +36,5 @@ end
 doc.root.add_element comp
 
 File.open(COMP_FILE, 'w') { |f|
-	doc.write(f, indent = 2)
+	doc.write(f, indent = 0)
 }
