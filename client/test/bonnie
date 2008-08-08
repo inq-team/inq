@@ -4,7 +4,7 @@
 # DESTROYS_HDD=true
 # POWEROFF_DURING_TEST=false
 # VERSION=0.2
-# TAGS=benchmark,hdd
+# TAGS=benchmark,hdd,filesystem
 # DEPENDS=HDD
 # VAR=FILESYSTEMS:string:ext2 ext3 vfat reiserfs xfs:Space-separated list of filesystems to be benchmarked
 # VAR=NUMBER_OF_FILES:int:2:The number of files for the file creation test. This is measured in multiples of 1024 files
@@ -43,7 +43,7 @@ benchmark_drive()
 	# We have to use -f/--force/-F options to force filesystem
 	# creation on a partition that already contains one. As a rule
 	# this flags are used.
-	echo -n "Preparing $drive drive..."
+	echo -n "Preparing $filesystem filesystem on $drive drive..."
 	mkfs.$filesystem -F $drive >$DEBUG_TTY 2>&1 ||
 	mkfs.$filesystem -f $drive >$DEBUG_TTY 2>&1 ||
 	mkfs.$filesystem --force $drive >$DEBUG_TTY 2>&1 ||
@@ -65,53 +65,77 @@ benchmark_drive()
 	# 14,271,0,24479us,34686us,58995us,16505us,342us,141ms,847ms,2292us,
 	# 273ms,776ms,78187us,823ms
 
-	benchmark_submit_float "Drive: $drive FS: $filesystem Write char speed" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $8}'`
-	benchmark_submit_float "Drive: $drive FS: $filesystem Write char CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $9}'`
-	benchmark_submit_string "Drive: $drive FS: $filesystem Write char latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $37}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Write char speed" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $8}'` "KiB/sec"
+	benchmark_submit_float "Drive: $drive FS: $filesystem Write char CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $9}'` "%"
+	benchmark_submit_float "Drive: $drive FS: $filesystem Write char latency" \
+		`sed -n '$p' < $RESULT_FILE | awk -F, '{print $37}' | sed 's/^\([0-9]*\)\([a-z]*\)$/\1/g'` \
+		`sed -n '$p' < $RESULT_FILE | awk -F, '{print $37}' | sed 's/^\([0-9]*\)\([a-z]*\)$/\2/g'`
 
-	benchmark_submit_float "Drive: $drive FS: $filesystem Write block speed" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $10}'`
-	benchmark_submit_float "Drive: $drive FS: $filesystem Write block CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $11}'`
-	benchmark_submit_string "Drive: $drive FS: $filesystem Write block latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $38}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Write block speed" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $10}'` "KiB/sec"
+	benchmark_submit_float "Drive: $drive FS: $filesystem Write block CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $11}'` "%"
+	benchmark_submit_float "Drive: $drive FS: $filesystem Write block latency" \
+		`sed -n '$p' < $RESULT_FILE | awk -F, '{print $38}' | sed 's/^\([0-9]*\)\([a-z]*\)$/\1/g'` \
+		`sed -n '$p' < $RESULT_FILE | awk -F, '{print $38}' | sed 's/^\([0-9]*\)\([a-z]*\)$/\2/g'`
 
-	benchmark_submit_float "Drive: $drive FS: $filesystem Rewrite speed" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $12}'`
-	benchmark_submit_float "Drive: $drive FS: $filesystem Rewrite CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $13}'`
-	benchmark_submit_string "Drive: $drive FS: $filesystem Rewrite latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $39}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Rewrite speed" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $12}'` "KiB/sec"
+	benchmark_submit_float "Drive: $drive FS: $filesystem Rewrite CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $13}'` "%"
+	benchmark_submit_float "Drive: $drive FS: $filesystem Rewrite latency" \
+		`sed -n '$p' < $RESULT_FILE | awk -F, '{print $39}' | sed 's/^\([0-9]*\)\([a-z]*\)$/\1/g'` \
+		`sed -n '$p' < $RESULT_FILE | awk -F, '{print $39}' | sed 's/^\([0-9]*\)\([a-z]*\)$/\2/g'`
 
-	benchmark_submit_float "Drive: $drive FS: $filesystem Read char speed" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $14}'`
-	benchmark_submit_float "Drive: $drive FS: $filesystem Read char CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $15}'`
-	benchmark_submit_string "Drive: $drive FS: $filesystem Read char latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $40}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Read char speed" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $14}'` "KiB/sec"
+	benchmark_submit_float "Drive: $drive FS: $filesystem Read char CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $15}'` "%"
+	benchmark_submit_float "Drive: $drive FS: $filesystem Read char latency" \
+		`sed -n '$p' < $RESULT_FILE | awk -F, '{print $40}' | sed 's/^\([0-9]*\)\([a-z]*\)$/\1/g'` \
+		`sed -n '$p' < $RESULT_FILE | awk -F, '{print $40}' | sed 's/^\([0-9]*\)\([a-z]*\)$/\2/g'`
 
-	benchmark_submit_float "Drive: $drive FS: $filesystem Read block speed" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $16}'`
-	benchmark_submit_float "Drive: $drive FS: $filesystem Read block CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $17}'`
-	benchmark_submit_string "Drive: $drive FS: $filesystem Read block latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $41}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Read block speed" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $16}'` "KiB/sec"
+	benchmark_submit_float "Drive: $drive FS: $filesystem Read block CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $17}'` "%"
+	benchmark_submit_float "Drive: $drive FS: $filesystem Read block latency" \
+		`sed -n '$p' < $RESULT_FILE | awk -F, '{print $41}' | sed 's/^\([0-9]*\)\([a-z]*\)$/\1/g'` \
+		`sed -n '$p' < $RESULT_FILE | awk -F, '{print $41}' | sed 's/^\([0-9]*\)\([a-z]*\)$/\2/g'`
 
-	benchmark_submit_float "Drive: $drive FS: $filesystem Random seeks time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $18}'`
-	benchmark_submit_float "Drive: $drive FS: $filesystem Random seeks CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $19}'`
-	benchmark_submit_string "Drive: $drive FS: $filesystem Random seeks latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $42}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Random seeks time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $18}'` "sec"
+	benchmark_submit_float "Drive: $drive FS: $filesystem Random seeks CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $19}'` "%"
+	benchmark_submit_float "Drive: $drive FS: $filesystem Random seeks latency" \
+		`sed -n '$p' < $RESULT_FILE | awk -F, '{print $42}' | sed 's/^\([0-9]*\)\([a-z]*\)$/\1/g'` \
+		`sed -n '$p' < $RESULT_FILE | awk -F, '{print $42}' | sed 's/^\([0-9]*\)\([a-z]*\)$/\2/g'`
 
-	benchmark_submit_float "Drive: $drive FS: $filesystem Sequential file create time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $25}'`
-	benchmark_submit_float "Drive: $drive FS: $filesystem Sequential file create CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $26}'`
-	benchmark_submit_string "Drive: $drive FS: $filesystem Sequential file create latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $43}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Sequential file create time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $25}'` "sec"
+	benchmark_submit_float "Drive: $drive FS: $filesystem Sequential file create CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $26}'` "%"
+	benchmark_submit_float "Drive: $drive FS: $filesystem Sequential file create latency" \
+		`sed -n '$p' < $RESULT_FILE | awk -F, '{print $43}' | sed 's/^\([0-9]*\)\([a-z]*\)$/\1/g'` \
+		`sed -n '$p' < $RESULT_FILE | awk -F, '{print $43}' | sed 's/^\([0-9]*\)\([a-z]*\)$/\2/g'`
 
-	benchmark_submit_float "Drive: $drive FS: $filesystem Sequential file read time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $27}'`
-	benchmark_submit_float "Drive: $drive FS: $filesystem Sequential file read CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $28}'`
-	benchmark_submit_string "Drive: $drive FS: $filesystem Sequential file read latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $44}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Sequential file read time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $27}'` "sec"
+	benchmark_submit_float "Drive: $drive FS: $filesystem Sequential file read CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $28}'` "%"
+	benchmark_submit_float "Drive: $drive FS: $filesystem Sequential file read latency" \
+		`sed -n '$p' < $RESULT_FILE | awk -F, '{print $44}' | sed 's/^\([0-9]*\)\([a-z]*\)$/\1/g'` \
+		`sed -n '$p' < $RESULT_FILE | awk -F, '{print $44}' | sed 's/^\([0-9]*\)\([a-z]*\)$/\2/g'`
 
-	benchmark_submit_float "Drive: $drive FS: $filesystem Sequential file delete time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $29}'`
-	benchmark_submit_float "Drive: $drive FS: $filesystem Sequential file delete CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $30}'`
-	benchmark_submit_string "Drive: $drive FS: $filesystem Sequential file delete latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $45}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Sequential file delete time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $29}'` "sec"
+	benchmark_submit_float "Drive: $drive FS: $filesystem Sequential file delete CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $30}'` "%"
+	benchmark_submit_float "Drive: $drive FS: $filesystem Sequential file delete latency" \
+		`sed -n '$p' < $RESULT_FILE | awk -F, '{print $45}' | sed 's/^\([0-9]*\)\([a-z]*\)$/\1/g'` \
+		`sed -n '$p' < $RESULT_FILE | awk -F, '{print $45}' | sed 's/^\([0-9]*\)\([a-z]*\)$/\2/g'`
 
-	benchmark_submit_float "Drive: $drive FS: $filesystem Random file create time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $31}'`
-	benchmark_submit_float "Drive: $drive FS: $filesystem Random file create CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $32}'`
-	benchmark_submit_string "Drive: $drive FS: $filesystem Random file create latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $46}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Random file create time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $31}'` "sec"
+	benchmark_submit_float "Drive: $drive FS: $filesystem Random file create CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $32}'` "%"
+	benchmark_submit_float "Drive: $drive FS: $filesystem Random file create latency" \
+		`sed -n '$p' < $RESULT_FILE | awk -F, '{print $46}' | sed 's/^\([0-9]*\)\([a-z]*\)$/\1/g'` \
+		`sed -n '$p' < $RESULT_FILE | awk -F, '{print $46}' | sed 's/^\([0-9]*\)\([a-z]*\)$/\2/g'`
 
-	benchmark_submit_float "Drive: $drive FS: $filesystem Random file read time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $33}'`
-	benchmark_submit_float "Drive: $drive FS: $filesystem Random file read CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $34}'`
-	benchmark_submit_string "Drive: $drive FS: $filesystem Random file read latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $47}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Random file read time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $33}'` "sec"
+	benchmark_submit_float "Drive: $drive FS: $filesystem Random file read CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $34}'` "%"
+	benchmark_submit_float "Drive: $drive FS: $filesystem Random file read latency" \
+		`sed -n '$p' < $RESULT_FILE | awk -F, '{print $47}' | sed 's/^\([0-9]*\)\([a-z]*\)$/\1/g'` \
+		`sed -n '$p' < $RESULT_FILE | awk -F, '{print $47}' | sed 's/^\([0-9]*\)\([a-z]*\)$/\2/g'`
 
-	benchmark_submit_float "Drive: $drive FS: $filesystem Random file delete time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $35}'`
-	benchmark_submit_float "Drive: $drive FS: $filesystem Random file delete CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $36}'`
-	benchmark_submit_string "Drive: $drive FS: $filesystem Random file delete latency" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $48}'`
+	benchmark_submit_float "Drive: $drive FS: $filesystem Random file delete time" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $35}'` "sec"
+	benchmark_submit_float "Drive: $drive FS: $filesystem Random file delete CPU load" `sed -n '$p' < $RESULT_FILE | awk -F, '{print $36}'` "%"
+	benchmark_submit_float "Drive: $drive FS: $filesystem Random file delete latency" \
+		`sed -n '$p' < $RESULT_FILE | awk -F, '{print $48}' | sed 's/^\([0-9]*\)\([a-z]*\)$/\1/g'` \
+		`sed -n '$p' < $RESULT_FILE | awk -F, '{print $48}' | sed 's/^\([0-9]*\)\([a-z]*\)$/\2/g'`
 
 	umount $SCRATCH_DIRECTORY
 }

@@ -32,8 +32,8 @@ for BLOCK_DEV in `get_hdds_list`; do
 
 	# Report result
 	echo " $BUFFERED_AVG / $CACHED_AVG KB/s"
-	benchmark_submit_float "Drive $BLOCK_DEV buffered speed" $BUFFERED_AVG
-	benchmark_submit_float "Drive $BLOCK_DEV cached speed" $CACHED_AVG
+	benchmark_submit_float "Drive $BLOCK_DEV buffered speed" $BUFFERED_AVG "KB/sec"
+	benchmark_submit_float "Drive $BLOCK_DEV cached speed" $CACHED_AVG "KB/sec"
 done
 
 test_succeeded

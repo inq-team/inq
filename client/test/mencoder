@@ -22,9 +22,9 @@ time -o $RESULT_FILE mencoder $ENCODE_OPTIONS \
 	-o $DEBUG_TTY $FILE_TO_ENCODE
 
 benchmark_submit_float "User time" \
-`sed -n "s/user//;1p" < $RESULT_FILE | awk '{print $1}'`
+`sed -n "s/user//;1p" < $RESULT_FILE | awk '{print $1}'` "sec"
 
 benchmark_submit_float "System time" \
-`sed -n "s/system//;1p" < $RESULT_FILE | awk '{print $1}'`
+`sed -n "s/system//;1p" < $RESULT_FILE | awk '{print $1}'` "sec"
 
 test_succeeded

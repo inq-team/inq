@@ -172,7 +172,7 @@ done
 # Override communication's functions with empty ones
 test_promise_time() { return 0; }
 test_stage_progress() { return 0; }
-benchmark_submit_float() { printf "\nBENCHMARK: %-40s%s\n" "$1" "$2"; }
+benchmark_submit_float() { printf "\nBENCHMARK: %-40s%s%s\n" "$1" "$2" "$3"; }
 benchmark_submit_string() { printf "\nBENCHMARK: %-40s%s\n" "$1" "$2"; }
 test_succeeded()
 {

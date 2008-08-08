@@ -4,7 +4,7 @@
 # DESTROYS_HDD=true
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
-# TAGS=benchmark,hdd
+# TAGS=benchmark,hdd,filesystem
 # DEPENDS=HDD
 # VAR=FILESYSTEMS:string:ext2:Space-separated list of filesystems on what drive will be benchmarked
 # VAR=TEST_FILE_SIZE:int:0:Size of test file, MiB. If set to zero - double memory amount size will be used

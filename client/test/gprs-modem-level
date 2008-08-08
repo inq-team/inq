@@ -38,6 +38,6 @@ while true; do
 done
 echo_success
 
-benchmark_submit_float 'GPRS signal level' "$LEVEL"
+benchmark_submit_float 'GPRS signal level' "$LEVEL" ""
 
 test_succeeded

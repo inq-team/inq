@@ -25,6 +25,6 @@ mv pgms/dc.dat testdir/
 mv pgms/sort.src testdir/
 
 benchmark_submit_float "All CPUs score" `unixbench | tee $DEBUG_TTY | \
-	grep "Index Score" | sed -n "$ p" | awk '{print $NF}'`
+	grep "Index Score" | sed -n "$ p" | awk '{print $NF}'` ""
 echo_success
 test_succeeded

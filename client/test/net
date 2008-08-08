@@ -84,7 +84,7 @@ test_nic()
 		test_failed "NIC eth${i} test failed"
 	echo_success
 
-	benchmark_submit_float "NIC eth${nic_number} download speed" $speed
+	benchmark_submit_float "NIC eth${nic_number} download speed" $speed "KiB/sec"
 }
 
 NIC_QUANTITY=`get_nics_list | wc -l`
