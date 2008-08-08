@@ -94,22 +94,34 @@ publish_my_ip()
 
 benchmark_submit_float()
 {
-	echo "$1	$2" >>$HOME/benchmarks.txt
+	local key=$1
+	local value=$2
+	local units=$3
+
+	echo "$key	$value $units" >>$HOME/benchmarks.txt
 }
 
 benchmark_submit_string()
 {
-	echo "$1	$2" >>$HOME/benchmarks.txt
+	local key=$1
+	local value=$2
+
+	echo "$key	$value" >>$HOME/benchmarks.txt
 }
 
 monitoring_submit()
 {
-	echo "`date +%s`	$2" >>$HOME/monitoring_${MONITORING_NAME}_$1.txt
+	local key=$1
+	local value=$2
+
+	echo "`date +%s`	$value" >>$HOME/monitoring_${MONITORING_NAME}_$key.txt
 }
 
 monitoring_submit_multiple()
 {
-	cat $1 >>$HOME/monitoring_${MONITORING_NAME}.txt
+	local data=$1
+
+	cat $data >>$HOME/monitoring_${MONITORING_NAME}.txt
 }
 
 require_attention()

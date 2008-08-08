@@ -86,8 +86,9 @@ benchmark_submit_float()
 {
 	local key=`echo -n "$1" | ruby -e 'require "cgi"; print CGI::escape($stdin.read)'`
 	local value=$2
+	local units=$3
 
-	if ! curl -sf "$REST_SERVER/computers/benchmark_submit_float/$COMPUTER_ID?key=$key&value=$value"; then
+	if ! curl -sf "$REST_SERVER/computers/benchmark_submit_float/$COMPUTER_ID?key=$key&value=$value&units=$units"; then
 		echo 'benchmark_submit_float: failed to submit'
 		return 1
 	fi
@@ -114,7 +115,10 @@ set_profile()
 
 monitoring_submit()
 {
-	if ! curl -sf "$REST_SERVER/computers/monitoring_submit/$COMPUTER_ID?monitoring_id=$MONITORING_ID&key=$1&value=$2"; then
+	local key=$1
+	local value=$2
+
+	if ! curl -sf "$REST_SERVER/computers/monitoring_submit/$COMPUTER_ID?monitoring_id=$MONITORING_ID&key=$key&value=$value"; then
 		echo "monitoring_submit: failed to submit ${MONITORING_NAME}"
 		return 1
 	fi
@@ -122,7 +126,9 @@ monitoring_submit()
 
 monitoring_submit_multiple()
 {
-	if ! curl -sf -F monitoring_data=@$1 "$REST_SERVER/computers/monitoring_submit_multiple/$COMPUTER_ID?monitoring_id=$MONITORING_ID"; then
+	local data=$1
+
+	if ! curl -sf -F monitoring_data=@$data "$REST_SERVER/computers/monitoring_submit_multiple/$COMPUTER_ID?monitoring_id=$MONITORING_ID"; then
 		echo "monitoring_submit_multiple: failed to submit ${MONITORING_NAME}"
 		return 1
 	fi
