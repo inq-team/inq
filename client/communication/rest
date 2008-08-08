@@ -86,7 +86,7 @@ benchmark_submit_float()
 {
 	local key=`echo -n "$1" | ruby -e 'require "cgi"; print CGI::escape($stdin.read)'`
 	local value=$2
-	local units=$3
+	local units=`echo -n "$3" | ruby -e 'require "cgi"; print CGI::escape($stdin.read)'`
 
 	if ! curl -sf "$REST_SERVER/computers/benchmark_submit_float/$COMPUTER_ID?key=$key&value=$value&units=$units"; then
 		echo 'benchmark_submit_float: failed to submit'
