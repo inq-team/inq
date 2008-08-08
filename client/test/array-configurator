@@ -1,6 +1,6 @@
 #!/bin/sh -e
 # NAME=Array configurator
-# DESCRIPTION=It is not a real test. Simply, it can create specified array configuration on disk controller with hard drives. Currently it can create only clear, optimal and passthrough disk configurations (related to einarc).
+# DESCRIPTION=It is not a real test. Simply, it can create specified array configuration on disk controller with hard drives. Currently it passed command line string to einarc, or, if specified "passthrough", "optimal" or "clear", necessary raid-wizard will be used instead.
 # DESTROYS_HDD=true
 # IS_INTERACTIVE=false
 # POWEROFF_DURING_TEST=false
@@ -11,12 +11,22 @@
 # VAR=DISK_GROUP_SIZE:int:8:Number of disks per group for testing (for passthrough configuration)
 # VAR=DISK_GROUP_NUMBER:int:1:Number of disk group (for passthrough configuration)
 
-# !!! Untested development version !!!
-
 . /usr/share/inquisitor/functions-test
 
-[ "$CONFIGURATION" = "passthrough" ] && PASSTHROUGH_ARGS="$DISK_GROUP_SIZE $DISK_GROUP_NUMBER" || PASSTHROUGH_ARGS=""
-
-raid-wizard-$CONFIGURATION $PASSTHROUGH_ARGS || test_failed
+case $CONFIGURATION in
+"optimal")
+	raid-wizard-$CONFIGURATION || test_failed 'Wizard failed'
+	;;
+"clear")
+	raid-wizard-$CONFIGURATION || test_failed 'Wizard failed'
+	;;
+"passthrough")
+	PASSTHROUGH_ARGS="$DISK_GROUP_SIZE $DISK_GROUP_NUMBER"
+	raid-wizard-$CONFIGURATION $PASSTHROUGH_ARGS || test_failed 'Wizard failed'
+	;;
+*)
+	einarc $CONFIGURATION || test_failed 'Einarc failed'
+	;;
+esac
 
 test_succeeded
