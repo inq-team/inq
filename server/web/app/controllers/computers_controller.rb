@@ -712,7 +712,8 @@ set grid"
 		stage = Computer.find(params[:id]).last_testing.last_stage
 		stage.marks << Mark.new(
 			:key => params[:key],
-			:value_float => params[:value]
+			:value_float => params[:value],
+			:value_str => params[:units]
 		)
 		if stage.save!
 			head(:status => 200)
