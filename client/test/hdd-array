@@ -103,7 +103,8 @@ if raid-wizard-optimal; then
 	test_promise_time $TESTTIME
 
 	for i in `get_hdds_list`; do
-		drive_size=`cat /sys/block/$i/size`
+		drivename=`echo $i | sed 's/\/dev\///'`
+		drive_size=`cat /sys/block/$drivename/size`
 		[ "$drive_size" -lt "$MINIMAL_DRIVE_SIZE" ] && continue
 		array_stress_check $i
 	done
