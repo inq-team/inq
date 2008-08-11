@@ -26,7 +26,7 @@ cd $SHARE_DIR/firmwares
 if [ $COMPRESSION = "none" ] || [ -z "$COMPRESSION" ]; then
 	DECOMPRESSOR="cat"
 else
-	DECOMPRESSOR="$COMPRESSION -c"
+	DECOMPRESSOR="$COMPRESSION -dc"
 fi
 
 # Perform writing itself
