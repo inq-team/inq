@@ -41,7 +41,7 @@ fi
 
 badblocks_test()
 {
-	raid-wizard-clear
+	raid-wizard-clear || echo "raid-wizard-clear failed" > "$ERROR_FILE"
 	sleep 10 # We have to use such dirty hack, because einarc's
 	         # operations are not waiting for real commands
 		 # completion. So, for example, we can get hard drives
