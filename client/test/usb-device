@@ -16,7 +16,6 @@
 get_usb_devices()
 {
 	for I in /sys/bus/usb/devices/*; do
-
 		# Check that it's readable
 		[ -r "$I/idVendor" ] || continue
 		[ -r "$I/idProduct" ] || continue

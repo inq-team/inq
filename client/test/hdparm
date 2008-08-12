@@ -24,6 +24,7 @@ for BLOCK_DEV in `get_hdds_list`; do
 		BUFFERED_SUM=$(($BUFFERED_SUM + $BUFFERED))
 		CACHED_SUM=$(($CACHED_SUM + $CACHED))
 		echo -n '.'
+		test_progress $i $AVG_SAMPLES
 	done
 
 	# Convert to KB/s, calculate average

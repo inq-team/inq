@@ -16,20 +16,24 @@ echo -n "Copy operation..."
 benchmark_submit_float "Memory Copy operation" `stream-mem | grep "^Copy" | \
 	awk '{print $2}'` "MiB/sec"
 echo_success
+test_progress 1 4
 
 echo -n "Scale operation..."
 benchmark_submit_float "Memory Scale operation" `stream-mem | grep "^Scale" | \
 	awk '{print $2}'` "MiB/sec"
 echo_success
+test_progress 2 4
 
 echo -n "Add operation..."
 benchmark_submit_float "Memory Add operation" `stream-mem | grep "^Add" | \
 	awk '{print $2}'` "MiB/sec"
 echo_success
+test_progress 3 4
 
 echo -n "Triad operation..."
 benchmark_submit_float "Memory Triad operation" `stream-mem | grep "^Triad" | \
 	awk '{print $2}'` "MiB/sec"
 echo_success
+test_progress 4 4
 
 test_succeeded

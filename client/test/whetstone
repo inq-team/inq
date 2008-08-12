@@ -23,6 +23,7 @@ for i in `seq 0 $(($CPU_QUANTITY - 1))`; do
 		awk '{print $6}'`
 	echo_success
 	benchmark_submit_float "Core $i" "$result" "whetstones"
+	test_progress $(( $i + 1 )) $CPU_QUANTITY
 done
 
 test_succeeded

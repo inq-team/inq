@@ -25,9 +25,11 @@ get_needed_firmwares_list > $FIRMWARES || test_failed "Unable to get needed firm
 					   	print "$s[$i-1]::$s[$i]::$s[$i+1]\n" unless $s[$i-1] =~ /^$/;
 					   };' > $FIRMWARES
 
-[ ! -s $FIRMWARES ] && test_succeeded "No firmwares needed to be updated"
+FIRMWARES_QUANTITY=`cat $FIRMWARES | wc -l`
+[ "$FIRMWARES_QUANTITY" -eq 0 ] && test_succeeded "No firmwares needed to be updated" || true
 
 # Parse each component
+TESTED_QUANTITY=0
 cat $FIRMWARES | while read component; do
 	type=`echo $component | awk -F :: '{print $1}'`
 	version=`echo $component | awk -F :: '{print $2}'`
@@ -100,9 +102,11 @@ cat $FIRMWARES | while read component; do
 		;;
 	esac
 
-	# Reboot with necessary reflasher
+	# Reboot with necessary reflasher if needed
 	if [ "$current_version" = "$version" ]; then
 		echo "Needed version \"$version\" found"
+		TESTED_QUANTITY=$(( $TESTED_QUANTITY + 1 ))
+		test_progress $TESTED_QUANTITY $FIRMWARES_QUANTITY
 		continue
 	else
 		true

@@ -22,6 +22,7 @@ exit_handler()
 
 RESULT_FILE=`mktemp`
 SCRATCH_DIRECTORY=`mktemp -d`
+STAGES_QUANTITY=$(( `perl -e 'print scalar split(" ",$ENV{FS})'` * `get_hdds_list | wc -l` ))
 
 perform_benchmark()
 {
@@ -54,6 +55,9 @@ benchmark_drive()
 	"`perl -ne 'print if /^\s+random/ .. /^$/' < $RESULT_FILE | sed -n '$d; s/^ *//g; 3,$p'`"
 
 	umount $SCRATCH_DIRECTORY
+
+	TESTED_QUANTITY=$(( $TESTED_QUANTITY + 1 ))
+	test_progress $TESTED_QUANTITY $STAGES_QUANTITY
 }
 
 test_succeed_if_no hdds
@@ -61,6 +65,7 @@ test_succeed_if_no hdds
 TOTAL_MEMORY=$(( `grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024 ))
 [ ! $TEST_FILE_SIZE -eq 0 ] || TEST_FILE_SIZE=$(($TOTAL_MEMORY * 2))
 
+TESTED_QUANTITY=0
 for BLOCK_DEV in `get_hdds_list`; do
 	perform_benchmark $BLOCK_DEV
 done

@@ -25,6 +25,7 @@ exit_handler()
 
 RESULT_FILE=`mktemp`
 SCRATCH_DIRECTORY=`mktemp -d`
+STAGES_QUANTITY=$(( `perl -e 'print scalar split(" ",$ENV{FS})'` * `get_hdds_list | wc -l` ))
 
 perform_benchmark()
 {
@@ -138,10 +139,14 @@ benchmark_drive()
 		`sed -n '$p' < $RESULT_FILE | awk -F, '{print $48}' | sed 's/^\([0-9]*\)\([a-z]*\)$/\2/g'`
 
 	umount $SCRATCH_DIRECTORY
+
+	TESTED_QUANTITY=$(( $TESTED_QUANTITY + 1 ))
+	test_progress $TESTED_QUANTITY $STAGES_QUANTITY
 }
 
 test_succeed_if_no hdds
 
+TESTED_QUANTITY=0
 for BLOCK_DEV in `get_hdds_list`; do
 	perform_benchmark $BLOCK_DEV
 done

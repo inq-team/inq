@@ -22,6 +22,7 @@ for i in `seq 0 $(($CPU_QUANTITY - 1))`; do
 	result=`taskset -c $i dhrystone $DURATION 2>&1 | awk '{print $1}'`
 	echo_success
 	benchmark_submit_float "Core $i" "$result" "loops"
+	test_progress $(( $i + 1 )) $CPU_QUANTITY
 done
 
 test_succeeded
