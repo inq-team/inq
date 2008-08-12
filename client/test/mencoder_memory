@@ -1,0 +1,66 @@
+#!/bin/sh -ef
+# NAME=Mencoder in memory
+# DESCRIPTION=This benchmark will transcode specified input file to H.264 video, copying without modification audio in (by default) AVI container. You can specify also preset (taken from MPlayerHQ's documentation examples for x264), scaling and bitrate. Two-pass encoding option is available too. This benchmark will use x264's multithreading capabilities to load all CPUs or can run using specified number of threads.
+# DESTROYS_HDD=false
+# POWEROFF_DURING_TEST=false
+# VERSION=0.1
+# TAGS=benchmark,cpu,stress,memory,hdd
+# DEPENDS=CPU,Memory,Mainboard,Disk Controller,HDD
+# VAR=SOURCE:string:movie.mpeg2:Source transcoding file
+# VAR=PRESET:string:hq:Encoding preset. "lq" (low quality), "hq" (high quality) and "vhq" (very high quality) are availabe
+# VAR=TWOPASS:boolean:false:Enable two-pass encoding of not
+# VAR=SCALE:string:720x480:Width and height for rescaling resulting image
+# VAR=BITRATE:int:1000:Bitrate of resulting video, KB/sec
+# VAR=THREADS:int:0:Force using specified number of threads. If equal to zero, then load all available CPUs
+
+. /usr/share/inquisitor/functions-test
+
+exit_handler()
+{
+	cd $HOME
+	umount -f $MOUNTPOINT >$DEBUG_TTY 2>&1 || true
+	[ -d "$MOUNTPOINT" ] && rmdir $MOUNTPOINT
+}
+
+cd $SHARE_DIR
+[ -s "$SOURCE" ] || test_failed "Source file does not exist"
+
+echo -n "Creating filesystem..."
+MOUNTPOINT=`mktemp -d`
+FILESIZE=$(( `ls -l "$SOURCE" | awk '{print $5}'` / (1024 * 1024) ))
+mount -t tmpfs -o size=$(( FILESIZE * 2 ))M tmpfs $MOUNTPOINT || test_failed "Ramdisk creation failed"
+echo_success
+
+echo -n "Copying source file..."
+cp $SOURCE $MOUNTPOINT
+cd $MOUNTPOINT
+echo_success
+
+[ ! "$THREADS" -eq 0 ] || THREADS=`cpu_quantity`
+
+# Perform benchmarking itself
+echo -n "Transcoding..."
+$SHARE_DIR/mencoder_call $SHARE_DIR/$SOURCE \
+			 destination.avi \
+			 $PRESET \
+			 $TWOPASS \
+			 `echo $SCALE | sed 's/x/:/'` \
+			 $BITRATE \
+			 $THREADS > call.result || test_failed "mencoder_call failed"
+echo_success
+
+if [ "$TWOPASS" = "false" ]; then
+	benchmark_submit_float "User time" `awk '{print $1}' < call.result` "sec"
+	benchmark_submit_float "System time" `awk '{print $2}' < call.result` "sec"
+	benchmark_submit_float "Average speed" `awk '{print $3}' < call.result` "fps"
+else
+	benchmark_submit_float "1st pass: User time" `awk '{print $1}' < call.result | sed -n '1p'` "sec"
+	benchmark_submit_float "1st pass: System time" `awk '{print $2}' < call.result | sed -n '1p'` "sec"
+	benchmark_submit_float "1st pass: Average speed" `awk '{print $3}' < call.result | sed -n '1p'` "fps"
+
+	benchmark_submit_float "2nd pass: User time" `awk '{print $1}' < call.result | sed -n '2p'` "sec"
+	benchmark_submit_float "2nd pass: System time" `awk '{print $2}' < call.result | sed -n '2p'` "sec"
+	benchmark_submit_float "2nd pass: Average speed" `awk '{print $3}' < call.result | sed -n '2p'` "fps"
+fi
+
+test_succeeded
