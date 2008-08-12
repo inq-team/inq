@@ -6,14 +6,17 @@ PRESET=$3
 TWOPASS=$4 # true or false
 SCALE=$5 # width:height
 BITRATE=$6
+THREADS=$7
 
-# Check for source file existence
-if [ -s "$SOURCE" ]; then
-	true
-else
-	echo "Source file does not exist"
-	return 1
-fi
+create_benchmark_results()
+{
+	user_time=`sed -n 's/^user \(.*\)$/\1/p' < time.result`
+	sys_time=`sed -n 's/^sys \(.*\)$/\1/p' < time.result`
+	frames=`grep "^Video stream:" < mencoder.result | awk '{print $(NF-1)}'`
+	fps=`perl -e "print int($frames / ($user_time + $sys_time))"`
+
+	echo "$user_time $sys_time $fps"
+}
 
 # Make command line options for mencoder x264 encoding based on preset
 # Preset is taken from examples in MPlayerHQ encoding documentation
@@ -31,16 +34,19 @@ esac
 
 X264OPTS="${X264OPTS}:bitrate=$BITRATE"
 CPU_QUANTITY=`grep '^processor' /proc/cpuinfo | wc -l`
-X264OPTS="${X264OPTS}:threads=$CPU_QUANTITY"
+[ ! "$THREADS" -eq 0 ] || THREADS=$CPU_QUANTITY
+X264OPTS="${X264OPTS}:threads=$THREADS"
 
 # Is it two-pass encoding or not?
 # Run transcoding after detection
 if [ "$TWOPASS" = "true" ]; then
-	mencoder -oac copy \
-		 -ovc x264 \
-		 -vf scale=$SCALE \
-		 -x264encopts ${X264OPTS}:pass=1 \
-		 -o $DESTINATION $SOURCE
+	/usr/bin/time -p -o time.result \
+		mencoder -oac copy \
+			 -ovc x264 \
+			 -vf scale=$SCALE \
+			 -x264encopts ${X264OPTS}:pass=1 \
+			 -o $DESTINATION $SOURCE 2>&1 | tee $DEBUG_TTY > mencoder.result
+	create_benchmark_results
 
 	# We need only created logfile
 	rm $DESTINATION
@@ -50,23 +56,17 @@ if [ "$TWOPASS" = "true" ]; then
 			 -ovc x264 \
 			 -vf scale=$SCALE \
 			 -x264encopts ${X264OPTS}:pass=2 \
-			 -o $DESTINATION $SOURCE 2>$DEBUG_TTY > mencoder.result
+			 -o $DESTINATION $SOURCE 2>&1 | tee $DEBUG_TTY > mencoder.result
+	create_benchmark_results
 else
 	/usr/bin/time -p -o time.result \
 		mencoder -oac copy \
 			 -ovc x264 \
 			 -vf scale=$SCALE \
 			 -x264encopts $X264OPTS \
-			 -o $DESTINATION $SOURCE 2>$DEBUG_TTY > mencoder.result
+			 -o $DESTINATION $SOURCE 2>&1 | tee $DEBUG_TTY > mencoder.result
+	create_benchmark_results
 fi
-
-# Parse results and output benchmarked parameters
-user_time=`sed -n 's/^user \(.*\)$/\1/p' < time.result`
-sys_time=`sed -n 's/^sys \(.*\)$/\1/p' < time.result`
-frames=`grep "^Video stream:" < mencoder.result | awk '{print $(NF-1)}'`
-fps=`perl -e "print int($frames / ($user_time + $sys_time))"`
-
-echo "$user_time $sys_time $fps"
 
 [ ! -e divx2pass.log ] || rm divx2pass.log
 rm mencoder.result

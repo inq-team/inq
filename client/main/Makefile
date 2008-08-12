@@ -24,7 +24,8 @@ SHARE_EXEC_FILES=\
 	vendor \
 	inq-sensors-detect \
 	decode-dimms.pl \
-	hal-searcher
+	hal-searcher \
+	mencoder_call
 
 all:
 	sed -e 's,@@ETC_DIR@@,$(ETC_DIR),g; s,@@BIN_DIR@@,$(BIN_DIR),g; s,@@LIB_DIR@@,$(LIB_DIR),g; s,@@SHARE_DIR@@,$(SHARE_DIR),g; s,@@INQ_VERSION@@,$(INQ_VERSION),g; s,@@DEBUG_TTY@@,$(DEBUG_TTY),g;' <global.in >global
