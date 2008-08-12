@@ -1,0 +1,73 @@
+#!/bin/sh -e
+
+SOURCE=$1
+DESTINATION=$2
+PRESET=$3
+TWOPASS=$4 # true or false
+SCALE=$5 # width:height
+BITRATE=$6
+
+# Check for source file existence
+if [ -s "$SOURCE" ]; then
+	true
+else
+	echo "Source file does not exist"
+	return 1
+fi
+
+# Make command line options for mencoder x264 encoding based on preset
+# Preset is taken from examples in MPlayerHQ encoding documentation
+case $PRESET in
+	"lq")
+		X264OPTS="subq=4:bframes=2:b_pyramid:weight_b"
+		;;
+	"hq")
+		X264OPTS="subq=5:8x8dct:frameref=2:bframes=3:b_pyramid:weight_b"
+		;;
+	"vhq")
+		X264OPTS="subq=6:partitions=all:8x8dct:me=umh:frameref=5:bframes=3:b_pyramid:weight_b"
+		;;
+esac
+
+X264OPTS="${X264OPTS}:bitrate=$BITRATE"
+CPU_QUANTITY=`grep '^processor' /proc/cpuinfo | wc -l`
+X264OPTS="${X264OPTS}:threads=$CPU_QUANTITY"
+
+# Is it two-pass encoding or not?
+# Run transcoding after detection
+if [ "$TWOPASS" = "true" ]; then
+	mencoder -oac copy \
+		 -ovc x264 \
+		 -vf scale=$SCALE \
+		 -x264encopts ${X264OPTS}:pass=1 \
+		 -o $DESTINATION $SOURCE
+
+	# We need only created logfile
+	rm $DESTINATION
+
+	/usr/bin/time -p -o time.result \
+		mencoder -oac copy \
+			 -ovc x264 \
+			 -vf scale=$SCALE \
+			 -x264encopts ${X264OPTS}:pass=2 \
+			 -o $DESTINATION $SOURCE 2>$DEBUG_TTY > mencoder.result
+else
+	/usr/bin/time -p -o time.result \
+		mencoder -oac copy \
+			 -ovc x264 \
+			 -vf scale=$SCALE \
+			 -x264encopts $X264OPTS \
+			 -o $DESTINATION $SOURCE 2>$DEBUG_TTY > mencoder.result
+fi
+
+# Parse results and output benchmarked parameters
+user_time=`sed -n 's/^user \(.*\)$/\1/p' < time.result`
+sys_time=`sed -n 's/^sys \(.*\)$/\1/p' < time.result`
+frames=`grep "^Video stream:" < mencoder.result | awk '{print $(NF-1)}'`
+fps=`perl -e "print int($frames / ($user_time + $sys_time))"`
+
+echo "$user_time $sys_time $fps"
+
+[ ! -e divx2pass.log ] || rm divx2pass.log
+rm mencoder.result
+rm time.result
