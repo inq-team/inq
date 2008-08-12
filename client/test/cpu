@@ -32,7 +32,7 @@ echo -n $BURN_PROGRAM
 echo_success
 
 # Detect CPU cores quantity
-CPU_QUANTITY=`grep '^processor' /proc/cpuinfo | wc -l`
+CPU_QUANTITY=`cpu_quantity`
 
 # Start
 for i in `seq 0 $(($CPU_QUANTITY - 1))`; do

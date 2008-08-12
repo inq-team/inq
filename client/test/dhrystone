@@ -15,7 +15,7 @@ exit_handler()
 	[ -f "$RESULT_FILE" ] && rm -f $RESULT_FILE
 }
 
-CPU_QUANTITY=`grep processor /proc/cpuinfo | wc -l`
+CPU_QUANTITY=`cpu_quantity`
 
 for i in `seq 0 $(($CPU_QUANTITY - 1))`; do
 	echo -n "Dhrystone on core $i"

@@ -42,6 +42,8 @@ cp $SOURCE $MOUNTPOINT
 cd $MOUNTPOINT
 echo_success
 
+[ ! "$THREADS" -eq 0 ] || THREADS=`cpu_quantity`
+
 # Perform benchmarking itself
 echo -n "Transcoding..."
 $SHARE_DIR/mencoder_call $SHARE_DIR/$SOURCE \

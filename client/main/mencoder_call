@@ -32,10 +32,7 @@ case $PRESET in
 		;;
 esac
 
-X264OPTS="${X264OPTS}:bitrate=$BITRATE"
-CPU_QUANTITY=`grep '^processor' /proc/cpuinfo | wc -l`
-[ ! "$THREADS" -eq 0 ] || THREADS=$CPU_QUANTITY
-X264OPTS="${X264OPTS}:threads=$THREADS"
+X264OPTS="${X264OPTS}:bitrate=$BITRATE:threads=$THREADS"
 
 # Is it two-pass encoding or not?
 # Run transcoding after detection
