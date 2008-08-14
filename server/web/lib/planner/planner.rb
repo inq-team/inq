@@ -60,7 +60,7 @@ class Planner
 			if t == 'submit-additional-components'
 				res << "submit_additional_components $HOME/components.xml\n"
 			else
-				res << "PLANNER=1 TEST_NAME=#{t.id} "
+				res << "PLANNER=1 TEST_NAME=\"#{t.id}\" "
 				t.var.each_pair { |k, v|
 					res << "#{k}='#{v}' "
 				}
