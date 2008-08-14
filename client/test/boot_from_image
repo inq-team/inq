@@ -1,0 +1,15 @@
+#!/bin/sh -e
+# NAME=Boot from image
+# DESCRIPTION=This is not real test. It will always succeed if file is available for booting. Can be used to force single loading from image file without any checks about its success finishing.
+# DESTROYS_HDD=false
+# IS_INTERACTIVE=false
+# POWEROFF_DURING_TEST=true
+# VERSION=0.1
+# TAGS=
+# DEPENDS=
+# VAR=IMAGE:string:boot_image.img:Image to boot from after rebooting
+
+. /usr/share/inquisitor/functions-test
+
+boot_from_image "$IMAGE" || test_failed "Unable to boot from image"
+test_succeeded_and_reboot
