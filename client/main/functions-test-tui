@@ -180,6 +180,13 @@ test_succeeded()
 	echo "Test comment: $@" >&2
 	exit 0
 }
+test_succeeded_and_reboot()
+{
+	print_green_message "Test successfully finished"
+	print_red_message "This test wants to hard reboot computer"
+	echo "Test comment: $@" >&2
+	exit 0
+}
 test_failed()
 {
 	print_red_message "Test failed"
