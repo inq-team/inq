@@ -780,7 +780,8 @@ set grid"
 		@macs.collect! { |mac| mac.gsub(/:/,'-') }
 
 		to_delete = @macs.collect { |mac| "pxelinux.cfg/01-" + mac }.join(" ")
-		add_options = File.size("#{TFTP_DIR}/firmwares/#{image}") == 16777216 ? "floppy c=16 s=32 h=64" : ""
+		filesize = File.size("#{TFTP_DIR}/firmwares/#{image}")
+		add_options = (filesize > 2880*2 and filesize % 1024**2 == 0) ? ("floppy c=" + (filesize / 1024**2.to_i).to_s) + " s=32 h=64" : ""
 
 		@macs.each { |mac|
 			cfgfile = File.new("#{TFTP_DIR}/pxelinux.cfg/01-#{mac}", "w")
