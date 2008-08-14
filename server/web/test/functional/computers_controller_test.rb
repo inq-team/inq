@@ -278,8 +278,8 @@ class ComputersControllerTest < Test::Unit::TestCase
 
 	def test_boot_from_image
 		# Create temporary "BIOS-image" file and pxelinux.cfg directory
-		FileUtils.mkdir("#{TFTP_DIR}/pxelinux.cfg")
-		FileUtils.mkdir("#{TFTP_DIR}/firmwares")
+		FileUtils.mkdir("#{TFTP_DIR}/pxelinux.cfg") if not File.directory?("#{TFTP_DIR}/pxelinux.cfg")
+		FileUtils.mkdir("#{TFTP_DIR}/firmwares") if not File.directory?("#{TFTP_DIR}/firmwares")
 		tmpfile = rand(100).to_s
 		f = File.new("#{TFTP_DIR}/firmwares/#{tmpfile}", "w")
 		f.close
