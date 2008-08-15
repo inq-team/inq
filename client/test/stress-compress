@@ -1,0 +1,127 @@
+#!/bin/sh -e
+# NAME=Stress compression
+# DESCRIPTION=This test runs many jobs on a hard drive simultaneously with background syncer. Each jobs performs compression/decompression together with taring/untaring of a big archive (Linux source code for example) in infinite loop. Syncer simply makes sync call each specified number of seconds. After specified time amount passed all jobs will be killed with syncer. Test will post benchmark results and successfully finish.
+# DESTROYS_HDD=true
+# IS_INTERACTIVE=false
+# POWEROFF_DURING_TEST=false
+# VERSION=0.1
+# TAGS=hdd,stress,cpu,memory,benchmark
+# DEPENDS=CPU,HDD,Memory,Mainboard,Disk Controller
+# VAR=TESTTIME:int:600:Total time of stress testing, sec
+# VAR=STRESS_TREE:string:linux-2.6.22.5-31-stress.tar.gz:Gzipped tarball file containing stress test tree
+# VAR=JOBS:int:16:Number of parallely running jobs during stress test compression/decompression
+# VAR=SYNCTIME:int:2:Sync time period, sec
+
+. /usr/share/inquisitor/functions-test
+
+exit_handler()
+{
+	sleep 5
+	if [ -d "$MOUNTPOINT" ]; then
+		cd $HOME/
+		umount -f $MOUNTPOINT >/dev/null 2>&1 || true
+		rmdir $MOUNTPOINT
+	fi
+}
+
+benchmark_result()
+{
+	perl -e 'while(<>){next unless /^real (.*)$/; $s+=$1; $n++;}; print $s/$n' $1
+}
+
+test_succeed_if_no hdds
+
+MOUNTPOINT=`mktemp -d`
+
+# We will use only first found HDD
+hdd=`get_hdds_list | sed -n '1p'`
+
+# Create default GNU/Linux filesystem on it
+echo -n "Creating filesystem..."
+mke2fs -m0 -F $hdd >$DEBUG_TTY 2>&1 || test_failed "Filesystem creation failed"
+mount -t ext2 $hdd $MOUNTPOINT
+echo_success
+
+[ ! "$JOBS" -eq 0 ] || JOBS=`cpu_quantity`
+
+echo -n "Starting syncer..."
+syncer()
+{
+	while true; do
+		sleep $SYNCTIME
+		sync
+	done
+}
+
+syncer &
+SYNCER_PID=$!
+echo_success
+
+echo -n "Copying stress tree archive..."
+cd $SHARE_DIR
+cp $STRESS_TREE $MOUNTPOINT/stress_tree.tar.gz
+cd $HOME
+echo_success
+
+for i in `seq 1 $JOBS`; do
+	echo -n "Starting job #$i..."
+	mkdir -p $MOUNTPOINT/$i
+
+	cat > $MOUNTPOINT/$i/job.sh <<EOF
+#!/bin/sh -e
+exit_handler()
+{
+	local rc=$?
+	trap - EXIT
+	wait || true
+	exit $rc
+}
+trap exit_handler HUP PIPE INT QUIT TERM EXIT
+
+mkdir job
+cd job
+tar xvzf ../../stress_tree.tar.gz >$DEBUG_TTY 2>&1
+cd ../
+
+while true; do
+	/usr/bin/time -a -p -o compress.time tar cvzf job.tar.gz job >$DEBUG_TTY 2>&1
+	rm -fr job
+	/usr/bin/time -a -p -o decompress.time tar xvzf job.tar.gz >$DEBUG_TTY 2>&1
+	rm job.tar.gz
+done
+EOF
+	cd $MOUNTPOINT/$i
+	sh -e job.sh &
+	echo $! > main.pid
+	echo_success
+done
+
+echo -n "Sleeping for $TESTTIME seconds..."
+sleep $TESTTIME
+echo_success
+
+for i in `seq 1 $JOBS`; do
+	echo -n "Killing job #$i..."
+	kill `cat $MOUNTPOINT/$i/main.pid`
+	echo_success
+done
+
+echo -n "Waiting for every child to die..."
+kill $SYNCER_PID
+wait
+echo_success
+
+echo -n "Creating benchmark data..."
+for i in `seq 1 $JOBS`; do
+	compress=`benchmark_result $MOUNTPOINT/$i/compress.time`
+	decompress=`benchmark_result $MOUNTPOINT/$i/decompress.time`
+	benchmark_submit_float "Job $i average compression time" $compress "sec"
+	benchmark_submit_float "Job $i average decompression time" $decompress "sec"
+done
+echo_success
+
+echo -n "Unmounting filesystem..."
+umount -f $MOUNTPOINT >/dev/null 2>&1 || true
+echo_success
+
+test_succeeded
