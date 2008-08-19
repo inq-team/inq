@@ -42,4 +42,9 @@ case $CONFIGURATION in
 	;;
 esac
 
+# We have to use such dirty hack, because einarc's operations are not
+# waiting for real commands completion. So, for example, we can get
+# hard drives appearing for kernel (in dmesg) during several seconds.
+sleep 30
+
 test_succeeded
