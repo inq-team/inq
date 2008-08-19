@@ -62,8 +62,7 @@ benchmark_drive()
 
 test_succeed_if_no hdds
 
-TOTAL_MEMORY=$(( `grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024 ))
-[ ! $TEST_FILE_SIZE -eq 0 ] || TEST_FILE_SIZE=$(($TOTAL_MEMORY * 2))
+[ ! $TEST_FILE_SIZE -eq 0 ] || TEST_FILE_SIZE=$((`memory_amount` * 2))
 
 TESTED_QUANTITY=0
 for BLOCK_DEV in `get_hdds_list`; do

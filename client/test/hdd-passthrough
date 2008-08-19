@@ -30,8 +30,7 @@ MOUNTPOINT=`mktemp -d`
 export ERROR_FILE=`mktemp`
 
 # Checking if this machince has too low amount of memory
-TOTAL_MEMORY=$(( `grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024 ))
-if [ "$TOTAL_MEMORY" -lt 600 ]; then
+if [ "`memory_amount`" -lt 600 ]; then
 	RAMDISK_SIZE=300
 	MAKE_ARGS="fs"
 	JOBS=4
