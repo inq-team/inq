@@ -268,6 +268,7 @@ class OrdersController < ApplicationController
 		@model = Model.find(params[:model][:id]) if params[:model][:id].to_i != 0
 		@order = Order.find(params[:id])
 		comps= params.to_a.select{ |x| x[0].to_s =~ /comp_[\d]+/ && x[1]['update'] == '1' }.map{ |x|  Computer.find_by_id(x[0].gsub(/comp_/, '').to_i) }
+		comps.sort! {|x,y| x.id<=>y.id}
 
 		case params[:commit]
 		when /Change/
