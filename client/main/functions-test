@@ -12,20 +12,24 @@ else
 	# Called by scheduler; will use handle #4 to output test data to
 	# be correctly grabbed by run_test
 
+	execute_after_test()
+	{
+		cat >&5 <<EOF
+#!/bin/sh
+. /etc/inquisitor/global
+. $SHARE_DIR/functions
+. $SHARE_DIR/communication
+
+$@
+EOF
+	}
+
 	test_succeeded()
 	{
 		if [ -n "$@" ]; then
 			echo "$@" >&4 || echo "$@" >&2
 		fi
 		exit 0
-	}
-
-	test_succeeded_and_reboot()
-	{
-		if [ -n "$@" ]; then
-			echo "$@" >&4 || echo "$@" >&2
-		fi
-		hard_reboot
 	}
 
 	test_failed()

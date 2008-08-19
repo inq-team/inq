@@ -12,4 +12,5 @@
 . /usr/share/inquisitor/functions-test
 
 boot_from_image "$IMAGE" || test_failed "Unable to boot from image"
-test_succeeded_and_reboot
+execute_after_test hard_reboot
+test_succeeded

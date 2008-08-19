@@ -119,12 +119,15 @@ run_test()
 	test_stage_advance "$TEST_NAME" "$TEST_TYPE" "$TEST_VERSION" start
 
 	MSG_DIR=`mktemp -d`
-	# Run test, collect status + comment
+	# Run test, collect status + comment + posttest commands
 	export PLANNER=1
-	(if "$SHARE_DIR/test/$1" 4>$MSG_DIR/comment 2>&1; then
+	(if "$SHARE_DIR/test/$1" 4>$MSG_DIR/comment 5>$MSG_DIR/execute_after_test.sh 2>&1; then
 		echo -n "Test $TEST_NAME"
 		echo_success
 		test_stage_advance "$TEST_NAME" "$TEST_TYPE" "$TEST_VERSION" finish "`cat $MSG_DIR/comment`"
+		echo -n "Executing posttest commands..."
+		/bin/sh $MSG_DIR/execute_after_test.sh
+		echo_success
 	else
 		touch ${MSG_DIR}/exit_fail
 		echo -n "Test $TEST_NAME"
@@ -353,4 +356,9 @@ component_version()
 cpu_quantity()
 {
 	grep '^processor' /proc/cpuinfo | wc -l
+}
+
+memory_amount()
+{
+	echo $(( `grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024 ))
 }
