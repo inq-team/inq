@@ -7,7 +7,7 @@
 # VERSION=0.2
 # TAGS=
 # DEPENDS=HDD,Disk Controller
-# VAR=IF:string:raw_disk_image:Absolute or relative path to source raw disk image to be written
+# VAR=IF:string:raw_disk_image:Euther absolute or relative path to source raw disk image to be written, or URL to download
 # VAR=OF:string:sda:Target device name that will be overwritten
 # VAR=BLOCKSIZE:int:1024:Blocksize, KiB
 # VAR=SKIP:int:0:Number of blocks to skip
@@ -19,7 +19,6 @@
 cd $SHARE_DIR/firmwares
 
 # Some protection from fools to produce test fail comments
-[ -e "$IF" ] || test_failed 'Source file does not exist'
 [ -b "/dev/$OF" ] || test_failed 'Target device is not block device'
 
 [ "$COUNT" -eq 0 ] && COUNT_ARG="" || COUNT_ARG="count=$COUNT"
@@ -30,7 +29,12 @@ else
 fi
 
 # Perform writing itself
-$DECOMPRESSOR $IF | dd of=/dev/"$OF" bs=$BLOCKSIZE $COUNT_ARG skip=$SKIP || test_failed 'DD failed'
+if echo $IF | grep -q "^http:\/\/"; then
+	curl "$IF" | $DECOMPRESSOR | dd of=/dev/"$OF" bs=$BLOCKSIZE $COUNT_ARG skip=$SKIP || test_failed 'DD failed'
+else
+	[ -e "$IF" ] || test_failed 'Source file does not exist'
+	$DECOMPRESSOR $IF | dd of=/dev/"$OF" bs=$BLOCKSIZE $COUNT_ARG skip=$SKIP || test_failed 'DD failed'
+fi
 
 # Call sfdisk to reread partition table if it was written,
 # otherwise it is not dangerous operation.
