@@ -23,7 +23,7 @@ fi
 
 [ -f "$TORRENT" ] || test_failed "Torrent file does not exist"
 
-ctorrent -s "$TARGET" -b /dev/null -e 0 -M 1000 "$TORRENT" || test_failed "Leeching failed"
+ctorrent -r -s "$TARGET" -b /dev/null -e 0 -M 1000 "$TORRENT" || test_failed "Leeching failed"
 
-[ "$SEED_AFTER" = "true" ] && execute_after_test ctorrent -f -s "$TARGET" -b /dev/null -E 1000 -M 1000 "$TORRENT"
+[ "$SEED_AFTER" = "true" ] && execute_after_test ctorrent -r -f -s "$TARGET" -b /dev/null -E 1000 -M 1000 "$TORRENT"
 test_succeeded
