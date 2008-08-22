@@ -430,9 +430,8 @@ set timefmt \"%s\""
 				chart_file.flush
 
 				system("gnuplot #{chart_file.path}")
-				send_file(png_file.path, :type => 'image/png')
-
 				chart_file.close!
+				send_file(png_file.path, :type => 'image/png', :stream => false)
 				png_file.close!
 			}
 		}
