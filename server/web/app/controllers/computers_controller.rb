@@ -431,6 +431,9 @@ set timefmt \"%s\""
 
 				system("gnuplot #{chart_file.path}")
 				send_file(png_file.path, :type => 'image/png')
+
+				chart_file.close!
+				png_file.close!
 			}
 		}
 	end
