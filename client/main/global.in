@@ -1,4 +1,3 @@
-#SERVER=`/sbin/ifconfig eth0 | grep 'inet addr' | sed 's/^.*inet addr:10\.0\.\(.\).*/10.0.\1.2/g;'`
 SERVER=10.254.254.1
 NTP_SERVER=$SERVER
 TESTER_USER=tester
