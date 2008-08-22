@@ -19,6 +19,7 @@ else
 . /etc/inquisitor/global
 . $SHARE_DIR/functions
 . $SHARE_DIR/communication
+cd $SHARE_DIR/firmwares # As it is commonly used
 
 $@
 EOF

@@ -7,7 +7,7 @@
 # VERSION=0.2
 # TAGS=
 # DEPENDS=HDD,Disk Controller
-# VAR=IF:string:raw_disk_image:Euther absolute or relative path to source raw disk image to be written, or URL to download
+# VAR=IF:string:raw_disk_image:Either absolute or relative path to source raw disk image to be written, or URL to download
 # VAR=OF:string:sda:Target device name that will be overwritten
 # VAR=BLOCKSIZE:int:1024:Blocksize, KiB
 # VAR=SKIP:int:0:Number of blocks to skip

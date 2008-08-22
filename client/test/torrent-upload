@@ -1,0 +1,29 @@
+#!/bin/sh -e
+# NAME=Torrent upload
+# DESCRIPTION=This test uses BitTorrent client to download specified torrent. It uses Enhanced CTorrent client. With its modified version it can write directly on block devices.
+# DESTROYS_HDD=true
+# IS_INTERACTIVE=false
+# POWEROFF_DURING_TEST=false
+# VERSION=0.1
+# TAGS=torrent
+# DEPENDS=HDD,Disk Controller
+# VAR=TORRENT:string:test.torrent:Either absolute or relative path to .torrent file. Be sure that tracker is available from network
+# VAR=TARGET:string:/dev/sda:Target device name that will be overwritten
+# VAR=SEED_AFTER:bool:true:Seed after successfull test finishing?
+
+. /usr/share/inquisitor/functions-test
+
+cd $SHARE_DIR/firmwares
+
+if echo "$TARGET" | grep -q "^\/dev\/" && [ -b "$TARGET" ]; then
+	true
+else
+	test_failed "Requested device is not block device "
+fi
+
+[ -f "$TORRENT" ] || test_failed "Torrent file does not exist"
+
+ctorrent -s "$TARGET" -b /dev/null -e 0 -M 1000 "$TORRENT" || test_failed "Leeching failed"
+
+[ "$SEED_AFTER" = "true" ] && execute_after_test ctorrent -f -s "$TARGET" -b /dev/null -E 1000 -M 1000 "$TORRENT"
+test_succeeded
