@@ -387,7 +387,9 @@ set timefmt \"%s\""
 				data_files_hash = {}
 
 				monitoring_ids.each do |monitoring_id|
-					uniq_keys = Graph.find_all_by_testing_id_and_monitoring_id(@testing, monitoring_id, :select => 'DISTINCT graphs.key').map{ |x| x[:key] }
+					uniq_keys = Graph.find_all_by_testing_id_and_monitoring_id(@testing,
+												   monitoring_id,
+												   :select => 'DISTINCT graphs.key').map{ |x| x[:key] }
 					data_files_hash[monitoring_id] = {} if data_files_hash[monitoring_id].nil?
 					uniq_keys.each{ |key| data_files_hash[monitoring_id][key] = Tempfile.new('data') }
 					
@@ -397,32 +399,30 @@ set timefmt \"%s\""
 						unless (@from_time == 0) or (@to_time == 0)
 							cond = ['timestamp >= ? AND timestamp <= ?', Time.at(@from_time), Time.at(@to_time)]
 							x_min = @from_time
-							if (@to_time - @from_time).round < 500
-								format_x = '%H:%M:%S'
-							end
+							format_x = '%H:%M:%S' if (@to_time - @from_time).round < 500
 						else
 							cond = ['timestamp >= ?', x_min]
 						end
 						
-						plot_script += "\nset format x \"#{format_x}\"
-set key below box
-set grid"						
+						plot_script += "\nset format x \"#{format_x}\"\nset key below box\nset grid"
 						
-						graphs = Graph.find_all_by_testing_id_and_monitoring_id_and_key(@testing, monitoring_id, key, :conditions => cond, :order => 'timestamp')
+						graphs = Graph.find_all_by_testing_id_and_monitoring_id_and_key(@testing,
+														monitoring_id,
+														key,
+														:conditions => cond,
+														:order => 'timestamp')
 						graphs.each{ |x| data_file.puts "#{x.timestamp.to_f + 14400}\t#{x.value}" }
 					end
 					
 					data_files_hash[monitoring_id].each_pair{ |k, f| f.flush }
 
-					line_title = (($MONITORINGS.find{|x| x[1][:id] == monitoring_id }||[])[1]||{})[:measurement]
-					plot_title = (($MONITORINGS.find{|x| x[1][:id] == monitoring_id }||[])[1]||{})[:name]
+					line_title = (($MONITORINGS.find{ |x| x[1][:id] == monitoring_id } || [])[1] || {})[:measurement]
+					plot_title = (($MONITORINGS.find{ |x| x[1][:id] == monitoring_id } || [])[1] || {})[:name]
 					
-					line_title = 'ln_ttl' unless line_title
-					plot_title = 'plt_ttl' unless plot_title
+					line_title = 'line title' unless line_title
+					plot_title = 'plot title' unless plot_title
 					plot_string = "set title \"#{plot_title}\"\n" + 'plot ' + data_files_hash[monitoring_id].map{ |x| "'#{x[1].path}' using 1:2 title \"#{line_title} #{x[0]}\" with lines" }.join(', ')
-					plot_script += "\n"
-					plot_script += plot_string
-					plot_script += "\n"									
+					plot_script += "\n" + plot_string + "\n"
 				end
 				
 				chart_file = Tempfile.new('chart')
@@ -431,10 +431,6 @@ set grid"
 
 				system("gnuplot #{chart_file.path}")
 				send_file(png_file.path, :type => 'image/png')
-
-#				data_file.close!
-#				chart_file.close!
-#				png_file.close!
 			}
 		}
 	end
