@@ -23,6 +23,7 @@ class DiscTest
 		@process = []
 		@done = []
 		@total = []
+		@blocks_found = []
 	end
 
 	def start
@@ -30,22 +31,22 @@ class DiscTest
 		@devices.each_with_index { |hdd, i|
 			next if not hdd or hdd.strip.empty?
 
-			pw = IO::pipe   # pipe[0] for read, pipe[1] for write
+			pw = IO::pipe # pipe[0] for read, pipe[1] for write
 			pr = IO::pipe
 			pe = IO::pipe
 
 			# Fork and start badblocks process
 			@process[i] = fork {
-			        pw[1].close
-			        STDIN.reopen(pw[0])
-			        pw[0].close
+				pw[1].close
+				STDIN.reopen(pw[0])
+				pw[0].close
 
-			        pr[0].close
-			        STDOUT.reopen(pr[1])
-			        STDERR.reopen(pr[1])
-			        pr[1].close
+				pr[0].close
+				STDOUT.reopen(pr[1])
+				STDERR.reopen(pr[1])
+				pr[1].close
 
-			        exec("#{BADBLOCKS_COMMAND} #{hdd}")
+				exec("#{BADBLOCKS_COMMAND} #{hdd}")
 			}
 
 			pw[0].close
@@ -64,6 +65,9 @@ class DiscTest
 						@done[i] = $1.to_f
 						@total[i] = $2.to_f
 						@total[i] = 1 if @total[i] < 1
+					end
+					if l =~ /(\d+)\s*bad blocks found/
+						@blocks_found[i] = $1.to_i
 					end
 				end
 			}
@@ -140,8 +144,16 @@ class DiscTest
 				else
 					File.open(ENV['ERROR_FILE'], 'w') { |f| f.puts "Bad HDD" }
 				end
-			else
-				status = 0
+			end
+		}
+
+		# Override everything with badblocks results
+		@blocks_found.each_with_index { |bb,i|
+			puts "GOT #{bb}"
+			if bb != 0 then
+				status = 1
+				failed_hdd = @devices[i]
+				File.open(ENV['ERROR_FILE'], 'w') { |f| f.puts "Failed HDD: #{failed_hdd} with #{bb} badblocks" }
 			end
 		}
 		puts "Status=#{status}"
