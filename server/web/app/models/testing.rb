@@ -1,6 +1,7 @@
 class Testing < ActiveRecord::Base
 	belongs_to :computer
 	has_many :components
+	has_many :software_components
 	has_many :testing_stages, :order => 'start'
 	has_one :audit
 	has_many :graphs

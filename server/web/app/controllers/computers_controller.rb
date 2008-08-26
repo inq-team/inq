@@ -56,6 +56,24 @@ class ComputersController < ApplicationController
 		end
 	end
 
+	def add_software_component
+		@computer = Computer.find(params[:id])
+		testing = @computer.testings.last
+		testing.software_components << SoftwareComponent.new(
+			:version => params[:version]
+			:model => SoftwareComponentModel.find_or_create_by_name_and_software_component_architecture_id(params[:name],SoftwareComponentArchitecture.find_or_create_by_name(params[:arch]).id),
+		)
+		if @computer.save
+			flash[:notice] = 'Components successfully updated.'
+			respond_to() do |format|
+				format.html { redirect_to(:action => 'show', :id => @computer) }
+				format.xml { render(:xml => testing.to_xml()) }
+			end
+		else
+			head(:status => 500)
+		end
+	end
+
 	def show_components
 		render :text => Computer.find(params[:id]).last_testing.components.collect { |com|
 			"#{com.model.vendor}::#{com.model.name}::#{com.model.group.name}"

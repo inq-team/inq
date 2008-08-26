@@ -15,8 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+DB_USER="inq"
+DB_PASSWORD="inq"
+DB_HOST="localhost"
+DB_NAME="inq"
+
 while true; do
-	cat <<__EOF__ | mysql -uinq -pinq inq
+	cat <<__EOF__ | mysql -u$DB_USER -p$DB_PASSWORD -h$DB_HOST $DB_NAME
 UPDATE computer_stages
 SET end=NOW()
 WHERE id IN (
