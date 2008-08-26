@@ -149,7 +149,6 @@ class DiscTest
 
 		# Override everything with badblocks results
 		@blocks_found.each_with_index { |bb,i|
-			puts "GOT #{bb}"
 			if bb != 0 then
 				status = 1
 				failed_hdd = @devices[i]
