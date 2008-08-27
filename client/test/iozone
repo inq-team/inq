@@ -6,7 +6,6 @@
 # VERSION=0.1
 # TAGS=benchmark,hdd,filesystem
 # DEPENDS=HDD
-# VAR=FILESYSTEMS:string:ext2:Space-separated list of filesystems on what drive will be benchmarked
 # VAR=TEST_FILE_SIZE:int:0:Size of test file, MiB. If set to zero - double memory amount size will be used
 
 . /usr/share/inquisitor/functions-test
@@ -28,30 +27,18 @@ perform_benchmark()
 {
 	local drive=$1
 
-	for fs in $FILESYSTEMS; do
-		benchmark_drive "$drive" "$fs"
-	done
-}
-
-benchmark_drive()
-{
-	local drive=$1
-	local filesystem=$2
-
 	echo -n "Preparing $drive drive..."
-	mkfs.$filesystem -F $drive >$DEBUG_TTY 2>&1 ||
-	mkfs.$filesystem -f $drive >$DEBUG_TTY 2>&1 ||
-	mkfs.$filesystem --force $drive >$DEBUG_TTY 2>&1 ||
-	mkfs.$filesystem $drive >$DEBUG_TTY 2>&1 || test_failed 'Filesystem creation failed'
+	mkfs.$DEFAULT_FILESYSTEM $DEFAULT_FILESYSTEM_FORCE $drive >$DEBUG_TTY 2>&1 ||
+		test_failed 'Filesystem creation failed'
 
-	mount $drive $SCRATCH_DIRECTORY
+	mount -t $DEFAULT_FILESYSTEM $drive $SCRATCH_DIRECTORY
 	echo_success
 
 	echo -n "Performing benchmark..."
 	iozone -a -g "$TEST_FILE_SIZE"m -f $SCRATCH_DIRECTORY/iozone_testfile | tee $RESULT_FILE
 	echo_success
 	
-	benchmark_submit_string "Drive: $drive FS: $filesystem" \
+	benchmark_submit_string "Drive: $drive" \
 	"`perl -ne 'print if /^\s+random/ .. /^$/' < $RESULT_FILE | sed -n '$d; s/^ *//g; 3,$p'`"
 
 	umount $SCRATCH_DIRECTORY

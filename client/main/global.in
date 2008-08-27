@@ -9,6 +9,8 @@ LIB_DIR=@@LIB_DIR@@
 SHARE_DIR=@@SHARE_DIR@@
 
 DEBUG_TTY=@@DEBUG_TTY@@
+DEFAULT_FILESYSTEM=@@DEFAULT_FILESYSTEM@@
+DEFAULT_FILESYSTEM_FORCE=@@DEFAULT_FILESYSTEM_FORCE@@
 
 PATH=/sbin:/usr/sbin:/usr/local/sbin:/bin:/usr/bin:/usr/local/bin:/usr/X11R6/bin
 

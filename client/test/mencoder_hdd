@@ -31,10 +31,10 @@ MOUNTPOINT=`mktemp -d`
 # We will use only first found HDD
 hdd=`get_hdds_list | sed -n '1p'`
 
-# Create default GNU/Linux filesystem on it
+# Create default filesystem on it
 echo -n "Creating filesystem..."
-mke2fs -m0 -F $hdd >$DEBUG_TTY 2>&1 || test_failed "Filesystem creation failed"
-mount -t ext2 $hdd $MOUNTPOINT
+mkfs.$DEFAULT_FILESYSTEM $DEFAULT_FILESYSTEM_FORCE $hdd >$DEBUG_TTY 2>&1 || test_failed "Filesystem creation failed"
+mount -t $DEFAULT_FILESYSTEM $hdd $MOUNTPOINT
 echo_success
 
 echo -n "Copying source file..."

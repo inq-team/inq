@@ -28,7 +28,14 @@ SHARE_EXEC_FILES=\
 	mencoder_call
 
 all:
-	sed -e 's,@@ETC_DIR@@,$(ETC_DIR),g; s,@@BIN_DIR@@,$(BIN_DIR),g; s,@@LIB_DIR@@,$(LIB_DIR),g; s,@@SHARE_DIR@@,$(SHARE_DIR),g; s,@@INQ_VERSION@@,$(INQ_VERSION),g; s,@@DEBUG_TTY@@,$(DEBUG_TTY),g;' <global.in >global
+	sed -e "s,@@ETC_DIR@@,$(ETC_DIR),g; \
+		s,@@BIN_DIR@@,$(BIN_DIR),g; \
+		s,@@LIB_DIR@@,$(LIB_DIR),g; \
+		s,@@SHARE_DIR@@,$(SHARE_DIR),g; \
+		s,@@INQ_VERSION@@,$(INQ_VERSION),g; \
+		s,@@DEFAULT_FILESYSTEM@@,$(DEFAULT_FILESYSTEM),g; \
+		s,@@DEFAULT_FILESYSTEM_FORCE@@,$(DEFAULT_FILESYSTEM_FORCE),g; \
+		s,@@DEBUG_TTY@@,$(DEBUG_TTY),g;" <global.in >global
 
 install:
 	mkdir -p $(DESTDIR)$(BIN_DIR) $(DESTDIR)$(ETC_DIR) $(DESTDIR)$(SHARE_DIR)

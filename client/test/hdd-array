@@ -64,8 +64,8 @@ prepare_array_for_test()
 	local array=$1
 
 	# Create and mount filesystem on which we will work
-	mke2fs -m0 -F $array >$DEBUG_TTY 2>&1 || test_failed "Disk write error"
-	mount -t ext2 $array $MOUNTPOINT
+	mkfs.$DEFAULT_FILESYSTEM $DEFAULT_FILESYSTEM_FORCE $array >$DEBUG_TTY 2>&1 || test_failed "Disk write error"
+	mount -t $DEFAULT_FILESYSTEM $array $MOUNTPOINT
 
 	# Extract sources for compilation
 	cd "$SHARE_DIR"
