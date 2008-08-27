@@ -1,0 +1,8 @@
+#!/bin/sh
+# NAME=Mencoder
+# DESCRIPTION=Detect MEncoder encoder version.
+
+version=`mencoder 2>&1 | sed -n '1p' | sed 's/^MEncoder //'`
+arch=`executable_arch mencoder`
+
+add_software_component mencoder "$arch" "$version"

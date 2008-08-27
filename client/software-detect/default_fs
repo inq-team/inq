@@ -1,0 +1,5 @@
+#!/bin/sh
+# NAME=Default filesystem
+# DESCRIPTION=Detect default filesystem.
+
+add_software_component default_fs noarch "$DEFAULT_FILESYSTEM"

@@ -1,0 +1,25 @@
+#!/bin/sh
+# NAME=Linux
+# DESCRIPTION=Detect Linux version.
+
+version=`uname -r`
+
+case `uname -m` in
+	"i386")
+		arch="i386"
+		;;
+	"i486")
+		arch="i386"
+		;;
+	"i586")
+		arch="i386"
+		;;
+	"i686")
+		arch="i386"
+		;;
+	"x86_64")
+		arch="amd64"
+		;;
+esac
+
+add_software_component linux "$arch" "$version"

@@ -71,6 +71,11 @@ submit_additional_components()
 	true
 }
 
+add_software_component()
+{
+	true
+}
+
 # Mark current testing as finished
 testing_finished()
 {

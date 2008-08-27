@@ -362,3 +362,17 @@ memory_amount()
 {
 	echo $(( `grep MemTotal /proc/meminfo | awk '{print $2}'` / 1024 ))
 }
+
+executable_arch()
+{
+	exe_path=`which $1`
+
+	case `file $exe_path | awk -F, '{print $2}' | sed 's/ //g'` in
+	"Intel80386")
+		echo "i386"
+		;;
+	"x86-64")
+		echo "amd64"
+		;;
+	esac
+}

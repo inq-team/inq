@@ -4,6 +4,7 @@ include ../../flavour/$(FLAVOUR)
 BIN_FILES=\
 	inquisitor \
 	inq-detect \
+	inq-software-detect \
 	get-macs \
 	inq-wrapper \
 	inq-live

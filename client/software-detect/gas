@@ -1,0 +1,8 @@
+#!/bin/sh
+# NAME=GAS
+# DESCRIPTION=Detect GNU assembler version.
+
+version=`as --version | sed -n '1p' | sed 's/^GNU assembler //'`
+arch=`executable_arch as`
+
+add_software_component gas "$arch" "$version"

@@ -23,8 +23,9 @@ fi
 	
 export COMPUTER_ID
 
-# Starting monitorings
-for I in $SHARE_DIR/monitoring/*; do
-	echo -n "Starting `basename $I`"
-	monitoring_start $I
+# Starting software detects
+for I in $SHARE_DIR/software-detect/*; do
+	echo -n "Detecting `basename $I`"
+	. $I
+	echo_success
 done

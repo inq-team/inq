@@ -1,0 +1,8 @@
+#!/bin/sh
+# NAME=Tar
+# DESCRIPTION=Detect Tar archiver version.
+
+version=`tar --version | sed -n '1p' | sed 's/^tar //'`
+arch=`executable_arch tar`
+
+add_software_component tar "$arch" "$version"

@@ -52,6 +52,18 @@ submit_additional_components()
 	[ -r "$1" ] && curl -f --data list=\""`cat $1 `"\" -X POST "$REST_SERVER/computers/submit_additional_components/$COMPUTER_ID.xml"
 }
 
+add_software_component()
+{
+	local name=`echo -n "$1" | ruby -e 'require "cgi"; print CGI::escape($stdin.read)'`
+	local arch=$2
+	local version=`echo -n "$3" | ruby -e 'require "cgi"; print CGI::escape($stdin.read)'`
+
+	if ! curl -sf "$REST_SERVER/computers/add_software_component/$COMPUTER_ID?name=$name&arch=$arch&version=$version"; then
+		echo 'add_software_component: failed to submit'
+		return 1
+	fi
+}
+
 # Mark current testing as finished
 testing_finished()
 {

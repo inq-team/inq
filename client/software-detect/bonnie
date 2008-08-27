@@ -1,0 +1,8 @@
+#!/bin/sh
+# NAME=Bonnie++
+# DESCRIPTION=Detect Bonnie++ benchmark version.
+
+version=`bonnie++ -h 2>&1 | sed -n '$p' | sed -n 's/^Version: \(.*\)$/\1/p'`
+arch=`executable_arch bonnie++`
+
+add_software_component bonnie "$arch" "$version"

@@ -1,0 +1,8 @@
+#!/bin/sh
+# NAME=Gzip
+# DESCRIPTION=Detect GNU Zip version.
+
+version=`gzip --version | sed -n '1p' | sed 's/^gzip //'`
+arch=`executable_arch gzip`
+
+add_software_component gzip "$arch" "$version"

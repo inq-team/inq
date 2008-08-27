@@ -1,0 +1,8 @@
+#!/bin/sh
+# NAME=GCC
+# DESCRIPTION=Detect GCC version.
+
+version=`gcc --version | sed -n '1p' | sed 's/^gcc //'`
+arch=`executable_arch gcc`
+
+add_software_component gcc "$arch" "$version"

@@ -1,0 +1,8 @@
+#!/bin/sh
+# NAME=p7zip
+# DESCRIPTION=Detect p7zip compressor version.
+
+version=`7zr | sed -n '2p' | sed 's/^7-Zip //'`
+arch=`executable_arch 7zr`
+
+add_software_component p7zip "$arch" "$version"
