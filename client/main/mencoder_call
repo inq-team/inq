@@ -38,7 +38,7 @@ X264OPTS="${X264OPTS}:bitrate=$BITRATE:threads=$THREADS"
 # Run transcoding after detection
 if [ "$TWOPASS" = "true" ]; then
 	/usr/bin/time -p -o time.result \
-		mencoder -oac copy \
+		mencoder -nosound \
 			 -ovc x264 \
 			 -vf scale=$SCALE \
 			 -x264encopts ${X264OPTS}:pass=1 \
@@ -49,7 +49,7 @@ if [ "$TWOPASS" = "true" ]; then
 	rm $DESTINATION
 
 	/usr/bin/time -p -o time.result \
-		mencoder -oac copy \
+		mencoder -nosound \
 			 -ovc x264 \
 			 -vf scale=$SCALE \
 			 -x264encopts ${X264OPTS}:pass=2 \
@@ -57,7 +57,7 @@ if [ "$TWOPASS" = "true" ]; then
 	create_benchmark_results
 else
 	/usr/bin/time -p -o time.result \
-		mencoder -oac copy \
+		mencoder -nosound \
 			 -ovc x264 \
 			 -vf scale=$SCALE \
 			 -x264encopts $X264OPTS \

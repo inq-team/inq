@@ -40,13 +40,14 @@ echo_success
 echo -n "Copying source file..."
 cp $SOURCE $MOUNTPOINT
 cd $MOUNTPOINT
+filename=`basename $SOURCE`
 echo_success
 
 [ ! "$THREADS" -eq 0 ] || THREADS=`cpu_quantity`
 
 # Perform benchmarking itself
 echo -n "Transcoding..."
-$SHARE_DIR/mencoder_call $SHARE_DIR/$SOURCE \
+$SHARE_DIR/mencoder_call $filename \
 			 destination.avi \
 			 $PRESET \
 			 $TWOPASS \
