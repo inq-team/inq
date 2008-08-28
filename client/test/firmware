@@ -35,13 +35,11 @@ cat $FIRMWARES | while read component; do
 	version=`echo $component | awk -F :: '{print $2}'`
 	firmware_file=`echo $component | awk -F :: '{print $3}'`
 
+	echo ""
 	echo "Current component: $type"
 
 	# Detect version
 	case $type in
-	*)
-		current_version=`component_version "$type"`
-		;;
 	"Disk Controller")
 		if [ `einarc -l | wc -l` -eq 0 ]; then
 			print_red_message "Disk controller does not supported by einarc"
@@ -99,6 +97,9 @@ cat $FIRMWARES | while read component; do
 				fi
 			fi
 		fi
+		;;
+	*)
+		current_version=`component_version "$type"`
 		;;
 	esac
 
