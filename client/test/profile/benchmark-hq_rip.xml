@@ -1,0 +1,20 @@
+<!-- 
+  This is reference mencoder_memory benchmark's profile.
+
+  It simulates behavior of user making high-quality HDRip.
+
+  As a source movie we are using Big Buck Bunny FullHD H.264 version,
+  downscale it to DVD resolution with appropriate bitrate in two pass
+  encoding mode with Very High Quality preset. Sound will be ignored,
+  as it is task for another benchmark.
+
+  2008-08-28 by Inquisitor team
+-->
+<test id="mencoder_memory" type="benchmark-hqrip">
+  <var name="SOURCE">big_buck_bunny.mov</var>
+  <var name="PRESET">vhq</var>
+  <var name="TWOPASS">true</var>
+  <var name="SCALE">720x480</var>
+  <var name="BITRATE">1500</var>
+  <var name="THREADS">0</var>
+</test>

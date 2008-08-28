@@ -1,0 +1,21 @@
+<!-- 
+  This is reference mencoder_memory benchmark's profile.
+
+  It simulates behavior of user quickly making rip for his
+  low-resolution portable device.
+
+  As a source movie we are using Big Buck Bunny FullHD H.264 version,
+  downscale it to VGA resolution with appropriate bitrate in single
+  pass encoding mode with Low Quality preset. Sound will be ignored,
+  as it is task for another benchmark.
+
+  2008-08-28 by Inquisitor team
+-->
+<test id="mencoder_memory" type="benchmark-lqrip">
+  <var name="SOURCE">big_buck_bunny.mov</var>
+  <var name="PRESET">lq</var>
+  <var name="TWOPASS">false</var>
+  <var name="SCALE">320x240</var>
+  <var name="BITRATE">333</var>
+  <var name="THREADS">0</var>
+</test>
