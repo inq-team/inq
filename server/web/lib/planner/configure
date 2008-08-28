@@ -9,6 +9,7 @@ require 'ostruct'
 TESTS_DIR='../../../../client/test'
 MONITORINGS_DIR='../../../../client/monitoring'
 DETECTS_DIR='../../../../client/detect'
+SOFTWARE_DETECTS_DIR='../../../../client/software-detect'
 
 tests = {}
 
@@ -82,6 +83,22 @@ Dir.new(DETECTS_DIR).each { |entry|
 	}
 }
 
+software_detects = {}
+
+Dir.new(SOFTWARE_DETECTS_DIR).each { |entry|
+	next unless FileTest.file?("#{SOFTWARE_DETECTS_DIR}/#{entry}")
+
+	software_detects[entry] = m = {
+		:name => nil,
+		:description => nil
+	}
+
+	File.open("#{SOFTWARE_DETECTS_DIR}/#{entry}", 'r').each_line { |l|
+		m[:name] = $1 if l =~ /^# NAME=(.*)$/
+		m[:description] = $1 if l =~ /^# DESCRIPTION=(.*)$/
+	}
+}
+
 File.open('meta.rb', 'w') { |out|
 	out.print <<__EOF__
 # DO NOT EDIT: IT'S A GENERATED FILE! USE ./configure to REGENERATE!
@@ -89,5 +106,6 @@ File.open('meta.rb', 'w') { |out|
 $TESTS = #{tests.pretty_inspect}
 $MONITORINGS = #{monitorings.pretty_inspect}
 $DETECTS = #{detects.pretty_inspect}
+$SOFTWARE_DETECTS = #{software_detects.pretty_inspect}
 __EOF__
 }
