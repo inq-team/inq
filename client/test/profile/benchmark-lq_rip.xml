@@ -5,7 +5,7 @@
   low-resolution portable device.
 
   As a source movie we are using Big Buck Bunny FullHD H.264 version,
-  downscale it to VGA resolution with appropriate bitrate in single
+  downscale it to qVGA resolution with appropriate bitrate in single
   pass encoding mode with Low Quality preset. Sound will be ignored,
   as it is task for another benchmark.
 
