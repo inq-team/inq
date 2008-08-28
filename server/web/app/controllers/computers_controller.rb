@@ -61,7 +61,8 @@ class ComputersController < ApplicationController
 		testing = @computer.testings.last
 		testing.software_components << SoftwareComponent.new(
 			:version => params[:version]
-			:model => SoftwareComponentModel.find_or_create_by_name_and_software_component_architecture_id(params[:name],SoftwareComponentArchitecture.find_or_create_by_name(params[:arch]).id),
+			:model => SoftwareComponentModel.find_or_create_by_name_and_software_component_architecture_id(params[:name], SoftwareComponentArchitecture.find_or_create_by_name(params[:arch]).id),
+			:version => params[:version]
 		)
 		if @computer.save
 			head :ok
