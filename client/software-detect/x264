@@ -1,0 +1,9 @@
+#!/bin/sh
+# NAME=x264
+# DESCRIPTION=Detect x264 libriary version.
+
+arch=`executable_arch mencoder`
+mencoder_path=`which mencoder`
+version=`ldd $mencoder_path | grep 264 | awk '{print $3}' | sed -n 's/^.*\.so\.\(.*\)$/\1/p'`
+
+add_software_component x264 "$arch" "$version"
