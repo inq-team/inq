@@ -31,7 +31,7 @@ if FRU_INFO=`cat $HOME/fru.log | grep -A13 'Builtin FRU Device'`; then
 	MB_SERIAL=`echo "$FRU_INFO" | sed -n 's/ Board Serial *: //p'`
 	MB_MODEL="$MB_PRODUCT / $MB_PART_NUM"
 	MB_VERSION="`grep -A 3 "BIOS Information" $HOME/dmi.log | sed -n '/Version:/s/^.*Version: \(.*\)$/\1/pg'`"
-	[ ! -z "$MB_VERSION" ] || MB_VERSION=`grep -A 5 "description: BIOS" < lshw.log | sed -n 's/^ *version: \(.*\)$/\1/p'`
+	[ ! -z "$MB_VERSION" ] || MB_VERSION=`grep -A 5 "description: BIOS" < $HOME/lshw.log | sed -n 's/^ *version: \(.*\)$/\1/p'`
 
 	# If mainboard model exists
 	if [ -n "$MB_PRODUCT" ] || [ -n "$MB_PART_NUM" ]; then
@@ -45,7 +45,7 @@ if FRU_INFO=`cat $HOME/fru.log | grep -A13 'Builtin FRU Device'`; then
 			MB_MODEL=`echo "$MB_INFO" | sed -n 's/ *product: //p'`
 			MB_SERIAL=`echo "$MB_INFO" | sed -n 's/ *serial: //p'`
 			MB_VERSION="`grep -A 3 "BIOS Information" $HOME/dmi.log | sed -n '/Version:/s/^.*Version: \(.*\)$/\1/pg'`"
-			[ ! -z "$MB_VERSION" ] || MB_VERSION=`grep -A 5 "description: BIOS" < lshw.log | sed -n 's/^ *version: \(.*\)$/\1/p'`
+			[ ! -z "$MB_VERSION" ] || MB_VERSION=`grep -A 5 "description: BIOS" < $HOME/lshw.log | sed -n 's/^ *version: \(.*\)$/\1/p'`
 			echo Mainboard "$MB_VENDOR" "$MB_MODEL" "$MB_SERIAL" ' - lshw' >> $HOME/debug.log
 			$SHARE_DIR/add-component Mainboard "$MB_VENDOR" "$MB_MODEL" "$MB_SERIAL" "$MB_VERSION"
 		fi

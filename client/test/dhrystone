@@ -17,6 +17,8 @@ exit_handler()
 
 CPU_QUANTITY=`cpu_quantity`
 
+test_promise_time $DURATION
+
 for i in `seq 0 $(($CPU_QUANTITY - 1))`; do
 	echo -n "Dhrystone on core $i"
 	result=`taskset -c $i dhrystone $DURATION 2>&1 | awk '{print $1}'`
