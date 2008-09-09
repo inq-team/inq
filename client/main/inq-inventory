@@ -1,0 +1,105 @@
+#!/bin/sh -e
+
+. /etc/inquisitor/global
+. $SHARE_DIR/functions
+. $SHARE_DIR/communication
+
+# ===========================================================================
+# Detects
+# ===========================================================================
+
+echo 'Starting detects'
+inq-detect
+echo 'Detects finished'
+
+# ===========================================================================
+# Self-identification
+# ===========================================================================
+
+echo 'Starting self-identification'
+# Try various methods for self-id, stop after successful one
+COMPUTER_ID=
+for I in $SHARE_DIR/self-id/*; do
+	echo -n "Trying self-id using $I"
+	. $I
+	if [ -n "$COMPUTER_ID" ]; then
+		echo_success
+		break
+	else
+		echo_failure
+	fi
+done
+[ -n "$COMPUTER_ID" ] || fatal_failure 'Self-identification'
+export COMPUTER_ID
+
+# Reporting IP-address to the server
+publish_my_ip || fatal_failure 'IP-address update'
+
+# ===========================================================================
+# Start logging
+# ===========================================================================
+
+hostname c$COMPUTER_ID
+/sbin/service syslog-ng start || :
+
+# ===========================================================================
+# Set time
+# ===========================================================================
+
+echo -n 'Trying set local time '
+if [ -n "$NTP_SERVER" ]; then
+	if /usr/sbin/ntpdate $NTP_SERVER $1>/dev/null && /sbin/hwclock --systohc; then
+		echo_success
+	else
+		echo_failure
+	fi
+else
+	echo -n '(ntp server does not set)'
+	echo_skipped
+fi
+
+# ===========================================================================
+# Start watchdog, if available
+# ===========================================================================
+
+watchdog_start
+
+# ===========================================================================
+# Submit configuration by REST
+# ===========================================================================
+
+submit_components $HOME/components.xml
+
+# ===========================================================================
+# Starting monitorings
+# ===========================================================================
+
+echo 'Starting monitorings'
+for I in $SHARE_DIR/monitoring/*; do
+	echo -n "Starting `basename $I`"
+	monitoring_start `basename $I`
+	echo_success
+done
+echo 'Monitorings were started'
+
+# ===========================================================================
+# Starting software detects
+# ===========================================================================
+
+echo 'Starting software detects'
+inq-software-detect
+echo 'Software detects finished'
+
+# ===========================================================================
+# Run all tests
+# ===========================================================================
+
+plan_test_script
+. $HOME/test_script
+
+# We completed all tests
+print_green_message "================"
+print_green_message "TESTING FINISHED"
+print_green_message "================"
+
+testing_finished

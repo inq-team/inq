@@ -23,8 +23,12 @@ else
 ifeq ($(FLAVOUR), standalone)
 all: build-package
 else
+ifeq ($(FLAVOUR), inventory)
+all: build-package
+else
 all:
 	echo 'Edit Makefile.config to set up FLAVOUR to one of the valid values'
+endif
 endif
 endif
 endif
