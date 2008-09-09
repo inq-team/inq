@@ -1,0 +1,23 @@
+#!/bin/sh -e
+
+. /etc/inquisitor/global
+. $SHARE_DIR/functions
+. $SHARE_DIR/communication
+
+# ===========================================================================
+# Stop watchdog
+# ===========================================================================
+
+watchdog_stop
+
+# ===========================================================================
+# Stopping monitorings
+# ===========================================================================
+
+echo 'Stopping monitorings'
+for I in $SHARE_DIR/monitoring/*; do
+	echo -n "Stopping `basename $I`"
+	monitoring_stop `basename $I`
+	echo_success
+done
+echo 'Monitorings were stopped'

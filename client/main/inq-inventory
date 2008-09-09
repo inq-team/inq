@@ -36,29 +36,6 @@ export COMPUTER_ID
 publish_my_ip || fatal_failure 'IP-address update'
 
 # ===========================================================================
-# Start logging
-# ===========================================================================
-
-hostname c$COMPUTER_ID
-/sbin/service syslog-ng start || :
-
-# ===========================================================================
-# Set time
-# ===========================================================================
-
-echo -n 'Trying set local time '
-if [ -n "$NTP_SERVER" ]; then
-	if /usr/sbin/ntpdate $NTP_SERVER $1>/dev/null && /sbin/hwclock --systohc; then
-		echo_success
-	else
-		echo_failure
-	fi
-else
-	echo -n '(ntp server does not set)'
-	echo_skipped
-fi
-
-# ===========================================================================
 # Start watchdog, if available
 # ===========================================================================
 
@@ -98,8 +75,5 @@ plan_test_script
 . $HOME/test_script
 
 # We completed all tests
-print_green_message "================"
-print_green_message "TESTING FINISHED"
-print_green_message "================"
-
+echo "Testing finished"
 testing_finished

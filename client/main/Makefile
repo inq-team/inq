@@ -1,8 +1,17 @@
 include ../../Makefile.config
 include ../../flavour/$(FLAVOUR)
 
+
+ifeq ($(FLAVOUR), inventory)
+BIN_FILES_FLAVOUR=\
+	inq-inventory \
+	inq-inventory-stop
+else
+BIN_FILES_FLAVOUR=\
+	inquisitor
+endif
 BIN_FILES=\
-	inquisitor \
+	$(BIN_FILES_FLAVOUR) \
 	inq-detect \
 	inq-software-detect \
 	get-macs \
