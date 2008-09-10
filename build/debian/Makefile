@@ -14,8 +14,10 @@ PACKAGE_DEB=$(PACKAGE_NAME)_$(PACKAGE_VERSION)-$(PACKAGE_RELEASE)_$(DEB_TARGET).
 
 # Local build paths
 WORKDIR=$(PWD)/work
-REPO=$(PWD)/repo
 ROOTDIR=chroot
+
+REPO=ftp://192.168.10.11/Linux/Repository/debian
+REPO_BRANCH=lenny
 
 build-package:
 	rm -rf $(WORKDIR)/build-package
@@ -26,11 +28,16 @@ build-package:
 	cd $(WORKDIR)/build-package/$(PACKAGE_DIR) && dpkg-buildpackage -b -a$(DEB_TARGET) -us -uc
 
 build-root:
-	@echo 'Unable to build root for Debian automatically. Please build root manually.' && exit 1
+	rm -rf $(WORKDIR)
+	mkdir -p $(WORKDIR)
+	debootstrap $(REPO_BRANCH) $(WORKDIR)/$(ROOTDIR) $(REPO)
 
 update-package-remote:
-	scp $(REPO)/$(PACKAGE_DEB) $(DEPLOY_HOST):
+	scp $(WORKDIR)/build-package/$(PACKAGE_DEB) $(DEPLOY_HOST):
 	ssh $(DEPLOY_HOST) -- sudo mv $(PACKAGE_DEB) $(DEPLOY_PATH)
 	ssh $(DEPLOY_HOST) -- sudo chroot $(DEPLOY_PATH) dpkg --purge $(PACKAGE_NAME) || true
 	ssh $(DEPLOY_HOST) -- sudo chroot $(DEPLOY_PATH) dpkg --install /$(PACKAGE_DEB)
 	ssh $(DEPLOY_HOST) -- sudo rm -f $(DEPLOY_PATH)/$(PACKAGE_DEB)
+
+repo-clean:
+	rm -f $(WORKDIR)/build-package/$(PACKAGE_DEB)

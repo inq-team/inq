@@ -1,3 +1,5 @@
+#!/bin/sh
+
 cat >/etc/syslog-ng.conf <<__EOF__
 options {
 	sync (0);

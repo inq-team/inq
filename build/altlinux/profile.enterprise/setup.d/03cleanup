@@ -1,1 +1,8 @@
-rm -Rf /usr/share/doc /usr/share/man /usr/share/info /usr/lib/locale /usr/lib64/locale /usr/share/locale
+#!/bin/sh
+
+rm -Rf /usr/share/doc \
+       /usr/share/man \
+       /usr/share/info \
+       /usr/lib/locale \
+       /usr/lib64/locale \
+       /usr/share/locale

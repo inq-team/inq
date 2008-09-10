@@ -1,4 +1,5 @@
 #!/bin/sh
+
 cd /
 for I in img/*.tar.gz; do
 	[ -r "$I" ] || break
@@ -8,5 +9,5 @@ done
 for I in img/*.tar.bz2; do
 	[ -r "$I" ] || break
 	echo Unpacking $I
-	tar xvjf $I
+	tar xjf $I
 done

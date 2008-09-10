@@ -2,11 +2,11 @@ Source: inquisitor-client
 Section: unknown
 Priority: extra
 Maintainer: Inquisitor team <team@inquisitor.ru>
-Build-Depends: debhelper (>= 5)
+Build-Depends: debhelper (>= 5), ruby (>= 1.8.6)
 Standards-Version: 3.7.2
 
 Package: inquisitor-client
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: libc6 (>= 2.7-1), ruby (>= 1.8.6)
 Description: Inquisitor client for client-server system
  Inquisitor client package for installation in chroot

@@ -1,4 +1,5 @@
 #!/bin/sh
+
 for I in `find -type l`; do
 	if readlink $I | grep -q "^$PWD"; then
 		TARGET=`readlink $I | sed "s,$PWD,,"`

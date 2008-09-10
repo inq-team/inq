@@ -1,3 +1,5 @@
+#!/bin/sh
+
 /sbin/chkconfig udevd on
 /sbin/chkconfig haldaemon on
 /sbin/chkconfig messagebus on
