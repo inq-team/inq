@@ -4,7 +4,7 @@
 # DESCRIPTION=This monitoring uses ipmitool for getting CPU's core voltage.
 # MEASUREMENT=voltage
 
-. `dirname $0`/../functions-monitoring
+. global; . $SHARE_DIR/functions-monitoring
 [ -n "$PERIOD" ] || PERIOD=60
 
 VCORE_PATTERNS='s/VCORE \(.\).*| \([^ ]*\).*|.*|.*|.*|.*|.*|.*|.*|.*/\1 => \2/p;

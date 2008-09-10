@@ -10,7 +10,7 @@
 # VAR=TEST_LOOPS:int:1:Number of testing loops
 # VAR=LOGTIME:int:120:Time between progress updates, sec
 
-. `dirname $0`/../functions-test
+. global; . $SHARE_DIR/functions-test
 
 FREE_MEMORY=$(( `grep "^MemFree:" /proc/meminfo | awk '{print $2}'` - 65536 ))
 TOTAL_SUBSTAGES=$(( 16 * $TEST_LOOPS ))

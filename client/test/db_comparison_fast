@@ -10,7 +10,7 @@
 # VAR=FILENAMES:string::Reference files
 # VAR=EXCLUDED_MODELS:string::Excluded component models from comparison
 
-. `dirname $0`/../functions-test
+. global; . $SHARE_DIR/functions-test
 
 if compare_fast; then
 	test_succeeded

@@ -3,8 +3,6 @@
 mount -n -t proc proc /proc
 mount -n -t sysfs sysfs /sys
 
-. @@ETC_DIR@@/global
-
 # Remount read-write
 REMOUNTTAB=/etc/remounttab
 if [ -s $REMOUNTTAB ]; then
@@ -31,8 +29,6 @@ fi
 
 #modprobe -a ide-core atiixp ide-generic ide-disk ide-cd
 #modprobe thermal
-
-export PATH=$PATH:/usr/sbin:/sbin
 
 /sbin/service udevd start
 /sbin/service messagebus start

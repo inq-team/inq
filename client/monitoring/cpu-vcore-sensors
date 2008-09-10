@@ -4,7 +4,7 @@
 # DESCRIPTION=This monitoring uses sensors for getting CPU's vcore.
 # MEASUREMENT=voltage
 
-. `dirname $0`/../functions-monitoring
+. global; . $SHARE_DIR/functions-monitoring
 [ -n "$PERIOD" ] || PERIOD=60
 
 strip_hash()

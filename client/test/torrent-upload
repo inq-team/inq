@@ -11,7 +11,7 @@
 # VAR=TARGET:string:/dev/sda:Target device name that will be overwritten
 # VAR=SEED_AFTER:bool:true:Seed after successfull test finishing?
 
-. `dirname $0`/../functions-test
+. global; . $SHARE_DIR/functions-test
 
 cd $SHARE_DIR/firmwares
 

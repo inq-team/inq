@@ -4,7 +4,7 @@
 # DESCRIPTION=This monitoring uses ipmitool for getting CPU's temperature.
 # MEASUREMENT=temperature
 
-. `dirname $0`/../functions-monitoring
+. global; . $SHARE_DIR/functions-monitoring
 [ -n "$PERIOD" ] || PERIOD=30
 
 TEMP_PATTERNS='s/CPU\(.\) Diode.*| \([^ ]*\).*|.*|.*|.*|.*|.*|.*|.*|.*/\1 => \2/p;

@@ -4,7 +4,10 @@
 # is booting from the net. Wraps /usr/bin/inquisitor to protect system
 # from kernel panic in case of death of /usr/bin/inquisitor.
 
-if /usr/bin/inquisitor; then
+export PATH=/sbin:/usr/sbin:/usr/local/sbin:/bin:/usr/bin:/usr/local/bin:/usr/X11R6/bin
+export HOME=/home
+
+if inquisitor; then
 	echo
 	echo 'All done'
 	bash

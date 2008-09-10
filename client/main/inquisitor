@@ -1,8 +1,9 @@
 #!/bin/sh -e
 
-. @@ETC_DIR@@/global
+. global
 . $SHARE_DIR/functions
 . $SHARE_DIR/communication
+export PATH
 if [ -r $SHARE_DIR/init ] && ! [ -r /proc/cpuinfo ]; then
 	. $SHARE_DIR/init
 fi

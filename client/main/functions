@@ -6,9 +6,6 @@
 # particular kind of a *module* (for example, for "test" modules),
 # see "functions-*module*" file, i.e. "functions-test".
 
-# Set the initial default search path for use by startup scripts.
-export PATH="/sbin:/usr/sbin:/usr/local/sbin:/bin:/usr/bin:/usr/local/bin:/usr/X11R6/bin"
-
 ALERT_ATTENTION='65535 65535 0'
 ALERT_FAILURE='65535 0 0'
 ALERT_PASSED='0 65535 0'

@@ -8,7 +8,7 @@
 # TAGS=hdd,flash
 # VAR=SIZE_LIMIT:int:2048:That is less than this amount is an IDE flash, MiB
 
-. `dirname $0`/../functions-test
+. global; . $SHARE_DIR/functions-test
 
 SIZE_LIMIT=$(( $SIZE_LIMIT * 1024 * 2 ))
 DEVICE_LIST_FILE=`mktemp`

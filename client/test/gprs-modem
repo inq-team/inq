@@ -11,7 +11,7 @@
 # VAR=ANSWER_ATI:string:OK:String to get after ATI
 # VAR=CHAT_TIMEOUT:int:5:Timeout for waiting for answer
 
-. `dirname $0`/../functions-test
+. global; . $SHARE_DIR/functions-test
 
 exit_handler()
 {

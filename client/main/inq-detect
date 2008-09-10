@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. @@ETC_DIR@@/global
+. global
 . $SHARE_DIR/functions
 
 # Preload necessary modules

@@ -9,7 +9,7 @@
 # DEPENDS=Floppy
 # VAR=FLOPPY_SIZE:int:1440:Size of testing floppy, KiB
 
-. `dirname $0`/../functions-test
+. global; . $SHARE_DIR/functions-test
 
 exit_handler()
 {

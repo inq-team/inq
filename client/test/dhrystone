@@ -8,7 +8,7 @@
 # DEPENDS=CPU
 # VAR=DURATION:int:300:Benchmark duration (sec)
 
-. `dirname $0`/../functions-test
+. global; . $SHARE_DIR/functions-test
 
 exit_handler()
 {
