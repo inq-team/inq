@@ -8,7 +8,7 @@
 # DEPENDS=BMC,CPU,Chassis,Disk Controller,Floppy,HDD,Mainboard,Memory,NIC,OSD,Platform,USB,Video,ODD,GPRS Modem,USB Mass Storage
 # TAGS=
 
-. /usr/share/inquisitor/functions-test
+. `dirname $0`/../functions-test
 
 # Check if we have already passed this stage
 check_audit && test_succeeded || true

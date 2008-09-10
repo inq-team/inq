@@ -37,6 +37,8 @@ SHARE_EXEC_FILES=\
 	hal-searcher \
 	mencoder_call
 
+ETC_DIR_REPLACING_FILES=$(BIN_FILES) $(SHARE_NOEXEC_FILES) $(SHARE_EXEC_FILES)
+
 all:
 	sed -e "s,@@ETC_DIR@@,$(ETC_DIR),g; \
 		s,@@BIN_DIR@@,$(BIN_DIR),g; \
@@ -46,6 +48,7 @@ all:
 		s,@@DEFAULT_FILESYSTEM@@,$(DEFAULT_FILESYSTEM),g; \
 		s,@@DEFAULT_FILESYSTEM_FORCE@@,$(DEFAULT_FILESYSTEM_FORCE),g; \
 		s,@@DEBUG_TTY@@,$(DEBUG_TTY),g;" <global.in >global
+	for i in $(ETC_DIR_REPLACING_FILES); do sed -e "s,@@ETC_DIR@@,$(ETC_DIR),g" < $$i > $${i}_; mv $${i}_ $${i}; done
 
 install:
 	mkdir -p $(DESTDIR)$(BIN_DIR) $(DESTDIR)$(ETC_DIR) $(DESTDIR)$(SHARE_DIR)

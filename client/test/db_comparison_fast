@@ -10,7 +10,7 @@
 # VAR=FILENAMES:string::Reference files
 # VAR=EXCLUDED_MODELS:string::Excluded component models from comparison
 
-. /usr/share/inquisitor/functions-test
+. `dirname $0`/../functions-test
 
 if compare_fast; then
 	test_succeeded

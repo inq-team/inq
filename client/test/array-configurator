@@ -13,7 +13,7 @@
 # VAR=DISK_GROUP_SIZE:int:8:Number of disks per group for testing (for passthrough configuration)
 # VAR=DISK_GROUP_NUMBER:int:1:Number of disk group (for passthrough configuration)
 
-. /usr/share/inquisitor/functions-test
+. `dirname $0`/../functions-test
 
 # Get default adapter and create einarc_command to simplify script reading
 [ ! -z "$ADAPTER" ] || ADAPTER=`einarc --list | sed -n '1p' | awk '{print $1}'`

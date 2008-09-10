@@ -14,7 +14,7 @@
 # VAR=WRITE_MESSAGE:string:Writing test disc:Message to print when test will start
 # VAR=FORCE_NON_INTERACTIVE:boolean:false:Force non-interactive mode for already prepared system
 
-. /usr/share/inquisitor/functions-test
+. `dirname $0`/../functions-test
 
 test_read()
 {

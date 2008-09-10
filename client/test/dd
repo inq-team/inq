@@ -14,7 +14,7 @@
 # VAR=COUNT:int:1024:Number of blocks to be written. If zero is specified then this parameter won't be used
 # VAR=COMPRESSION:string:none:What compression is used. gzip, bzip2 or lzma can be chosen
 
-. /usr/share/inquisitor/functions-test
+. `dirname $0`/../functions-test
 
 cd $SHARE_DIR/firmwares
 

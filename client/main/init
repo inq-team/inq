@@ -3,7 +3,7 @@
 mount -n -t proc proc /proc
 mount -n -t sysfs sysfs /sys
 
-. /etc/inquisitor/global
+. @@ETC_DIR@@/global
 
 # Remount read-write
 REMOUNTTAB=/etc/remounttab

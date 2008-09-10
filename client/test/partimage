@@ -10,7 +10,7 @@
 # VAR=SOURCE:string:raw_disk_image:Absolute of relative path to source raw disk image to be written
 # VAR=TARGET:string:sda:Target device name that will be overwritten
 
-. /usr/share/inquisitor/functions-test
+. `dirname $0`/../functions-test
 
 cd $SHARE_DIR/firmwares
 

@@ -8,7 +8,7 @@
 # DEPENDS=HDD
 # VAR=TEST_FILE_SIZE:int:0:Size of test file, MiB. If set to zero - double memory amount size will be used
 
-. /usr/share/inquisitor/functions-test
+. `dirname $0`/../functions-test
 
 exit_handler()
 {

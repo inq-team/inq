@@ -12,7 +12,7 @@
 # VAR=MD5:string:805414334eb1d3ff4fdca507ec82098f:MD5 checksum for checking
 # VAR=EXCLUDE_MAC:string::Exclude NICs with MAC addresses that match this regexp from testing
 
-. /usr/share/inquisitor/functions-test
+. `dirname $0`/../functions-test
 
 exit_handler()
 {

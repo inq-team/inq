@@ -1,7 +1,7 @@
 #!/bin/sh
 # Obligatory functions to process on start of every monitoring.
 
-. /etc/inquisitor/global
+. @@ETC_DIR@@/global
 . $SHARE_DIR/functions
 . $SHARE_DIR/communication
 

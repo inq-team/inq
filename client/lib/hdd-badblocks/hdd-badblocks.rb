@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require '/usr/share/inquisitor/communication'
+require "#{ENV['SHARE_DIR']}/communication"
 
 PERIOD_SCREEN=5
 PERIOD_LOG=15

@@ -11,7 +11,7 @@
 # VAR=IDPRODUCT:string:6001:Filter in only devices with this idProduct (match all if empty)
 # VAR=COUNT:int:1:There should be this many devices
 
-. /usr/share/inquisitor/functions-test
+. `dirname $0`/../functions-test
 
 get_usb_devices()
 {

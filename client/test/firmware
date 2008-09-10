@@ -9,7 +9,7 @@
 # DEPENDS=Mainboard,Disk Controller,BMC
 # VAR=FORCE_FIRMWARES_LIST:string::Forced firmwares list over that sended by server. Newlines replaced by twice doubledots
 
-. /usr/share/inquisitor/functions-test
+. `dirname $0`/../functions-test
 
 exit_handler()
 {

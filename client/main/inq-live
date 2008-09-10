@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. /etc/inquisitor/global
+. @@ETC_DIR@@/global
 
 export TERM=linux
 DIALOG=dialog

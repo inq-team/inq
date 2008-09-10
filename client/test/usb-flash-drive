@@ -11,7 +11,7 @@
 # VAR=BLOCKSIZE:int:1024:Blocksize used for reading and writing by dd, KiB
 # VAR=COUNT:int:2:There should be this many devices
 
-. /usr/share/inquisitor/functions-test
+. `dirname $0`/../functions-test
 
 exit_handler()
 {

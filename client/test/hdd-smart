@@ -9,7 +9,7 @@
 # DEPENDS=HDD
 # VAR=LOGTIME:int:120:Time between progress updates, sec
 
-. /usr/share/inquisitor/functions-test
+. `dirname $0`/../functions-test
 
 exit_handler()
 {

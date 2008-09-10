@@ -12,7 +12,7 @@
 # VAR=MESH_POINTS:int:1024:Points for meshes for monitoring drive's speed
 # VAR=FORCE_NON_INTERACTIVE:boolean:false:Force non-interactive mode for already prepared system
 
-. /usr/share/inquisitor/functions-test
+. `dirname $0`/../functions-test
 
 exit_handler()
 {

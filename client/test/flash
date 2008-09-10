@@ -8,7 +8,7 @@
 # TAGS=hdd,flash
 # VAR=SIZE_LIMIT:int:2048:That is less than this amount is an IDE flash, MiB
 
-. /usr/share/inquisitor/functions-test
+. `dirname $0`/../functions-test
 
 SIZE_LIMIT=$(( $SIZE_LIMIT * 1024 * 2 ))
 DEVICE_LIST_FILE=`mktemp`

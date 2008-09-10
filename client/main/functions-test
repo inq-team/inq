@@ -1,7 +1,7 @@
 #!/bin/sh
 # Obligatory functions to process before every test.
 
-. /etc/inquisitor/global
+. @@ETC_DIR@@/global
 . $SHARE_DIR/functions
 . $SHARE_DIR/communication
 
@@ -16,7 +16,7 @@ else
 	{
 		cat >&5 <<EOF
 #!/bin/sh
-. /etc/inquisitor/global
+. @@ETC_DIR@@/global
 . $SHARE_DIR/functions
 . $SHARE_DIR/communication
 cd $SHARE_DIR/firmwares # As it is commonly used

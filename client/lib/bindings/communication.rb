@@ -5,7 +5,7 @@ class Communication
 		if background then
 			@sh = IO::popen('/bin/sh', 'w')
 			@sh.puts("export COMPUTER_ID=#{ENV['COMPUTER_ID']}")
-			@sh.puts('. /etc/inquisitor/global')
+			@sh.puts(". #{ENV['ETC_DIR']}/global")
 			@sh.puts('. $SHARE_DIR/functions')
 			@sh.puts('. $SHARE_DIR/communication')
 		else
@@ -18,7 +18,7 @@ class Communication
 		if @sh then
 			@sh.puts(cmd)
 		else
-			cmd = "export COMPUTER_ID=#{ENV['COMPUTER_ID']} && . /etc/inquisitor/global && . $SHARE_DIR/functions && . $SHARE_DIR/communication && #{cmd} >$DEBUG_TTY 2>&1"
+			cmd = "export COMPUTER_ID=#{ENV['COMPUTER_ID']} && . #{ENV['ETC_DIR']}/global && . $SHARE_DIR/functions && . $SHARE_DIR/communication && #{cmd} >$DEBUG_TTY 2>&1"
 			system(cmd)
 		end
 	end

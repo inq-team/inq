@@ -21,7 +21,7 @@
 # VAR=UPLOAD_URL:string::URL to upload (without http)
 # VAR=SPEED:int:115200:Line speed
 
-. /usr/share/inquisitor/functions-test
+. `dirname $0`/../functions-test
 
 exit_handler()
 {

@@ -2,7 +2,7 @@
 
 export LC_ALL=C
 
-. /etc/inquisitor/global
+. @@ETC_DIR@@/global
 . $SHARE_DIR/functions
 . $SHARE_DIR/communication
 

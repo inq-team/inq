@@ -7,7 +7,7 @@
 # TAGS=benchmark,cpu,memory,ram
 # DEPENDS=CPU,Memory,Mainboard
 
-. /usr/share/inquisitor/functions-test
+. `dirname $0`/../functions-test
 
 exit_handler()
 {
