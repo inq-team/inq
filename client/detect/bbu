@@ -1,0 +1,14 @@
+#!/bin/sh
+# NAME=BBU detect
+# DESCRIPTION=Get BBU information through einarc.
+# DEPENDS=BBU
+
+for CTL in `einarc -l | cut -f1`; do
+	if INFO=`einarc -t "$CTL" bbu info`; then
+		MANUFACTURER=`echo "$INFO" | cut -f1`
+		MODEL=`echo "$INFO" | cut -f2`
+		SERIAL=`echo "$INFO" | cut -f3`
+		$SHARE_DIR/add-component 'BBU' "$MANUFACTURER" "$MODEL" "$SERIAL" ''
+	fi
+done
+
