@@ -1,0 +1,5 @@
+#!/bin/sh
+
+echo "deb $REPO $BRANCH main contrib" > $CHROOT_PATH/etc/apt/sources.list
+
+chroot $CHROOT_PATH apt-get update

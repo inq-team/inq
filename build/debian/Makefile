@@ -15,6 +15,7 @@ PACKAGE_DEB=$(PACKAGE_NAME)_$(PACKAGE_VERSION)-$(PACKAGE_RELEASE)_$(DEB_TARGET).
 # Local build paths
 WORKDIR=$(PWD)/work
 ROOTDIR=chroot
+DEBS=$(PWD)/repo
 
 REPO=ftp://192.168.10.11/Linux/Repository/debian
 REPO_BRANCH=lenny
@@ -28,9 +29,22 @@ build-package:
 	cd $(WORKDIR)/build-package/$(PACKAGE_DIR) && dpkg-buildpackage -b -a$(DEB_TARGET) -us -uc
 
 build-root:
-	rm -rf $(WORKDIR)
-	mkdir -p $(WORKDIR)
+	# Cleanup from previous build
+	rm -rf $(WORKDIR)/$(ROOTDIR)
+	mkdir -p $(WORKDIR)/$(ROOTDIR)
+	# Creating chroot itself
 	debootstrap $(REPO_BRANCH) $(WORKDIR)/$(ROOTDIR) $(REPO)
+	# Copy additional .deb packages
+	if [ -d $(DEBS) ]; then cp $(DEBS)/* $(WORKDIR)/$(ROOTDIR); fi
+	# Copy Inquisitor client package
+	cp $(WORKDIR)/build-package/$(PACKAGE_DEB) $(WORKDIR)/$(ROOTDIR)
+	# Copy build-specific temporary files
+	cp build/debian/packages \
+	   build/debian/remove_packages \
+	   build/debian/debs \
+	   build/debian/preseed $(WORKDIR)/$(ROOTDIR)
+	# Run post-debootstrap installation scripts
+	CHROOT_PATH=$(WORKDIR)/$(ROOTDIR) REPO=$(REPO) BRANCH=$(REPO_BRANCH) build/debian/run_scripts.sh
 
 update-package-remote:
 	scp $(WORKDIR)/build-package/$(PACKAGE_DEB) $(DEPLOY_HOST):

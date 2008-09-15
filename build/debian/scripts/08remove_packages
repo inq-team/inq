@@ -1,0 +1,11 @@
+#!/bin/sh
+
+cat $CHROOT_PATH/remove_packages | while read package; do
+	# Skip comment lines
+	if echo "$package" | grep -q "^#"; then continue; fi
+
+	if [ -n "$package" ]; then
+		echo "Removing $package package..."
+		chroot $CHROOT_PATH apt-get -y --purge remove $package
+	fi
+done

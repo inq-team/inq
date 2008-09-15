@@ -1,0 +1,22 @@
+#!/bin/sh
+
+echo "Removing temporary files..."
+rm -rf \
+	$CHROOT_PATH/debs \
+	$CHROOT_PATH/*.deb \
+	$CHROOT_PATH/packages \
+	$CHROOT_PATH/preseed \
+	$CHROOT_PATH/remove_packages
+
+echo "Cleaning up APT's cache..."
+chroot $CHROOT_PATH apt-get -y autoremove
+chroot $CHROOT_PATH apt-get clean
+
+echo "Removing documentation and locales..."
+rm -rf \
+	$CHROOT_PATH/usr/share/doc \
+	$CHROOT_PATH/usr/share/man \
+	$CHROOT_PATH/usr/share/info \
+	$CHROOT_PATH/usr/lib/locale \
+	$CHROOT_PATH/usr/lib64/locale \
+	$CHROOT_PATH/usr/share/locale

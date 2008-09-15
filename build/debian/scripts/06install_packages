@@ -1,0 +1,11 @@
+#!/bin/sh
+
+cat $CHROOT_PATH/packages | while read package; do
+	# Skip comment lines
+	if echo "$package" | grep -q "^#"; then continue; fi
+
+	if [ -n "$package" ]; then
+		echo "Installing $package package..."
+		chroot $CHROOT_PATH apt-get -y install $package
+	fi
+done

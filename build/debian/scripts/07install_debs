@@ -1,0 +1,12 @@
+#!/bin/sh
+
+cat $CHROOT_PATH/debs | while read deb; do
+	# Skip comment lines
+	if echo "$deb" | grep -q "^#"; then continue; fi
+
+	if [ -n "$deb" ]; then
+		echo "Installing $deb package..."
+		name=`ls $CHROOT_PATH/${deb}* | sed -n '1p'`
+		chroot $CHROOT_PATH dpkg -i /`basename $name`
+	fi
+done

@@ -1,0 +1,5 @@
+#!/bin/sh
+
+chroot $CHROOT_PATH debconf-set-selections /preseed
+chroot $CHROOT_PATH apt-get -y dselect-upgrade
+chroot $CHROOT_PATH apt-get check
