@@ -36,6 +36,8 @@ build-root:
 	debootstrap $(REPO_BRANCH) $(WORKDIR)/$(ROOTDIR) $(REPO)
 	# Copy additional .deb packages
 	if [ -d $(DEBS) ]; then cp $(DEBS)/* $(WORKDIR)/$(ROOTDIR); fi
+	# Copy images if present
+	if [ -d  image ]; then cp -r image $(WORKDIR)/$(ROOTDIR)/img; fi
 	# Copy Inquisitor client package
 	cp $(WORKDIR)/build-package/$(PACKAGE_DEB) $(WORKDIR)/$(ROOTDIR)
 	# Copy build-specific temporary files
@@ -44,7 +46,11 @@ build-root:
 	   build/debian/debs \
 	   build/debian/preseed $(WORKDIR)/$(ROOTDIR)
 	# Run post-debootstrap installation scripts
-	CHROOT_PATH=$(WORKDIR)/$(ROOTDIR) REPO=$(REPO) BRANCH=$(REPO_BRANCH) build/debian/run_scripts.sh
+	CHROOT_PATH=$(WORKDIR)/$(ROOTDIR) \
+		REPO=$(REPO) \
+		BRANCH=$(REPO_BRANCH) \
+		SERVER=$(shell sed -n 's/^SERVER=\(.*\)$$/\1/p' < $(PWD)/client/main/global.in) \
+		DEBUG_TTY=$(DEBUG_TTY) build/debian/run_scripts.sh
 
 update-package-remote:
 	scp $(WORKDIR)/build-package/$(PACKAGE_DEB) $(DEPLOY_HOST):

@@ -1,0 +1,27 @@
+#!/bin/sh
+
+LOG_TTY=`echo /dev/tty$(( $(echo $DEBUG_TTY | sed -n 's/^\/dev\/tty\([0-9]*\)$/\1/p') + 1 ))`
+
+cat > $CHROOT_PATH/etc/syslog-ng/syslog-ng.conf <<__EOF__
+options {
+        sync (0);
+        time_reopen (10);
+        log_fifo_size (1000);
+        long_hostnames (off);
+        use_dns (no);
+        use_fqdn (no);
+        create_dirs (no);
+        keep_hostname (yes);
+};
+
+source sys { unix-dgram ("/dev/log"); unix-dgram ("/var/lib/klogd/dev/log"); file("/proc/kmsg"); };
+source inq { pipe("/dev/inqlog"); };
+
+destination udp_dst { udp("$SERVER"); };
+destination ttyall { file("$LOG_TTY"); };
+
+log { source(sys); destination(udp_dst); };
+log { source(inq); destination(udp_dst); };
+log { source(sys); destination(ttyall); };
+
+__EOF__

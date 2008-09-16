@@ -1,0 +1,14 @@
+#!/bin/sh
+
+pushd $CHROOT_PATH
+for image in img/*.tar.gz; do
+	[ -r "$image" ] || continue
+	echo "Unpacking $image image..."
+	tar xzf $image
+done
+for image in img/*.tar.bz; do
+	[ -r "$image" ] || continue
+	echo "Unpacking $image image..."
+	tar xjf $image
+done
+popd
