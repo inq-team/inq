@@ -30,6 +30,7 @@ end
 
 def shelf_content(computer)
 	testing = computer.last_testing 
+	if not testing then return end
 	stage = testing.last_stage 
 	state = :before
 	if testing.testing_stages.size > 0
