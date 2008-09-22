@@ -35,6 +35,10 @@ end
 
 doc.root.add_element comp
 
+output = ""
+doc.write(output, indent = 0)
+output.gsub!(/&[^;]+;/,"")
+
 File.open(COMP_FILE, 'w') { |f|
-	doc.write(f, indent = 0)
+	f.puts output
 }
