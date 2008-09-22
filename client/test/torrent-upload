@@ -18,7 +18,7 @@ cd $SHARE_DIR/firmwares
 if echo "$TARGET" | grep -q "^\/dev\/" && [ -b "$TARGET" ]; then
 	true
 else
-	test_failed "Requested device is not block device "
+	test_failed "Requested device is not block device"
 fi
 
 [ -f "$TORRENT" ] || test_failed "Torrent file does not exist"

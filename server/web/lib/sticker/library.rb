@@ -5,9 +5,8 @@ class Library
 attr_accessor :profiles
 
 def initialize
-	#TODO: replat `ls` with sane lib call
 	path = STICKER_PROFILE_LIBRARY_PATH
-	files = `ls #{ path }/*.xml`.collect { |s| s.chomp }
+	files = Dir.glob("#{path}/*.xml")
 	@profiles = files.inject({}) do |h, f| 
 		if p = Profile.from_file(f)
 			puts("Ok!: Loaded #{ p.title } from #{ f }\n")
