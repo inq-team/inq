@@ -1,0 +1,5 @@
+#!/bin/sh
+
+rm -f $CHROOT_PATH/etc/ssh/ssh_host_*
+# Later we have to do dpkg-reconfigure openssh-server to create
+# another new ones

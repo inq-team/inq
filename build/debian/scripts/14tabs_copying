@@ -1,0 +1,4 @@
+#!/bin/sh
+
+cp client/main/remounttab $CHROOT_PATH/etc/
+cp client/main/overlaytab $CHROOT_PATH/etc/

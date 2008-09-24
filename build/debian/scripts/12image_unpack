@@ -11,4 +11,5 @@ for image in img/*.tar.bz; do
 	echo "Unpacking $image image..."
 	tar xjf $image
 done
+rm -fr img
 popd
