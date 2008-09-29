@@ -182,5 +182,8 @@ boot_from_image()
 
 compare_fast()
 {
-	curl -sf "$REST_SERVER/computers/compare_fast/$COMPUTER_ID.xml?files=$FILENAMES&excluded=$EXCLUDED"
+	local files=$1
+	local excluded=$2
+
+	curl -sf "$REST_SERVER/computers/compare_fast/$COMPUTER_ID.xml?files=$files&excluded=$excluded"
 }
