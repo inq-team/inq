@@ -339,7 +339,7 @@ need_kernel_module()
 	if ! lsmod | grep -q "^$1"; then
 		echo -n "Loading $1 kernel module..."
 		modprobe $1 || true
-		sleep 10
+		sleep 30
 		echo_success
 	fi
 }
