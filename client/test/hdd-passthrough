@@ -12,6 +12,7 @@
 # VAR=STRESS_TREE:string:linux-2.6.22.5-31-stress.tar.gz:Tarball file containing stress test tree
 # VAR=RAMDISK_SIZE:int:400:Size of memory disk for stress tree building, MB
 # VAR=JOBS:int:16:Number of parallely running jobs during stress test tree compile
+# VAR=SKIP_STRESS_TESTING:bool:false:Do we need to skip stress subtest, perform only badblocks
 
 . global; . $SHARE_DIR/functions-test
 
@@ -99,7 +100,11 @@ START_TIME=`date "+%s"`
 # Run badblocks and compilation processes simultaneously
 badblocks_test &
 BADBLOCKS_PID=$!
-stress_test &
+if [ "$SKIP_STRESS_TESTING" = "true" ]; then
+	true
+else
+	stress_test &
+fi
 
 # Wait their completion and check if there are any errors
 wait || true
