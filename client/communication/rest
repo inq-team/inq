@@ -152,6 +152,7 @@ require_attention()
 		echo 'require_attention: failed to change state'
 		return 1
 	fi
+	echo ""
 }
 
 dismiss_attention()
@@ -160,6 +161,7 @@ dismiss_attention()
 		echo 'dismiss_attention: failed to change state'
 		return 1
 	fi
+	echo ""
 }
 
 get_needed_firmwares_list()

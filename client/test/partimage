@@ -9,16 +9,35 @@
 # DEPENDS=HDD,Disk Controller
 # VAR=SOURCE:string:raw_disk_image:Absolute of relative path to source raw disk image to be written
 # VAR=TARGET:string:sda:Target device name that will be overwritten
+# VAR=COPY_TO_RAMDISK:bool:false:Copy an image to ramdisk before partimage call
 
 . global; . $SHARE_DIR/functions-test
 
-cd $SHARE_DIR/firmwares
+exit_handler()
+{
+	[ -e "$RAMDISK_IMAGE" ] && rm -f $RAMDISK_IMAGE
+}
+
+RAMDISK_IMAGE=`mktemp`
+
+pushdq $SHARE_DIR/firmwares
 
 # Some protection from fools to produce test fail comments
 [ -e "$SOURCE" ] || test_failed 'Source file does not exist'
 [ -b "/dev/$TARGET" ] || test_failed 'Target device is not block device'
 
+# Do we need to precopy image to RAM
+if [ "$COPY_TO_RAMDISK" = "false" ]; then
+        true
+else
+	echo -n "Precopying image to ramdisk..."
+	cp "$SOURCE" $RAMDISK_IMAGE
+	echo_success
+	SOURCE=$RAMDISK_IMAGE
+fi
+
 # Perform disk image restoring itself
 partimage restore --batch /dev/"$TARGET" "$SOURCE" || test_failed 'Partimage failed'
 
+popdq
 test_succeeded

@@ -22,7 +22,7 @@ cd $SHARE_DIR/firmwares
 [ -b "/dev/$OF" ] || test_failed 'Target device is not block device'
 
 [ "$COUNT" -eq 0 ] && COUNT_ARG="" || COUNT_ARG="count=$COUNT"
-if [ $COMPRESSION = "none" ] || [ -z "$COMPRESSION" ]; then
+if [ "$COMPRESSION" = "none" ] || [ -z "$COMPRESSION" ]; then
 	DECOMPRESSOR="cat"
 else
 	DECOMPRESSOR="$COMPRESSION -dc"

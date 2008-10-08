@@ -373,3 +373,15 @@ executable_arch()
 		;;
 	esac
 }
+
+pushdq()
+{
+	# It is "quiet" pushd
+	pushd $@ 2>&1 >$DEBUG_TTY
+}
+
+popdq()
+{
+	# It is "quiet" popd
+	popd 2>&1 >$DEBUG_TTY
+}
