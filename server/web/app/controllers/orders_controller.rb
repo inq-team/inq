@@ -278,10 +278,11 @@ class OrdersController < ApplicationController
 				c.save!
 			end
 		when /Print labels/
-			if(Object.const_defined?('DEFAULT_SERIAL_STICKER_PROFILE_FIXME'))
+			quantity = params[:labels_quantity].to_i
+			if(Object.const_defined?('DEFAULT_SERIAL_STICKER_PROFILE_FIXME') and quantity > 0)
 				comps.each do |c|
 					@computer = c
-					print_sticker(DEFAULT_SERIAL_STICKER_PROFILE_FIXME, 2)
+					print_sticker(DEFAULT_SERIAL_STICKER_PROFILE_FIXME, quantity)
 				end
 				flash[:notice] = "Stickers sent to #{ Sticker::Library.new.profiles[DEFAULT_SERIAL_STICKER_PROFILE_FIXME].printers.first.class }" 
 			else

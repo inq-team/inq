@@ -50,6 +50,7 @@ function checkUncheckAll(theElement) {
 <th>Done: <%= count_done %></th>
 <th colspan="4" style="text-align: left">
 <% if changes_allowed %>
+	<%= text_field_tag 'labels_quantity', 'Labels quantity' %>
 	<%= submit_tag 'Print labels' %>
 	<%= submit_tag 'Change' %><br/>
 <% end %>
