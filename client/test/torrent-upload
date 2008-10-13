@@ -13,7 +13,7 @@
 
 . global; . $SHARE_DIR/functions-test
 
-cd $SHARE_DIR/firmwares
+pushdq $SHARE_DIR/firmwares
 
 if echo "$TARGET" | grep -q "^\/dev\/" && [ -b "$TARGET" ]; then
 	true
@@ -25,5 +25,6 @@ fi
 
 ctorrent -r -s "$TARGET" -b /dev/null -e 0 -M 1000 "$TORRENT" || test_failed "Leeching failed"
 
+popdq
 [ "$SEED_AFTER" = "true" ] && execute_after_test ctorrent -r -f -s "$TARGET" -b /dev/null -E 1000 -M 1000 "$TORRENT"
 test_succeeded

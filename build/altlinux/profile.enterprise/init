@@ -1,0 +1,61 @@
+#!/bin/sh -ef
+
+mount -n -t proc proc /proc
+mount -n -t sysfs sysfs /sys
+
+# Remount read-write
+REMOUNTTAB=/etc/remounttab
+if [ -s $REMOUNTTAB ]; then
+	grep -ve '^\(#\|\$\)' $REMOUNTTAB | while read mntpt rest; do
+		if [ -d $mntpt ]; then
+			[ -z "$rest" ] || rest="-o $rest"
+			echo -n "Remounting $mntpt read/write:"
+			(cd $mntpt && tar cp --same-owner --same-permissions . 2>/dev/null) |\
+			(mount -n -ttmpfs $rest /dev/shm $mntpt && tar xp -C $mntpt/ 2>/dev/null) && echo_success || echo_failure
+		fi
+	done
+fi
+
+LIVETAB=/etc/overlaytab
+if [ -s $LIVETAB ]; then
+	grep -ve '^\(#\|\$\)' $LIVETAB |while read mntpt; do
+		if [ -d $mntpt ]; then
+			mkdir -p /mnt/root/$mntpt
+			echo -n "Remounting $mntpt to overlay:"
+			mount -n -t unionfs -o dirs=/mnt/root/$mntpt=rw:$mntpt=ro null $mntpt && echo_success || echo_failure
+		fi
+	done
+fi
+
+/sbin/service udevd start
+/sbin/service messagebus start
+/sbin/service haldaemon start
+/sbin/service sshd start
+/sbin/service portmap start
+
+/sbin/modprobe ipmi_si || :
+/sbin/modprobe ipmi_devintf || :
+
+# Mount NFS share containing firmwares, but do not fail
+echo -n "Trying to mount firmwares share:"
+mount -t nfs $SERVER:/inq/firmwares $SHARE_DIR/firmwares && echo_success || echo_failure
+
+echo -n 'Starting lm_sensors detection'
+$SHARE_DIR/inq-sensors-detect >/dev/null 2>/dev/null && echo_success || echo_failure
+
+# Set up MegaRAID device
+if grep -q megadev /proc/devices; then
+        MAJOR=`grep megadev /proc/devices | cut -f1 -d\ `
+        mknod /dev/megadev0 c $MAJOR 0 || :
+fi
+
+# Set up Adaptec device
+if grep -q aac /proc/devices; then
+        MAJOR=`grep aac /proc/devices | cut -f1 -d\ `
+        mknod /dev/aac0 c $MAJOR 0 || :
+fi
+
+echo -n 'Creating Inquisitor logging pipe'
+mkfifo /dev/inqlog && echo_success || echo_failure
+
+setterm -powersave off

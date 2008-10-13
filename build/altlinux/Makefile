@@ -14,6 +14,7 @@ REPO=$(PWD)/repo
 ROOTDIR=chroot
 
 build-package:
+	cp build/altlinux/profile.$(FLAVOUR)/init client/main
 	mkdir -p $(RPM_BUILD_DIR)/SOURCES $(RPM_BUILD_DIR)/SPECS
 	cp build/altlinux/$(PACKAGE_NAME)-$(FLAVOUR).spec $(RPM_BUILD_DIR)/SPECS/$(PACKAGE_NAME)-$(FLAVOUR).spec
 	rm -f $(RPM_BUILD_DIR)/SOURCES/$(PACKAGE_NAME).tar

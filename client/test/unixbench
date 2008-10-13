@@ -12,13 +12,13 @@
 exit_handler()
 {
 	[ -d "$WORKING_DIR" ] && rm -rf "$WORKING_DIR"
-	cd $HOME
+	popdq
 }
 
 WORKING_DIR=`mktemp -d`
 
 echo -n "Running UNIX Bench Multi-CPU benchmark..."
-cd $WORKING_DIR
+pushdq $WORKING_DIR
 mkdir pgms testdir results tmp
 cp $LIB_DIR/unixbench/* pgms/
 mv pgms/dc.dat testdir/

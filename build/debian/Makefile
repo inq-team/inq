@@ -26,6 +26,7 @@ build-package:
 	cp -r client $(WORKDIR)/build-package/$(PACKAGE_DIR)
 	cp -r flavour Makefile.config $(WORKDIR)/build-package
 	cp -r build/debian/debian $(WORKDIR)/build-package/$(PACKAGE_DIR)
+	cp build/debian/init $(WORKDIR)/build-package/$(PACKAGE_DIR)/main
 	cd $(WORKDIR)/build-package/$(PACKAGE_DIR) && dpkg-buildpackage -b -a$(DEB_TARGET) -us -uc
 
 build-root:

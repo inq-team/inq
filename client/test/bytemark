@@ -16,7 +16,7 @@ exit_handler()
 
 WORKING_DIR=`mktemp -d`
 
-cd $WORKING_DIR
+pushd $WORKING_DIR
 cp $SHARE_DIR/test/additional/NNET.DAT .
 cp $SHARE_DIR/test/additional/COM.DAT .
 nbench | tee result >$DEBUG_TTY
@@ -49,6 +49,6 @@ benchmark_submit_float "Floating-poing Index" \
 benchmark_submit_float "Memory Index" `grep "MEMORY INDEX" < result | \
 	awk '{print $4}'` ""
 
-cd $HOME
+popdq
 
 test_succeeded

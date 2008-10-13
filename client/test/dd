@@ -16,7 +16,7 @@
 
 . global; . $SHARE_DIR/functions-test
 
-cd $SHARE_DIR/firmwares
+pushdq $SHARE_DIR/firmwares
 
 # Some protection from fools to produce test fail comments
 [ -b "/dev/$OF" ] || test_failed 'Target device is not block device'
@@ -41,4 +41,5 @@ fi
 sleep 5
 sfdisk -R /dev/"$OF"
 
+popdq
 test_succeeded
