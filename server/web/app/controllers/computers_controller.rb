@@ -920,6 +920,7 @@ __EOF__
 				:started => stage.start + stage.accumulated_idle,
 				:result => RESULT_MAPPING[stage.result] || 'unknown',
 				:comment => (RESULT_MAPPING[stage.result] || 'unknown') + (stage.comment ? ": #{stage.comment}" : ''),
+				:title => "#{stage.test_type} #{stage.test_version}"
 			}
 		}
 
