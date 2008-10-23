@@ -254,6 +254,20 @@ subnet_for_dev()
 	echo "$(( ip >> 24 )).$(( (ip >> 16) & 255 )).$(( (ip >> 8) & 255 )).$(( ip & 255 ))/$mask"
 }
 
+get_hdd_info()
+{
+	udi=`hal-find-by-property --key block.device --string "$1"`
+	echo "Device $1:"
+	echo "       Product: `hal-get-property --udi $udi --key info.product`"
+	echo "       Serial: `hal-get-property --udi $udi --key storage.serial`"
+}
+
+get_nic_mac()
+{
+	udi=`hal-find-by-property --key net.interface --string "$1"`
+	echo "`hal-get-property --udi $udi --key net.address`"
+}
+
 get_hdds_list()
 {
 	for UDI in `hal-find-by-property --key=storage.drive_type --string disk`; do
