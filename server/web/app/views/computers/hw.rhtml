@@ -21,3 +21,20 @@
 		</tr>
 	<% end %>
 </table>
+
+<table id="software_components">
+	<tr>
+		<th class="component_serial">Software</th>
+		<th class="component_group">Architecture</th>
+		<th class="component_name">Version</th>
+	</tr>
+	<% hardware = ''; style = 0 %>
+	<% @software_components.each() do |software_component| %>
+		<% style = (style + 1) % 2 %>
+		<tr class='component_<%= style == 0 ? 'even' : 'odd' %>'>
+			<td class="component_serial"><%= software_component.model.name %></td>
+			<td class="component_group"><%= software_component.model.architecture.name %></td>
+			<td class="component_name"><%= software_component.version %></td>
+		</tr>
+	<% end %>
+</table>

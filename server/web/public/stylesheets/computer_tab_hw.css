@@ -25,7 +25,7 @@ td#info_tabs table tr td#info_tab_hw a{
 
 /*********************/
 
-#components th, #testing_plan th {
+#components th, #testing_plan th, #software_components th {
 	background-color: #AACFBE;
 	color: #002514;
 }

@@ -99,6 +99,7 @@ class ComputersController < ApplicationController
 	def hw
 		prepare_computer_tabs
 		@components = @testing ? @testing.components : []
+		@software_components = @testing ? @testing.software_components : []
 		render(:layout => 'computer_tabs')
 	end
 
