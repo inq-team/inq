@@ -933,7 +933,8 @@ __EOF__
 				@stages << {
 					:id => stage.id,
 					:result => 'planned',
-					:comment => 'planned'
+					:comment => 'planned',
+					:progress => 0
 				}
 			}
 		end
