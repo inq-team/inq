@@ -4,7 +4,7 @@
 # DESTROYS_HDD=true
 # IS_INTERACTIVE=false
 # POWEROFF_DURING_TEST=false
-# VERSION=0.2
+# VERSION=0.3
 # TAGS=hdd,stress
 # DEPENDS=CPU,HDD,Memory,Mainboard,Disk Controller
 # VAR=DISK_GROUP_SIZE:int:8:Number of disks per group for testing
@@ -47,14 +47,12 @@ badblocks_test()
 		 # completion. So, for example, we can get hard drives
 		 # appearing for kernel (in dmesg) during several
 		 # seconds.
-	$SHARE_DIR/hdd-badblocks.rb `get_hdds_list` ||
-		echo "hdd-badblocks.rb failed" > "$ERROR_FILE"
+	$SHARE_DIR/hdd-badblocks.pl -i `get_hdds_list` 2>"$ERROR_FILE" || true
 
-	I=0
+	local I=0
 	while raid-wizard-passthrough $DISK_GROUP_SIZE $I; do
 		sleep 10 # Dirty hack again
-		$SHARE_DIR/hdd-badblocks.rb `get_hdds_list` ||
-			echo "hdd-badblocks.rb #$i failed" > "$ERROR_FILE"
+		$SHARE_DIR/hdd-badblocks.pl -i `get_hdds_list` 2>"$ERROR_FILE" || true
 		I=$(( $I + 1 ))
 	done
 
@@ -75,7 +73,7 @@ stress_test()
 	# Extract sources for compilation
 	cd "$SHARE_DIR"
 	tar xzf "$STRESS_TREE" -C "$MOUNTPOINT" >$DEBUG_TTY 2>&1 || 
-		echo "Untaring failed" > $ERROR_FILE
+		echo "Untaring failed" > "$ERROR_FILE"
 	
 	cd $MOUNTPOINT
 	tree_name=`basename "$STRESS_TREE" .tar.gz`
@@ -91,7 +89,7 @@ stress_test()
 	while [ -d "/proc/$BADBLOCKS_PID" ]; do
 		make clean >$DEBUG_TTY 2>&1 &&
 		make -j $JOBS "$MAKE_ARGS" >$DEBUG_TTY 2>&1 ||
-		echo "Make failed" > $ERROR_FILE
+		echo "Make failed" > "$ERROR_FILE"
 	done
 }
 
@@ -108,4 +106,14 @@ fi
 
 # Wait their completion and check if there are any errors
 wait || true
-[ -s "$ERROR_FILE" ] && test_failed "`sed -n '1p' <$ERROR_FILE`" || test_succeeded
+if [ -s "$ERROR_FILE" ]; then
+	if grep -q "^Failed HDD:"; then
+		for hdd in `sed -n 's/^Failed HDD: \(.*\)$/\1/gp' < $ERROR_FILE`; do
+			get_hdd_info $hdd
+		done
+	else
+		test_failed "`sed -n '1p' < $ERROR_FILE`"
+	fi
+else
+	test_succeeded
+fi
