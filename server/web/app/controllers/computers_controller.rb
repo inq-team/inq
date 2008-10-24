@@ -922,7 +922,9 @@ __EOF__
 				:result => RESULT_MAPPING[stage.result] || 'unknown',
 				:comment => (RESULT_MAPPING[stage.result] || 'unknown') + (stage.comment ? ": #{stage.comment}" : ''),
 				:title => "#{stage.test_type} #{stage.test_version}",
-				:progress => stage.result == TestingStage::RUNNING ? @testing.progress_complete * 100 / @testing.progress_total : 100
+				:progress => (stage.result == TestingStage::RUNNING && 
+					      @testing.progress_complete &&
+					      @testing.progress_total) ? @testing.progress_complete * 100 / @testing.progress_total : 100
 			}
 		}
 
