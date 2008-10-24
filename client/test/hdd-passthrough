@@ -107,8 +107,8 @@ fi
 # Wait their completion and check if there are any errors
 wait || true
 if [ -s "$ERROR_FILE" ]; then
-	if grep -q "^Failed HDD:"; then
-		for hdd in `sed -n 's/^Failed HDD: \(.*\)$/\1/gp' < $ERROR_FILE`; do
+	if grep -q "^Failed HDD:" "$ERROR_FILE"; then
+		for hdd in `sed -n 's/^Failed HDD: \(.*\)$/\1/gp' < "$ERROR_FILE"`; do
 			get_hdd_info $hdd
 		done
 	else
