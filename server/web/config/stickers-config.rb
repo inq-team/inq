@@ -1,0 +1,6 @@
+STICKER_PROFILE_LIBRARY_PATH = '/srv/sticker/profiles'
+STICKER_ASSETS_PATH = '/srv/sticker/assets'
+STICKER_PRINTERS_PATH = '/srv/sticker/lib'
+
+DEFAULT_STICKER_PROFILE_FIXME='Output sticker'
+DEFAULT_SERIAL_STICKER_PROFILE_FIXME='New sticker'
