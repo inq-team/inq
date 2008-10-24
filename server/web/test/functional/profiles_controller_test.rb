@@ -26,7 +26,7 @@ class ProfilesControllerTest < Test::Unit::TestCase
 
 	def test_should_create_profile
 		old_count = Profile.count
-		post :create, :profile => { :feature => nil, :xml => nil }, :model => { :id => nil }
+		post :create, :profile => { :feature => nil, :xml => "<tests></tests>" }, :model => { :id => nil }
 		assert_equal old_count+1, Profile.count
 		assert_redirected_to :action => 'index'
 	end

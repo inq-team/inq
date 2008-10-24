@@ -26,8 +26,7 @@ class ProfilesController < ApplicationController
 	def create
 		@profile = Profile.new
 		@profile.xml = params[:profile][:xml]
-		feature = params[:profile][:feature]
-		@profile.feature = (feature.empty? ? nil : feature)
+		@profile.feature = params[:profile][:feature]
  		@profile.model_id = params[:model][:id]
 		@profile.timestamp = Time.now		
 		@models = Model.find(:all, :order => :name).map { |x| [x.name, x.id] }.unshift(['', nil])
