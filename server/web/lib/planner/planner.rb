@@ -34,9 +34,36 @@ class Planner
 		@plan
 	end
 
+	def profile_includer(profile)
+		parsed_profile_text = ""
+
+		# We will work with text XML representation
+		xml_text = ""
+		profile.write(xml_text, indent = 0)
+
+		xml_text.each_line { |l|
+			if l =~ /<include-profile profile=\'(.*)\'/ then
+				# Simply insert included profile's text
+				parsed_profile_text << Profile.find_all_by_feature(Regexp.last_match(1)).last.xml.gsub(/<\/??tests>/, "")
+			else
+				parsed_profile_text << l
+			end
+		}
+
+		parsed_profile = REXML::Document.new(parsed_profile_text)
+		# Recursively replace all include-profile's instances
+		if parsed_profile_text =~ /include-profile/ then
+			parsed_profile = profile_includer(parsed_profile)
+		end
+
+		return parsed_profile
+	end
+
 	def calculate
 		@plan = []
-		@profile.root.each_element { |t|
+		
+		# We need to parse include-profile tag before
+		profile_includer(@profile).root.each_element { |t|
 			case t.name
 			when 'test'
 				if @stages.select { |st|
