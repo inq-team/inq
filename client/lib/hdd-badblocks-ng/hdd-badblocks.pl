@@ -12,6 +12,9 @@ use Getopt::Std;
 ################################################################################
 my $UPDATE_PERIOD = 10;
 my $BADBLOCKS_COMMAND = "badblocks -sv";
+my $BB_THRESHOLD = 1; # Bad controllers can give single ATA error, but
+                      # this does not mean that HDD is bad. As a rule
+		      # it will have several badblocks
 
 my %sd :shared;
 my %threads;
@@ -242,7 +245,7 @@ sub write_graph_data {
 sub return_bad_hdds {
 	my @bad_hdds;
 
-	foreach (sort keys %sd) { push @bad_hdds, $_ if $sd{$_}{found} > 0 };
+	foreach (sort keys %sd) { push @bad_hdds, $_ if $sd{$_}{found} > $BB_THRESHOLD };
 
 	if($#bad_hdds >= 0){
 		# There are bad HDDs
