@@ -14,7 +14,7 @@ my $UPDATE_PERIOD = 10;
 my $BADBLOCKS_COMMAND = "badblocks -sv";
 my $BB_THRESHOLD = 1; # Bad controllers can give single ATA error, but
                       # this does not mean that HDD is bad. As a rule
-		      # it will have several badblocks
+                      # it will have several badblocks.
 
 my %sd :shared;
 my %threads;

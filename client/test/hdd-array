@@ -1,6 +1,6 @@
 #!/bin/sh -ef
 # NAME=HDD array stress
-# DESCRIPTION=HDD array is a stress test that causes high load on HDD array subsystem. First of all it creates a filesystem on each array and unpacks and compiles there a large source tree for a specified time. Test distributes specified test duration among created arrays equally. Compilation, as in hdd-passthrough test, goes with 16 simultaneous jobs (by default). Test would end successfully if there wouldn't be any errors in filesystem creation and source code compilation runs. Usually this test starts after the CPU burning, memory and hdd-passthrough ones, and thus failing of this test (considering successful previous tests) usually identifies a broken RAID controller.
+# DESCRIPTION=HDD array is a stress test that causes high load on HDD array subsystem. First of all it creates a filesystem on each array and unpacks and compiles there a large source tree for a specified time. Test distributes specified test duration among created arrays equally. Compilation, as in hdd-passthrough test, goes with 16 simultaneous jobs (by default). Test will finish successfully if there won't be any errors in filesystem creation and source code compilation runs. Usually this test starts after the CPU burning, memory and hdd-passthrough ones, and thus failing of this test (considering successful previous tests) usually identifies a broken RAID controller.
 # DESTROYS_HDD=true
 # IS_INTERACTIVE=false
 # POWEROFF_DURING_TEST=false

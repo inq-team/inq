@@ -1,13 +1,13 @@
 #!/bin/sh -e
 # NAME=Array configurator
-# DESCRIPTION=It is not a real test. Simply, it can create specified array configuration on disk controller with hard drives. Currently it passed command line string to einarc, or, if specified "passthrough", "optimal" or "clear", necessary raid-wizard will be used instead.
+# DESCRIPTION=It is not a real test. Simply, it can create specified array configuration on disk controller with hard drives. Currently it either passes command line string to einarc, or (if specified "passthrough", "optimal" or "clear") necessary raid-wizard will be used instead.
 # DESTROYS_HDD=true
 # IS_INTERACTIVE=false
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=hdd
 # DEPENDS=HDD,Disk Controller
-# VAR=CONFIGURATION:string:optimal:Configuration to be passed to einarc. Can be "clear", "optimal" or "passthrough" to run correpsonding raid-wizard utility. Otherwise it will be command line string for einarc. If there are only identical hard drives, then EINARC_DISK1, EINARC_DISK2, etc words can be used to prevent absolute hard drive's identification using
+# VAR=CONFIGURATION:string:optimal:Configuration to be passed to einarc. Can be "clear", "optimal" or "passthrough" to run corresponding raid-wizard utility. Otherwise it will be command line string to einarc. If there are only identical hard drives, then EINARC_DISK1, EINARC_DISK2, etc words can be used to prevent absolute hard drive's identification using
 # VAR=ADAPTER:string::Default adapter type to work with. Leave it empty if there only single or several identical adapters present
 # VAR=ADAPTER_NUMBER:int:0:Default adapter number (-a option for einarc) to work with
 # VAR=DISK_GROUP_SIZE:int:8:Number of disks per group for testing (for passthrough configuration)

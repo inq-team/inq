@@ -1,6 +1,6 @@
 #!/bin/sh -e
 # NAME=Boot from image
-# DESCRIPTION=This is not real test. It will always succeed if file is available for booting. Can be used to force single loading from image file without any checks about its success finishing.
+# DESCRIPTION=This is not real test. It will always succeed if file is available for booting. Can be used to force single booting from image file without any checks about its successful finishing.
 # DESTROYS_HDD=false
 # IS_INTERACTIVE=false
 # POWEROFF_DURING_TEST=true

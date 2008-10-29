@@ -1,6 +1,6 @@
 #!/bin/sh -ef
 # NAME=FDD read/write
-# DESCRIPTION=A simple test to determine wheter the floppy drive work or not. It asks a user to insert a floppy disk into drive, then writes some random data on a diskette, clears the cache, reads the data back and compares it to what was written. Process repeats for every FDD available.
+# DESCRIPTION=A simple test to determine whether the floppy drive is either workable or not. It asks a user to insert a floppy disk into drive, then writes some random data on a it, clears the cache, reads the data back and compares it to what was written. Process repeats for every FDD available.
 # DESTROYS_HDD=false
 # IS_INTERACTIVE=true
 # POWEROFF_DURING_TEST=false

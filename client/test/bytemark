@@ -16,7 +16,7 @@ exit_handler()
 
 WORKING_DIR=`mktemp -d`
 
-pushd $WORKING_DIR
+pushdq $WORKING_DIR
 cp $SHARE_DIR/test/additional/NNET.DAT .
 cp $SHARE_DIR/test/additional/COM.DAT .
 nbench | tee result >$DEBUG_TTY

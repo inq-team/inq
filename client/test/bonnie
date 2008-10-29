@@ -25,7 +25,7 @@ exit_handler()
 
 RESULT_FILE=`mktemp`
 SCRATCH_DIRECTORY=`mktemp -d`
-STAGES_QUANTITY=$(( `perl -e 'print scalar split(" ",$ENV{FS})'` * `get_hdds_list | wc -l` ))
+STAGES_QUANTITY=$(( `c=0; for i in $FILESYSTEMS; do c=$(( $c + 1)); done; echo $c` * `get_hdds_list | wc -l`))
 
 perform_benchmark()
 {

@@ -1,6 +1,6 @@
 #!/bin/sh -ef
 # NAME=ODD read
-# DESCRIPTION=This test checks for workability and correct optical discs reading of ODDs. It detects if disc is already loaded and tries to run test non-interactively (without any humans nearby). It reads needed number of blocks (trying readcd or dd), calculates their checksums and compares with specified. So, we can determine either drives works fine or not. Also, simultaneously it acts as a monitoring, measuring disc reading speed.
+# DESCRIPTION=This test checks for workability and correct optical discs reading of ODDs. It detects if disc is already loaded and tries to run test non-interactively (without any humans nearby). It reads needed number of blocks (trying readcd or dd), calculates their checksums and compares with specified one. So, we can determine either drives works fine or not. Also, simultaneously it acts as a monitoring, measuring disc reading speed.
 # DESTROYS_HDD=false
 # IS_INTERACTIVE=true
 # POWEROFF_DURING_TEST=false

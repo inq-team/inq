@@ -1,8 +1,8 @@
 #!/bin/sh -ef
-# NAME=DB to Detects comparison
-# DESCRIPTION=Pauses testing until comparison has been completed on the application server.
+# NAME=Datebase to detects comparison
+# DESCRIPTION=Pauses testing until hardware components comparison has been completed on the application server.
 # DESTROYS_HDD=false
-# IS_INTERACTIVE=false
+# IS_INTERACTIVE=true
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # DEPENDS=BMC,CPU,Chassis,Disk Controller,Floppy,HDD,Mainboard,Memory,NIC,OSD,Platform,USB,Video,ODD,GPRS Modem,USB Mass Storage

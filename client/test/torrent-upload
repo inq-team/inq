@@ -1,6 +1,6 @@
 #!/bin/sh -e
 # NAME=Torrent upload
-# DESCRIPTION=This test uses BitTorrent client to download specified torrent. It uses Enhanced CTorrent client. With its modified version it can write directly on block devices.
+# DESCRIPTION=This test uses BitTorrent client (Enhanced CTorrent) to download specified torrent. With its modified version it can write directly on block devices.
 # DESTROYS_HDD=true
 # IS_INTERACTIVE=false
 # POWEROFF_DURING_TEST=false
