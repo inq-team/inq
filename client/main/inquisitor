@@ -44,7 +44,7 @@ publish_my_ip || fatal_failure 'IP-address update'
 # ===========================================================================
 
 hostname c$COMPUTER_ID
-/sbin/service syslog-ng start || :
+service_start syslog-ng || :
 
 # ===========================================================================
 # Set time

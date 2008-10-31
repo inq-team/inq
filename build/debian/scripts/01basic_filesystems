@@ -1,4 +1,5 @@
 #!/bin/sh
 
 echo "proc /proc proc defaults 0 0" > $CHROOT_PATH/etc/fstab
+echo "devpts /dev/pts devpts rw 0 0" >> $CHROOT_PATH/etc/fstab
 echo "tmpfs /tmp tmpfs rw 0 0" >> $CHROOT_PATH/etc/fstab

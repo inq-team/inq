@@ -34,6 +34,7 @@ dialog
 xsltproc
 lshw
 lm-sensors
+i2c-tools
 bonnie++
 curl
 wget

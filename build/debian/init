@@ -28,6 +28,7 @@ if [ -s $LIVETAB ]; then
 fi
 
 /etc/init.d/udev start || :
+/sbin/mount /dev/pts
 /etc/init.d/dbus start || :
 /etc/init.d/hal start || :
 /usr/sbin/dpkg-reconfigure openssh-server || :
@@ -55,7 +56,5 @@ fi
 
 echo -n 'Creating Inquisitor logging pipe'
 mkfifo /dev/inqlog && echo_success || echo_failure
-ls -l /dev/inqlog
-read foo
 
 setterm -powersave off

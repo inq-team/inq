@@ -35,6 +35,7 @@ SHARE_EXEC_FILES=\
 	decode-dimms.pl \
 	hal-searcher \
 	mencoder_call
+INIT_FILES=init
 
 all:
 	sed -e "s,@@ETC_DIR@@,$(ETC_DIR),g; \
@@ -51,7 +52,7 @@ install:
 	install -m755 $(BIN_FILES) $(DESTDIR)$(BIN_DIR)
 	install -m755 $(SHARE_EXEC_FILES) $(DESTDIR)$(SHARE_DIR)
 	install -m644 $(SHARE_NOEXEC_FILES) $(DESTDIR)$(SHARE_DIR)
-	if [ -n "$(INIT)" ]; then install -m644 init $(DESTDIR)$(SHARE_DIR); fi
+	if test -n "$(INIT_FILES)" ; then install -m644 $(INIT_FILES) $(DESTDIR)$(SHARE_DIR); fi
 	install -m644 $(ETC_FILES) $(DESTDIR)$(ETC_DIR)
 	install -m644 global $(DESTDIR)$(BIN_DIR)
 

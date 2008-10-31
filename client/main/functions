@@ -399,3 +399,14 @@ popdq()
 	# It is "quiet" popd
 	popd 2>&1 >$DEBUG_TTY
 }
+
+service_start()
+{
+	service=$1
+
+	if [ -x /sbin/service ]; then
+		/sbin/service $1 start
+	else
+		/etc/init.d/$1 start
+	fi
+}
