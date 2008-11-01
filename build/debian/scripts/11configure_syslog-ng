@@ -14,7 +14,7 @@ options {
         keep_hostname (yes);
 };
 
-source sys { unix-dgram ("/dev/log"); unix-dgram ("/var/lib/klogd/dev/log"); file("/proc/kmsg"); };
+source sys { unix-dgram ("/dev/log"); file("/proc/kmsg"); };
 source inq { pipe("/dev/inqlog"); };
 
 destination udp_dst { udp("$SERVER"); };
