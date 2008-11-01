@@ -997,7 +997,7 @@ __EOF__
 
 		ccp = components.dup
 		return true unless testing.components.inject(true) { |b, cmp|
-			b && ccp.delete(ccp.find() { |h|
+			b && ccp.delete(ccp.find(:all) { |h|
 				(h[:vendor] == cmp.model.vendor && h[:model] == cmp.model.name) ||
 				(!h[:serial].blank? && h[:serial] == cmp.serial) ||
 				(!h[:version].blank? && h[:version] == cmp.serial)
