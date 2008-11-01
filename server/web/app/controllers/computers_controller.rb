@@ -470,6 +470,29 @@ set timefmt \"%s\""
 		end
 	end
 
+	def force_retest
+		@computer = Computer.find_by_id(params[:id])
+		testing = @computer.testings.last
+
+		# Close last testing
+		testing.test_end = Time.new()
+		@computer.testings << testing
+
+		# Create a new one
+		new_testing = Testing.new(
+			:profile_id => testing.profile_id,
+			:test_start => Time.new(),
+			:components => testing.components
+		)
+		@computer.testings << new_testing
+
+		if @computer.save
+			head(:status => 200)
+		else
+			head(:status => 500)
+		end
+	end
+
 	def submit_components
 		#serial_no = 4431, id = 4363
 		@computer = Computer.find_by_id(params[:id])
