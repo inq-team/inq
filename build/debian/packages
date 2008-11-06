@@ -45,4 +45,4 @@ partimage
 cdrecord
 dvd+rw-tools
 mkisofs
-#mencoder from debian-multimedia repository
+mencoder

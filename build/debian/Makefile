@@ -18,6 +18,7 @@ ROOTDIR=chroot
 DEBS=$(PWD)/repo
 
 REPO=ftp://192.168.10.11/Linux/Repository/debian
+REPO_MULTIMEDIA=http://mirror.yandex.ru/debian-multimedia
 REPO_BRANCH=lenny
 
 build-package:
