@@ -43,6 +43,8 @@ partimage
 cdrecord
 dvd+rw-tools
 mkisofs
+debian-multimedia-keyring
 mencoder
 syslog-ng
 psmisc
+nfs-common
