@@ -5,6 +5,8 @@
 
 # Preload necessary modules
 need_kernel_module eeprom
+need_kernel_module ipmi_si
+need_kernel_module ipmi_devintf
 
 # Save detection logs
 dmidecode >$HOME/dmi.log
