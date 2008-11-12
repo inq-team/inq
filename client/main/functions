@@ -378,6 +378,14 @@ executable_arch()
 {
 	exe_path=`which $1`
 
+	# Check if it is symbilic link
+	if file $exe_path | grep -q "symbolic link"; then
+                linked_to=`file $exe_path | sed -n "s/^.*symbolic link to .\(.*\)'$/\1/p"`
+                exe_path=`which $linked_to`
+	else
+		true
+	fi
+	
 	case `file $exe_path | awk -F, '{print $2}' | sed 's/ //g'` in
 	"Intel80386")
 		echo "i386"
