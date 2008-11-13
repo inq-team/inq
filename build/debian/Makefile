@@ -50,6 +50,7 @@ build-root:
 	# Run post-debootstrap installation scripts
 	CHROOT_PATH=$(WORKDIR)/$(ROOTDIR) \
 		REPO=$(REPO) \
+		REPO_MULTIMEDIA=$(REPO_MULTIMEDIA) \
 		BRANCH=$(REPO_BRANCH) \
 		SERVER=$(shell sed -n 's/^SERVER=\(.*\)$$/\1/p' < $(PWD)/client/main/global.in) \
 		DEBUG_TTY=$(DEBUG_TTY) build/debian/run_scripts.sh
