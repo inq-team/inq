@@ -81,6 +81,7 @@ test_nic()
 	echo -n "Downloading testing file"
 	speed=`curl -s -w "%{speed_download}" -o $TESTFILE --connect-timeout \
 		$TIMEOUT http://${SERVER}:${URL} | sed 's/\D//g'` ||
+	speed=$(( $speed / 1024 ))
 			test_failed "NIC eth${nic_number} (`get_nic_mac eth${nic_number}`) test failed"
 	[ `md5sum -b < $TESTFILE | awk '{print $1}'` = $MD5 ] ||
 		test_failed "NIC eth${nic_number} (`get_nic_mac eth${nic_number}`) test failed"
