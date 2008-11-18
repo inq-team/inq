@@ -476,20 +476,23 @@ set timefmt \"%s\""
 
 		# Close last testing
 		testing.test_end = Time.new()
-		@computer.testings << testing
-
-		# Create a new one
-		new_testing = Testing.new(
-			:profile_id => testing.profile_id,
-			:test_start => Time.new(),
-			:components => testing.components
-		)
-		@computer.testings << new_testing
-
-		if @computer.save
-			head(:status => 200)
-		else
+		if not testing.save
 			head(:status => 500)
+		else
+			# Create a new one
+			new_testing = Testing.new(
+				:profile_id => @computer.profile_id,
+				:test_start => Time.new(),
+				:components => testing.components,
+				:software_components => testing.software_components
+			)
+			@computer.testings << new_testing
+
+			if @computer.save
+				head(:status => 200)
+			else
+				head(:status => 500)
+			end
 		end
 	end
 
