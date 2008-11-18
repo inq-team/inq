@@ -1,3 +1,4 @@
 #!/bin/sh
 
 chroot $CHROOT_PATH apt-get -y install localepurge
+chroot $CHROOT_PATH localepurge
