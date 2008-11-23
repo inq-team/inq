@@ -10,7 +10,7 @@
 
   2008-08-28 by Inquisitor team
 -->
-<test id="mencoder_memory" type="benchmark-hqrip">
+<test id="benchmark-hqrip" type="mencoder_memory">
   <var name="SOURCE">big_buck_bunny.mov</var>
   <var name="PRESET">vhq</var>
   <var name="TWOPASS">true</var>

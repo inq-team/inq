@@ -11,7 +11,7 @@
 
   2008-08-28 by Inquisitor team
 -->
-<test id="mencoder_memory" type="benchmark-lqrip">
+<test id="benchmark-lqrip" type="mencoder_memory">
   <var name="SOURCE">big_buck_bunny.mov</var>
   <var name="PRESET">lq</var>
   <var name="TWOPASS">false</var>
