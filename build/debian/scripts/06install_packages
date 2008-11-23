@@ -6,6 +6,6 @@ cat $CHROOT_PATH/packages | while read package; do
 
 	if [ -n "$package" ]; then
 		echo "Installing $package package..."
-		chroot $CHROOT_PATH apt-get -y install $package
+		chroot $CHROOT_PATH apt-get --no-install-recommends -y install $package
 	fi
 done
