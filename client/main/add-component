@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-puts "CAAAAAALLLLEEEEEDDD"
 
 COMP_FILE = "#{ENV['HOME']}/components.xml"
 
@@ -36,10 +35,9 @@ end
 
 doc.root.add_element comp
 
-output = ""
-doc.write(output, indent = 1, trans = 1, ie_hack = false)
-output.gsub!(/&[^;]+;/,"")
-
 File.open(COMP_FILE, 'w') { |f|
+	output = ""
+	doc.write(output)
+	output.gsub!(/&[^;]+;/, "")
 	f.puts output
 }
