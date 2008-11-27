@@ -20,7 +20,7 @@ mount
 portmap
 ruby
 irb
-gnufdisk
+gnu-fdisk
 parted
 gpart
 hdparm
