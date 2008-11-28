@@ -792,7 +792,7 @@ set timefmt \"%s\""
 		@monitoring_id = params[:monitoring_id].to_i
 
 		params[:monitoring_data].each_line { |l|
-			key, timestamp, value = l.split(/,/)
+			key, timestamp, value = l.split(/\t/)
 
 			g = Graph.new(
 				:testing => @testing,

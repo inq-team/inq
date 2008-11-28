@@ -46,7 +46,7 @@ test_odd()
 		readcd -v dev=$odd f=$FIFOFILE sectors=0-$TEST_IMAGE_BLOCKS meshpoints=$MESH_POINTS | while read line; do
 			speed=`echo $line | awk '{print $2}'`
 			timestamp=`date +%s`
-			echo "$TESTED_QUANTITY,$timestamp,$speed" >> "$RESULT_FILE"
+			echo "$TESTED_QUANTITY	$timestamp	$speed" >> "$RESULT_FILE"
 		done
 		read_md5=`cat ${FIFOFILE}.md5 | awk '{print $1}'`
 	fi

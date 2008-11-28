@@ -103,7 +103,7 @@ benchmark_submit_float()
 	local value=$2
 	local units=$3
 
-	echo "$key	$value $units" >>$HOME/benchmarks.txt
+	echo "$key	$value	$units" >>$HOME/benchmarks.txt
 }
 
 benchmark_submit_string()
@@ -119,7 +119,7 @@ monitoring_submit()
 	local key=$1
 	local value=$2
 
-	echo "`date +%s`	$value" >>$HOME/monitoring_${MONITORING_NAME}_$key.txt
+	echo "$key	`date +%s`	$value" >>$HOME/monitoring_${MONITORING_ID}.txt
 }
 
 monitoring_submit_multiple()
