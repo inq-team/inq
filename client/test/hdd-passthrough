@@ -47,7 +47,11 @@ badblocks_test()
 		 # completion. So, for example, we can get hard drives
 		 # appearing for kernel (in dmesg) during several
 		 # seconds.
-	$SHARE_DIR/hdd-badblocks.pl -i `get_hdds_list` 2>"$ERROR_FILE" || true
+	if [ `get_hdds_list | wc -l` -eq 0 ]; then
+		true
+	else
+		$SHARE_DIR/hdd-badblocks.pl -i `get_hdds_list` 2>"$ERROR_FILE" || true
+	fi
 
 	local I=0
 	while raid-wizard-passthrough $DISK_GROUP_SIZE $I; do
