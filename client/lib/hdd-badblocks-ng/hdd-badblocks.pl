@@ -49,14 +49,14 @@ sub start_badblocks {
 
 	# Start badblocks program itself
 	open IN, "$BADBLOCKS_COMMAND $harddrive 2>&1 |" or exit 1;
-	while(!eof IN){
+	while(not eof IN){
 		$c = getc IN;
 		if($c =~ /[0-9 \/\ta-zA-Z]/) { $str .= $c }
 		else {
 			# Count badblocks number
 			$sd{$harddrive}{found}++ if $str =~ /^\d+$/;
 
-			# Overribe badblocks number by already calculated by badblocks
+			# Override badblocks number by already calculated by badblocks
 			if($str =~ /(\d+)\s*bad blocks found/){ $sd{$harddrive}{found} = $1 };
 
 			# Check if it is completed
@@ -226,7 +226,6 @@ sub write_graph_data {
 	# Find maximal time values and fill up time column first
 	my $max_time = 0;
 	foreach (keys %graph) { $max_time = $#{$graph{$_}} if $max_time < $#{$graph{$_}} };
-	print "MT: $max_time\n";
 	for($i = 0; $i < $max_time; $i++) { $output_graph_data[$i] = "" . $i * $UPDATE_PERIOD };
 
 	# Create columns with time and speed values
@@ -259,7 +258,7 @@ sub return_bad_hdds {
 			perform_exit(1);
 		};
 	} else {
-		# There is no bad HDDs
+		# There are no bad HDDs
 		if(defined $options{t}){
 			$mw->messageBox(-message => "There are no bad HDDs",
 					-type => 'ok');
