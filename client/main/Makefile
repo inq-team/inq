@@ -54,7 +54,7 @@ install:
 	install -m644 $(SHARE_NOEXEC_FILES) $(DESTDIR)$(SHARE_DIR)
 	if test -n "$(INIT_FILES)" ; then install -m644 $(INIT_FILES) $(DESTDIR)$(SHARE_DIR); fi
 	install -m644 $(ETC_FILES) $(DESTDIR)$(ETC_DIR)
-	install -m644 global $(DESTDIR)$(BIN_DIR)
+	ln -s $(ETC_DIR)/global $(DESTDIR)$(BIN_DIR)/global
 
 clean:
 	rm -f global
