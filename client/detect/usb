@@ -31,5 +31,5 @@ for I in /sys/bus/usb/devices/*; do
 		continue
 	fi
 
-	$SHARE_DIR/add-component USB "$MANUFACTURER" "$PRODUCT" "$SERIAL" ""
+	add-component USB "$MANUFACTURER" "$PRODUCT" "$SERIAL" ""
 done

@@ -20,7 +20,7 @@ if FRU_INFO=`cat $HOME/fru.log | grep -A13 'Builtin FRU Device'`; then
 	fi
 	CHASSIS_MODEL="$CHASSIS_TYPE$SEP$CHASSIS_PART_NUM"
 	if [ -n "$CHASSIS_TYPE" ] || [ -n "$CHASSIS_PART_NUM" ]; then
-		$SHARE_DIR/add-component Chassis "$CHASSIS_VENDOR" "$CHASSIS_MODEL" "$CHASSIS_SERIAL" ""
+		add-component Chassis "$CHASSIS_VENDOR" "$CHASSIS_MODEL" "$CHASSIS_SERIAL" ""
 	fi
 	
 	# Detecting mainboard
@@ -36,7 +36,7 @@ if FRU_INFO=`cat $HOME/fru.log | grep -A13 'Builtin FRU Device'`; then
 	# If mainboard model exists
 	if [ -n "$MB_PRODUCT" ] || [ -n "$MB_PART_NUM" ]; then
 		echo Mainboard "$MB_VENDOR" "$MB_MODEL" "$MB_SERIAL" ' - ipmi' >> $HOME/debug.log
-		$SHARE_DIR/add-component Mainboard "$MB_VENDOR" "$MB_MODEL" "$MB_SERIAL" "$MB_VERSION"
+		add-component Mainboard "$MB_VENDOR" "$MB_MODEL" "$MB_SERIAL" "$MB_VERSION"
 	else
 		# If IPMI detection of MB failed
 		if MB_INFO=`cat $HOME/lshw.log | grep -A5 'description: Motherboard'`; then
@@ -47,7 +47,7 @@ if FRU_INFO=`cat $HOME/fru.log | grep -A13 'Builtin FRU Device'`; then
 			MB_VERSION="`grep -A 3 "BIOS Information" $HOME/dmi.log | sed -n '/Version:/s/^.*Version: \(.*\)$/\1/pg'`"
 			[ ! -z "$MB_VERSION" ] || MB_VERSION=`grep -A 5 "description: BIOS" < $HOME/lshw.log | sed -n 's/^ *version: \(.*\)$/\1/p'`
 			echo Mainboard "$MB_VENDOR" "$MB_MODEL" "$MB_SERIAL" ' - lshw' >> $HOME/debug.log
-			$SHARE_DIR/add-component Mainboard "$MB_VENDOR" "$MB_MODEL" "$MB_SERIAL" "$MB_VERSION"
+			add-component Mainboard "$MB_VENDOR" "$MB_MODEL" "$MB_SERIAL" "$MB_VERSION"
 		fi
 	fi
 	
@@ -64,7 +64,7 @@ if FRU_INFO=`cat $HOME/fru.log | grep -A13 'Builtin FRU Device'`; then
 	fi
 	PLATFORM_MODEL="$PLATFORM_PRODUCT$SEP$PLATFORM_PART_NUM"
 	if [ -n "$PLATFORM_PRODUCT" ] || [ -n "$PLATFORM_PART_NUM" ]; then
-		$SHARE_DIR/add-component Platform "$PLATFORM_VENDOR" "$PLATFORM_MODEL" "$PLATFORM_SERIAL" "$PLATFORM_VERSION"
+		add-component Platform "$PLATFORM_VENDOR" "$PLATFORM_MODEL" "$PLATFORM_SERIAL" "$PLATFORM_VERSION"
 	fi
 fi
 
@@ -78,7 +78,7 @@ if PS_INFO=`cat $HOME/fru.log | grep -A9 'ps\.vpd'`; then
 	PS_MODEL=`echo "$PS_INFO" | sed -n 's/ Product Part Number *: //p'`
 	PS_VERSION=`echo "$PS_INFO" | sed -n 's/ Product Version *: //p'`
 	PS_SERIAL=`echo "$PS_INFO" | sed -n 's/ Product Serial *: //p'`
-	$SHARE_DIR/add-component 'Power Supply' "$PS_VENDOR" "$PS_MODEL" "$PS_SERIAL"
+	add-component 'Power Supply' "$PS_VENDOR" "$PS_MODEL" "$PS_SERIAL"
 fi
 
 # Detecting backplane
@@ -87,5 +87,5 @@ if BP_INFO=`cat $HOME/fru.log | grep -A9 'scsibp\.vpd'`; then
 	BP_MODEL=`echo "$BP_INFO" | sed -n 's/ Product Part Number *: //p'`
 	BP_VERSION=`echo "$BP_INFO" | sed -n 's/ Product Version *: //p'`
 	BP_SERIAL=`echo "$BP_INFO" | sed -n 's/ Product Serial *: //p'`
-	$SHARE_DIR/add-component 'SCSI Backplane' "$BP_VENDOR" "$BP_MODEL" "$BP_SERIAL" "$BP_VERSION"
+	add-component 'SCSI Backplane' "$BP_VENDOR" "$BP_MODEL" "$BP_SERIAL" "$BP_VERSION"
 fi

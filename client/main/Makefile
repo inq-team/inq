@@ -30,7 +30,6 @@ ETC_FILES=\
 	overlaytab \
 	remounttab
 SHARE_EXEC_FILES=\
-	add-component \
 	vendor \
 	inq-sensors-detect \
 	decode-dimms.pl \

@@ -19,6 +19,6 @@ else
 			version=""
 		fi
 
-		$SHARE_DIR/add-component "Floppy" "$vendor" "$model" "$serial" "$version"
+		add-component "Floppy" "$vendor" "$model" "$serial" "$version"
 	done
 fi
