@@ -23,7 +23,8 @@ SHARE_NOEXEC_FILES=\
 	functions-monitoring \
 	outformat \
 	lshw.xslt \
-	get_component_version.xslt
+	get_component_version.xslt \
+	add-component.xslt
 ETC_FILES=\
 	global \
 	overlaytab \
