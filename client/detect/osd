@@ -86,6 +86,6 @@ hal-find-by-property --key storage.drive_type --string cdrom | while read L; do
 		OSD_SERIAL=""
 		OSD_VERSION=""
 
-		add-component OSD "$OSD_VENDOR" "$OSD_MODEL" "$OSD_SERIAL" "$OSD_VERSION"
+		add_component OSD "$OSD_VENDOR" "$OSD_MODEL" "$OSD_SERIAL" "$OSD_VERSION"
 	fi
 done

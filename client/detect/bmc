@@ -8,7 +8,7 @@ if [ -n "$manufacturer" ]; then
 	device=`ipmitool mc info | sed -n '/Product ID/s/^.*: \(.*\)$/\1/gp'` || true
 	serial=`ipmitool lan print | grep "MAC Address" | awk '{print $NF}'` || true
 	version="`ipmitool mc info | grep "Firmware Revision" | awk '{print $NF}'`"
-	add-component "BMC" "$manufacturer" "$device" "$serial" "$version"
+	add_component "BMC" "$manufacturer" "$device" "$serial" "$version"
 else
 	true
 fi

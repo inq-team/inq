@@ -19,6 +19,6 @@ else
 			version=""
 		fi
 
-		add-component "Floppy" "$vendor" "$model" "$serial" "$version"
+		add_component "Floppy" "$vendor" "$model" "$serial" "$version"
 	done
 fi

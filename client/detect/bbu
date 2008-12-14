@@ -8,7 +8,7 @@ for CTL in `einarc -l | cut -f1`; do
 		MANUFACTURER=`echo "$INFO" | cut -f1`
 		MODEL=`echo "$INFO" | cut -f2`
 		SERIAL=`echo "$INFO" | cut -f3`
-		[ -n "$MODEL" ] && add-component 'BBU' "$MANUFACTURER" "$MODEL" "$SERIAL" ''
+		[ -n "$MODEL" ] && add_component 'BBU' "$MANUFACTURER" "$MODEL" "$SERIAL" ''
 	fi
 done
 

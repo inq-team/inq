@@ -419,7 +419,7 @@ service_start()
 	fi
 }
 
-add-component()
+add_component()
 {
 	type=$1
 	vendor=$2
@@ -434,7 +434,7 @@ add-component()
 		 --stringparam model "$model" \
 		 --stringparam serial "$serial" \
 		 --stringparam version "$type" \
-		 $SHARE_DIR/add-component.xslt $HOME/components.xml |
+		 $SHARE_DIR/add_component.xslt $HOME/components.xml |
 		 # Strings must not contatin "&.*;"-like symbols as it
 		 # can break detects. Currently we do not do it in
 		 # XSLT itself, because it is not quite simple. Also

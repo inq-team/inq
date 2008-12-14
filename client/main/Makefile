@@ -24,7 +24,7 @@ SHARE_NOEXEC_FILES=\
 	outformat \
 	lshw.xslt \
 	get_component_version.xslt \
-	add-component.xslt
+	add_component.xslt
 ETC_FILES=\
 	global \
 	overlaytab \

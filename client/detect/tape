@@ -8,5 +8,5 @@ for UDI in `hal-find-by-property --key scsi.type --string tape`; do
 	model=`hal-get-property --udi "$UDI" --key scsi.model`
 	serial=""
 	version=""
-	add-component "Tape drive" "$vendor" "$model" "$serial" "$version"
+	add_component "Tape drive" "$vendor" "$model" "$serial" "$version"
 done

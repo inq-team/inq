@@ -22,7 +22,7 @@ einarc_detect()
 			'adaptec_arcconf') CTRL_VENDOR='Adaptec';;
 		esac
 		echo 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" "$CTRL_SERIAL" - einarc >> $HOME/debug.log
-		add-component 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" "$CTRL_SERIAL" "$CTRL_VERSION"
+		add_component 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" "$CTRL_SERIAL" "$CTRL_VERSION"
 	done
 }
 
@@ -86,7 +86,7 @@ hal_detect()
 			CTRL_MODEL=`hal-get-property --udi "$UDI" --key info.product`
 			strip_vendor "$CTRL_VENDOR"
 			echo 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" '' - hal >> $HOME/debug.log
-			add-component 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" "" ""
+			add_component 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" "" ""
 		fi
 	done
 }

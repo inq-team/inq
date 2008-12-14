@@ -12,7 +12,7 @@ einarc_detect()
 			HDD_SERIAL=`echo "$L" | cut -f4`
 			HDD_VERSION="" # Einarc currently doesn't support HDD version retrieving
 			echo HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" ' - einarc' >> $HOME/debug.log
-			add-component HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" "$HDD_VERSION"
+			add_component HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" "$HDD_VERSION"
 		done
 	done
 }
@@ -90,7 +90,7 @@ hal_detect()
 			strip_vendor 'Hitachi ' 'Hitachi'
 		
 			echo HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" ' - hal' >> $HOME/debug.log
-			add-component HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" "$HDD_VERSION"
+			add_component HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" "$HDD_VERSION"
 		fi	
 	done
 }
