@@ -1,0 +1,32 @@
+<tests name="Benchmark-RW">
+ <description>Destructive benchmark-only tests loop - WARNING!</description>
+ <warning>WARNING! This test would overwrite all the data on your hard drive!</warning>
+ <assurance>This is a destructive benchmarks test that will overwrite all the contents of your hard drives! Are you sure you want to run this test?</assurance>
+
+ <test id="dhrystone" type="dhrystone">
+  <var name="DURATION">300</var>
+ </test>
+ <test id="whetstone" type="whetstone">
+  <var name="LOOPS">200000</var>
+ </test>
+ <test id="stream" type="stream" />
+ <test id="hdparm" type="hdparm">
+  <var name="AVG_SAMPLES">5</var>
+ </test>
+ <test id="iozone" type="iozone">
+  <var name="TEST_FILE_SIZE">0</var>
+ </test>
+ <test id="bonnie" type="bonnie">
+  <var name="FILESYSTEMS">ext3 xfs</var>
+  <var name="NUMBER_OF_FILES">2</var>
+  <var name="MINIMAL_FILE_SIZE">10</var>
+  <var name="MAXIMAL_FILE_SIZE">1024</var>
+  <var name="DIRECTORIES_NUMBER">256</var>
+ </test>
+ <test id="stress-compress" type="stress-compress">
+  <var name="TESTTIME">600</var>
+  <var name="STRESS_TREE">linux-2.6.22.5-31-stress.tar.gz</var>
+  <var name="JOBS">16</var>
+  <var name="SYNCTIME">8</var>
+ </test>
+</tests>

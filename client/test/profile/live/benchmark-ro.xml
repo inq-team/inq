@@ -1,0 +1,14 @@
+<tests name="Benchmark-RO">
+ <description>Non-destructive benchmark-only tests loop</description>
+
+ <test id="dhrystone" type="dhrystone">
+  <var name="DURATION">300</var>
+ </test>
+ <test id="whetstone" type="whetstone">
+  <var name="LOOPS">200000</var>
+ </test>
+ <test id="stream" type="stream" />
+ <test id="hdparm" type="hdparm">
+  <var name="AVG_SAMPLES">5</var>
+ </test>
+</tests>

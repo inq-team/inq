@@ -1,0 +1,17 @@
+<tests name="Non-destructive">
+ <description>Non-destructive (for hard drive) tests loop</description>
+
+ <test id="cpu" type="cpu">
+  <var name="TESTTIME">1800</var>
+ </test>
+ <test id="memory" type="memory">
+  <var name="TEST_LOOPS">1</var>
+  <var name="LOGTIME">120</var>
+ </test>
+ <test id="hdd-smart" type="hdd-smart">
+  <var name="LOGTIME">120</var>
+ </test>
+ <test id="fdd" type="fdd">
+  <var name="FLOPPY_SIZE">1440</var>
+ </test>
+</tests>

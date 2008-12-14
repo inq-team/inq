@@ -10,7 +10,7 @@
 # VAR=TESTTIME:int:600:Total time of stress testing, sec
 # VAR=STRESS_TREE:string:linux-2.6.22.5-31-stress.tar.gz:Gzipped tarball file containing stress test tree
 # VAR=JOBS:int:16:Number of parallely running jobs during stress test compression/decompression
-# VAR=SYNCTIME:int:2:Sync time period, sec
+# VAR=SYNCTIME:int:8:Sync time period, sec
 
 . global; . $SHARE_DIR/functions-test
 
