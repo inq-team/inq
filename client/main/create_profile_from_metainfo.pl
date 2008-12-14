@@ -38,3 +38,4 @@ foreach my $file (@files){
 	$x->endTag("test");
 };
 $x->endTag("tests");
+print "\n";
