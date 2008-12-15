@@ -4,6 +4,7 @@
 
 export TERM=linux
 DIALOG=dialog
+PROFILE_PATH=$SHARE_DIR/profile
 
 clear_screen()
 {
@@ -22,7 +23,7 @@ test_descriptions()
 
 menu_items()
 {
-	for profile in $SHARE_DIR/test/profile/live/*.xml; do
+	for profile in $PROFILE_PATH/live/*.xml; do
 		xsltproc $SHARE_DIR/profile2menu_item.xslt $profile
 	done
 
@@ -173,7 +174,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>." 15 72
 	# Otherwise start testing with necessary profile
 	*)
 		# Find corresponding profile XML
-		for profile in $SHARE_DIR/test/profile/live/*.xml; do
+		for profile in $PROFILE_PATH/live/*.xml; do
 			if grep -q "name=.$value" $profile; then
 				profile_filename=$profile
 			fi
