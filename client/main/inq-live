@@ -27,6 +27,7 @@ menu_items()
 	done
 
 	# Some special predefined items
+	echo \"Infinite loop\" \"Turn on infinite testing looping\" \"Choosing this and running testings above you will not return here anymore\"
 	echo \"Single\" \"Run a single test\" \"Choose and run a single test with fine-tuning of all parameters\"
 	echo \"Detects\" \"Detects only\" \"\"
 	echo \"View\" \"View test results\" \"\"
@@ -42,6 +43,15 @@ create_test_script()
 	xsltproc $SHARE_DIR/profile2test_script.xslt $profile_filename > $HOME/test_script
 }
 
+run_inquisitor()
+{
+	if [ $infinite_loop = "off" ]; then
+		inquisitor
+	else
+		while true; do inquisitor; done
+	fi
+}
+
 result_list()
 {
 	ls -1 $HOME | sed "/\.pid$/d; s/\(.*\)/\"\1\" 'File'/"
@@ -49,6 +59,7 @@ result_list()
 
 desc=`test_descriptions`
 items=`menu_items`
+infinite_loop="off"
 
 while true; do
 	exec 3>&1
@@ -76,6 +87,18 @@ while true; do
 
 	case "$value" in
 	# Here are special predefined items
+	"Infinite loop")
+		if [ $infinite_loop = "off" ]; then
+			infinite_loop="on"
+		else
+			infinite_loop="off"
+		fi
+			
+		$DIALOG --backtitle 'Inquisitor Live: Infinite loop' \
+			--title 'Infinite loop switch' \
+			--msgbox "Infinite loop switch turned $infinite_loop" 5 40
+		continue
+		;;
 	Single)
 		exec 3>&1
 		RESULT=`echo $desc | xargs $DIALOG --clear --backtitle 'Inquisitor Live: Run a single test' \
@@ -159,13 +182,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>." 15 72
 		assurance=`xsltproc $SHARE_DIR/profile2assurance.xslt $profile_filename`
 		if [ -z "$assurance" ]; then
 			create_test_script $profile_filename
-			inquisitor
+			run_inquisitor
 		else
 			# User should be sure to continue testing
 			if $DIALOG --backtitle "Inquisitor Live: $value" --title 'WARNING!' --clear --yesno "$assurance" 8 60; then
 				clear_screen
 				create_test_script $profile_filename
-				inquisitor
+				run_inquisitor
 			else
 				continue
 			fi
