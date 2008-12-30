@@ -1,5 +1,5 @@
 Name: inquisitor-inventory-client
-Version: 1.2
+Version: 1.0
 Release: 1
 
 License: GPL
