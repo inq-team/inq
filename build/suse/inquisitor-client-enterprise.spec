@@ -25,6 +25,7 @@ make -C client RUBY_SHARE_DIR=%{_libdir}/ruby/vendor_ruby/%{rb_ver} RUBY_LIB_DIR
 
 %install
 make -C client DESTDIR=$RPM_BUILD_ROOT install
+mkdir -p $RPM_BUILDROOT/%_libdir/inquisitor
 
 %files
 %_sysconfdir/inquisitor
