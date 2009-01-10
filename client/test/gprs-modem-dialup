@@ -100,7 +100,7 @@ while [ "$TRIES" -lt "$PPPD_TRIES" ]; do
 	curl --retry "$DOWNLOAD_TRIES" --max-time "$DOWNLOAD_MAX_TIME" http://$URL -o $TMP_DIR/download -w '%{speed_download}' >$TMP_DIR/report && echo_success || continue
 
 	# Speed reporting
-	benchmark_submit_float 'Average download speed' `cat $TMP_DIR/report` "KiB/sec"
+	benchmark_submit_float 'Average download speed' `cat $TMP_DIR/report` "B/sec"
 
 	# MD5 check
 	echo 'Checking MD5 sum'
@@ -117,7 +117,7 @@ while [ "$TRIES" -lt "$PPPD_TRIES" ]; do
 	curl --retry "$UPLOAD_TRIES" --max-time "$UPLOAD_MAX_TIME" -F file=@$UPLOAD_FILE http://$UPLOAD_URL -o $TMP_DIR/md5 -w '%{speed_upload}' >$TMP_DIR/report && echo_success || continue
 
 	# Speed reporting
-	benchmark_submit_float 'Average upload speed' `cat $TMP_DIR/report` "KiB/sec"
+	benchmark_submit_float 'Average upload speed' `cat $TMP_DIR/report` "B/sec"
 
 	# MD5 check
 	echo 'Checking uploaded MD5 sum'
