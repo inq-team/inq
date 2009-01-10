@@ -7,8 +7,8 @@
 # VERSION=0.1
 # TAGS=usb
 # DEPENDS=USB
-# VAR=IDVENDOR:string:0403:Filter in only devices with this idVendor (match all if empty)
-# VAR=IDPRODUCT:string:6001:Filter in only devices with this idProduct (match all if empty)
+# VAR=IDVENDOR:string:0403:Filter in only devices with this idVendor (match all if empty, could be an extended regular expression)
+# VAR=IDPRODUCT:string:6001:Filter in only devices with this idProduct (match all if empty, could be an extended regular expression)
 # VAR=COUNT:int:1:There should be this many devices
 
 . global; . $SHARE_DIR/functions-test
@@ -22,12 +22,12 @@ get_usb_devices()
 
 		# Match
 		if [ -n "$IDVENDOR" ]; then
-			if [ "$IDVENDOR" != "`cat $I/idVendor`" ]; then
+			if ! cat $I/idVendor | egrep "$IDVENDOR"; then
 				continue
 			fi
 		fi
 		if [ -n "$IDPRODUCT" ]; then
-			if [ "$IDPRODUCT" != "`cat $I/idProduct`" ]; then
+			if ! cat $I/idProduct | egrep "$IDPRODUCT"; then
 				continue
 			fi
 		fi
