@@ -427,19 +427,33 @@ add_component()
 	serial=$4
 	version=$5
 
-	new_components=`mktemp`
+	if [ -s "$HOME/components.xml" ]; then
+		new_components=`mktemp`
 
-	xsltproc --stringparam type "$type" \
-		 --stringparam vendor "$vendor" \
-		 --stringparam model "$model" \
-		 --stringparam serial "$serial" \
-		 --stringparam version "$type" \
-		 $SHARE_DIR/add_component.xslt $HOME/components.xml |
-		 # Strings must not contatin "&.*;"-like symbols as it
-		 # can break detects. Currently we do not do it in
-		 # XSLT itself, because it is not quite simple. Also
-		 # we are removing empty namespace declarations there.
-		 sed 's/&[^;]\+;//g ; s/ xmlns=""//g' > $new_components
+		xsltproc --stringparam type "$type" \
+			 --stringparam vendor "$vendor" \
+			 --stringparam model "$model" \
+			 --stringparam serial "$serial" \
+			 --stringparam version "$type" \
+			 $SHARE_DIR/add_component.xslt $HOME/components.xml |
+			 # Strings must not contatin "&.*;"-like symbols as it
+			 # can break detects. Currently we do not do it in
+			 # XSLT itself, because it is not quite simple. Also
+			 # we are removing empty namespace declarations there.
+			 sed 's/&[^;]\+;//g ; s/ xmlns=""//g' > $new_components
 
-	mv $new_components $HOME/components.xml
+		mv $new_components $HOME/components.xml
+	else
+		cat >$HOME/components.xml <<__EOF__
+<list>
+<component>
+<type>$type</type>
+<vendor>$vendor</vendor>
+<model>$model</model>
+<serial>$serial</serial>
+<version>$version</version>
+</component>
+</list>
+__EOF__
+	fi
 }
