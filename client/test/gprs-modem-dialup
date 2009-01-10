@@ -108,6 +108,11 @@ while [ "$TRIES" -lt "$PPPD_TRIES" ]; do
 	md5sum -c $TMP_DIR/checkfile && echo_success || continue
 
 	# Uploading
+	[ -r "$UPLOAD_FILE" ] || {
+		print_red_message "Cannot open $UPLOAD_FILE; using default file for upload test"
+		UPLOAD_FILE=/etc/ld.so.cache
+	}
+
 	echo 'Uploading file'
 	curl --retry "$UPLOAD_TRIES" --max-time "$UPLOAD_MAX_TIME" -F file=@$UPLOAD_FILE http://$UPLOAD_URL -o $TMP_DIR/md5 -w '%{speed_upload}' >$TMP_DIR/report && echo_success || continue
 
