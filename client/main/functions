@@ -445,6 +445,7 @@ add_component()
 		mv $new_components $HOME/components.xml
 	else
 		cat >$HOME/components.xml <<__EOF__
+<?xml version="1.0"?>
 <list>
 <component>
 <type>$type</type>
