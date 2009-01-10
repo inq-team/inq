@@ -1,6 +1,6 @@
 #!/bin/sh -ef
-# NAME=USB GPRS Modem Dialup
-# DESCRIPTION=Test GPRS modem, connected using USB
+# NAME=USB GPRS/EDGE/3G Modem Dialup
+# DESCRIPTION=Test cellular modem, connected via USB. This test tries to initialize the GPRS/EDGE/3G session using pppd with device DEV at SPEED bps, setting device's access point to APN, authenticating using username PPPD_USERNAME, selecting CHAP/PAP protocol as suggested by provider's server. You must include a relevant login/password entry in either /etc/ppp/pap-secrets or /etc/ppp/chap-secrets file for authentication to work. This test tries to reconnect pppd sessions up to PPPD_TRIES time. After successful start of pppd session, it tries to download file at URL up to DOWNLOAD_TRIES times, making sure that download takes up to DOWNLOAD_MAX_TIME seconds. Downloaded file's md5 checksum is matched MD5 string. After downloading, it tries to upload a file UPLOAD_FILE up to UPLOAD_TRIES times at UPLOAD_URL, making sure that upload takes no more than UPLOAD_MAX_TIME seconds. Both download and upload speeds are reported as benchmark results.
 # DESTROYS_HDD=false
 # IS_INTERACTIVE=false
 # POWEROFF_DURING_TEST=false
