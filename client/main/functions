@@ -434,7 +434,7 @@ add_component()
 			 --stringparam vendor "$vendor" \
 			 --stringparam model "$model" \
 			 --stringparam serial "$serial" \
-			 --stringparam version "$type" \
+			 --stringparam version "$version" \
 			 $SHARE_DIR/add_component.xslt $HOME/components.xml |
 			 # Strings must not contatin "&.*;"-like symbols as it
 			 # can break detects. Currently we do not do it in
@@ -447,13 +447,13 @@ add_component()
 		cat >$HOME/components.xml <<__EOF__
 <?xml version="1.0"?>
 <list>
-<component>
-<type>$type</type>
-<vendor>$vendor</vendor>
-<model>$model</model>
-<serial>$serial</serial>
-<version>$version</version>
-</component>
+  <component>
+    <type>$type</type>
+    <vendor>$vendor</vendor>
+    <model>$model</model>
+    <serial>$serial</serial>
+    <version>$version</version>
+  </component>
 </list>
 __EOF__
 	fi
