@@ -22,12 +22,12 @@ get_usb_devices()
 
 		# Match
 		if [ -n "$IDVENDOR" ]; then
-			if ! cat $I/idVendor | egrep "$IDVENDOR"; then
+			if ! cat $I/idVendor | egrep -q "$IDVENDOR"; then
 				continue
 			fi
 		fi
 		if [ -n "$IDPRODUCT" ]; then
-			if ! cat $I/idProduct | egrep "$IDPRODUCT"; then
+			if ! cat $I/idProduct | egrep -q "$IDPRODUCT"; then
 				continue
 			fi
 		fi
