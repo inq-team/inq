@@ -8,7 +8,7 @@
 
 Name: inquisitor-standalone
 Version: 3.0
-Release: alt0.rc
+Release: alt3.rc
 URL: http://www.inquisitor.ru/
 
 Summary: Hardware detection, testing and monitoring system (demo standalone version)
@@ -19,6 +19,8 @@ Source: inquisitor.tar
 
 # Automatically added by buildreq on Tue Feb 26 2008
 BuildRequires: glibc-devel-static linux-libc-headers packages-info-i18n-common ruby ruby-module-optparse rpm-build-ruby
+
+Conflicts: memtester
 
 %description
 Inquisitor is an open-source hardware testing and certification system,
@@ -52,6 +54,15 @@ sed -i '/^export HOME/ d' client/main/global.in
 #%ruby_sitearchdir/raid
 
 %changelog
+* Mon Jun 09 2008 Mikhail Yakshin <greycat@altlinux.ru> 3.0-alt3.rc
+- Updated to svn 2008-09-06
+
+* Fri Apr 11 2008 Mikhail Yakshin <greycat@altlinux.ru> 3.0-alt2.rc
+- Added memtester conflict
+
+* Wed Apr 09 2008 Mikhail Yakshin <greycat@altlinux.ru> 3.0-alt1.rc
+- Fixed tarball packaging error
+
 * Wed Apr 09 2008 Mikhail Yakshin <greycat@altlinux.ru> 3.0-alt0.rc
 - 3.0-rc release
 
