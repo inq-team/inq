@@ -15,7 +15,7 @@ Source: %name.tar
 
 Packager: Inquisitor team <team@inquisitor.ru>
 
-BuildRequires: freetype2-devel gpp hwdatabase libggi-devel libgii-devel ruby xorg-x11-devel rpm-build-ruby
+BuildRequires: freetype2-devel gpp hwdatabase libggi-devel libgii-devel ruby xorg-x11-devel rpm-build-ruby perl-threads
 
 %description
 Inquisitor client RPM for installation in chroot

@@ -7,13 +7,14 @@ Release: alt1
 Summary: Inquisitor client for client-server system
 License: GPL
 Group: Monitoring
+AutoReq: no
 
 Source: %name.tar
 
 Packager: Inquisitor team <team@inquisitor.ru>
 
 #BuildRequires: freetype2-devel hwdatabase ruby xorg-x11-devel rpm-build-ruby
-BuildRequires: ruby rpm-build-ruby
+BuildRequires: ruby rpm-build-ruby perl-threads
 
 %description
 Inquisitor client RPM for installation in chroot
