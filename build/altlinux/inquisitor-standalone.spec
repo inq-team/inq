@@ -7,8 +7,8 @@
 # by editing /Makefile.config and run "make build-package" there.
 
 Name: inquisitor-standalone
-Version: 3.0
-Release: alt3.rc
+Version: 3.1
+Release: alt0.svn1418
 URL: http://www.inquisitor.ru/
 
 Summary: Hardware detection, testing and monitoring system (demo standalone version)
@@ -18,7 +18,7 @@ Group: Monitoring
 Source: inquisitor.tar
 
 # Automatically added by buildreq on Tue Feb 26 2008
-BuildRequires: glibc-devel-static linux-libc-headers packages-info-i18n-common ruby ruby-module-optparse rpm-build-ruby
+BuildRequires: glibc-devel-static linux-libc-headers packages-info-i18n-common ruby ruby-module-optparse rpm-build-ruby perl-threads
 
 Conflicts: memtester
 
@@ -29,7 +29,8 @@ available in both serverless Live CD/DVD format and server-controlled
 network boot production system.
 
 This package includes standalone version of Inquisitor, suitable for
-installation in any system, such as regular desktops/servers.
+installation in any system, such as regular desktops/servers, mostly for
+demonstration purposes.
 
 %prep
 %setup -q -c
@@ -37,23 +38,25 @@ installation in any system, such as regular desktops/servers.
 %build
 sed -i 's/^TARGET=.*$/TARGET=%_arch/' Makefile.config
 sed -i '/^export HOME/ d' client/main/global.in
+# Remove Einarc from standalone: it's already a separate package in Sisyphus
+sed -i '/^SUBDIRS/ s/einarc //; /cd einarc/ d' client/lib/Makefile
 %make_build -C client RUBY_SHARE_DIR=%ruby_sitelibdir RUBY_LIB_DIR=%ruby_sitearchdir
 
 %install
 %make -C client DESTDIR=%buildroot install
+mkdir -p %buildroot/%_libdir/inquisitor
 
 %files
 %_sysconfdir/inquisitor
-#%_sysconfdir/X11/xorg.conf*
 %_bindir/*
 %_datadir/inquisitor
 %_libdir/inquisitor
-#%_x11bindir/*
-#%_libdir/jtkey
-%ruby_sitelibdir/raid
-#%ruby_sitearchdir/raid
 
 %changelog
+* Sat Jan 10 2009 Mikhail Yakshin <greycat@altlinux.org> 3.1-alt0.svn1418
+- Updated to svn 2009-01-10
+- Removed some commented out parts of the spec
+
 * Mon Jun 09 2008 Mikhail Yakshin <greycat@altlinux.ru> 3.0-alt3.rc
 - Updated to svn 2008-09-06
 
