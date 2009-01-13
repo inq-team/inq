@@ -10,17 +10,6 @@ all:
 install:
 	$(MAKE) -C lib install
 	$(MAKE) -C main install
-#	install -m755 decode-dimm/decode-dimm.rb $(DESTDIR)$(BIN_DIR)/
-#	install -m755 planner/planner.rb $(DESTDIR)$(BIN_DIR)/
-#	install -m755 interface/interface.rb $(DESTDIR)$(BIN_DIR)/
-#	mkdir -p $(DESTDIR)$(LIB_DIR)/jtkey
-#	install -m644 interface/TERM.linux $(DESTDIR)$(LIB_DIR)/jtkey/
-#	mkdir -p $(DESTDIR)$(SYSCONFDIR)/inquisitor $(DESTDIR)$(SYSCONFDIR)/X11
-#	rsync -r '--exclude=*CVS' '--exclude=*X11*' etc/* $(DESTDIR)$(SYSCONFDIR)/inquisitor/
-#	rsync -r '--exclude=*CVS' etc/X11/* $(DESTDIR)$(SYSCONFDIR)/X11/
-#	install -m755 summarize/summarize $(DESTDIR)$(LIB_DIR)/inquisitor
-#	find lib/ -type f | grep -v CVS | xargs install -t $(DESTDIR)$(LIB_DIR)/inquisitor/
-#	rsync -r '--exclude=*CVS' ../image/* $(DESTDIR)$(LIB_DIR)/inquisitor/
 	mkdir -p \
 		$(DESTDIR)$(SHARE_DIR)/detect \
 		$(DESTDIR)$(SHARE_DIR)/software-detect \
