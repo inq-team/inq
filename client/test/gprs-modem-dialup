@@ -21,7 +21,7 @@
 # VAR=UPLOAD_URL:string::URL to upload (without http)
 # VAR=SPEED:int:115200:Line speed
 
-. global; . $SHARE_DIR/functions-test
+. _inq-config-global; . $SHARE_DIR/functions-test
 
 exit_handler()
 {

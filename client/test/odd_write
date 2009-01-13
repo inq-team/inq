@@ -14,7 +14,7 @@
 # VAR=WRITE_MESSAGE:string:Writing test disc:Message to print when test will start
 # VAR=FORCE_NON_INTERACTIVE:boolean:false:Force non-interactive mode for already prepared system
 
-. global; . $SHARE_DIR/functions-test
+. _inq-config-global; . $SHARE_DIR/functions-test
 
 test_read()
 {

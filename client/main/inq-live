@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. global
+. _inq-config-global
 
 export TERM=linux
 DIALOG=dialog

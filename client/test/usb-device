@@ -11,7 +11,7 @@
 # VAR=IDPRODUCT:string:6001:Filter in only devices with this idProduct (match all if empty, could be an extended regular expression)
 # VAR=COUNT:int:1:There should be this many devices
 
-. global; . $SHARE_DIR/functions-test
+. _inq-config-global; . $SHARE_DIR/functions-test
 
 get_usb_devices()
 {

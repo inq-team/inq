@@ -8,7 +8,7 @@
 # TAGS=benchmark,ram,memory
 # DEPENDS=Memory
 
-. global; . $SHARE_DIR/functions-test
+. _inq-config-global; . $SHARE_DIR/functions-test
 
 # As STREAM benchmark is rather fast, we will easily run it several
 # times. Results won't diverge meaningfully.

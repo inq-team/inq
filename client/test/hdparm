@@ -8,7 +8,7 @@
 # DEPENDS=Disk Controller,HDD
 # VAR=AVG_SAMPLES:int:5:Number of tests per disc to average for result
 
-. global; . $SHARE_DIR/functions-test
+. _inq-config-global; . $SHARE_DIR/functions-test
 
 test_succeed_if_no hdds
 

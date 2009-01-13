@@ -12,7 +12,7 @@
 # VAR=JOBS:int:16:Number of parallely running jobs during stress test compression/decompression
 # VAR=SYNCTIME:int:8:Sync time period, sec
 
-. global; . $SHARE_DIR/functions-test
+. _inq-config-global; . $SHARE_DIR/functions-test
 
 exit_handler()
 {

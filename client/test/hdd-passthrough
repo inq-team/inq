@@ -14,7 +14,7 @@
 # VAR=JOBS:int:16:Number of parallely running jobs during stress test tree compile
 # VAR=SKIP_STRESS_TESTING:bool:false:Do we need to skip stress subtest, perform only badblocks
 
-. global; . $SHARE_DIR/functions-test
+. _inq-config-global; . $SHARE_DIR/functions-test
 
 exit_handler()
 {

@@ -7,7 +7,7 @@
 # TAGS=benchmark,cpu,memory,ram
 # DEPENDS=CPU,Memory,Mainboard
 
-. global; . $SHARE_DIR/functions-test
+. _inq-config-global; . $SHARE_DIR/functions-test
 
 exit_handler()
 {

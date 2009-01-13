@@ -4,7 +4,7 @@
 # DESCRIPTION=This monitoring uses sensors for getting CPU's temperature.
 # MEASUREMENT=temperature
 
-. global; . $SHARE_DIR/functions-monitoring
+. _inq-config-global; . $SHARE_DIR/functions-monitoring
 [ -n "$PERIOD" ] || PERIOD=30
 
 strip_hash()

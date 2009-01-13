@@ -14,7 +14,7 @@
 # VAR=COUNT:int:1024:Number of blocks to be written. If zero is specified then this parameter won't be used
 # VAR=COMPRESSION:string:none:What compression is used. gzip, bzip2 or lzma can be chosen
 
-. global; . $SHARE_DIR/functions-test
+. _inq-config-global; . $SHARE_DIR/functions-test
 
 pushdq $SHARE_DIR/firmwares
 

@@ -9,7 +9,7 @@
 # DEPENDS=HDD
 # VAR=LOGTIME:int:120:Time between progress updates, sec
 
-. global; . $SHARE_DIR/functions-test
+. _inq-config-global; . $SHARE_DIR/functions-test
 
 exit_handler()
 {

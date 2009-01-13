@@ -8,7 +8,7 @@
 # DEPENDS=CPU
 # VAR=LOOPS:int:200000:Loop count
 
-. global; . $SHARE_DIR/functions-test
+. _inq-config-global; . $SHARE_DIR/functions-test
 
 exit_handler()
 {

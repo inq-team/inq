@@ -11,7 +11,7 @@
 # VAR=TARGET:string:sda:Target device name that will be overwritten
 # VAR=COPY_TO_RAMDISK:bool:false:Copy an image to ramdisk before partimage call
 
-. global; . $SHARE_DIR/functions-test
+. _inq-config-global; . $SHARE_DIR/functions-test
 
 exit_handler()
 {

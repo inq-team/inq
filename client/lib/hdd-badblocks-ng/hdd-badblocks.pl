@@ -89,7 +89,7 @@ sub alive_threads {
 # This is Inquisitor's specific communication function
 sub inq_communication {
 	system "export COMPUTER_ID=$ENV{COMPUTER_ID} && \
-		. global && \
+		. _inq-config-global && \
 		. \$SHARE_DIR/functions && \
 		. \$SHARE_DIR/communication && $_[0] >\$DEBUG_TTY 2>&1";
 };

@@ -11,7 +11,7 @@
 # VAR=TARGET:string:/dev/sda:Target device name that will be overwritten
 # VAR=SEED_AFTER:bool:true:Seed after successfull test finishing?
 
-. global; . $SHARE_DIR/functions-test
+. _inq-config-global; . $SHARE_DIR/functions-test
 
 pushdq $SHARE_DIR/firmwares
 

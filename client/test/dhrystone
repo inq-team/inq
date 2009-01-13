@@ -8,7 +8,7 @@
 # DEPENDS=CPU
 # VAR=DURATION:int:300:Benchmark duration (sec)
 
-. global; . $SHARE_DIR/functions-test
+. _inq-config-global; . $SHARE_DIR/functions-test
 
 exit_handler()
 {

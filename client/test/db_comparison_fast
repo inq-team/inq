@@ -10,7 +10,7 @@
 # VAR=FILENAMES:string::Reference files
 # VAR=EXCLUDED_MODELS:string::Excluded component models from comparison
 
-. global; . $SHARE_DIR/functions-test
+. _inq-config-global; . $SHARE_DIR/functions-test
 
 if compare_fast "$FILENAMES" "$EXCLUDED_MODELS"; then
 	test_succeeded
