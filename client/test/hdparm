@@ -23,7 +23,6 @@ for BLOCK_DEV in `get_hdds_list`; do
 		sed -ne '/Timing/ { s/^.*= *//; s, MB/sec,,; s/\.//; p }'`
 		BUFFERED_SUM=$(($BUFFERED_SUM + $BUFFERED))
 		CACHED_SUM=$(($CACHED_SUM + $CACHED))
-		echo -n '.'
 		test_progress $i $AVG_SAMPLES
 	done
 

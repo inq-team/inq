@@ -18,7 +18,7 @@ exit_handler()
 {
 	[ -f "$RESULT_FILE" ] && rm -fr "$RESULT_FILE"
 	if [ -d "$SCRATCH_DIRECTORY" ]; then
-		umount -f $SCRATCH_DIRECTORY >/dev/null || true
+		umount -f $SCRATCH_DIRECTORY >$DEBUG_TTY 2>&1 || true
 		rmdir $SCRATCH_DIRECTORY
 	fi
 }
