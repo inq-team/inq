@@ -1,6 +1,6 @@
 #!/bin/sh -e
 # NAME=HDD benchmark: Bonnie
-# DESCRIPTION=This test uses bonnie++ benchmark to test hard drives performance on different filesystems. For every hard drive in a system, test sequently creates specified filesystems on it and then runs bonnie++ benchmark itself. There are two sections to the program’s operations. The first is to test the IO throughput in a fashion that is designed to simulate some types of database applications. The  second is to test creation, reading, and deleting many small files in a fashion similar to the usage patterns of programs such as Squid or INN. Bonnie++ tests some of them and for each test gives a result of the amount of work done per second and the percentage of CPU time this took.
+# DESCRIPTION=This test uses bonnie++ benchmark to test hard drives performance on different filesystems. For every hard drive in a system, test sequently creates specified filesystems on it and then runs bonnie++ benchmark itself. There are two sections to the program’s operations. The first is to test the IO throughput in a fashion that is designed to simulate some types of database applications. The  second is to test creation, reading, and deleting many small files in a fashion similar to the usage patterns of programs such as Squid or INN. Bonnie++ tests some of them and for each test gives a result of the amount of work done per second and the percentage of CPU time this took. This test uses unstable Bonnie++ 1.9x version.
 # DESTROYS_HDD=true
 # POWEROFF_DURING_TEST=false
 # VERSION=0.2
