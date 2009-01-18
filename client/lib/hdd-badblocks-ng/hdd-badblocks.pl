@@ -27,6 +27,9 @@ my %hdds_gui;
 my $status_bar;
 my $bb_loop_started = 0;
 
+# Dummy ID, for example, if we are using LiveCD
+$ENV{COMPUTER_ID} = 0 if not defined $ENV{COMPUTER_ID};
+
 ################################################################################
 # subs section
 ################################################################################

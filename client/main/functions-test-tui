@@ -29,7 +29,7 @@ show_usage()
 	echo "Inquisitor test: $HUMAN_NAME"
 	echo "A part of Inquisitor platform, version $INQ_VERSION"
 	echo
-	sed -ne '/^# *DESCRIPTION=/ s/# *DESCRIPTION=//p' <$0
+	sed -ne '/^# *DESCRIPTION=/ s/# *DESCRIPTION=//p' <$0 | fmt
 	cat <<__EOF__
 
 Usage: [variables] $0 [options]
@@ -111,7 +111,7 @@ done >"$UI_TMP/var-src" 2>"$UI_TMP/var-key"
 if grep -q "^# *DESTROYS_HDD=true" $TEST_FILENAME; then
 	if dialog \
 		--backtitle "Inquisitor v$INQ_VERSION" \
-		--title "$HUMAN NAME"
+		--title "$HUMAN_NAME" \
 		--yesno "WARNING!
 This test would destroy the contents of all your hard drives!
 
@@ -127,7 +127,7 @@ fi
 if grep -q "^# *POWEROFF_DURING_TEST=true" $TEST_FILENAME; then
 	if dialog \
 		--backtitle "Inquisitor v$INQ_VERSION" \
-		--title "$HUMAN NAME"
+		--title "$HUMAN_NAME" \
 		--yesno "WARNING!
 This test would end in a poweroff of system under test!
 

@@ -55,7 +55,7 @@ run_inquisitor()
 
 result_list()
 {
-	ls -1 $HOME | sed "/\.pid$/d; s/\(.*\)/\"\1\" 'File'/"
+	find $HOME -maxdepth 1 -type f -printf "\"%f\" 'File'\n"
 }
 
 desc=`test_descriptions`
