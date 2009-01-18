@@ -34,7 +34,6 @@ xsltproc
 lshw
 lm-sensors
 i2c-tools
-bonnie++
 curl
 wget
 util-linux
@@ -52,4 +51,4 @@ nfs-common
 eject
 p7zip
 ntp
-vi
+vim-tiny
