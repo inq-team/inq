@@ -38,6 +38,12 @@ plan_test_script()
 	true
 }
 
+get_id_by_macs()
+{
+	# We can not get ID in LiveCD version
+	echo ""
+}
+
 test_stage_advance()
 {
 	local stage=$1
