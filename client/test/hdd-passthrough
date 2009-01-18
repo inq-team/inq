@@ -9,7 +9,7 @@
 # DEPENDS=CPU,HDD,Memory,Mainboard,Disk Controller
 # VAR=DISK_GROUP_SIZE:int:8:Number of disks per group for testing
 # VAR=MINIMAL_STRESS_TIME:int:600:Minimal time of stress testing
-# VAR=STRESS_TREE:string:linux-2.6.22.5-31-stress.tar.gz:Tarball file containing stress test tree
+# VAR=STRESS_TREE:string:linux-stress.tar.gz:Tarball file containing stress test tree
 # VAR=RAMDISK_SIZE:int:400:Size of memory disk for stress tree building, MB
 # VAR=JOBS:int:16:Number of parallely running jobs during stress test tree compile
 # VAR=SKIP_STRESS_TESTING:bool:false:Do we need to skip stress subtest, perform only badblocks
