@@ -15,6 +15,7 @@ BIN_FILES=\
 	inq-software-detect \
 	get-macs \
 	inq-wrapper \
+	inq-live-wrapper \
 	inq-live
 SHARE_NOEXEC_FILES=\
 	functions \
