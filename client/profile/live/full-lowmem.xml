@@ -1,0 +1,40 @@
+<tests name="Full-lowmem">
+ <description>Full tests loop (lower memory usage) - WARNING!</description>
+ <warning>WARNING! This test would overwrite all the data on your hard drive!</warning>
+ <assurance>This is a full test (lower memory usage) that will overwrite all the contents of your hard drives! Are you sure you want to run this test?</assurance>
+
+ <test id="cpu" type="cpu">
+  <var name="TESTTIME">1800</var>
+ </test>
+ <test id="memory" type="memory">
+  <var name="TEST_LOOPS">1</var>
+  <var name="LOGTIME">120</var>
+ </test>
+ <test id="hdd-smart" type="hdd-smart">
+  <var name="LOGTIME">120</var>
+ </test>
+ <test id="hdd-array" type="hdd-array">
+  <var name="TESTTIME">3600</var>
+  <var name="LOGTIME">120</var>
+  <var name="JOBS">16</var>
+  <var name="STRESS_TREE">stream-mem.tar.gz</var>
+  <var name="MINIMAL_DRIVE_SIZE">2048</var>
+ </test>
+ <test id="hdd-passthrough" type="hdd-passthrough">
+  <var name="DISK_GROUP_SIZE">8</var>
+  <var name="MINIMAL_STRESS_TIME">600</var>
+  <var name="STRESS_TREE">stream-mem.tar.gz</var>
+  <var name="RAMDISK_SIZE">32</var>
+  <var name="JOBS">16</var>
+  <var name="SKIP_STRESS_TESTING">false</var>
+ </test>
+ <test id="stress-compress" type="stress-compress">
+  <var name="TESTTIME">600</var>
+  <var name="STRESS_TREE">linux-stress.tar.gz</var>
+  <var name="JOBS">16</var>
+  <var name="SYNCTIME">8</var>
+ </test>
+ <test id="fdd" type="fdd">
+  <var name="FLOPPY_SIZE">1440</var>
+ </test>
+</tests>
