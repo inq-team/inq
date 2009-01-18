@@ -15,10 +15,11 @@ PACKAGE_DEB=$(PACKAGE_NAME)_$(PACKAGE_VERSION)-$(PACKAGE_RELEASE)_$(DEB_TARGET).
 # Local build paths
 WORKDIR=$(PWD)/work
 ROOTDIR=chroot
+LIVEDIR=live
 DEBS=$(PWD)/repo
 
-REPO=ftp://192.168.10.11/Linux/Repository/debian
-REPO_MULTIMEDIA=http://mirror.yandex.ru/debian-multimedia
+REPO=ftp://your.mirror.here/debian
+REPO_MULTIMEDIA=ftp://your.mirror.here/debian-multimedia
 REPO_BRANCH=lenny
 
 build-package:
@@ -54,6 +55,18 @@ build-root:
 		BRANCH=$(REPO_BRANCH) \
 		SERVER=$(shell sed -n 's/^SERVER=\(.*\)$$/\1/p' < $(PWD)/client/main/global.in) \
 		DEBUG_TTY=$(DEBUG_TTY) build/debian/run_scripts.sh
+
+build-live:
+	# Cleanup from previous build
+	cd $(WORKDIR)/$(LIVEDIR) && lh_clean
+	rm -rf $(WORKDIR)/$(LIVEDIR)
+	mkdir -p $(WORKDIR)/$(LIVEDIR)
+	## Run LiveCD LiveHelper configuration helper script
+	WORKDIR=$(WORKDIR) LIVEDIR=$(LIVEDIR) \
+		REPO=$(REPO) REPO_MULTIMEDIA=$(REPO_MULTIMEDIA) \
+		REPO_BRANCH=$(REPO_BRANCH) DEB_TARGET=$(DEB_TARGET) \
+		PACKAGE_DEB=$(PACKAGE_DEB) build/debian/live_lh_config.sh
+	cd $(WORKDIR)/$(LIVEDIR) && export MKSQUASHFS_OPTIONS="-e boot" && lh_build
 
 update-package-remote:
 	scp $(WORKDIR)/build-package/$(PACKAGE_DEB) $(DEPLOY_HOST):

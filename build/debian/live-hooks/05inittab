@@ -1,0 +1,6 @@
+#!/bin/sh
+
+echo "I: configuring inittab"
+
+echo "inq:2345:respawn:/usr/bin/inq-live-wrapper" >> /etc/inittab
+sed -i '/tty1$/d' /etc/inittab

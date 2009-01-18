@@ -1,0 +1,24 @@
+#!/bin/sh
+
+echo "I: configuring syslog-ng"
+
+cat >/etc/syslog-ng/syslog-ng.conf <<__EOF__
+options {
+	sync (0);
+	time_reopen (10);
+	log_fifo_size (1000);
+	long_hostnames (off);
+	use_dns (no);
+	use_fqdn (no);
+	create_dirs (no);
+	keep_hostname (yes);
+};
+
+source sys { unix-dgram ("/dev/log"); unix-dgram ("/var/lib/klogd/dev/log"); file("/proc/kmsg"); };
+source inq { pipe("/dev/inqlog"); };
+
+destination ttyall { file("/dev/tty12"); };
+
+log { source(sys); destination(ttyall); };
+
+__EOF__

@@ -1,0 +1,6 @@
+#!/bin/sh
+
+echo "I: installing Inquisitor package"
+
+dpkg -i $INQ_PACKAGE
+rm $INQ_PACKAGE

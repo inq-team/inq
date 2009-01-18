@@ -1,0 +1,6 @@
+#!/bin/sh
+
+echo "I: configure rc.local"
+
+echo 'mkfifo /dev/inqlog' > /etc/rc.local
+chmod a+x /etc/rc.local
