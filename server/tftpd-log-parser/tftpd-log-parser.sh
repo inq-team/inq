@@ -1,6 +1,6 @@
 #!/bin/sh
 # server/tftpd-log-parser/tftpd-log-parser.sh - A part of Inquisitor project
-# Copyright (C) 2004-2008 by Iquisitor team 
+# Copyright (C) 2004-2009 by Iquisitor team 
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
