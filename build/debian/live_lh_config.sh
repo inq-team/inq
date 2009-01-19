@@ -63,7 +63,7 @@ cp ../../client/main/overlaytab $WORKDIR/$LIVEDIR/config/chroot_local-includes/e
 ################################################################################
 # Needed to be included files (in Tars)
 ################################################################################
-for include in live-includes/*.tar; do
+for include in ../../image/*.tar; do
 	tar xvfC "$include" $WORKDIR/$LIVEDIR/config/chroot_local-includes
 done
 
