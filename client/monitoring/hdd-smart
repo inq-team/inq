@@ -9,12 +9,10 @@
 
 while true; do
 	I=0
-	for UDI in `hal-find-by-property --key=storage.drive_type --string disk`; do
-		BLOCK=`hal-get-property --udi "$UDI" --key block.device`
-		VALUE=`smartctl -d ata -A $BLOCK | grep 'Temperature_Celsius' | cut -c88-`
+	for device in `get_hdds_list`; do
+		VALUE=`smartctl -d ata -A $device | grep 'Temperature_Celsius' | cut -c88-`
 		[ -z "$VALUE" ] || monitoring_submit $I $VALUE
 		I=$(($I+1))
 	done
-
 	sleep $PERIOD
 done
