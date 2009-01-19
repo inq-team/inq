@@ -54,8 +54,13 @@ sub start_badblocks {
 	open IN, "$BADBLOCKS_COMMAND $harddrive 2>&1 |" or exit 1;
 	while(not eof IN){
 		$c = getc IN;
-		if($c =~ /[0-9 \/\ta-zA-Z]/) { $str .= $c }
+		if($c =~ /[0-9 \/\ta-zA-Z:%,\.]/) { $str .= $c }
 		else {
+			# Read first line to retrieve total blocks number
+			if($str =~ /Checking blocks 0 to (\d+)$/){
+				$sd{$harddrive}{total} = $1;
+			};
+
 			# Count badblocks number
 			$sd{$harddrive}{found}++ if $str =~ /^\d+$/;
 
@@ -68,10 +73,15 @@ sub start_badblocks {
 				close IN && exit;
 			};
 
-			# Get total and doned blocks count
-			next unless $str =~ /(\d+)\s*\/\s*(\d+)/;
-			$sd{$harddrive}{doned} = $1;
-			$sd{$harddrive}{total} = $2;
+			# Here we are deciding which parser to use,
+			# because of badblocks possible different
+			# output formats
+			if($str =~ / ([0-9.]+)% done, .* elapsed/){
+				$sd{$harddrive}{doned} = int($sd{$harddrive}{total} * $1 * 0.01);
+			} else {
+				next unless $str =~ /(\d+)\s*\/\s*\d+/;
+				$sd{$harddrive}{doned} = $1;
+			};
 
 			# Clear string
 			$str = "";
