@@ -57,6 +57,7 @@ build-root:
 		DEBUG_TTY=$(DEBUG_TTY) build/debian/run_scripts.sh
 
 build-live:
+	mkdir -p $(WORKDIR)/$(LIVEDIR)
 	# Cleanup from previous build
 	cd $(WORKDIR)/$(LIVEDIR) && lh_clean
 	rm -rf $(WORKDIR)/$(LIVEDIR)
