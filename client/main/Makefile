@@ -12,6 +12,8 @@ endif
 BIN_FILES=\
 	$(BIN_FILES_FLAVOUR) \
 	inq-detect \
+	inq-monitoring \
+	inq-self-id \
 	inq-software-detect \
 	get-macs \
 	inq-wrapper \
@@ -26,6 +28,7 @@ SHARE_NOEXEC_FILES=\
 	lshw.xslt \
 	get_component_version.xslt \
 	add_component.xslt \
+	add_software_component.xslt \
 	profile2assurance.xslt \
 	profile2menu_item.xslt \
 	profile2test_script.xslt

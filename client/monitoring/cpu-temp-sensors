@@ -16,7 +16,7 @@ strip_hash()
 }
 
 while true; do
-	INFO=`sensors -A`
+	INFO=`sensors -A 2>$DEBUG_TTY`
 	RES=
 	echo "$INFO" | grep -n 'Core\(.\) Temp:' | sed 's/^\(.*\):Core\(.\) Temp:/\1;\2/'  | \
 	(

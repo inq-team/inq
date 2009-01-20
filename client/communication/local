@@ -79,7 +79,30 @@ submit_additional_components()
 
 add_software_component()
 {
-	true
+	name=$1
+	arch=$2
+	version=$3
+
+	if [ -s "$HOME/software-components.xml" ]; then
+		new_components=`mktemp`
+
+		xsltproc --stringparam name "$name" \
+		         --stringparam arch "$arch" \
+			 --stringparam version "$version" \
+			 $SHARE_DIR/add_software_component.xslt $HOME/software-components.xml > $new_components
+		mv $new_components $HOME/software-components.xml
+	else
+		cat > $HOME/software-components.xml <<__EOF__
+<?xml version="1.0"?>
+<list>
+  <software-component>
+    <name>$name</name>
+    <arch>$arch</arch>
+    <version>$version</version>
+  </software-component>
+</list>
+__EOF__
+	fi
 }
 
 # Mark current testing as finished

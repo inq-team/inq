@@ -16,7 +16,7 @@ strip_hash()
 }
 
 while true; do
-	INFO=`sensors -A`
+	INFO=`sensors -A 2>$DEBUG_TTY`
 	RES=
 	echo "$INFO" | sed -n "s/^VCore \(.\): *+\(.*\) V .*$/\1 => \2/p" | \
 	(

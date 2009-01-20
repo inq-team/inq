@@ -21,18 +21,7 @@ echo 'Detects finished'
 # ===========================================================================
 
 echo 'Starting self-identification'
-# Try various methods for self-id, stop after successful one
-COMPUTER_ID=
-for I in $SHARE_DIR/self-id/*; do
-	echo -n "Trying self-id using $I"
-	. $I
-	if [ -n "$COMPUTER_ID" ]; then
-		echo_success
-		break
-	else
-		echo_failure
-	fi
-done
+COMPUTER_ID=`inq-self-id`
 [ -n "$COMPUTER_ID" ] || fatal_failure 'Self-identification'
 export COMPUTER_ID
 
@@ -79,11 +68,7 @@ submit_components $HOME/components.xml
 # ===========================================================================
 
 echo 'Starting monitorings'
-for I in $SHARE_DIR/monitoring/*; do
-	echo -n "Starting `basename $I`"
-	monitoring_start `basename $I`
-	echo_success
-done
+inq-monitoring
 echo 'Monitorings were started'
 
 # ===========================================================================

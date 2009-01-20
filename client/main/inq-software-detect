@@ -4,26 +4,14 @@
 . $SHARE_DIR/functions
 . $SHARE_DIR/communication
 
-COMPUTER_ID=
-echo -n 'Trying to get ID by MACs...'
-COMPUTER_ID=`get_id_by_macs \`get-macs\``
-if [ -n "$COMPUTER_ID" ]; then
-	echo_success
+[ -n "$COMPUTER_ID" ] || COMPUTER_ID=`inq-self-id`
+if ! [ -n "$COMPUTER_ID" ]; then
+	echo_failure 'Self-identification failed'
+	exit 1
 else
-	echo_failure
-	echo -n "Enter serial number manually: "
-	read COMPUTER_ID
-	if [ -n "$COMPUTER_ID" ]; then
-		echo_success
-	else
-		echo_failure
-		exit 1
-	fi	
+	export COMPUTER_ID
 fi
-	
-export COMPUTER_ID
 
-# Starting software detects
 for I in $SHARE_DIR/software-detect/*; do
 	echo -n "Detecting `basename $I`"
 	. $I

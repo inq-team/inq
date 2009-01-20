@@ -1,0 +1,21 @@
+#!/bin/sh
+
+. _inq-config-global
+. $SHARE_DIR/functions
+
+# We will use STDERR for progress output
+
+# Try various methods for self-id, stop after successful one
+COMPUTER_ID=""
+for I in $SHARE_DIR/self-id/*; do
+	echo -n "Trying self-id using $I" >&2
+	. $I >&2
+	if [ -n "$COMPUTER_ID" ]; then
+		echo_success >&2
+		break
+	else
+		echo_failure >&2
+	fi
+done
+
+echo $COMPUTER_ID

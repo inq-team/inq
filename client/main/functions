@@ -145,9 +145,10 @@ run_test()
 monitoring_start()
 {
 	monitoring_stop $1
-	cd $SHARE_DIR/monitoring
+	pushdq $SHARE_DIR/monitoring
 	./$1 &
 	echo $! >$HOME/monitoring_$1.pid
+	popdq
 }
 
 # Stops a monitoring, running in background.
@@ -352,9 +353,12 @@ need_kernel_module()
 {
 	if ! lsmod | grep -q "^$1"; then
 		echo -n "Loading $1 kernel module..."
-		modprobe $1 || true
-		sleep 30
-		echo_success
+		if modprobe $1; then
+			sleep 30
+			echo_success
+		else
+			echo_failure
+		fi
 	fi
 }
 
