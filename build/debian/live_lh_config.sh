@@ -23,7 +23,7 @@ lh_config --mirror-bootstrap $REPO --mirror-chroot $REPO \
           --iso-volume "Inquisitor 3.1 LiveCD $REPO_BRANCH" \
           --iso-preparer "Sergey Matveev (stargrave@users.sourceforge.net)" \
           --iso-publisher "Sergey Matveev (stargrave@users.sourceforge.net)" \
-          --bootappend-live "noautologin nolocales noacpi" \
+          --bootappend-live "noautologin nolocales" \
           --hostname inq \
           --packages-lists inq \
           --binary-indices disabled \
