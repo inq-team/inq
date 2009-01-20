@@ -35,6 +35,7 @@ menu_items()
 	echo \"Save\" \"Save test results\" \"Save test results to external storage media \(USB flash, etc\)\"
 	echo \"About\" \"About Inquisitor\" \"\"
 	echo \"Reboot\" \"Quit and reboot\" \"\"
+	echo \"Shutdown\" \"Shutdown computer\" \"\"
 }
 
 create_test_script()
@@ -170,6 +171,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>." 15 72
 		;;
 	Reboot)
 		/sbin/reboot
+		;;
+	Shutdown)
+		/sbin/shutdown -h now
 		;;
 	# Otherwise start testing with necessary profile
 	*)
