@@ -28,7 +28,7 @@ build-package:
 	cp -r client $(WORKDIR)/build-package/$(PACKAGE_DIR)
 	cp -r flavour Makefile.config $(WORKDIR)/build-package
 	cp -r build/debian/debian $(WORKDIR)/build-package/$(PACKAGE_DIR)
-	cp build/debian/init $(WORKDIR)/build-package/$(PACKAGE_DIR)/main
+	cp build/debian/init.$(FLAVOUR) $(WORKDIR)/build-package/$(PACKAGE_DIR)/main/init
 	cd $(WORKDIR)/build-package/$(PACKAGE_DIR) && dpkg-buildpackage -b -a$(DEB_TARGET) -us -uc
 
 build-root:
@@ -66,7 +66,8 @@ build-live:
 	WORKDIR=$(WORKDIR) LIVEDIR=$(LIVEDIR) \
 		REPO=$(REPO) REPO_MULTIMEDIA=$(REPO_MULTIMEDIA) \
 		REPO_BRANCH=$(REPO_BRANCH) DEB_TARGET=$(DEB_TARGET) \
-		PACKAGE_DEB=$(PACKAGE_DEB) build/debian/live_lh_config.sh
+		PACKAGE_DEB=$(PACKAGE_DEB) INQ_VERSION=$(INQ_VERSION) \
+		build/debian/live_lh_config.sh
 	cd $(WORKDIR)/$(LIVEDIR) && export MKSQUASHFS_OPTIONS="-e boot" && lh_build
 
 update-package-remote:

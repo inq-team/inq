@@ -20,10 +20,10 @@ lh_config --mirror-bootstrap $REPO --mirror-chroot $REPO \
           --architecture $DEB_TARGET \
           --distribution $REPO_BRANCH \
           --iso-application Inquisitor \
-          --iso-volume "Inquisitor 3.1 LiveCD $REPO_BRANCH" \
+          --iso-volume "Inquisitor $INQ_VERSION LiveCD $REPO_BRANCH" \
           --iso-preparer "Sergey Matveev (stargrave@users.sourceforge.net)" \
           --iso-publisher "Sergey Matveev (stargrave@users.sourceforge.net)" \
-          --bootappend-live "noautologin nolocales" \
+          --bootappend-live "noautologin nolocales noacpi" \
           --hostname inq \
           --packages-lists inq \
           --binary-indices disabled \
@@ -51,14 +51,11 @@ popd
 echo "deb $REPO_MULTIMEDIA $REPO_BRANCH main" > $WORKDIR/$LIVEDIR/config/chroot_sources/debian-multimedia.chroot
 
 ################################################################################
-# Packages list, pressed file, Inquisitor package, mounttabs
+# Packages list, pressed file, Inquisitor package
 ################################################################################
 cp packages.live $WORKDIR/$LIVEDIR/config/chroot_local-packageslists/inq
 cp preseed.live $WORKDIR/$LIVEDIR/config/chroot_local-preseed/inq
 cp $WORKDIR/build-package/$PACKAGE_DEB $WORKDIR/$LIVEDIR/config/chroot_local-includes
-mkdir $WORKDIR/$LIVEDIR/config/chroot_local-includes/etc
-cp ../../client/main/remounttab $WORKDIR/$LIVEDIR/config/chroot_local-includes/etc
-cp ../../client/main/overlaytab $WORKDIR/$LIVEDIR/config/chroot_local-includes/etc
 
 ################################################################################
 # Needed to be included files (in Tars)
@@ -77,6 +74,7 @@ cp live-additional/splash.xpm.gz $WORKDIR/$LIVEDIR/config/binary_grub
 ################################################################################
 # User interface pretty outlook
 ################################################################################
+mkdir $WORKDIR/$LIVEDIR/config/chroot_local-includes/etc
 cp live-additional/debian_version $WORKDIR/$LIVEDIR/config/chroot_local-includes/etc
 cp live-additional/issue $WORKDIR/$LIVEDIR/config/chroot_local-includes/etc
 

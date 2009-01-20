@@ -3,4 +3,11 @@
 export PATH=/sbin:/usr/sbin:/usr/local/sbin:/bin:/usr/bin:/usr/local/bin:/usr/X11R6/bin
 export HOME=/home
 
+. _inq-config-global
+. $SHARE_DIR/functions
+
+# Here we can safely start init, as this wrapper will be used only in
+# LiveCD version
+. $SHARE_DIR/init
+
 exec inq-live
