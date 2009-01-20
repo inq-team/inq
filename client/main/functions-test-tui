@@ -53,6 +53,7 @@ __EOF__
 show_version()
 {
 	echo "Inquisitor test: $HUMAN_NAME"
+	echo "Test's version: "`sed -ne '/^# *VERSION=/ s/# *VERSION=//p' <$0`
 	cat <<__EOF__
 A part of Inquisitor platform, version ${INQ_VERSION}
 
