@@ -88,7 +88,7 @@ run_inquisitor()
 
 result_list()
 {
-	find $HOME -maxdepth 1 -type f -printf "\"%f\" 'File'\n"
+	find $HOME -maxdepth 1 -type f -and ! -name '*.pid' -printf "\"%f\" 'File'\n"
 }
 
 desc=`test_descriptions`
@@ -179,7 +179,7 @@ while true; do
 		if [ "$retval" = 0 ]; then
 			clear_screen
 			echo 'Saving test results...'
-			find $HOME -maxdepth 1 -type f | xargs tar -cvzf "$RESULT"
+			find $HOME -maxdepth 1 -type f -and ! -name '*.pid' | xargs tar -cvzf "$RESULT"
 			echo 'Saving complete'
 		else
 			continue
