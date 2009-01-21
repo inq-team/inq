@@ -23,19 +23,51 @@ test_descriptions()
 
 menu_items()
 {
+	# Dialog specific options
+	cat <<__EOF__
+--item-help
+--nocancel
+--backtitle
+"Inquisitor Live"
+--title
+"Choose an action"
+--menu
+"" 16 72 10
+__EOF__
+
+	# Profiles itself
 	for profile in $PROFILE_PATH/live/*.xml; do
 		xsltproc $SHARE_DIR/profile2menu_item.xslt $profile
 	done
 
 	# Some special predefined items
-	echo \"Infinite loop\" \"Turn on infinite testing looping\" \"Choosing this and running testings above you will not return here anymore\"
-	echo \"Single\" \"Run a single test\" \"Choose and run a single test with fine-tuning of all parameters\"
-	echo \"Detects\" \"Detects only\" \"\"
-	echo \"View\" \"View test results\" \"\"
-	echo \"Save\" \"Save test results\" \"Save test results to external storage media \(USB flash, etc\)\"
-	echo \"About\" \"About Inquisitor\" \"\"
-	echo \"Reboot\" \"Quit and reboot\" \"\"
-	echo \"Shutdown\" \"Shutdown computer\" \"\"
+	cat <<__EOF__
+"Infinite loop"
+"Turn on infinite testing looping"
+"Choosing this and running testings above you will not return here anymore"
+Single
+"Run a single test"
+"Choose and run a single test with fine-tuning of all parameters"
+Detects
+"Detects only"
+""
+View
+"View test results"
+""
+Save
+"Save test results"
+"Save test results to external storage media \(USB flash, etc\)"
+About
+"About Inquisitor"
+""
+Reboot
+"Quit and reboot"
+""
+Shutdown
+"Shutdown computer"
+""
+__EOF__
+
 }
 
 create_test_script()
@@ -60,14 +92,16 @@ result_list()
 }
 
 desc=`test_descriptions`
-items=`menu_items`
 infinite_loop="off"
+
+# Menu items
+items=`mktemp`
+menu_items > $items
 
 while true; do
 	exec 3>&1
-	value=`echo $items | xargs $DIALOG --item-help --nocancel --backtitle 'Inquisitor Live' \
-	        --title 'Choose an action' --menu '' 16 72 10 2>&1 1>&3`
-	        
+	value=`$DIALOG --file $items 2>&1 1>&3`
+
 	retval=$?
 	exec 3>&-
 	clear_screen
