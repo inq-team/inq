@@ -13,6 +13,13 @@
  <test id="hdd-smart" type="hdd-smart">
   <var name="LOGTIME">120</var>
  </test>
+ <test id="array-configurator" type="array-configurator">
+  <var name="CONFIGURATION">optimal</var>
+  <var name="ADAPTER"></var>
+  <var name="ADAPTER_NUMBER">0</var>
+  <var name="DISK_GROUP_SIZE">8</var>
+  <var name="DISK_GROUP_NUMBER">1</var>
+ </test>
  <test id="hdd-array" type="hdd-array">
   <var name="TESTTIME">3600</var>
   <var name="LOGTIME">120</var>
