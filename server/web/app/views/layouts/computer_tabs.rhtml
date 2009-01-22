@@ -63,9 +63,7 @@
 						<%= (@current_action == 'graph' ? link_to(stage[:id], {:controller => :computers, :action => :graph, :id => @computer, :testing => @testing_number, :from => stage[:started].nil? ? nil : stage[:started].to_f , :to => stage[:finished].nil? ? nil : stage[:finished].to_f }) : stage[:id]) %> <div style="font-size: 80%">(<%= stage[:progress] %>%)</div>
 						<div style="font-size: 60%"><%= stage[:comment] %></div>
 					</td>
-					<td class="testing_stage_span">
-						<%= sprintf("%02i:%02i:%02i", stage[:elapsed]/3600, stage[:elapsed]%3600/60, stage[:elapsed]%3600%60) if stage[:elapsed] %>
-					</td>
+					<td class="testing_stage_span"><%= sprintf("%02i:%02i:%02i", stage[:elapsed]/3600, stage[:elapsed]%3600/60, stage[:elapsed]%3600%60) if stage[:elapsed] %></td>
 				</tr>
 			<% } %>
 			<% end %>
