@@ -88,7 +88,7 @@ You can use commands:
 	        
 ${COLOR_GREEN}inquisitor${COLOR_NORMAL} - execute Inquisitor testing in whole (normal testing mode)
 ${COLOR_GREEN}inq-detect${COLOR_NORMAL} - execute detects only
-${COLOR_GREEN}/usr/share/inquisitor/test/${COLOR_YELLOW}STAGE${COLOR_NORMAL} - execute particular test ${COLOR_YELLOW}STAGE${COLOR_NORMAL}, one of:
+${COLOR_GREEN}${SHARE_DIR}/test/${COLOR_YELLOW}STAGE${COLOR_NORMAL} - execute particular test ${COLOR_YELLOW}STAGE${COLOR_NORMAL}, one of:
 ${COLOR_BLUE}
 __EOF__
 		        
