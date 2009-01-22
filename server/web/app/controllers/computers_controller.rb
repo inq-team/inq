@@ -604,15 +604,16 @@ set timefmt \"%s\""
 		type = params[:type]
 		version = params[:version]
 		comment = params[:comment] || ""
-		raise "Event not supported: #{ event }." unless [:start, :finish, :fail, :require_attention, :dismiss_attention].include?(event)
+		raise "Event not supported: #{ event }." unless [:start, :mayhang, :finish, :fail, :require_attention, :dismiss_attention].include?(event)
 		testing = @computer.testings.last
 		stage = testing.testing_stages.last
 		case event
-		when :start
+		when :start, :mayhang
 			testing.testing_stages << TestingStage.new(:start => Time.new(),
 								   :comment => comment,
 								   :stage => name,
 								   :test_type => type,
+								   :result => event == :mayhang ? TestingStage::MAYHANG : TestingStage::RUNNING,
 								   :test_version => version)
 			z = testing
 		when :finish, :fail
@@ -905,6 +906,7 @@ __EOF__
 	RESULT_MAPPING = {
 		TestingStage::RUNNING => 'running',
 		TestingStage::FINISHED => 'finished',
+		TestingStage::MAYHANG => 'mayhang',
 		TestingStage::FAILED => 'failed',
 		TestingStage::HANGING => 'hanging',
 		TestingStage::ATTENTION => 'attention',

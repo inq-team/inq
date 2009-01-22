@@ -296,6 +296,13 @@ tr.testing_stage_running {
 	background-color: #f0f4f0;
 }
 
+tr.testing_stage_mayhang .testing_stage_name {
+	background: url('/images/stage_running.png') 8px 50% no-repeat;
+}
+tr.testing_stage_mayhang {
+	background-color: #f0f4f0;
+}
+
 tr.testing_stage_attention .testing_stage_name {
 	background: url('/images/stage_running.png') 8px 50% no-repeat;
 }

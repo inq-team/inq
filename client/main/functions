@@ -113,7 +113,13 @@ run_test()
 	# Mark test as started
 	echo -n "Test $TEST_NAME"
 	echo_running
-	test_stage_advance "$TEST_NAME" "$TEST_TYPE" "$TEST_VERSION" start
+	# Can this test hangup machine
+	if [ `sed -n 's/^# POWEROFF_DURING_TEST=\(.*\)$/\1/p' < $SHARE_DIR/test/$1` = "false" ]; then
+		event="start"
+	else
+		event="mayhang"
+	fi
+	test_stage_advance "$TEST_NAME" "$TEST_TYPE" "$TEST_VERSION" $event
 
 	MSG_DIR=`mktemp -d`
 	# Run test, collect status + comment + posttest commands
