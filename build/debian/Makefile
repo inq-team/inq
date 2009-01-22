@@ -67,6 +67,7 @@ build-live:
 		REPO=$(REPO) REPO_MULTIMEDIA=$(REPO_MULTIMEDIA) \
 		REPO_BRANCH=$(REPO_BRANCH) DEB_TARGET=$(DEB_TARGET) \
 		PACKAGE_DEB=$(PACKAGE_DEB) INQ_VERSION=$(INQ_VERSION) \
+		SHARE_DIR=$(SHARE_DIR) \
 		build/debian/live_lh_config.sh
 	cd $(WORKDIR)/$(LIVEDIR) && export MKSQUASHFS_OPTIONS="-e boot" && lh_build
 

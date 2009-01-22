@@ -70,6 +70,7 @@ done
 cp live-hooks/* $WORKDIR/$LIVEDIR/config/chroot_local-hooks/
 sed -i "s/\$INQ_PACKAGE/$PACKAGE_DEB/g" $WORKDIR/$LIVEDIR/config/chroot_local-hooks/01install_inq
 cp live-additional/splash.xpm.gz $WORKDIR/$LIVEDIR/config/binary_grub
+[ -s live-additional/menu.lst ] && cp live-additional/menu.lst $WORKDIR/$LIVEDIR/config/binary_grub
 
 ################################################################################
 # User interface pretty outlook
