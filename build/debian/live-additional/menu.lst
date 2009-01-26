@@ -3,11 +3,11 @@ timeout 30
 splashimage /boot/grub/splash.xpm.gz
 
 title		Inquisitor 3.1 LiveCD i386
-kernel		/live/vmlinuz-2.6.26-1-686 boot=live noautologin nolocales noacpi hostname=inq union=aufs
+kernel		/live/vmlinuz-2.6.26-1-686 boot=live noautologin nolocales hostname=inq union=aufs
 initrd		/live/initrd.img-2.6.26-1-686
 
 title		Inquisitor 3.1 LiveCD i386 (fail-safe mode)
-kernel		/live/vmlinuz-2.6.26-1-686 boot=live noautologin nolocales noacpi hostname=inq union=aufs noapic noapm nodma nomce nolapic nosmp vga=normal
+kernel		/live/vmlinuz-2.6.26-1-686 boot=live noautologin nolocales hostname=inq union=aufs noapic noapm nodma nomce nolapic nosmp vga=normal
 initrd		/live/initrd.img-2.6.26-1-686
 
 title		Other:
