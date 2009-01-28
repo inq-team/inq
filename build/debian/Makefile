@@ -40,7 +40,7 @@ build-root:
 	# Copy additional .deb packages
 	if [ -d $(DEBS) ]; then cp $(DEBS)/* $(WORKDIR)/$(ROOTDIR); fi
 	# Copy images if present
-	if [ -d  image ]; then cp -r image $(WORKDIR)/$(ROOTDIR)/img; fi
+	if [ -d  $(IMAGE_DIR) ]; then cp -r $(IMAGE_DIR) $(WORKDIR)/$(ROOTDIR)/img; fi
 	# Copy Inquisitor client package
 	cp $(WORKDIR)/build-package/$(PACKAGE_DEB) $(WORKDIR)/$(ROOTDIR)
 	# Copy build-specific temporary files
@@ -68,6 +68,7 @@ build-live:
 		REPO_BRANCH=$(REPO_BRANCH) DEB_TARGET=$(DEB_TARGET) \
 		PACKAGE_DEB=$(PACKAGE_DEB) INQ_VERSION=$(INQ_VERSION) \
 		SHARE_DIR=$(SHARE_DIR) \
+		IMAGE_DIR=$(IMAGE_DIR) \
 		build/debian/live_lh_config.sh
 	cd $(WORKDIR)/$(LIVEDIR) && export MKSQUASHFS_OPTIONS="-e boot" && lh_build
 

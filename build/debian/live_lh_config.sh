@@ -60,7 +60,7 @@ cp $WORKDIR/build-package/$PACKAGE_DEB $WORKDIR/$LIVEDIR/config/chroot_local-inc
 ################################################################################
 # Needed to be included files (in Tars)
 ################################################################################
-for include in ../../image/*.tar; do
+for include in ../../$IMAGE_DIR/*.tar; do
 	tar xvfC "$include" $WORKDIR/$LIVEDIR/config/chroot_local-includes
 done
 
