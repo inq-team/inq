@@ -34,6 +34,10 @@
   <var name="RAMDISK_SIZE">400</var>
   <var name="JOBS">16</var>
   <var name="SKIP_STRESS_TESTING">false</var>
+  <var name="BADBLOCKS_MODE">destructive</var>
+  <var name="BADBLOCKS_BLOCKSIZE">1024</var>
+  <var name="BADBLOCKS_PATTERN"></var>
+  <var name="BADBLOCKS_BLOCKS_TESTED_AT_ONCE">64</var>
  </test>
  <test id="stress-compress" type="stress-compress">
   <var name="TESTTIME">600</var>

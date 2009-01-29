@@ -11,7 +11,7 @@ use Getopt::Std;
 # Configuration
 ################################################################################
 my $UPDATE_PERIOD = 10;
-my $BADBLOCKS_COMMAND = "badblocks -sv";
+my $BADBLOCKS_COMMAND = "badblocks -sv ";
 my $BB_THRESHOLD = 1; # Bad controllers can give single ATA error, but
                       # this does not mean that HDD is bad. As a rule
                       # it will have several badblocks.
@@ -34,15 +34,21 @@ $ENV{COMPUTER_ID} = 0 if not defined $ENV{COMPUTER_ID};
 # subs section
 ################################################################################
 sub usage {
-	return "Usage: $0 [-g graph_datafile] [-i] [-t] [-n] hard_drives
+	return "Usage: $0 [-g graph_datafile] [-m mode] [-b blocksize] 
+                          [-p pattern] [-o blocks_at_once] [-i] [-t] 
+                          [-n] hard_drives
 
--i \t Enable Inquisitor related communication function
 -g \t Path to file containig data for graphs drawing
--n \t Do not clear screen while redrawing progress information
+-m \t readonly, non-destructive or destructive. Default is readonly
+-b \t Size of blocks in bytes. Default is 1024
+-p \t Test pattern to be read (and written) to disk blocks
+-o \t Number of blocks which are tested at a time. Default is 64
+-i \t Enable Inquisitor related communication function
 -t \t Switch to Tk based user interface
+-n \t Do not clear screen while redrawing progress information
 
-Update period: $UPDATE_PERIOD sec
-Badblocks command: $BADBLOCKS_COMMAND\n";
+Badblocks threshold: $BB_THRESHOLD block
+Update period: $UPDATE_PERIOD sec\n";
 };
 
 sub start_badblocks {
@@ -57,7 +63,7 @@ sub start_badblocks {
 		if($c =~ /[0-9 \/\ta-zA-Z:%,\.]/) { $str .= $c }
 		else {
 			# Read first line to retrieve total blocks number
-			if($str =~ /Checking blocks 0 to (\d+)$/){
+			if($str =~ /0 to (\d+)$/){
 				$sd{$harddrive}{total} = $1;
 			};
 
@@ -298,9 +304,19 @@ sub perform_exit {
 ################################################################################
 # Main
 ################################################################################
-getopts("g:nit", \%options);
+getopts("g:nitm:b:p:o:", \%options);
 my @harddrives = @ARGV;
 die usage() if $#harddrives < 0;
+
+# Fill up badblocks command line
+$BADBLOCKS_COMMAND .= defined $options{b} ? "-b $options{b} " : "-b 1024 ";
+$BADBLOCKS_COMMAND .= "-t $options{p} " if defined $options{p} and $options{p} != "";
+$BADBLOCKS_COMMAND .= defined $options{o} ? "-c $options{o} " : "-c 64 ";
+for($options{m}){
+	if(/non-destructive/){ $BADBLOCKS_COMMAND .= "-n "; };
+	if(/^destructive/){ $BADBLOCKS_COMMAND .= "-w "; };
+};
+print "Badblocks command: $BADBLOCKS_COMMAND\n";
 
 init_gui() if defined $options{t};
 

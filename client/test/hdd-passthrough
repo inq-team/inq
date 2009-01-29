@@ -13,6 +13,10 @@
 # VAR=RAMDISK_SIZE:int:400:Size of memory disk for stress tree building, MB
 # VAR=JOBS:int:16:Number of parallely running jobs during stress test tree compile
 # VAR=SKIP_STRESS_TESTING:bool:false:Do we need to skip stress subtest, perform only badblocks
+# VAR=BADBLOCKS_MODE:string:readonly:Badblocks usage. Can be - read only ("readonly"), non-destructive read and write ("non-destructive"), destructive read and write ("destructive")
+# VAR=BADBLOCKS_BLOCKSIZE:int:1024:Specify the size of blocks in bytes, bytes
+# VAR=BADBLOCKS_PATTERN:string::Specify a test pattern to be read (and written) to disk blocks. See badblocks manual for more info.
+# VAR=BADBLOCKS_BLOCKS_TESTED_AT_ONCE:int:64:Number of blocks which are tested at a time.
 
 . _inq-config-global; . $SHARE_DIR/functions-test
 
@@ -50,13 +54,21 @@ badblocks_test()
 	if [ `get_hdds_list | wc -l` -eq 0 ]; then
 		true
 	else
-		$SHARE_DIR/hdd-badblocks.pl -i `get_hdds_list` 2>"$ERROR_FILE" || true
+		$SHARE_DIR/hdd-badblocks.pl -m $BADBLOCKS_MODE \
+					    -b $BADBLOCKS_BLOCKSIZE \
+					    -p $BADBLOCKS_PATTERN \
+					    -o $BADBLOCKS_BLOCKS_TESTED_AT_ONCE \
+					    -i `get_hdds_list` 2>"$ERROR_FILE" || true
 	fi
 
 	local I=0
 	while raid-wizard-passthrough $DISK_GROUP_SIZE $I; do
 		sleep 10 # Dirty hack again
-		$SHARE_DIR/hdd-badblocks.pl -i `get_hdds_list` 2>"$ERROR_FILE" || true
+		$SHARE_DIR/hdd-badblocks.pl -m $BADBLOCKS_MODE \
+					    -b $BADBLOCKS_BLOCKSIZE \
+					    -p $BADBLOCKS_PATTERN \
+					    -o $BADBLOCKS_BLOCKS_TESTED_AT_ONCE \
+					    -i `get_hdds_list` 2>"$ERROR_FILE" || true
 		I=$(( $I + 1 ))
 	done
 
