@@ -1,0 +1,26 @@
+#!/bin/sh -e
+# NAME=Check component existence
+# DESCRIPTION=It is not a real test. It just checks if specified component exists in system. Mainly it can be used as an assumption for real tests, that will succeed if no related components where found.
+# DESTROYS_HDD=false
+# IS_INTERACTIVE=false
+# POWEROFF_DURING_TEST=false
+# VERSION=0.1
+# TAGS=hdd,net,odd,fdd
+# DEPENDS=
+# VAR=TYPE:string:nic:Specify component needed to be checked. Maybe: hdd, nic, fdd, odd
+# VAR=COUNT:int:0:If greater than zero, than exactly that number of components must be present.
+
+. _inq-config-global; . $SHARE_DIR/functions-test
+
+count=`get_"$TYPE"s_list | wc -l`
+capitalized_type="`echo "$TYPE" | tr a-z A-Z`s"
+
+if [ "$count" = "0" ]; then
+	test_failed "No $capitalized_type found"
+elif [ "$count" = "$COUNT" ]; then
+	test_succeeded
+elif [ "$count" != "$COUNT" -a $COUNT -gt 0 ]; then
+	test_failed "Found $count instead of $COUNT $capitalized_type"
+else
+	test_succeeded
+fi

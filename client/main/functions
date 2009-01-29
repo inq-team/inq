@@ -302,7 +302,7 @@ get_fdds_list()
 
 get_nics_list()
 {
-	cat /proc/net/dev | grep eth
+	cat /proc/net/dev | awk -F: '{print $1}' | sed -n 's/ //g; /eth/p'
 }
 
 get_interface_ipaddr()
