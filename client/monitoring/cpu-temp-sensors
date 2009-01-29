@@ -7,61 +7,16 @@
 . _inq-config-global; . $SHARE_DIR/functions-monitoring
 [ -n "$PERIOD" ] || PERIOD=30
 
-strip_hash()
-{
-	local i
-	for i in `ruby -e "$1.each_pair{|k, v| puts \"#{k};#{v}\"}"`; do
-		echo "$i"
-	done
-}
-
 while true; do
-	INFO=`sensors -A 2>$DEBUG_TTY`
-	RES=
-	echo "$INFO" | grep -n 'Core\(.\) Temp:' | sed 's/^\(.*\):Core\(.\) Temp:/\1;\2/'  | \
-	(
-	while read PAIR; do
-		if [ -n "$PAIR" ]; then
-			LINE_NUMBER=`echo "$PAIR" | cut -f1 -d';'`
-			LINE_NUMBER=$(($LINE_NUMBER + 1))
-			CORE_NUMBER=`echo "$PAIR" | cut -f2 -d';'`
-			TEMP=`echo "$INFO" | sed -n "$LINE_NUMBER, +0 p" | sed 's/^ *+//' | sed 's/ C$//'`
-			if [ -n "$RES" ]; then
-				RES="$RES, $CORE_NUMBER => $TEMP"
-			else
-				RES="$CORE_NUMBER => $TEMP"
-			fi
-		fi
-	done
-	RES="{ $RES }"
-	for TEMP_PAIR in `strip_hash "$RES"`; do
-		KEY=`echo "$TEMP_PAIR" | cut -f1 -d';'`
-		VALUE=`echo "$TEMP_PAIR" | cut -f2 -d';'`
-		[ -z "$VALUE" ] || monitoring_submit "$KEY" "$VALUE"
-#		echo "$KEY" '->' "$VALUE"
-	done
-	)
+	sensors -A 2>$DEBUG_TTY | while read sensor; do
+		# Core temperature
+		temp=`echo "$sensor" | sed -n 's/^Core\([0-9]*\) Temp:.*+\([0-9\.]*\) C.*$/\1 \2/p'`
+		[ -z "$temp" ] || monitoring_submit $temp 0 # Zero is precaution for an empty value
 
-	RES=
-	echo "$INFO" | sed -n 's/^temp\(.\):.*+\(.*\) C .*$/\1 => \2/p' | \
-	(
-	while read TEMP_PAIR; do
-		if [ -n "$TEMP_PAIR" ]; then
-			if [ -n "$RES" ]; then
-				RES="$RES, $TEMP_PAIR"
-			else
-				RES="$TEMP_PAIR"
-			fi
-		fi
+		# temp* temperatures
+		temp=`echo "$sensor" | sed -n 's/^temp\([0-9]*\):.*+\([0-9\.]*\) C .*$/\1 \2/p' | awk '{print $1, $2}'`
+		[ -z "$temp" ] || monitoring_submit $temp 0 # Zero is precaution for an empty value
 	done
-	RES="{ $RES }"
-	for TEMP_PAIR in `strip_hash "$RES"`; do
-		KEY=`echo "$TEMP_PAIR" | cut -f1 -d';'`
-		VALUE=`echo "$TEMP_PAIR" | cut -f2 -d';'`
-		[ -z "$VALUE" ] || monitoring_submit "$KEY" "$VALUE"
-#		echo "$KEY" '->' "$VALUE"
-	done
-	)
 
 	sleep $PERIOD
 done

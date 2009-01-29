@@ -7,36 +7,11 @@
 . _inq-config-global; . $SHARE_DIR/functions-monitoring
 [ -n "$PERIOD" ] || PERIOD=60
 
-strip_hash()
-{
-	local i
-	for i in `ruby -e "$1.each_pair{|k, v| puts \"#{k};#{v}\"}"`; do
-		echo "$i"
-	done
-}
-
 while true; do
-	INFO=`sensors -A 2>$DEBUG_TTY`
-	RES=
-	echo "$INFO" | sed -n "s/^VCore \(.\): *+\(.*\) V .*$/\1 => \2/p" | \
-	(
-	while read VCORE_PAIR; do
-		if [ -n "$VCORE_PAIR" ]; then
-			if [ -n "$RES" ]; then
-				RES="$RES, $VCORE_PAIR"
-			else
-				RES="$VCORE_PAIR"
-			fi
-		fi
+	sensors -A 2>$DEBUG_TTY | while read sensor; do
+		voltage=`echo "$sensor" | sed -n "s/^VCore \([0-9]*\):.*+\([0-9\.]*\) V .*$/\1 \2/p"`
+		[ -z "$voltage" ] || monitoring_submit $voltage 0 # Zero is precaution for an empty value
 	done
-	RES="{ $RES }"
-	for VCORE_PAIR in `strip_hash "$RES"`; do
-		KEY=`echo "$VCORE_PAIR" | cut -f1 -d';'`
-		VALUE=`echo "$VCORE_PAIR" | cut -f2 -d';'`
-		[ -z "$VALUE" ] || monitoring_submit "$KEY" "$VALUE"
-#		echo "$KEY" '->' "$VALUE"
-	done
-	)
 
 	sleep $PERIOD
 done
