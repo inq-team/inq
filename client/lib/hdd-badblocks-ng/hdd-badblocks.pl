@@ -310,7 +310,7 @@ die usage() if $#harddrives < 0;
 
 # Fill up badblocks command line
 $BADBLOCKS_COMMAND .= defined $options{b} ? "-b $options{b} " : "-b 1024 ";
-$BADBLOCKS_COMMAND .= "-t $options{p} " if defined $options{p} and $options{p} != "";
+$BADBLOCKS_COMMAND .= "-t $options{p} " if defined $options{p} and $options{p} ne "";
 $BADBLOCKS_COMMAND .= defined $options{o} ? "-c $options{o} " : "-c 64 ";
 for($options{m}){
 	if(/non-destructive/){ $BADBLOCKS_COMMAND .= "-n "; };
