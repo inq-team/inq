@@ -12,15 +12,15 @@ fi
 # Detects
 # ===========================================================================
 
-echo 'Starting detects'
+print_red_message 'Starting detects'
 inq-detect
-echo 'Detects finished'
+print_green_message 'Detects finished'
 
 # ===========================================================================
 # Self-identification
 # ===========================================================================
 
-echo 'Starting self-identification'
+print_red_message 'Starting self-identification'
 COMPUTER_ID=`inq-self-id`
 [ -n "$COMPUTER_ID" ] || fatal_failure 'Self-identification'
 export COMPUTER_ID
@@ -67,17 +67,17 @@ submit_components $HOME/components.xml
 # Starting monitorings
 # ===========================================================================
 
-echo 'Starting monitorings'
+print_red_message 'Starting monitorings'
 inq-monitoring
-echo 'Monitorings were started'
+print_green_message 'Monitorings were started'
 
 # ===========================================================================
 # Starting software detects
 # ===========================================================================
 
-echo 'Starting software detects'
+print_red_message 'Starting software detects'
 inq-software-detect
-echo 'Software detects finished'
+print_green_message 'Software detects finished'
 
 # ===========================================================================
 # Run all tests
