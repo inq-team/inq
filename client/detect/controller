@@ -20,6 +20,7 @@ einarc_detect()
 			'lsi_megcli') CTRL_VENDOR='LSI';;
 			'adaptec_aaccli') CTRL_VENDOR='Adaptec';;
 			'adaptec_arcconf') CTRL_VENDOR='Adaptec';;
+			'software') CTRL_VENDOR='mdadm';;
 		esac
 		echo 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" "$CTRL_SERIAL" - einarc >> $HOME/debug.log
 		add_component 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" "$CTRL_SERIAL" "$CTRL_VERSION"
