@@ -89,7 +89,7 @@ class Planner
 			else
 				res << "PLANNER=1 TEST_NAME=\"#{t.id}\" "
 				t.var.each_pair { |k, v|
-					res << "#{k.strip}='#{v.strip}' "
+					res << "#{k.strip}='#{v.nil? ? "" : v.strip}' "
 				}
 				res << "run_test #{t.type}\n"
 			end
