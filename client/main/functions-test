@@ -12,6 +12,19 @@ else
 	# Called by scheduler; will use handle #4 to output test data to
 	# be correctly grabbed by run_test
 
+	# We need to fillup all test variables with default values if
+	# no specified by user (profile)
+	for test_var in `sed -ne 's/^# *VAR=\(.*\):.*:\(.*\):.*$/\1:\2/p' < $0`; do
+		varname=`echo $test_var | awk -F: '{print $1}'`
+		varvalue=`echo $test_var | awk -F: '{print $2}'`
+		if declare -p $varname 2>&1 | grep -q "^declare"; then
+			# Variable is already set
+			true
+		else
+			eval $varname=$varvalue
+		fi
+	done
+
 	execute_after_test()
 	{
 		cat >&5 <<EOF
