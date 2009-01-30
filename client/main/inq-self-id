@@ -2,6 +2,7 @@
 
 . _inq-config-global
 . $SHARE_DIR/functions
+. $SHARE_DIR/communication
 
 # We will use STDERR for progress output
 
