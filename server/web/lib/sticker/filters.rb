@@ -55,7 +55,7 @@ class PropertyFilter
 				data = data.inject({}) do |h, d| 
 					if h[d[@property]]
 						h[d[@property]][:count] += 1						
-						concats.each { |c| h[d[@property]][:data][c] << "#{ delimiter }#{ d[c] }"}
+						concats.each { |c| (h[d[@property]][:data][c] ||= '') << "#{ delimiter }#{ d[c] }" }
 						h
 					else
 						h.merge({ d[@property] => { :data => d, :count => 1 } })

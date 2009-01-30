@@ -62,7 +62,7 @@ class DatabaseSource < AbstractSource
 	def fetch_data
 		data = []
 		computer = context.proxy.get_property('computer')
-                lines = computer.order.order_lines
+                lines = computer.order.order_lines if computer.order
                 unless lines.blank?
                         min = lines.inject(lines.first.qty) { |i, j| i > j.qty ? j.qty : i }
 			lines.each do |line|
