@@ -10,7 +10,7 @@ einarc_detect()
 			HDD_VENDOR=`echo "$L" | cut -f2 | cut -f1 -d' '`
 			HDD_MODEL=`echo "$L" | cut -f2 | cut -f2 -d' '`
 			HDD_SERIAL=`echo "$L" | cut -f4`
-			HDD_VERSION="" # Einarc currently doesn't support HDD version retrieving
+			HDD_VERSION=`echo "$L" | cut -f3`
 			echo HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" ' - einarc' >> $HOME/debug.log
 			add_component HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" "$HDD_VERSION"
 		done
