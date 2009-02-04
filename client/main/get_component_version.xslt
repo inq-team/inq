@@ -1,11 +1,9 @@
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0"
-                xmlns:components='http://www.w3.org/1999/xhtml'>
-
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 <xsl:output method="text" />
 
-<xsl:template match='components:component'>
-	<xsl:if test='components:type = $group'>
-		<xsl:value-of select="components:version" />
+<xsl:template match='component'>
+	<xsl:if test='type = $group'>
+		<xsl:value-of select="version" />
 		<xsl:text>&#10;</xsl:text>
 	</xsl:if>
 </xsl:template>
