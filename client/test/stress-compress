@@ -69,15 +69,6 @@ for i in `seq 1 $JOBS`; do
 
 	cat > $MOUNTPOINT/$i/job.sh <<EOF
 #!/bin/sh -e
-exit_handler()
-{
-	local rc=$?
-	trap - EXIT
-	wait || true
-	exit $rc
-}
-trap exit_handler HUP PIPE INT QUIT TERM EXIT
-
 mkdir job
 cd job
 tar xvzf ../../stress_tree.tar.gz >$DEBUG_TTY 2>&1
@@ -88,11 +79,11 @@ while true; do
 	rm -fr job
 	/usr/bin/time -a -p -o decompress.time tar xvzf job.tar.gz >$DEBUG_TTY 2>&1
 	rm job.tar.gz
+	[ -e $need_to_finish ] && exit || true
 done
 EOF
 	cd $MOUNTPOINT/$i
 	sh -e job.sh &
-	echo $! > main.pid
 	echo_success
 done
 
@@ -101,8 +92,8 @@ sleep $TESTTIME
 echo_success
 
 for i in `seq 1 $JOBS`; do
-	echo -n "Killing job #$i..."
-	kill `cat $MOUNTPOINT/$i/main.pid`
+	echo -n "Asking job #$i to die..."
+	touch $MOUNTPOINT/$i/need_to_finish
 	echo_success
 done
 
