@@ -1,0 +1,20 @@
+#!/bin/sh -e
+# ID=9
+# NAME=Fan rotation speed (ipmi)
+# DESCRIPTION=This monitoring uses ipmitool to get Fans rotation speed.
+# MEASUREMENT=rpm
+
+. _inq-config-global; . $SHARE_DIR/functions-monitoring
+[ -n "$PERIOD" ] || PERIOD=30
+
+while true; do
+	ipmitool sdr type Fan 2>$DEBUG_TTY |
+		awk -F'|' '{print $NF}' |
+		sed -n 's/^ //g; s/^\([0-9]*\) .*$/\1/gp' |
+		cat -n |
+	while read entity; do
+		[ -z "$entity" ] || monitoring_submit $entity 0 # Zero is precaution for an empty value
+	done
+
+	sleep $PERIOD
+done
