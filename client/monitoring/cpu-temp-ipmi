@@ -7,41 +7,15 @@
 . _inq-config-global; . $SHARE_DIR/functions-monitoring
 [ -n "$PERIOD" ] || PERIOD=30
 
-TEMP_PATTERNS='s/CPU\(.\) Diode.*| \([^ ]*\).*|.*|.*|.*|.*|.*|.*|.*|.*/\1 => \2/p;
-	       s/cpu\(.\)\.dietemp.*| \([^ ]*\).*|.*|.*|.*|.*|.*|.*|.*|.*/\1 => \2/p;
-	       s/CPU \(.\) TEMP.*| \([^ ]*\).*|.*|.*|.*|.*|.*|.*|.*|.*/\1 => \2/p;
-	       s/CPU\(.\) TEMP.*| \([^ ]*\).*|.*|.*|.*|.*|.*|.*|.*|.*/\1 => \2/p'
-
-strip_hash()
-{
-	local i
-	for i in `ruby -e "$1.each_pair{|k, v| puts \"#{k};#{v}\"}"`; do
-		echo "$i"
-	done
-}
-
 while true; do
-	INFO=`ipmitool sensor`
-	RES=
-	echo "$INFO" | sed -n "$TEMP_PATTERNS" | sed 's/.*na//' | \
-	(
-	while read TEMP_PAIR; do
-		if [ -n "$TEMP_PAIR" ]; then
-			if [ -n "$RES" ]; then
-				RES="$RES, $TEMP_PAIR"
-			else
-				RES="$TEMP_PAIR"
-			fi
-		fi
+	ipmitool sdr type Temperature 2>$DEBUG_TTY |
+		grep -i cpu |
+		awk -F'|' '{print $NF}' |
+		sed -n 's/^ //g; s/^\([0-9]*\) .*$/\1/gp' |
+		cat -n |
+	while read entity; do
+		[ -z "$entity" ] || monitoring_submit $entity 0 # Zero is precaution for an empty value
 	done
-	RES="{ $RES }"
-	for TEMP_PAIR in `strip_hash "$RES"`; do
-		KEY=`echo "$TEMP_PAIR" | cut -f1 -d';'`
-		VALUE=`echo "$TEMP_PAIR" | cut -f2 -d';'`
-		[ -z "$VALUE" ] || monitoring_submit "$KEY" "$VALUE"
-#		echo "$KEY" '->' "$VALUE"
-	done
-	)
 
 	sleep $PERIOD
 done
