@@ -61,6 +61,7 @@ hal_detect()
 		if ! hdd_detected "$UDI"; then	
 			HDD_DEV=`hal-get-property --udi "$UDI" --key block.device`
 			HDD_MODEL=`hal-get-property --udi "$UDI" --key info.product`
+			[ -n "$HDD_MODEL" ] || HDD_MODEL=`hal-get-property --udi "$UDI" --key storage.model`
 			HDD_VENDOR=`hal-get-property --udi "$UDI" --key storage.vendor`
 			HDD_SERIAL=`smartctl -d ata -a $HDD_DEV |
 				    sed -ne '/^Serial Number:/ s/^Serial Number: *//p'`
