@@ -1,8 +1,8 @@
 	<div id="title_bar"> 
 	<table><tr>
-		<td id="title_bar_model"><%= @computer.model.name %></td>
-		<td id="title_bar_serial"><%= @computer.serial_no %></td>
-		<td id="title_bar_shelf"><%= @computer.shelf %></td>
+		<td id="title_bar_model"><%= @computer.model ? @computer.model.name : "&nbsp;" %></td>
+		<td id="title_bar_serial"><%= @computer.serial_no ? @computer.serial_no : "&nbsp;" %></td>
+		<td id="title_bar_shelf"><%= @computer.shelf ? @computer.shelf : "&nbsp;" %></td>
 <% if @computer.order %>
 		<td id="title_bar_doc">Order: <%= link_to @computer.order.buyer_order_number, { :controller => :orders, :action => :show, :id => @computer.order } %> (<%= link_to @computer.order.customer ? truncate(@computer.order.customer, 40).gsub(/ /, '&nbsp;') : '', { :controller => :orders, :action => :search, :order => { :customer => @computer.order.customer } } %>)</td>
 <% end %>
