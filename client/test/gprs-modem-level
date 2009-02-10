@@ -9,6 +9,8 @@
 # DEPENDS=USB, GPRS Modem
 # VAR=DEV:string:/dev/ttyUSB0:Name of device to test
 # VAR=CHAT_TIMEOUT:int:5:Timeout for waiting for answer
+# VAR=LEVEL_REFERENCE:int:0:Reference signal level. If device has equal signal strength, then test is passed. 0 value means that there is no any reference. Ask user to end test manually.
+# VAR=LEVEL_REFERENCE_DELTA:int:5:Possible reference level variation.
 
 . _inq-config-global; . $SHARE_DIR/functions-test
 
@@ -24,20 +26,28 @@ sleep 1
 echo_success
 
 TMP_DIR=`mktemp -d`
-echo 'Getting signal level'
 while true; do
+	echo -n 'Getting signal level... '
 	chat -t $CHAT_TIMEOUT -Vs '' AT OK-AT-OK AT+CSQ OK <$DEV >$DEV \
 		2>$TMP_DIR/level || test_failed 'Getting signal level'
-	LEVEL=`sed -ne '/^\+CSQ: / { s/^\+CSQ: //; p; }' <$TMP_DIR/level`
-	print_green_message "GPRS level: $LEVEL"
-	echo -n 'Press ENTER to retry, enter "y" to complete the test: '
-	require_attention
-	read L
-	dismiss_attention
-	[ "$L" = y ] && break || :
+	level=`sed -ne '/^\+CSQ: / { s/^\+CSQ: //; p; }' <$TMP_DIR/level | sed 's/^\([0-9]*\).*$/\1/'`
+	echo -n "$level"
+	echo_success
+
+	if [ "$LEVEL_REFERENCE" -gt 0 ]; then
+		if [ $level -le $(( $LEVEL_REFERENCE + $LEVEL_REFERENCE_DELTA )) -a $level -ge $(( $LEVEL_REFERENCE - $LEVEL_REFERENCE_DELTA )) ]; then
+			break
+		else
+			test_failed "Strong difference of signal level ($level) from reference one"
+		fi
+	else
+		echo -n 'Press ENTER to retry, enter "y" to complete the test: '
+		require_attention
+		read L
+		dismiss_attention
+		[ "$L" = y ] && break || :
+	fi
 done
-echo_success
 
-benchmark_submit_float 'GPRS signal level' "$LEVEL" ""
-
+benchmark_submit_float 'GPRS signal level' "$level" ""
 test_succeeded
