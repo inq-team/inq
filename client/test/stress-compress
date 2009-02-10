@@ -79,7 +79,7 @@ while true; do
 	rm -fr job
 	/usr/bin/time -a -p -o decompress.time tar xvzf job.tar.gz >$DEBUG_TTY 2>&1
 	rm job.tar.gz
-	[ -e $need_to_finish ] && exit || true
+	[ -e need_to_finish ] && exit || true
 done
 EOF
 	cd $MOUNTPOINT/$i
