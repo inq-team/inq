@@ -14,14 +14,14 @@ else
 
 	# We need to fillup all test variables with default values if
 	# no specified by user (profile)
-	for test_var in `sed -ne 's/^# *VAR=\(.*\):.*:\(.*\):.*$/\1:\2/p' < $0`; do
+	for test_var in `sed -n 's/^# *VAR=\(.*\):.*:\(.*\):.*$/\1:\2/p' < $0 | sed "s/ /___/g"`; do
 		varname=`echo $test_var | awk -F: '{print $1}'`
-		varvalue=`echo $test_var | awk -F: '{print $2}'`
+		varvalue=`echo $test_var | awk -F: '{print $2}' | sed "s/___/ /g"`
 		if declare -p $varname 2>&1 | grep -q "^declare"; then
 			# Variable is already set
 			true
 		else
-			eval $varname=$varvalue
+			eval "$varname=\"$varvalue\""
 		fi
 	done
 
