@@ -35,7 +35,7 @@ def shelf_content(computer)
 	state = :before
 	if testing.testing_stages.size > 0
 		if stage
-			state = [:running, :mayhang, :failed, :failed, :failed, :attention][stage.result]
+			state = [:running, :failed, :failed, :failed, :attention, :mayhang][stage.result]
 		else
 			state = :after
 		end
