@@ -194,5 +194,59 @@
         <shelf name="3" prefix="3" ipnet="10.3.106.0/28" kind="testing" colour="green"/>
       </row>
     </stack>
+    <stack name="E" prefix="E" template="colours">
+      <row name="1" prefix="1" colour="orange">
+        <shelf name="3" prefix="3" ipnet="10.3.107.0/28" kind="testing" colour="orange"/>
+        <shelf name="4" prefix="4" ipnet="10.3.108.0/28" kind="testing" colour="orange"/>
+        <shelf name="5" prefix="5" ipnet="10.3.109.0/28" kind="testing" colour="orange"/>
+      </row>
+      <row name="1" prefix="1" colour="green">
+        <shelf name="0" prefix="0" ipnet="10.3.110.0/28" kind="console" colour="green"/>
+        <shelf name="1" prefix="1" ipnet="10.3.111.0/28" kind="console" colour="green"/>
+        <shelf name="2" prefix="2" ipnet="10.3.112.0/28" kind="console" colour="green"/>
+      </row>
+      <row name="" prefix="" colour="blue">
+        <shelf name="3" prefix="3" ipnet="10.3.113.0/28" kind="testing" colour="blue"/>
+        <shelf name="8" prefix="8" ipnet="10.3.114.0/28" kind="testing" colour="blue"/>
+        <shelf name="11" prefix="11" ipnet="10.3.115.0/28" kind="testing" colour="blue"/>
+      </row>
+      <row name="" prefix="" colour="orange">
+        <shelf name="2" prefix="2" ipnet="10.3.116.0/28" kind="testing" colour="orange"/>
+        <shelf name="7" prefix="7" ipnet="10.3.117.0/28" kind="testing" colour="orange"/>
+        <shelf name="10" prefix="10" ipnet="10.3.118.0/28" kind="testing" colour="orange"/>
+      </row>
+      <row name="" prefix="" colour="green">
+        <shelf name="1" prefix="1" ipnet="10.3.119.0/28" kind="testing" colour="green"/>
+        <shelf name="6" prefix="6" ipnet="10.3.120.0/28" kind="testing" colour="green"/>
+        <shelf name="9" prefix="9" ipnet="10.3.121.0/28" kind="testing" colour="green"/>
+      </row>
+    </stack>
+    <stack name="F" prefix="F" template="colours">
+      <row name="1" prefix="1" colour="orange">
+        <shelf name="3" prefix="3" ipnet="10.3.122.0/28" kind="testing" colour="orange"/>
+        <shelf name="4" prefix="4" ipnet="10.3.123.0/28" kind="testing" colour="orange"/>
+        <shelf name="5" prefix="5" ipnet="10.3.124.0/28" kind="testing" colour="orange"/>
+      </row>
+      <row name="1" prefix="1" colour="green">
+        <shelf name="0" prefix="0" ipnet="10.3.125.0/28" kind="testing" colour="green"/>
+        <shelf name="1" prefix="1" ipnet="10.3.126.0/28" kind="testing" colour="green"/>
+        <shelf name="2" prefix="2" ipnet="10.3.127.0/28" kind="testing" colour="green"/>
+      </row>
+      <row name="" prefix="" colour="blue">
+        <shelf name="7" prefix="7" ipnet="10.3.128.0/28" kind="testing" colour="blue"/>
+        <shelf name="8" prefix="8" ipnet="10.3.129.0/28" kind="testing" colour="blue"/>
+        <shelf name="9" prefix="9" ipnet="10.3.130.0/28" kind="testing" colour="blue"/>
+      </row>
+      <row name="" prefix="" colour="orange">
+        <shelf name="4" prefix="4" ipnet="10.3.131.0/28" kind="testing" colour="orange"/>
+        <shelf name="5" prefix="5" ipnet="10.3.132.0/28" kind="testing" colour="orange"/>
+        <shelf name="6" prefix="6" ipnet="10.3.133.0/28" kind="testing" colour="orange"/>
+      </row>
+      <row name="" prefix="" colour="green">
+        <shelf name="1" prefix="1" ipnet="10.3.134.0/28" kind="testing" colour="green"/>
+        <shelf name="2" prefix="2" ipnet="10.3.135.0/28" kind="testing" colour="green"/>
+        <shelf name="3" prefix="3" ipnet="10.3.136.0/28" kind="testing" colour="green"/>
+      </row>
+    </stack>
   </group>
 </shelves>
