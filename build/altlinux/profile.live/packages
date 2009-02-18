@@ -1,4 +1,4 @@
-kernel-image-wks-smp=2.6.24-alt2.4
+kernel-image-std-def
 #kernel-modules-fglrx-std-smp
 #kernel-modules-nvidia-std-smp
 #kernel-modules-alsa-std-smp
