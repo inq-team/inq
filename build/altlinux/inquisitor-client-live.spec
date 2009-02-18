@@ -14,6 +14,7 @@ Source: %name.tar
 Packager: Inquisitor team <team@inquisitor.ru>
 
 #BuildRequires: freetype2-devel hwdatabase ruby xorg-x11-devel rpm-build-ruby
+BuildRequires(pre): rpm-build-ruby
 BuildRequires: ruby rpm-build-ruby perl-threads
 
 %description
@@ -68,11 +69,12 @@ EOF
 %attr(755,root,root) %_ifcfgdir/eth0/ifup-post
 %_bindir/*
 %_datadir/inquisitor
-%_libdir/inquisitor
+#%_libdir/inquisitor
 #%_x11bindir/*
 #%_libdir/jtkey
 %ruby_sitelibdir/raid
 #%ruby_sitearchdir/raid
+%_localstatedir/einarc
 
 %changelog
 * Mon Sep 17 2007 Inquisitor team <team@inquisitor.ru> 1.0-alt1
