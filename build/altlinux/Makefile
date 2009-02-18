@@ -35,9 +35,9 @@ build-root:
 	if [ -d $(WORKDIR)/$(ROOTDIR) ]; then spt-clean -w $(WORKDIR); fi
 	rm -rf $(WORKDIR)
 	mkdir -p $(WORKDIR)
-	ln -sf ../build/altlinux/profile.$(FLAVOUR) $(WORKDIR)/profile
+	ln -sf $(PWD)/build/altlinux/profile.$(FLAVOUR) $(WORKDIR)/profile
 	sed -e 's,@@INQ_VERSION@@,$(INQ_VERSION),g; s,@@TARGET@@,$(TARGET),g;' <$(WORKDIR)/profile/config.in >$(WORKDIR)/profile/config
-	if [ -d $(REPO) ]; then rm -fr $(WORKDIR)/repo && ln -sf ../repo $(WORKDIR); fi
+	if [ -d $(REPO) ]; then rm -fr $(WORKDIR)/repo && ln -sf $(PWD)/repo $(WORKDIR); fi
 	if [ -d $(REPO_HUGE) ]; then echo "rpm file:$(REPO_HUGE) $(TARGET) huge" >>$(WORKDIR)/aptbox/etc/apt/sources.list; fi
 	spt-init-chroot -w $(WORKDIR)
 	spt-make-chroot -w $(WORKDIR)
