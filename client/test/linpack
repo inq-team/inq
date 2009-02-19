@@ -1,0 +1,136 @@
+#!/bin/sh -e
+# NAME=Linpack
+# DESCRIPTION=This test creates very high system load and monitors MCE for appearing errors. It uses Portable Implementation of the High-Performance Linpack Benchmark for Distributed-Memory Computers and built-in MCE monitoring capabilities of Linux. Matrix size can be set by user or automatically calculated by test. Ns will be calculated to fill up nearly all available free memory. Test will submit benchmark result in gigaflops on successfull completion.
+# DESTROYS_HDD=false
+# IS_INTERACTIVE=false
+# POWEROFF_DURING_TEST=false
+# VERSION=0.1
+# TAGS=cpu,stress,memory,ram,benchmark
+# DEPENDS=CPU
+# VAR=MCE_CHECK_TIME:int:10:MCE's error check time, sec
+# VAR=BINARY_PATH:string:/usr/bin/hpl_barcelona:Path to linpack's object code to use, that will mostly fit to your processor
+# VAR=PS:int:0:Part of matrix size (P x Q)
+# VAR=QS:int:0:Part of matrix size (P x Q)
+
+. _inq-config-global; . $SHARE_DIR/functions-test
+
+print_red_message "!!! This is experimental unchecked test !!!"
+
+exit_handler()
+{
+	kill `cat $TMP_DIR/xhpl.pid` 2>$DEBUG_TTY
+	kill `cat $TMP_DIR/mcechecker.pid` 2>$DEBUG_TTY
+}
+
+TMP_DIR=`mktemp -d`
+
+mce_checker()
+{
+	pushdq $TMP_DIR
+	while true; do
+		mcelog >> mce_errors
+		sleep $MCE_CHECK_TIME
+	done
+}
+
+mpi_runner()
+{
+	mpirun -np `get_cpus_list | wc -l` $TMP_DIR/xhpl 2>&1 | tee $TMP_DIR/output
+	touch $TMP_DIR/finished
+}
+
+echo -n "Starting MCE checker up..."
+mce_checker &
+echo $! > $TMP_DIR/mcechecker.pid
+echo_success
+
+ln -s $BINARY_PATH $TMP_DIR/xhpl
+
+if [ "$PS" = "0" -a "$QS" = "0" ]; then
+	# Some default values
+	case "`get_cpus_list | wc -l`" in
+		"1") Ps=1 ; Qs=1 ;;
+		"2") Ps=1 ; Qs=2 ;;
+		"4") Ps=2 ; Qs=2 ;;
+		"8") Ps=2 ; Qs=4 ;;
+		"16") Ps=4 ; Qs=4 ;;
+		"32") Ps=4 ; Qs=8 ;;
+	esac
+else
+	true
+fi
+
+[ "$PS" = "0" -o "$QS" = "0" ] &&
+	test_failed "Uncorrect matrix size specified" ||
+	print_green_message "Using $PS x $QS matrix size"
+
+# The following working calculation was taken from unknown source
+memory_size_to_test="`free | awk ' /Mem:/ { print sqrt( ( $2 - 524288 ) * 0.95 * 1024 / 8 ) } '`"
+
+# Format of this file was not changed for many years
+cat > $TMP_DIR/HPL.dat <<__EOF__
+HPLinpack benchmark input file
+Innovative Computing Laboratory, University of Tennessee
+HPL.out      output file name (if any)
+6            device out (6=stdout,7=stderr,file)
+1            # of problems sizes (N)
+$memory_size_to_test  Ns
+1          # of NBs
+80      NBs
+0            PMAP process mapping (0=Row-,1=Column-major)
+1            # of process grids (P x Q)
+$Ps        Ps
+$Qs        Qs
+16.0         threshold
+1           # of panel fact
+1        PFACTs (0=left, 1=Crout, 2=Right)
+1            # of recursive stopping criterium
+32          NBMINs (>= 1)
+1            # of panels in recursion
+2            NDIVs
+1            # of recursive panel fact.
+1        RFACTs (0=left, 1=Crout, 2=Right)
+1            # of broadcast
+0              BCASTs (0=1rg,1=1rM,2=2rg,3=2rM,4=Lng,5=LnM)
+1            # of lookahead depth
+2            DEPTHs (>=0)
+2            SWAP (0=bin-exch,1=long,2=mix)
+64           swapping threshold
+0            L1 in (0=transposed,1=no-transposed) form
+0            U  in (0=transposed,1=no-transposed) form
+1            Equilibration (0=no,1=yes)
+8            memory alignment in double (> 0)
+
+__EOF__
+
+echo -n "Running tests itself..."
+mpi_runner &
+echo_success
+
+while ! [ -e $TMP_DIR/finished ]; do
+	if [ -s $TMP_DIR/mce_errors ]; then
+		print_red_message "MCE errors found"
+	else
+		true
+	fi
+	sleep $MCE_CHECK_TIME
+done
+
+if [ -s $TMP_DIR/mce_errors ]; then
+	test_failed "MCE errors were found"
+else
+	for i in `cat -n $TMP_DIR/output | grep 'Gflops$' | awk '{print $1}'`; do
+		line_number=$(( $i + 4 ))
+		[ `sed -n "${line_number}p" < $TMP_DIR/output | awk '{print $NF}'` = "PASSED" ] || test_failed "First stage is not passed"
+		line_number=$(( $i + 5 ))
+		[ `sed -n "${line_number}p" < $TMP_DIR/output | awk '{print $NF}'` = "PASSED" ] || test_failed "Second stage is not passed"
+		line_number=$(( $i + 6 ))
+		[ `sed -n "${line_number}p" < $TMP_DIR/output | awk '{print $NF}'` = "PASSED" ] || test_failed "Third stage is not passed"
+	done
+	for i in `cat -n $TMP_DIR/output | grep 'Gflops$' | awk '{print $1}'`; do
+		line_number=$(( $i + 2 ))
+		value=`sed -n "${line_number}p" < $TMP_DIR/output | awk '{print $NF}'`
+		benchmark_submit_float `perl -e "printf(\"%f\", $value)"` "Gflops"
+	done
+	test_succeeded
+fi
