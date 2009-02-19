@@ -11,7 +11,7 @@ while true; do
 	ipmitool sdr type Temperature 2>$DEBUG_TTY |
 		grep -i cpu |
 		awk -F'|' '{print $NF}' |
-		sed -n 's/^ //g; s/^\([0-9]*\) .*$/\1/gp' |
+		sed -n 's/^ //g; s/^\([0-9\.]*\) .*$/\1/gp' |
 		cat -n |
 	while read entity; do
 		[ -z "$entity" ] || monitoring_submit $entity 0 # Zero is precaution for an empty value
