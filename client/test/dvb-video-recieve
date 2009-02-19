@@ -1,0 +1,152 @@
+#!/bin/sh -e
+# NAME=DVB Video Recieve
+# DESCRIPTION=This test makes many DVB related things. At first, it tries to tune up to transponder (with specified transponder parameters and maximum wait time (locktime)). Then it tries to find all opened available channels. Then when any of found channels can be locked up, it will make record (with specified size) of video translation there. And, after all, video's codec will be checked if it match the specified one. If everything succeed, then several benchmark results will be submited.
+# DESTROYS_HDD=false
+# IS_INTERACTIVE=false
+# POWEROFF_DURING_TEST=false
+# VERSION=0.1
+# TAGS=dvb
+# DEPENDS=DVB
+# VAR=FREQUENCY:int:11727:Frequency, kHz
+# VAR=SYMBOL_RATE:int:27500:Symbol rate, thousand chars/sec
+# VAR=POLARIZATION:string:horizontal:Polarization. Horizontal or vertical
+# VAR=FEC:string:3_4:Forward error correction
+# VAR=LOCKTIME:int:60:Time to wait for locking up channel, sec
+# VAR=RECORD_SIZE:int:1024:Recordsize for testing, KiB
+# VAR=CODEC:string:MPEG2:Video stream must contain this video codec
+
+. _inq-config-global; . $SHARE_DIR/functions-test
+
+print_red_message "!!! This is experimental unchecked test !!!"
+
+exit_handler()
+{
+	[ -d "$TMP_DIR" ] && rm -rf $TMP_DIR
+}
+
+get_num_from_zap()
+{
+	local input=$1
+	local entity=$2
+
+	hex=`sed -n "s/^status.*$entity \([^ ]*\).*FE_HAS_LOCK$/\1/p" < $input |
+		uniq -c |
+		sort -nr |
+		sed -n '1p' |
+		awk '{print $2}'`
+	if echo $hex | grep -q "^0*$"; then
+		num=0
+	else
+		let num=0x$hex
+	fi
+	echo $num
+}
+
+# Assuming that we have single attached adapter
+ADAPTER_DVR="/dev/dvb/adapter0/dvr0"
+TMP_DIR=`mktemp -d`
+
+case $POLARIZATION in
+"horizontal") POLARIZATION="H" ;;
+"vertical") POLARIZATION="V" ;;
+esac
+
+tune()
+{
+	local start_time=`date "+%s"`
+	while true; do
+		local current_time=`date "+%s"`
+		if [ "$(( $current_time - $start_time ))" -gt "$LOCKTIME" ]; then
+			test_failed "Unable to tune"
+		else
+			dvbtune -f $FREQUENCY -p $POLARIZATION -s $SYMBOL_RATE -cr $FEC >$TMP_DIR/dvbtune_result 2>&1 || true
+			if grep -q "^FE_STATUS:" $TMP_DIR/dvbtune_result; then
+				break #Everything is fine
+			else
+				sleep 5
+			fi
+		fi
+
+	done
+}
+
+echo -n "Scanning transponder... "
+echo "S $FREQUENCY $POLARIZATION $SYMBOL_RATE $FEC" > $TMP_DIR/transponder_configuration
+while true; do
+	tune
+	dvbscan $TMP_DIR/transponder_configuration 2>&1 |
+		sed 's/ /_/g' > $TMP_DIR/transponder_channellist || true
+	if grep -q "ERROR:_initial_tuning_failed" $TMP_DIR/transponder_channellist; then
+		true
+	else
+		break
+	fi
+done
+sed -n '/^Done/,$p' < $TMP_DIR/transponder_channellist | sed '1d; s/ /_/g' > $TMP_DIR/zap_channellist
+echo_success
+
+print_red_message "Determining opened channels..."
+opened_channels_quantity=0
+closed_channels_quantity=0
+for channel in `cat $TMP_DIR/zap_channellist | awk -F: '{print $1}'`; do
+	echo -n "Channel \"$channel\"..."
+	if sed -n "/^.*_--_${channel}_(/p" < $TMP_DIR/transponder_channellist | grep -q scrambled; then
+		closed_channels_quantity=$(( $closed_channels_quantity + 1 ))
+		echo_failure
+	else
+		opened_channels_quantity=$(( $opened_channels_quantity + 1 ))
+		echo "$channel" >> $TMP_DIR/opened_channels
+		echo_success
+	fi
+done
+
+if [ "$opened_channels_quantity" = "0" ]; then
+	test_failed "No opened channels on transponder"
+else
+	print_green_message "Found $opened_channels_quantity opened and $closed_channels_quantity closed channels"
+fi
+
+for channel in `cat $TMP_DIR/opened_channels`; do
+	echo -n "Tuning up channel $channel... "
+	tune
+	szap -r -c $TMP_DIR/zap_channellist "$channel" > $TMP_DIR/zap_result 2>&1 &
+	echo $! > $TMP_DIR/zap.pid
+
+	echo -n "waiting for $LOCKTIME seconds..."
+	sleep $LOCKTIME
+	kill `cat $TMP_DIR/zap.pid` 2>$DEBUG_TTY
+
+	if grep -q FE_HAS_LOCK $TMP_DIR/zap_result; then
+		echo_success
+		echo "$channel" > $TMP_DIR/locked_channel
+		break
+	else
+		echo_failure
+	fi
+done
+
+if ! [ -r $TMP_DIR/locked_channel ]; then
+	test_failed "No able to lock channel is found"
+else
+	echo -n "Recording $RECORD_SIZE KiBs of video..."
+	dd if=$ADAPTER_DVR of=$TMP_DIR/recording bs=1024 count=$RECORD_SIZE
+	kill `cat $TMP_DIR/zap.pid` 2>$DEBUG_TTY
+	echo_success
+
+	echo -n "Looking for $CODEC video stream... "
+	mplayer -identify -vo null -ao null $TMP_DIR/recording > $TMP_DIR/mplayer_result 2>&1 || true
+	codec=`grep "^VIDEO:" $TMP_DIR/mplayer_result | awk '{print $2}'`
+	if [ "$codec" = "$CODEC" ]; then
+		echo_success
+		benchmark_submit_float "DVB signal strength" "`get_num_from_zap $TMP_DIR/zap_result signal`" ""
+		benchmark_submit_float "SNR" "`get_num_from_zap $TMP_DIR/zap_result snr`" ""
+		benchmark_submit_float "Bit error rate" "`get_num_from_zap $TMP_DIR/zap_result ber`" ""
+		benchmark_submit_float "Uncorrected block errors" "`get_num_from_zap $TMP_DIR/zap_result unc`" ""
+		test_succeeded
+	else
+		echo_failure
+		[ -z "$codec" ] &&
+			test_failed "No video stream found" ||
+			test_failed "Found $codec video stream instead of $CODEC"
+	fi
+fi

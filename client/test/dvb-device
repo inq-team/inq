@@ -1,0 +1,40 @@
+#!/bin/sh -ef
+# NAME=DVB Device
+# DESCRIPTION=This test scans all DVB-capable devices and tries to figure out their MAC addresses.
+# DESTROYS_HDD=false
+# IS_INTERACTIVE=false
+# POWEROFF_DURING_TEST=false
+# VERSION=0.1
+# TAGS=dvb
+# DEPENDS=DVB
+
+. _inq-config-global; . $SHARE_DIR/functions-test
+
+exit_handler()
+{
+	[ -f "$TMP" ] && rm -f $TMP
+	[ -z "$iface" ] || dvbnet -d $iface >/dev/null 2>&1 || true
+}
+
+TMP=`mktemp`
+
+udi=`hal-find-by-capability --capability dvb | sort | sed -n '1p' | xargs hal-get-property --key info.parent --udi`
+component_vendor=`hal-get-property --udi $udi --key info.vendor`
+component_model=`hal-get-property --udi $udi --key info.product`
+
+echo -n "Creating network interface..."
+dvbnet -p $RANDOM > $TMP || test_failed "Unable to create network interface"
+iface=`sed -n 's/^.*device \(.*\) for pid.*$/\1/p' < $TMP`
+echo_success
+
+echo -n "Retrieving MAC address... "
+mac=`ifconfig $iface | sed -n 's/.*HWaddr \(.*\)$/\1/p'`
+if [ -z "$mac" -o "$mac" = "00:00:00:00:00:00" ]; then
+	test_failed "No MAC address found"
+else
+	echo -n "$mac"
+	echo_success
+fi
+
+add_component 'DVB' "$component_vendor" "$component_model" "$mac" ""
+test_succeeded

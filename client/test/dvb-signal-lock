@@ -1,0 +1,54 @@
+#!/bin/sh -ef
+# NAME=DVB Signal Lock
+# DESCRIPTION=This test tries to tune DVB reciever on specified transponder. It tries several times to lock signal during specified time interval. It will submit benchmark results (signal quality and strength and bit error rate) on successful finishing.
+# DESTROYS_HDD=false
+# IS_INTERACTIVE=false
+# POWEROFF_DURING_TEST=false
+# VERSION=0.1
+# TAGS=dvb,benchmark
+# DEPENDS=DVB
+# VAR=FREQUENCY:int:11727:Frequency, kHz
+# VAR=SYMBOL_RATE:int:27500:Symbol rate, thousand chars/sec
+# VAR=POLARIZATION:string:horizontal:Polarization. Horizontal or vertical
+# VAR=FEC:string:3_4:Forward error correction
+# VAR=LOCKTIME:int:60:Time to wait for tuner to lock, sec
+
+. _inq-config-global; . $SHARE_DIR/functions-test
+
+exit_handler()
+{
+	[ -e "$TMP" ] && rm -f $TMP
+}
+
+TMP=`mktemp`
+start_time=`date "+%s"`
+
+case $POLARIZATION in
+"horizontal") POLARIZATION="H" ;;
+"vertical") POLARIZATION="V" ;;
+esac
+
+while true; do
+	current_time=`date "+%s"`
+	test_progress $(( $current_time - $start_time )) $LOCKTIME
+	if [ "$(( $current_time - $start_time ))" -gt "$LOCKTIME" ]; then
+		test_failed "Unable to tune"
+	else
+		echo
+		echo -n "Trying to tune..."
+		dvbtune -f $FREQUENCY -p $POLARIZATION -s $SYMBOL_RATE -cr $FEC >$TMP 2>&1 || true
+		if grep -q "^FE_STATUS:" $TMP; then
+			echo_success
+			break
+		else
+			echo_failure
+		fi
+		sleep 5
+	fi
+done
+
+benchmark_submit_float "Bit error rate" `sed -n 's/^Bit error rate: \(.*\)$/\1/p' < $TMP` ""
+benchmark_submit_float "Signal strength" `echo $(( $(sed -n 's/^Signal strength: \(.*\)$/\1/p' < $TMP) * 100 / 65536 ))` ""
+benchmark_submit_float "Quality" `echo $(( $(sed -n 's/^SNR: \(.*\)$/\1/p' <$TMP) * 100 / 65536 ))` ""
+
+test_succeeded
