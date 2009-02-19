@@ -8,8 +8,6 @@
 # TAGS=usb,gprs
 # DEPENDS=USB, GPRS Modem
 # VAR=DEV:string:/dev/ttyUSB0:Name of device to test
-# VAR=APN:string:internet.mts.ru:Cell service provider's Internet APN
-# VAR=PPPD_USERNAME:string:mts:Cell service provider's pppd username
 # VAR=PPPD_TRIES:int:4:Number of tries to bring pppd up
 # VAR=URL:string:img-fotki.yandex.ru/getx/10/photoface.359/sevastopol-foto_34661_L:URL to download (without http)
 # VAR=MD5:string:ca530886183b06d0047e0655537327aa:MD5 of downloaded file
@@ -23,69 +21,84 @@
 
 . _inq-config-global; . $SHARE_DIR/functions-test
 
+PID_DIR="/var/run"
+
 exit_handler()
 {
-	if [ -r "$TMP_DIR/pppd.lock" ]; then
-		echo -n 'Stopping pppd'
-		killall pppd
-		sleep 5
-		if pgrep pppd; then
-			echo_failure
-			echo -n 'Killing pppd'
-			killall -KILL pppd
-			sleep 1
-			echo_success
-		else
-			echo_success
-		fi
-	fi
+	kill_pppd
 	[ -d "$TMP_DIR" ] && rm -rf "$TMP_DIR"
 }
 
-MODEM_INIT="AT+CGDCONT=1,\"IP\",\"$APN\" OK"
-PHONE="*99***1#"
+kill_pppd()
+{
+	if [ -r "$TMP_DIR/pppd.lock" ]; then
+		echo -n "Killing PPP daemon..."
+		kill -KILL `sed -n '1p' < $PID_DIR/ppp-$PPPD_NAME.pid` >/dev/null 2>&1 || true
+		echo_success
+		sleep 5
+
+		rm -f $TMP_DIR/pppd.lock
+	else
+		true
+	fi
+}
 					
 # Create temporary directory
 TMP_DIR=`mktemp -d`
+PPPD_NAME=$RANDOM
+
+echo -n "Retrieving current cellular network operator... "
+chat -Vs '' AT OK-AT-OK AT+COPS? OK <$DEV >$DEV 2>$TMP_DIR/cops ||
+	test_failed "Unable to determine network operator"
+operator="`sed -n 's/^+COPS: .*"\(.*\)"$/\1/p' < $TMP_DIR/cops`"
+echo -n "$operator"
+echo_success
+
+# We need to replace this awful code
+case "$operator" in
+	"MTS")
+		echo "Be sure to have \"mts * mts *\" in chap-secrets"
+		echo "Be sure to have \"mts * mts\" in pap-secrets"
+		APN="internet.mts.ru"
+		PPPD_USERNAME="mts"
+		;;
+	"Megafon")
+		echo "Be sure to have \"gdata * gdata *\" in chap-secrets"
+		echo "Be sure to have \"gdata * gdata\" in pap-secrets"
+		APN="internet"
+		PPPD_USERNAME="gdata"
+		;;
+	"Bee Line GSM")
+		echo "Be sure to have \"beeline * beeline *\" in chap-secrets"
+		echo "Be sure to have \"beeline * beeline\" in pap-secrets"
+		APN="internet.beeline.ru"
+		PPPD_USERNAME="beeline"
+		;;
+esac
+
+MODEM_INIT="AT+CGDCONT=1,\"IP\",\"$APN\" OK"
+PHONE="*99***1#"
 
 TRIES=0
 while [ "$TRIES" -lt "$PPPD_TRIES" ]; do
-	TRIES=$(($TRIES+1))
+	TRIES=$(( $TRIES + 1 ))
 
 	# Try to stop pppd if it is already running
-	if [ -r "$TMP_DIR/pppd.lock" ]; then
-		echo -n 'Stopping pppd'
-		killall pppd
-		sleep 5
-		if pgrep pppd; then
-			echo_failure
-			echo -n 'Killing pppd'
-			killall -KILL pppd
-			sleep 1
-			echo_success
-		else
-			echo_success
-		fi
-		rm -f "$TMP_DIR/pppd.lock"
-	fi
-
-#ipcp-accept-local
-#ipcp-accept-remote
+	kill_pppd
 	if pppd \
 		connect 'chat -v ABORT "NO DIALTONE" ABORT "NO CARRIER" ABORT BUSY "" '"$MODEM_INIT"' ATDP'$PHONE' "CONNECT" ;' \
 		crtscts \
-		defaultroute \
 		modem \
-		updetach \
-		noipdefault \
 		debug \
+		name $PPPD_USERNAME \
+		linkname $PPPD_NAME \
+		updetach \
+		noauth \
+		noccp \
 		usepeerdns \
-		user $PPPD_USERNAME \
-		novj \
-		nobsdcomp \
-		novjccomp \
-		nopcomp \
-		noaccomp \
+		defaultroute \
+		replacedefaultroute \
+		noipdefault \
 		$DEV $SPEED; then
 		touch $TMP_DIR/pppd.lock
 	else
@@ -94,16 +107,19 @@ while [ "$TRIES" -lt "$PPPD_TRIES" ]; do
 	fi
 
 	sleep 5
-
 	# Downloading
-	echo 'Downloading file'
-	curl --retry "$DOWNLOAD_TRIES" --max-time "$DOWNLOAD_MAX_TIME" http://$URL -o $TMP_DIR/download -w '%{speed_download}' >$TMP_DIR/report && echo_success || continue
+	echo -n 'Downloading file...'
+	curl --retry "$DOWNLOAD_TRIES" \
+	     --max-time "$DOWNLOAD_MAX_TIME" \
+	     -o "$TMP_DIR/download" \
+	     -w '%{speed_download}' \
+	     "http://$URL" >$TMP_DIR/report && echo_success || continue
 
 	# Speed reporting
-	benchmark_submit_float 'Average download speed' `cat $TMP_DIR/report` "B/sec"
+	benchmark_submit_float 'Average download speed' "`cat $TMP_DIR/report`" "B/sec"
 
 	# MD5 check
-	echo 'Checking MD5 sum'
+	echo -n 'Checking MD5 sum... '
 	echo "$MD5  $TMP_DIR/download" >$TMP_DIR/checkfile
 	md5sum -c $TMP_DIR/checkfile && echo_success || continue
 
@@ -113,14 +129,19 @@ while [ "$TRIES" -lt "$PPPD_TRIES" ]; do
 		UPLOAD_FILE=/etc/ld.so.cache
 	}
 
-	echo 'Uploading file'
-	curl --retry "$UPLOAD_TRIES" --max-time "$UPLOAD_MAX_TIME" -F file=@$UPLOAD_FILE http://$UPLOAD_URL -o $TMP_DIR/md5 -w '%{speed_upload}' >$TMP_DIR/report && echo_success || continue
+	#echo 'Uploading file'
+	curl --retry "$UPLOAD_TRIES" \
+	     --max-time "$UPLOAD_MAX_TIME" \
+	     -F file=@$UPLOAD_FILE \
+	     -o $TMP_DIR/md5 \
+	     -w '%{speed_upload}' \
+	     "http://$UPLOAD_URL" >$TMP_DIR/report && echo_success || continue
 
 	# Speed reporting
-	benchmark_submit_float 'Average upload speed' `cat $TMP_DIR/report` "B/sec"
+	benchmark_submit_float 'Average upload speed' "`cat $TMP_DIR/report`" "B/sec"
 
 	# MD5 check
-	echo 'Checking uploaded MD5 sum'
+	echo -n 'Checking uploaded MD5 sum...'
 	echo "`cat $TMP_DIR/md5`  $UPLOAD_FILE" >$TMP_DIR/checkfile
 	md5sum -c $TMP_DIR/checkfile && echo_success || continue
 
@@ -129,6 +150,7 @@ while [ "$TRIES" -lt "$PPPD_TRIES" ]; do
 done
 
 if [ -r "$TMP_DIR/checkfile" ]; then
+	benchmark_submit_string "Network operator" "$operator" "" || true
 	test_succeeded
 else
 	test_failed
