@@ -47,9 +47,9 @@ echo_success
 # Assume that it is two or three strings output with vendor, model and
 # some revision on them
 ati=`sed -n '/^ATI/,/^OK/p' < $TMP_DIR/ati | sed '/^OK/d;/^ATI$/d;/^$/d'`
-component_vendor=`echo "$ati" | sed -n '1p'`
-component_model=`echo "$ati" | sed -n '2p'`
-component_version=`echo "$ati" | sed -n '3p' | sed 's/[Rr]evision://'`
+component_vendor=`echo "$ati" | sed -n '1p' | sed 's/[Mm]anufacturer:\s*//'`
+component_model=`echo "$ati" | sed -n '2p' | sed 's/[Mm]odel:\s*//'`
+component_version=`echo "$ati" | sed -n '3p' | sed 's/[Rr]evision:\s*//'`
 
 sleep 1
 echo -n "Getting IMEI... "
