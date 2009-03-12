@@ -305,6 +305,11 @@ get_nics_list()
 	cat /proc/net/dev | awk -F: '{print $1}' | sed -n 's/ //g; /eth/p'
 }
 
+get_cpus_list()
+{
+	cat /proc/cpuinfo | grep "^processor" | awk '{print $NF}'
+}
+
 get_interface_ipaddr()
 {
 	/sbin/ifconfig eth$1 | grep 'inet addr:' | sed 's/^.*:\(.*\)  Bcast.*$/\1/;'
@@ -376,7 +381,7 @@ component_version()
 
 cpu_quantity()
 {
-	grep '^processor' /proc/cpuinfo | wc -l
+	get_cpus_list | wc -l
 }
 
 memory_amount()
@@ -390,7 +395,7 @@ executable_arch()
 
 	# Check if it is symbilic link
 	if file $exe_path 2>&1 | grep -q "symbolic link"; then
-                linked_to=`file $exe_path 2>&1 | sed -n "s/^.*symbolic link to .\(.*\)'$/\1/p"`
+		linked_to=`readlink $exe_path`
                 exe_path=`which $linked_to 2>&1`
 	else
 		true
@@ -429,13 +434,18 @@ service_start()
 	fi
 }
 
+strip_surrounding_spaces()
+{
+	echo "$1" | sed 's/^\s*//g; s/\s*$//g'
+}
+
 add_component()
 {
 	type=$1
-	vendor=$2
-	model=$3
-	serial=$4
-	version=$5
+	vendor=`strip_surrounding_spaces $2`
+	model=`strip_surrounding_spaces $3`
+	serial=`strip_surrounding_spaces $4`
+	version=`strip_surrounding_spaces $5`
 
 	if [ -s "$HOME/components.xml" ]; then
 		new_components=`mktemp`
