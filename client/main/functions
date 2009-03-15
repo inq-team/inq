@@ -442,10 +442,10 @@ strip_surrounding_spaces()
 add_component()
 {
 	type=$1
-	vendor=`strip_surrounding_spaces $2`
-	model=`strip_surrounding_spaces $3`
-	serial=`strip_surrounding_spaces $4`
-	version=`strip_surrounding_spaces $5`
+	vendor=`strip_surrounding_spaces "$2"`
+	model=`strip_surrounding_spaces "$3"`
+	serial=`strip_surrounding_spaces "$4"`
+	version=`strip_surrounding_spaces "$5"`
 
 	if [ -s "$HOME/components.xml" ]; then
 		new_components=`mktemp`
