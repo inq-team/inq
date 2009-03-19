@@ -1,6 +1,6 @@
 #!/bin/sh -e
 # NAME=Linpack
-# DESCRIPTION=This test creates very high system load and monitors MCE for appearing errors. It uses Portable Implementation of the High-Performance Linpack Benchmark for Distributed-Memory Computers and built-in MCE monitoring capabilities of Linux. Matrix size can be set by user or automatically calculated by test. Ns will be calculated to fill up nearly all available free memory. Test will submit benchmark result in gigaflops on successfull completion.
+# DESCRIPTION=This test creates very high system load and monitors MCE for appearing errors. It uses Portable Implementation of the High-Performance Linpack Benchmark 2.0 for Distributed-Memory Computers and built-in MCE monitoring capabilities of Linux. Matrix size can be set by user or automatically calculated by test. Ns will be calculated to fill up nearly all available free memory. Test will submit benchmark result in gigaflops on successfull completion.
 # DESTROYS_HDD=false
 # IS_INTERACTIVE=false
 # POWEROFF_DURING_TEST=false
@@ -14,12 +14,11 @@
 
 . _inq-config-global; . $SHARE_DIR/functions-test
 
-print_red_message "!!! This is experimental unchecked test !!!"
-
 exit_handler()
 {
 	kill `cat $TMP_DIR/xhpl.pid` 2>$DEBUG_TTY
 	kill `cat $TMP_DIR/mcechecker.pid` 2>$DEBUG_TTY
+	[ -d "$TMP_DIR" ] && rm -fr $TMP_DIR
 }
 
 TMP_DIR=`mktemp -d`
@@ -31,12 +30,15 @@ mce_checker()
 		mcelog >> mce_errors
 		sleep $MCE_CHECK_TIME
 	done
+	popdq
 }
 
 mpi_runner()
 {
+	pushdq $TMP_DIR
 	mpirun -np `get_cpus_list | wc -l` $TMP_DIR/xhpl 2>&1 | tee $TMP_DIR/output
 	touch $TMP_DIR/finished
+	popdq
 }
 
 echo -n "Starting MCE checker up..."
@@ -49,12 +51,12 @@ ln -s $BINARY_PATH $TMP_DIR/xhpl
 if [ "$PS" = "0" -a "$QS" = "0" ]; then
 	# Some default values
 	case "`get_cpus_list | wc -l`" in
-		"1") Ps=1 ; Qs=1 ;;
-		"2") Ps=1 ; Qs=2 ;;
-		"4") Ps=2 ; Qs=2 ;;
-		"8") Ps=2 ; Qs=4 ;;
-		"16") Ps=4 ; Qs=4 ;;
-		"32") Ps=4 ; Qs=8 ;;
+		"1") PS=1 ; QS=1 ;;
+		"2") PS=1 ; QS=2 ;;
+		"4") PS=2 ; QS=2 ;;
+		"8") PS=2 ; QS=4 ;;
+		"16") PS=4 ; QS=4 ;;
+		"32") PS=4 ; QS=8 ;;
 	esac
 else
 	true
@@ -65,7 +67,7 @@ fi
 	print_green_message "Using $PS x $QS matrix size"
 
 # The following working calculation was taken from unknown source
-memory_size_to_test="`free | awk ' /Mem:/ { print sqrt( ( $2 - 524288 ) * 0.95 * 1024 / 8 ) } '`"
+matrix_size_to_test="`free | awk ' /Mem:/ { print sqrt( ( $2 - 524288 ) * 0.95 * 1024 / 8 ) } '`"
 
 # Format of this file was not changed for many years
 cat > $TMP_DIR/HPL.dat <<__EOF__
@@ -74,13 +76,13 @@ Innovative Computing Laboratory, University of Tennessee
 HPL.out      output file name (if any)
 6            device out (6=stdout,7=stderr,file)
 1            # of problems sizes (N)
-$memory_size_to_test  Ns
+$matrix_size_to_test  Ns
 1          # of NBs
 80      NBs
 0            PMAP process mapping (0=Row-,1=Column-major)
 1            # of process grids (P x Q)
-$Ps        Ps
-$Qs        Qs
+$PS        PS
+$QS        QS
 16.0         threshold
 1           # of panel fact
 1        PFACTs (0=left, 1=Crout, 2=Right)
@@ -121,16 +123,12 @@ if [ -s $TMP_DIR/mce_errors ]; then
 else
 	for i in `cat -n $TMP_DIR/output | grep 'Gflops$' | awk '{print $1}'`; do
 		line_number=$(( $i + 4 ))
-		[ `sed -n "${line_number}p" < $TMP_DIR/output | awk '{print $NF}'` = "PASSED" ] || test_failed "First stage is not passed"
-		line_number=$(( $i + 5 ))
-		[ `sed -n "${line_number}p" < $TMP_DIR/output | awk '{print $NF}'` = "PASSED" ] || test_failed "Second stage is not passed"
-		line_number=$(( $i + 6 ))
-		[ `sed -n "${line_number}p" < $TMP_DIR/output | awk '{print $NF}'` = "PASSED" ] || test_failed "Third stage is not passed"
+		[ `sed -n "${line_number}p" < $TMP_DIR/output | awk '{print $NF}'` = "PASSED" ] || test_failed "Residual checking is not passed"
 	done
 	for i in `cat -n $TMP_DIR/output | grep 'Gflops$' | awk '{print $1}'`; do
 		line_number=$(( $i + 2 ))
 		value=`sed -n "${line_number}p" < $TMP_DIR/output | awk '{print $NF}'`
-		benchmark_submit_float `perl -e "printf(\"%f\", $value)"` "Gflops"
+		benchmark_submit_float "Linpack performance" "$value" "Gflops"
 	done
 	test_succeeded
 fi
