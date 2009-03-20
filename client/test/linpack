@@ -129,6 +129,9 @@ else
 		line_number=$(( $i + 2 ))
 		value=`sed -n "${line_number}p" < $TMP_DIR/output | awk '{print $NF}'`
 		benchmark_submit_float "Linpack performance" "$value" "Gflops"
+		benchmark_submit_float "Solving matrix size" "$matrix_size_to_test" ""
+		benchmark_submit_float "Ps" "$PS" ""
+		benchmark_submit_float "Qs" "$QS" ""
 	done
 	test_succeeded
 fi
