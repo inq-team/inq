@@ -12,7 +12,8 @@ get_id_by_macs()
 
 plan_test_script()
 {
-	if ! curl -sf "$REST_SERVER/computers/plan/$COMPUTER_ID" >$HOME/test_script; then
+	local profile_name=$1
+	if ! curl -sf "$REST_SERVER/computers/plan/$COMPUTER_ID?feature=$profile_name"; then
 		echo 'Unable to get testing plan'
 		return 1
 	fi
@@ -97,7 +98,7 @@ publish_my_ip()
 benchmark_submit_float()
 {
 	local key=`echo -n "$1" | ruby -e 'require "cgi"; print CGI::escape($stdin.read)'`
-	local value=$2
+	local value=`echo -n "$2" | ruby -e 'require "cgi"; print CGI::escape($stdin.read)'`
 	local units=`echo -n "$3" | ruby -e 'require "cgi"; print CGI::escape($stdin.read)'`
 
 	if ! curl -sf "$REST_SERVER/computers/benchmark_submit_float/$COMPUTER_ID?key=$key&value=$value&units=$units"; then
