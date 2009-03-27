@@ -1,0 +1,21 @@
+<style type="text/css">
+	th, td, table { border: 1px solid #666666 } td { text-align: center }
+</style>
+<h1>Describeful statistics for: <%= @person.name %></h1>
+<center>
+<h2>Model: <%= @model.name %></h2>
+<h3>Model complexity: <%= @model.complexity %></h3>
+
+<table>
+<tr><th>Computer</th><th>Assembling time</th></tr>
+<% for computer in @computers.keys.sort %>
+	<tr>
+	<td><%= link_to computer,
+			:controller => "computers",
+			:action => "show",
+			:id => computer %></td>
+	<td><%= @computers[computer] %></td>
+	</tr>
+<% end %>
+</table>
+</center>

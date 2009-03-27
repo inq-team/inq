@@ -1,0 +1,64 @@
+<style type="text/css">
+	th, td, table { border: 1px solid #666666 } td { text-align: center }
+</style>
+
+<h1>Statistics</h1>
+
+<center>
+<form action="" method="get">
+<%= select_day(@from_day, :field_name => "from_day") %>
+<%= select_month(@from_month, :field_name => "from_month") %>
+<%= select_year(@from_year, :field_name => "from_year") %>
+--
+<%= select_day(@to_day, :field_name => "to_day") %>
+<%= select_month(@to_month, :field_name => "to_month") %>
+<%= select_year(@to_year, :field_name => "to_year") %>
+<input type="submit"/>
+</form>
+
+<table>
+<tr>
+	<th>Model</th>
+	<th colspan="<%= @available_assemblers.length %>">Assemblers</th>
+</tr>
+<tr><th>&nbsp;</th>
+<% for assembler in @available_assemblers %>
+	<th><%= assembler %></th>
+<% end %>
+</tr>
+
+<% for model in @stats.keys.sort %>
+	<tr>
+		<th><%= model %></th>
+		<% for assembler in @available_assemblers %>
+			<td>
+			<% if @stats[model][assembler] %>
+				<%= link_to @stats[model][assembler],
+					    :controller => "statistics",
+					    :action => "show",
+					    :id => assembler,
+					    :from_day => @from_day,
+					    :from_month => @from_month,
+					    :from_year => @from_year,
+					    :to_day => @to_day,
+					    :to_month => @to_month,
+					    :to_year => @to_year,
+					    :model => model %>
+				/
+				<%= @stats[model][assembler] * @complexities[model] %>
+			<% else %>
+				&nbsp;
+			<% end %>
+			</td>
+		<% end %>
+	</tr>
+<% end %>
+
+<tr><td>Total</td>
+<% for assembler in @available_assemblers %>
+	<td><%= @total_stats[assembler] %></td>
+<% end %>
+</tr>
+
+</table>
+</center>
