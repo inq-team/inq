@@ -1,0 +1,33 @@
+#!/bin/sh -e
+# NAME=p7zip
+# DESCRIPTION=This benchmark uses p7zip program to compress specified file in multithreaded mode with Bzip2 algorithm and measure time, which process spend on it.
+# DESTROYS_HDD=false
+# IS_INTERACTIVE=false
+# POWEROFF_DURING_TEST=false
+# VERSION=0.1
+# TAGS=cpu,benchmark,ram,memory
+# DEPENDS=CPU, Memory
+# VAR=SOURCE:string:compress_file:File to compress
+# VAR=THREADS:int:0:Force using specified number of threads. If equal to zero, then load all available CPUs
+# VAR=COMPRESSION_LEVEL:int:9:Set the compression level that reflects on testing time, from 0 (minimal) to 9 (maximal)
+
+. _inq-config-global; . $SHARE_DIR/functions-test
+
+exit_handler()
+{
+	[ -f "$TIME_RESULT" ] && rm $TIME_RESULT
+}
+
+TIME_RESULT=`mktemp`
+
+[ ! "$THREADS" -eq 0 ] || THREADS=`cpu_quantity`
+
+pusdq $SHARE_DIR
+/usr/bin/time -a -p -o $TIME_RESULT \
+	7z a dummy -mx=$COMPRESSION_LEVEL -mmt=$THREADS -tbzip2 -so $SOURCE \
+	>/dev/null 2>$DEBUG_TTY || test_failed "7z failed"
+popdq
+
+benchmark_submit_float "Compression time" "`cat $TIME_RESULT | sed -n '1p' | awk '{print $NF}'`" "sec"
+
+test_succeeded
