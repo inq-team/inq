@@ -21,7 +21,7 @@ COMPLETED_SUBSTAGES=0
 exit_handler()
 {
 	[ -d "/proc/$MEMTEST_PID" ] && kill $MEMTEST_PID
-	[ -f  "$MEMORY_LOG" ] && rm $MEMORY_LOG
+	[ -f "$MEMORY_LOG" ] && rm $MEMORY_LOG
 
 	# Turn OOM killer on
 	#sysctl vm.overcommit_memory=0

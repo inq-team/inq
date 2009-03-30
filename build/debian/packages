@@ -43,7 +43,6 @@ partimage
 cdrecord
 dvd+rw-tools
 mkisofs
-debian-multimedia-keyring
 mencoder
 syslog-ng
 psmisc
@@ -51,3 +50,4 @@ nfs-common
 eject
 p7zip
 debian-multimedia-keyring
+p7zip-full
