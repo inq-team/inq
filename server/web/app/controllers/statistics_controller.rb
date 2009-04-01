@@ -11,7 +11,7 @@ class StatisticsController < ApplicationController
 			@to_month = params[:date]['to_month'].to_i
 			@to_year = params[:date]['to_year'].to_i
 		else
-			@from_day = Date.today.day - 1
+			@from_day = Date.today.day != 1 ? Date.today.day-1 : Date.today.day
 			@from_month = Date.today.month
 			@from_year = Date.today.year
 
