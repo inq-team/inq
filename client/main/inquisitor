@@ -41,7 +41,7 @@ service_start syslog-ng || :
 
 echo -n 'Trying set local time '
 if [ -n "$NTP_SERVER" ]; then
-	if /usr/sbin/ntpdate $NTP_SERVER $1>/dev/null && /sbin/hwclock --systohc; then
+	if /usr/sbin/ntpdate $NTP_SERVER >$DEBUG_TTY && /sbin/hwclock --systohc; then
 		echo_success
 	else
 		echo_failure
