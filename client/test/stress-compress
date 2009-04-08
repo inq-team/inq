@@ -49,7 +49,7 @@ syncer()
 {
 	while true; do
 		sleep $SYNCTIME
-		sync
+		sync_full
 	done
 }
 

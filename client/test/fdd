@@ -28,9 +28,8 @@ test_fdd()
 	echo_success
 
 	# Clear all caches
-	sync;sync;sync
 	floppycontrol -f -d $fdd >$DEBUG_TTY 2>&1 || true
-	echo 3 > /proc/sys/vm/drop_caches
+	sync_full
 
 	echo -n "Reading and comparing..."
 	dd if=$fdd of="$TEST_IMAGE"_fd bs=1024 count=$FLOPPY_SIZE \

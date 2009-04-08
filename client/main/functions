@@ -333,6 +333,13 @@ check_readable_odd()
 	fi
 }
 
+# Syncing with clearing all buffers and caches
+sync_full()
+{
+	sync;sync;sync
+	echo 3 > /proc/sys/vm/drop_caches
+}
+
 # Waits for 10 seconds and forces hard reboot sequence using procfs
 # system request.
 hard_reboot()

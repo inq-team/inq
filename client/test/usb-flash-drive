@@ -75,6 +75,9 @@ for UDI in `hal-find-by-property --key storage.bus --string usb`; do
 		sed -n '$ p'` ||
 		test_failed "Drive $block_dev writing error"
 
+	echo -n "syncing..."
+	sync_full
+
 	echo -n "reading..."
 	read_md5=`dd if=${block_dev} bs=${BLOCKSIZE}k count=${SIZE} skip=$(($SIZE * $seed)) \
 		2>${FIFOFILE}.read_speed | md5sum -b | awk '{print $1}'` ||
