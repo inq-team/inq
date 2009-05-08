@@ -65,6 +65,9 @@ hal_detect()
 			HDD_VENDOR=`hal-get-property --udi "$UDI" --key storage.vendor`
 			HDD_SERIAL=`smartctl -d ata -a $HDD_DEV |
 				    sed -ne '/^Serial Number:/ s/^Serial Number: *//p'`
+			if [ "$HDD_SERIAL" = '' ]; then
+				HDD_SERIAL=`hal-get-property --udi "$UDI" --key storage.serial`
+			fi
 			HDD_VERSION=""
 
 			detect_vendor '^ST.*' 'Seagate'
