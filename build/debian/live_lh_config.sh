@@ -84,16 +84,16 @@ cp live-additional/issue $WORKDIR/$LIVEDIR/config/chroot_local-includes/etc
 ################################################################################
 cat <<__EOF__ > $WORKDIR/$LIVEDIR/config/chroot_local-includes/etc/motd
 Welcome to command-line ${COLOR_YELLOW}Inquisitor${COLOR_NORMAL} interface
-        
+
 You can use commands:
-	        
+
 ${COLOR_GREEN}inquisitor${COLOR_NORMAL} - execute Inquisitor testing in whole (normal testing mode)
 ${COLOR_GREEN}inq-detect${COLOR_NORMAL} - execute detects only
 ${COLOR_GREEN}${SHARE_DIR}/test/${COLOR_YELLOW}STAGE${COLOR_NORMAL} - execute particular test ${COLOR_YELLOW}STAGE${COLOR_NORMAL}, one of:
 ${COLOR_BLUE}
 __EOF__
-		        
-TMPDIR=`mktemp -d` 
+
+TMPDIR=`mktemp -d`
 cp ../../client/test/* $TMPDIR 2>/dev/null
 ls --color -C $TMPDIR >> $WORKDIR/$LIVEDIR/config/chroot_local-includes/etc/motd
 rm -fr $TMPDIR 2>/dev/null
