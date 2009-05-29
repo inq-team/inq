@@ -20,6 +20,8 @@ BIN_FILES=\
 	inq-live-wrapper \
 	inq-live
 SHARE_NOEXEC_FILES=\
+	issue \
+	motd \
 	functions \
 	functions-test \
 	functions-test-tui \
@@ -44,7 +46,7 @@ SHARE_EXEC_FILES=\
 	mencoder_call
 INIT_FILES=init
 
-all:
+all: motd.inq issue.inq
 	sed -e "s,@@ETC_DIR@@,$(ETC_DIR),g; \
 		s,@@BIN_DIR@@,$(BIN_DIR),g; \
 		s,@@LIB_DIR@@,$(LIB_DIR),g; \
@@ -53,6 +55,12 @@ all:
 		s,@@DEFAULT_FILESYSTEM@@,$(DEFAULT_FILESYSTEM),g; \
 		s,@@DEFAULT_FILESYSTEM_FORCE@@,$(DEFAULT_FILESYSTEM_FORCE),g; \
 		s,@@DEBUG_TTY@@,$(DEBUG_TTY),g;" <global.in >global
+
+motd.inq:
+	./build-motd
+
+issue.inq:
+	./build-issue
 
 install:
 	mkdir -p $(DESTDIR)$(BIN_DIR) $(DESTDIR)$(ETC_DIR) $(DESTDIR)$(SHARE_DIR)

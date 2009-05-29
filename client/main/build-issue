@@ -1,0 +1,16 @@
+#!/bin/sh -efu
+
+# Builds file that can be used as /etc/issue in Live CD build of
+# Inquisitor. Contents of /etc/issue file greet user at every console
+# before login. Currently it tells user how to log in.
+
+COLOR_GREEN=`printf '\033[01;32m'`
+COLOR_YELLOW=`printf '\033[01;33m'`
+COLOR_BLUE=`printf '\033[01;34m'`
+COLOR_NORMAL=`printf '\033[0m'`
+
+cat >issue <<__EOF__
+Welcome to ${COLOR_YELLOW}\\R${COLOR_NORMAL} (\\l)
+
+${COLOR_BLUE}Use login ${COLOR_GREEN}root${COLOR_BLUE} and password ${COLOR_GREEN}inq${COLOR_BLUE} to enter command-line Inquisitor interface${COLOR_NORMAL}
+__EOF__

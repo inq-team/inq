@@ -1,0 +1,27 @@
+#!/bin/sh -eu
+
+# Builds file that can be used as motd in Live CD build of
+# Inquisitor. Contents of motd are shown to user after login.
+# Currently it shows available command and a list of tests.
+
+COLOR_GREEN=`printf '\033[01;32m'`
+COLOR_YELLOW=`printf '\033[01;33m'`
+COLOR_BLUE=`printf '\033[01;34m'`
+COLOR_NORMAL=`printf '\033[0m'`
+
+cat <<__EOF__ >motd
+Welcome to command-line ${COLOR_YELLOW}Inquisitor${COLOR_NORMAL} interface
+
+You can use commands:
+
+${COLOR_GREEN}inquisitor${COLOR_NORMAL} - execute Inquisitor testing in whole (normal testing mode)
+${COLOR_GREEN}inq-detect${COLOR_NORMAL} - execute detects only
+${COLOR_GREEN}/usr/share/inquisitor/test/${COLOR_YELLOW}STAGE${COLOR_NORMAL} - execute particular test ${COLOR_YELLOW}STAGE${COLOR_NORMAL}, one of:
+${COLOR_BLUE}
+__EOF__
+
+cd ../test
+ls -C >>../main/motd
+cd ../main
+
+echo "${COLOR_NORMAL}" >>motd
