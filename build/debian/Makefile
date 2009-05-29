@@ -18,18 +18,25 @@ ROOTDIR=chroot
 LIVEDIR=live
 DEBS=$(PWD)/repo
 
-build-package: $(WORKDIR)/build-package/$(PACKAGE_DEB)
+.PHONY: build-package
 
-$(WORKDIR)/build-package/$(PACKAGE_DEB):
-	rm -rf $(WORKDIR)/build-package
-	mkdir -p $(WORKDIR)/build-package
-	cp -r client $(WORKDIR)/build-package/$(PACKAGE_DIR)
-	cp -r flavour Makefile.config $(WORKDIR)/build-package
-	cp -r build/debian/debian $(WORKDIR)/build-package/$(PACKAGE_DIR)
-	cp build/debian/init.$(FLAVOUR) $(WORKDIR)/build-package/$(PACKAGE_DIR)/main/init
+rebuild_deb=\
+	rm -rf $(WORKDIR)/build-package; \
+	mkdir -p $(WORKDIR)/build-package; \
+	cp -r client $(WORKDIR)/build-package/$(PACKAGE_DIR); \
+	cp -r flavour Makefile.config $(WORKDIR)/build-package; \
+	cp -r build/debian/debian $(WORKDIR)/build-package/$(PACKAGE_DIR); \
+	cp build/debian/init.$(FLAVOUR) $(WORKDIR)/build-package/$(PACKAGE_DIR)/main/init; \
 	cd $(WORKDIR)/build-package/$(PACKAGE_DIR) && dpkg-buildpackage -b -a$(DEB_TARGET) -us -uc
 
+build-package:
+	$(rebuild_deb)
+
+$(WORKDIR)/build-package/$(PACKAGE_DEB):
+	$(rebuild_deb)
+
 build-root: $(WORKDIR)/build-package/$(PACKAGE_DEB)
+	@if [ "$(REPO)" = ftp://your.mirror.here/debian ]; then echo 'REPO not defined. Please edit Makefile.config to specify your Debian-compatible repository in REPO.'; exit 1; fi
 	# Cleanup from previous build
 	rm -rf $(WORKDIR)/$(ROOTDIR)
 	mkdir -p $(WORKDIR)/$(ROOTDIR)
@@ -38,7 +45,7 @@ build-root: $(WORKDIR)/build-package/$(PACKAGE_DEB)
 	# Copy additional .deb packages
 	if [ -d $(DEBS) ]; then cp $(DEBS)/* $(WORKDIR)/$(ROOTDIR); fi
 	# Copy images if present
-	if [ -d  $(IMAGE_DIR) ]; then cp -r $(IMAGE_DIR) $(WORKDIR)/$(ROOTDIR)/img; fi
+	if [ -d $(IMAGE_DIR) ]; then cp -r $(IMAGE_DIR) $(WORKDIR)/$(ROOTDIR)/img; fi
 	# Copy Inquisitor client package
 	cp $(WORKDIR)/build-package/$(PACKAGE_DEB) $(WORKDIR)/$(ROOTDIR)
 	# Copy build-specific temporary files
