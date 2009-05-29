@@ -18,7 +18,9 @@ ROOTDIR=chroot
 LIVEDIR=live
 DEBS=$(PWD)/repo
 
-build-package:
+build-package: $(WORKDIR)/build-package/$(PACKAGE_DEB)
+
+$(WORKDIR)/build-package/$(PACKAGE_DEB):
 	rm -rf $(WORKDIR)/build-package
 	mkdir -p $(WORKDIR)/build-package
 	cp -r client $(WORKDIR)/build-package/$(PACKAGE_DIR)
@@ -27,7 +29,7 @@ build-package:
 	cp build/debian/init.$(FLAVOUR) $(WORKDIR)/build-package/$(PACKAGE_DIR)/main/init
 	cd $(WORKDIR)/build-package/$(PACKAGE_DIR) && dpkg-buildpackage -b -a$(DEB_TARGET) -us -uc
 
-build-root:
+build-root: $(WORKDIR)/build-package/$(PACKAGE_DEB)
 	# Cleanup from previous build
 	rm -rf $(WORKDIR)/$(ROOTDIR)
 	mkdir -p $(WORKDIR)/$(ROOTDIR)
