@@ -20,9 +20,8 @@ foreach my $file (@files){
 	my $type = +(split '/', $file)[-1];
 
 	# Check for variables existence in metainformation
-	my $exist = 0;
 	open FD, "< $file";
-	while(<FD>){ /^# VAR=/ && $exist++; };
+	my $exist = grep { /^# VAR=/ } <FD>;
 	close FD;
 	next unless $exist;
 
@@ -30,10 +29,7 @@ foreach my $file (@files){
 	next if defined $ARGV[1] and $type ne $ARGV[1];
 	$x->startTag("test", "id" => $type, "type" => $type);
 	open FD, "< $file";
-	while(<FD>){
-		next unless /^# VAR=(.*):\w+:(.*):/;
-		$x->dataElement("var", "$2", "name" => $1);
-	};
+	map { $x->dataElement("var", "$2", "name" => $1) if /^# VAR=(.*):\w+:(.*):/ } <FD>;
 	close FD;
 	$x->endTag("test");
 };
