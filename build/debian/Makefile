@@ -18,10 +18,6 @@ ROOTDIR=chroot
 LIVEDIR=live
 DEBS=$(PWD)/repo
 
-REPO=ftp://your.mirror.here/debian
-REPO_MULTIMEDIA=ftp://your.mirror.here/debian-multimedia
-REPO_BRANCH=lenny
-
 build-package:
 	rm -rf $(WORKDIR)/build-package
 	mkdir -p $(WORKDIR)/build-package

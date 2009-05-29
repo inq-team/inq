@@ -81,5 +81,10 @@ rsync-server:
 
 #===============================================================================
 
+# Some sanity checks
+ifndef CLIENT_BASE
+$(error CLIENT_BASE not defined. Please edit Makefile.config to specify your build system Linux distribution in CLIENT_BASE.)
+endif
+
 # Include client platform-dependent build instructions
 include build/$(CLIENT_BASE)/Makefile
