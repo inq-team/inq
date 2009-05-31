@@ -93,6 +93,7 @@ readcd
 schedutils
 syslog-ng
 memtest86+
+mcelog
 
 stream-mem
 dhrystone

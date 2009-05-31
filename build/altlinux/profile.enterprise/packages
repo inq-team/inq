@@ -91,6 +91,7 @@ curl
 bonnie++
 ipmitool
 schedutils
+mcelog
 
 cdrtools-control
 cdrecord-classic
