@@ -1,10 +1,15 @@
 #!/bin/sh
 
 cd /
+for I in img/*.tar; do
+	[ -r "$I" ] || break
+	echo Unpacking $I
+	tar xf $I
+done
 for I in img/*.tar.gz; do
 	[ -r "$I" ] || break
 	echo Unpacking $I
-	tar xzf $I;
+	tar xzf $I
 done
 for I in img/*.tar.bz2; do
 	[ -r "$I" ] || break
