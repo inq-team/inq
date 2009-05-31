@@ -1,4 +1,7 @@
-#!/bin/bash
+#!/bin/bash -e
+
+# Load proper Inquisitor configuration
+. _inq-config-global
 
 # Inquisitor-specific setup
 ln -sf inquisitor/remounttab /etc/
@@ -7,13 +10,21 @@ ln -sf inquisitor/overlaytab /etc/
 echo "XROOTWARN=no" > /etc/sysconfig/xinitrc
 
 echo 'Setting up /etc/inittab'
-echo 'inq:2345:respawn:/usr/bin/inq-live' >> /etc/inittab
+
+# Live CD user interface startup on first tty (tty1)
+echo "inq:2345:respawn:$BIN_DIR/inq-live-wrapper" >> /etc/inittab
+
+# Remove mingetty from tty1 (otherwise it conflicts with inq-live)
 sed -i '/tty1$/ d' /etc/inittab
+
+# Remove mingetty from debug tty (usually tty2)
+ONLY_TTY=`echo "$DEBUG_TTY" | sed 's,/dev/,,'`
+sed -i "/$ONLY_TTY\$/ d" /etc/inittab
 
 echo 'Setting up command-line login helpers'
 echo 'Inquisitor Live' > /etc/altlinux-release
-ln -sf /usr/share/inquisitor/motd /etc/motd
-ln -sf /usr/share/inquisitor/issue /etc/issue
+ln -sf $SHARE_DIR/motd /etc/motd
+ln -sf $SHARE_DIR/issue /etc/issue
 
 echo 'Setting up rc.local'
 echo 'mkfifo /dev/inqlog' >/etc/rc.d/rc.local
