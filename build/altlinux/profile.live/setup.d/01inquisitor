@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Inquisitor-specific setup
-
 ln -sf inquisitor/remounttab /etc/
 ln -sf inquisitor/overlaytab /etc/
 #ln -sf inquisitor/pci.ids /usr/share/
@@ -13,34 +12,8 @@ sed -i '/tty1$/ d' /etc/inittab
 
 echo 'Setting up command-line login helpers'
 echo 'Inquisitor Live' > /etc/altlinux-release
-
-COLOR_GREEN=`echo -e "\033[01;32m"`
-COLOR_YELLOW=`echo -e "\033[01;33m"`
-COLOR_BLUE=`echo -e "\033[01;34m"`
-COLOR_NORMAL=`echo -e "\033[0m"`
-
-echo "Welcome to ${COLOR_YELLOW}\\R${COLOR_NORMAL} (\\l)" >/etc/issue
-echo >>/etc/issue
-echo -e "\033[01;34mUse login \033[01;32mroot\033[01;34m and password \033[01;32minq\033[01;34m to enter command-line Inquisitor interface\033[0m" >>/etc/issue
-
-cat <<__EOF__ >/etc/motd
-Welcome to command-line ${COLOR_YELLOW}Inquisitor${COLOR_NORMAL} interface
-
-You can use commands:
-
-${COLOR_GREEN}inquisitor${COLOR_NORMAL} - execute Inquisitor testing in whole (normal testing mode)
-${COLOR_GREEN}inq-detect${COLOR_NORMAL} - execute detects only
-${COLOR_GREEN}/usr/share/inquisitor/test/${COLOR_YELLOW}STAGE${COLOR_NORMAL} - execute particular test ${COLOR_YELLOW}STAGE${COLOR_NORMAL}, one of:
-${COLOR_BLUE}
-__EOF__
-
-# Dirty things we are doing here to get beautiful output without junk
-TMPDIR=`mktemp -d`
-cp /usr/share/inquisitor/test/* $TMPDIR 2>/dev/null
-ls -C $TMPDIR >>/etc/motd
-rm -fr $TMPDIR 2>/dev/null
-
-echo "${COLOR_NORMAL}" >>/etc/motd
+ln -sf /usr/share/inquisitor/motd /etc/motd
+ln -sf /usr/share/inquisitor/issue /etc/issue
 
 echo 'Setting up rc.local'
 echo 'mkfifo /dev/inqlog' >/etc/rc.d/rc.local
