@@ -77,6 +77,12 @@ build-live:
 		build/debian/live_lh_config.sh
 	cd $(WORKDIR)/$(LIVEDIR) && export MKSQUASHFS_OPTIONS="-e boot" && lh_build
 
+update-package:
+	sudo cp $(WORKDIR)/build-package/$(PACKAGE_DEB) $(WORKDIR)/$(ROOTDIR)
+	sudo chroot $(WORKDIR)/$(ROOTDIR) dpkg --purge $(PACKAGE_NAME) || :
+	sudo chroot $(WORKDIR)/$(ROOTDIR) dpkg --install /$(PACKAGE_DEB) || :
+	sudo rm -f $(WORKDIR)/$(ROOTDIR)/$(PACKAGE_DEB)
+
 update-package-remote:
 	scp $(WORKDIR)/build-package/$(PACKAGE_DEB) $(DEPLOY_HOST):
 	ssh $(DEPLOY_HOST) -- sudo mv $(PACKAGE_DEB) $(DEPLOY_PATH)
