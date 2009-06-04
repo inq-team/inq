@@ -22,7 +22,7 @@ TIME_RESULT=`mktemp`
 
 [ ! "$THREADS" -eq 0 ] || THREADS=`cpu_quantity`
 
-pusdq $SHARE_DIR
+pushdq $SHARE_DIR
 /usr/bin/time -a -p -o $TIME_RESULT \
 	7z a dummy -mx=$COMPRESSION_LEVEL -mmt=$THREADS -tbzip2 -so $SOURCE \
 	>/dev/null 2>$DEBUG_TTY || test_failed "7z failed"
