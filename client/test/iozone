@@ -14,7 +14,7 @@ exit_handler()
 {
 	[ -f "$RESULT_FILE" ] && rm -fr "$RESULT_FILE"
 	if [ -d "$SCRATCH_DIRECTORY" ]; then
-		umount -f $SCRATCH_DIRECTORY >/dev/null || true
+		umount -f $SCRATCH_DIRECTORY >/dev/null 2>&1 || true
 		rmdir $SCRATCH_DIRECTORY
 	fi
 }
@@ -35,7 +35,7 @@ perform_benchmark()
 	echo_success
 
 	echo -n "Performing benchmark..."
-	iozone -a -g "$TEST_FILE_SIZE"m -f $SCRATCH_DIRECTORY/iozone_testfile | tee $RESULT_FILE
+	iozone -a -g "$TEST_FILE_SIZE"m -f $SCRATCH_DIRECTORY/iozone_testfile > $RESULT_FILE
 	echo_success
 	
 	benchmark_submit_string "Drive: $drive" \
