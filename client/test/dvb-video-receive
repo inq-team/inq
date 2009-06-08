@@ -1,5 +1,5 @@
 #!/bin/sh -e
-# NAME=DVB Video Recieve
+# NAME=DVB Video Receive
 # DESCRIPTION=This test makes many DVB related things. At first, it tries to tune up to transponder (with specified transponder parameters and maximum wait time (locktime)). Then it tries to find all opened available channels. Then when any of found channels can be locked up, it will make record (with specified size) of video translation there. And, after all, video's codec will be checked if it match the specified one. If everything succeed, then several benchmark results will be submited.
 # DESTROYS_HDD=false
 # IS_INTERACTIVE=false
