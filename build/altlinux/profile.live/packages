@@ -26,6 +26,7 @@ openssh-server
 #xorg-x11-drv-i8xx
 #xorg-x11-drv-sis
 #xorg-x11-drv-v4l
+which
 cpuburn
 modutils
 #xfsprogs
