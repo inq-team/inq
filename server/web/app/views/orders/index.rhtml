@@ -16,42 +16,25 @@ Manager: <%= select :manager, :name, @managers, :selected => @selected_manager %
 	<tr>
 		<% @staging.each_with_index { |ost, i| %>
 		<td style="vertical-align: top<%= '; border-right: none' if i == 6 %>">
+		<% if ost.length > 0 %>
 			<table width="100%">
 				<%	ost.each { |o| %>
 				<tr>
 					<td class="order_cell">
 						<a href="<%= url_for(:action => 'show', :controller => 'orders', :id => o) %>">
-						<div class="order_number">
-							<a href="<%= url_for(:action => 'show', :controller => 'orders', :id => o) %>">
-								<%=h o.buyer_order_number %>
-							</a>
-						</div>
-						<div class="title" title="<%=h o.title %>">
-							<a href="<%= url_for(:action => 'show', :controller => 'orders', :id => o) %>">
-								<%=h truncate(o.title, 35).gsub(/\//, ' / ').gsub(/\\/, ' \ ') if truncate(o.title, 35) %>
-							</a>
-						</div>
-						<div class="customer" title="<%=h o.customer %>">
-							<a href="<%= url_for(:action => 'show', :controller => 'orders', :id => o) %>">
-								<%=h truncate(o.customer, 22) %>
-							</a>
-						</div>
+							<span class="order_number"><%=h o.buyer_order_number %></span>
+							<span class="title" title="<%=h o.title %>"><%=h truncate(o.title, 35).gsub(/\//, ' / ').gsub(/\\/, ' \ ') if truncate(o.title, 35) %></span>
+							<span class="customer" title="<%=h o.customer %>"><%=h truncate(o.customer, 22) %></span>
 <%						if i == 3 or i == 4 or i == 5 %>
-							<div class="computers">
-								<a href="<%= url_for(:action => 'show', :controller => 'orders', :id => o) %>">
-									<% qt = o.comp_qty.to_i > 7 ? 1 : o.comp_qty.to_i; qt.times { %><%= image_tag 'computer.png', :style => 'vertical-align: middle' %><% } %><%= "&times;#{o.comp_qty}" if o.comp_qty.to_i > 7 %>
-								</a>
-							</div>
+							<span class="computers"><% qt = o.comp_qty.to_i > 7 ? 1 : o.comp_qty.to_i; qt.times { %><%= image_tag 'computer.png', :style => 'vertical-align: middle' %><% } %><%= "&times;#{o.comp_qty}" if o.comp_qty.to_i > 7 %></span>
 <%						end %>
-						<div class="timer">
-							<a href="<%= url_for(:action => 'show', :controller => 'orders', :id => o) %>">
-								<%= format_delta1(o.from_delay.to_i) %>
-							</a>
-						</div>
+							<span class="timer"><%= format_delta1(o.from_delay.to_i) %></span>
+						</a>
 					</td>
 				</tr>
 				<%	} %>
 			</table>
+		<% end %>
 		</td>
 		<% } %>
 	</tr>

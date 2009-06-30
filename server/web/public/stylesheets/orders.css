@@ -28,6 +28,7 @@
 }
 
 .order_cell .order_number {
+	display: block;
         float: left;
         width: 45px;
         min-height: 38px;
@@ -40,16 +41,19 @@
 }
 
 .order_cell .customer {
+	display: block;
 	clear: left;
 }
 
 .order_cell .timer {
+	display: block;
         text-align: right;
         font-style: italic;
         padding-right: 0.5em;
 }
 
 .order_cell .computers {
+	display: block;
 	float: left;
 }
 
