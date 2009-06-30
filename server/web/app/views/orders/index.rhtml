@@ -17,7 +17,6 @@ Manager: <%= select :manager, :name, @managers, :selected => @selected_manager %
 		<% @staging.each_with_index { |ost, i| %>
 		<td style="vertical-align: top<%= '; border-right: none' if i == 6 %>">
 			<table width="100%">
-				<%= '<tr><td>&nbsp;</td></tr>' if ost.length == 0 %>
 				<%	ost.each { |o| %>
 				<tr>
 					<td class="order_cell">
