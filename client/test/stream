@@ -1,14 +1,18 @@
 #!/bin/sh -ef
 # NAME=Memory benchmark: STREAM
-# DESCRIPTION=The STREAM benchmark is a simple synthetic benchmark program that measures sustainable memory bandwidth (in MiB/s) and the corresponding computation rate for simple vector kernels. A version written in C language and optimized for single processor systems is used.
+# DESCRIPTION=The STREAM benchmark is a simple synthetic benchmark program that measures sustainable memory bandwidth (in MiB/s) and the corresponding computation rate for simple vector kernels. This benchmark uses stream version written in C language and optimized either for single processor systems or for multiprocessor systems with help of OpenMP.
 # DESTROYS_HDD=false
 # IS_INTERACTIVE=false
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=benchmark,ram,memory
 # DEPENDS=Memory
+# VAR=THREADS:int:0:Force using specified number of threads. If equal to zero, then load all available CPUs. This option works only with OpenMP version of stream
 
 . _inq-config-global; . $SHARE_DIR/functions-test
+
+[ ! "$THREADS" -eq 0 ] || THREADS=`cpu_quantity`
+export OMP_NUM_THREADS=$THREADS
 
 # As STREAM benchmark is rather fast, we will easily run it several
 # times. Results won't diverge meaningfully.
