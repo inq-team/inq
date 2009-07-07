@@ -48,6 +48,8 @@ syslog-ng
 psmisc
 nfs-common
 eject
-p7zip
 debian-multimedia-keyring
 p7zip-full
+vorbis-tools
+flac
+speex

@@ -1,0 +1,25 @@
+#!/bin/sh -e
+# NAME=vorbis-encode
+# DESCRIPTION=This benchmark simply encodes PCM WAV audiofile to OGG/Vorbis format and calculates encoding speed.
+# DESTROYS_HDD=false
+# IS_INTERACTIVE=false
+# POWEROFF_DURING_TEST=false
+# VERSION=0.1
+# TAGS=cpu,benchmark
+# DEPENDS=CPU
+# VAR=SOURCE:string:input.wav:Path to PCM WAV file to compress
+# VAR=QUALITY:int:3:Specify quality, between -1 (very low) and 10 (very high)
+
+. _inq-config-global; . $SHARE_DIR/functions-test
+
+pushdq $SHARE_DIR
+rate=`oggenc -q $QUALITY -o /dev/null $SOURCE 2>&1 | sed -n 's/,/\./g; s/^\s*Rate:\s*\(.*\)$/\1/p'`
+popdq
+
+if [ -z "$rate" ]; then
+	test_failed "oggenc failed"
+else
+	benchmark_submit_float "Encoding rate" "$rate" ""
+fi
+
+test_succeeded

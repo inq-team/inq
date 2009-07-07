@@ -1,0 +1,37 @@
+#!/bin/sh -e
+# NAME=speex-encode
+# DESCRIPTION=This benchmark simply encodes PCM WAV audiofile to Speex format and measures encoding time.
+# DESTROYS_HDD=false
+# IS_INTERACTIVE=false
+# POWEROFF_DURING_TEST=false
+# VERSION=0.1
+# TAGS=cpu,benchmark
+# DEPENDS=CPU
+# VAR=SOURCE:string:input.wav:Path to PCM WAV file to compress
+# VAR=QUALITY:int:8:Specify quality, between 0 (lowest) and 10 (highest)
+# VAR=VBR:bool:true:Enable variable bitrate
+# VAR=DTX:bool:true:Enable file-based discontinuous transmission
+# VAR=COMPLEXITY:int:3:Specify encoding complexity, between 0 (lowest) and 10 (highest)
+
+. _inq-config-global; . $SHARE_DIR/functions-test
+
+exit_handler()
+{
+	[ -f "$TIME_RESULT" ] && rm $TIME_RESULT
+}
+
+TIME_RESULT=`mktemp`
+OPTIONS=""
+
+[ "$DTX" = "false" ] || OPTIONS="--dtx --vbr "
+[ "$VBR" = "false" ] || OPTIONS="${OPTIONS} --vbr "
+
+pushdq $SHARE_DIR
+/usr/bin/time -a -p -o $TIME_RESULT \
+	speexenc --quality $QUALITY --comp $COMPLEXITY $OPTIONS $SOURCE /dev/null \
+	>$DEBUG_TTY 2>&1 || test_failed "speexenc failed"
+popdq
+
+benchmark_submit_float "Encoding time" "`cat $TIME_RESULT | sed -n '1p' | awk '{print $NF}'`" "sec"
+
+test_succeeded

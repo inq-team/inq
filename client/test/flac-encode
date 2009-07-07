@@ -1,0 +1,30 @@
+#!/bin/sh -e
+# NAME=flac-encode
+# DESCRIPTION=This benchmark simply encodes PCM WAV audiofile to Flac format and measures encoding time.
+# DESTROYS_HDD=false
+# IS_INTERACTIVE=false
+# POWEROFF_DURING_TEST=false
+# VERSION=0.1
+# TAGS=cpu,benchmark
+# DEPENDS=CPU
+# VAR=SOURCE:string:input.wav:Path to PCM WAV file to compress
+# VAR=COMPRESSION_LEVEL:int:8:Specify compression level, between 0 (fast) and 8 (slow)
+
+. _inq-config-global; . $SHARE_DIR/functions-test
+
+exit_handler()
+{
+	[ -f "$TIME_RESULT" ] && rm $TIME_RESULT
+}
+
+TIME_RESULT=`mktemp`
+
+pushdq $SHARE_DIR
+/usr/bin/time -a -p -o $TIME_RESULT \
+	flac -$COMPRESSION_LEVEL -f -o /dev/null $SOURCE \
+	>$DEBUG_TTY 2>&1 || test_failed "flac failed"
+popdq
+
+benchmark_submit_float "Encoding time" "`cat $TIME_RESULT | sed -n '1p' | awk '{print $NF}'`" "sec"
+
+test_succeeded
