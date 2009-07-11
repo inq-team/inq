@@ -1,0 +1,8 @@
+#!/bin/sh
+# NAME=OpenSSL
+# DESCRIPTION=Detect OpenSSL tool version.
+
+version=`openssl version -v`
+arch=`executable_arch openssl`
+
+add_software_component openssl "$arch" "$version"
