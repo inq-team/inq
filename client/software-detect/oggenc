@@ -1,0 +1,8 @@
+#!/bin/sh
+# NAME=OGGEnc
+# DESCRIPTION=Detect OGG/Vorbis encoder from Vorbis-tools version.
+
+version=`oggenc --version | awk '{print $NF}'`
+arch=`executable_arch oggenc`
+
+add_software_component oggenc "$arch" "$version"

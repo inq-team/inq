@@ -1,0 +1,8 @@
+#!/bin/sh
+# NAME=FLAC
+# DESCRIPTION=Detect FLAC encoder version.
+
+version=`flac --version | awk '{print $NF}'`
+arch=`executable_arch flac`
+
+add_software_component flac "$arch" "$version"
