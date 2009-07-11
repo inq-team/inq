@@ -221,6 +221,29 @@ stop_background()
 	rm -f "$1"
 }
 
+timed_run()
+{
+	# We do not need to use built-in "time" command, as it may
+	# have very different options and output format
+	time_cmd=`which time`
+	time_output=`mktemp`
+
+	if $time_cmd -p -o "$time_output" $@ >$DEBUG_TTY 2>&1; then
+		# Print out real, user and sys times
+		awk '{print $NF}' < $time_output
+		rm -f "$time_output"
+	else
+		rm -f "$time_output"
+		false
+	fi
+}
+
+timed_run_real()
+{
+	# Show only real time instead of real, user and sys
+	timed_run $@ | sed -n '1p'
+}
+
 print_green_message()
 {
 	echo ""

@@ -13,21 +13,11 @@
 
 . _inq-config-global; . $SHARE_DIR/functions-test
 
-exit_handler()
-{
-	[ -f "$TIME_RESULT" ] && rm $TIME_RESULT
-}
-
-TIME_RESULT=`mktemp`
-
 [ ! "$THREADS" -eq 0 ] || THREADS=`cpu_quantity`
 
 pushdq $SHARE_DIR
-/usr/bin/time -a -p -o $TIME_RESULT \
-	7z a dummy -mx=$COMPRESSION_LEVEL -mmt=$THREADS -tbzip2 -so $SOURCE \
-	>/dev/null 2>$DEBUG_TTY || test_failed "7z failed"
+benchmark_submit_float "Compression time" \
+		       "`timed_run_real 7z a dummy -mx=$COMPRESSION_LEVEL -mmt=$THREADS -tbzip2 -so $SOURCE`" \
+		       "sec" || test_failed "7z failed"
 popdq
-
-benchmark_submit_float "Compression time" "`cat $TIME_RESULT | sed -n '1p' | awk '{print $NF}'`" "sec"
-
 test_succeeded

@@ -37,7 +37,7 @@ X264OPTS="${X264OPTS}:bitrate=$BITRATE:threads=$THREADS"
 # Is it two-pass encoding or not?
 # Run transcoding after detection
 if [ "$TWOPASS" = "true" ]; then
-	/usr/bin/time -p -o time.result \
+	`which time` -p -o time.result \
 		mencoder -nosound \
 			 -ovc x264 \
 			 -vf scale=$SCALE \
@@ -48,7 +48,7 @@ if [ "$TWOPASS" = "true" ]; then
 	# We need only created logfile
 	rm $DESTINATION
 
-	/usr/bin/time -p -o time.result \
+	`which time` -p -o time.result \
 		mencoder -nosound \
 			 -ovc x264 \
 			 -vf scale=$SCALE \
@@ -56,7 +56,7 @@ if [ "$TWOPASS" = "true" ]; then
 			 -o $DESTINATION $SOURCE 2>&1 | tee $DEBUG_TTY > mencoder.result
 	create_benchmark_results
 else
-	/usr/bin/time -p -o time.result \
+	`which time` -p -o time.result \
 		mencoder -nosound \
 			 -ovc x264 \
 			 -vf scale=$SCALE \

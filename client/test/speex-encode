@@ -15,23 +15,14 @@
 
 . _inq-config-global; . $SHARE_DIR/functions-test
 
-exit_handler()
-{
-	[ -f "$TIME_RESULT" ] && rm $TIME_RESULT
-}
-
-TIME_RESULT=`mktemp`
 OPTIONS=""
 
 [ "$DTX" = "false" ] || OPTIONS="--dtx --vbr "
 [ "$VBR" = "false" ] || OPTIONS="${OPTIONS} --vbr "
 
 pushdq $SHARE_DIR
-/usr/bin/time -a -p -o $TIME_RESULT \
-	speexenc --quality $QUALITY --comp $COMPLEXITY $OPTIONS $SOURCE /dev/null \
-	>$DEBUG_TTY 2>&1 || test_failed "speexenc failed"
+benchmark_submit_float "Encoding time" \
+		       "`timed_run_real speexenc --quality $QUALITY --comp $COMPLEXITY $OPTIONS $SOURCE /dev/null`" \
+		       "sec" || test_failed "speexenc failed"
 popdq
-
-benchmark_submit_float "Encoding time" "`cat $TIME_RESULT | sed -n '1p' | awk '{print $NF}'`" "sec"
-
 test_succeeded

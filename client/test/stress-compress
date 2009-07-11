@@ -75,9 +75,9 @@ tar xvzf ../../stress_tree.tar.gz >$DEBUG_TTY 2>&1
 cd ../
 
 while true; do
-	/usr/bin/time -a -p -o compress.time tar cvzf job.tar.gz job >$DEBUG_TTY 2>&1
+	`which time` -a -p -o compress.time tar cvzf job.tar.gz job >$DEBUG_TTY 2>&1
 	rm -fr job
-	/usr/bin/time -a -p -o decompress.time tar xvzf job.tar.gz >$DEBUG_TTY 2>&1
+	`which time` -a -p -o decompress.time tar xvzf job.tar.gz >$DEBUG_TTY 2>&1
 	rm job.tar.gz
 	[ -e need_to_finish ] && exit || true
 done
