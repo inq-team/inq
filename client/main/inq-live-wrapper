@@ -10,4 +10,16 @@ export HOME=/home
 # LiveCD version
 . $SHARE_DIR/init
 
-exec inq-live
+SCREEN_SCENARIO=`mktemp`
+
+cat > $SCREEN_SCENARIO <<__EOF__
+split
+resize -9
+screen -t Watchdog $SHARE_DIR/inq-live-spinner
+focus
+screen -t Inquisitor inq-live
+
+__EOF__
+
+chmod 775 /var/run/screen
+exec screen -c $SCREEN_SCENARIO

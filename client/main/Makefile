@@ -43,6 +43,7 @@ SHARE_EXEC_FILES=\
 	inq-sensors-detect \
 	decode-dimms.pl \
 	hal-searcher \
+	inq-live-spinner \
 	mencoder_call
 INIT_FILES=init
 

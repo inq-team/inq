@@ -2,7 +2,7 @@
 
 . _inq-config-global
 
-export TERM=linux
+export TERM=vt100
 DIALOG=dialog
 PROFILE_PATH=$SHARE_DIR/profile/live
 
