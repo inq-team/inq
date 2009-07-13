@@ -5,7 +5,7 @@ pushd build/debian
 ################################################################################
 # Decide which kernel flavour to use
 ################################################################################
-if [ "$DEB_TARGET" == "i386" ]; then
+if [ "$DEB_TARGET" = "i386" ]; then
 	KERNEL_FLAVOUR="686"
 else
 	KERNEL_FLAVOUR="amd64"
@@ -36,7 +36,7 @@ lh_config --mirror-bootstrap $REPO --mirror-chroot $REPO \
           --bootloader grub \
           --bootstrap debootstrap \
           --cache disabled \
-          --categories "main contrib" \
+          --categories "$REPO_SECTIONS" \
           --chroot-filesystem squashfs \
           --union-filesystem aufs \
           --memtest memtest86+ \
@@ -67,10 +67,11 @@ done
 ################################################################################
 # Hooks, splash image
 ################################################################################
-cp live-hooks/* $WORKDIR/$LIVEDIR/config/chroot_local-hooks/
+cp live-chroot-hooks/* $WORKDIR/$LIVEDIR/config/chroot_local-hooks/
+cp live-binary-hooks/* $WORKDIR/$LIVEDIR/config/binary_local-hooks/
 sed -i "s/\$INQ_PACKAGE/$PACKAGE_DEB/g" $WORKDIR/$LIVEDIR/config/chroot_local-hooks/01install_inq
 cp live-additional/splash.xpm.gz $WORKDIR/$LIVEDIR/config/binary_grub
-[ -s live-additional/menu.lst ] && cp live-additional/menu.lst $WORKDIR/$LIVEDIR/config/binary_grub
+[ -s live-additional/menu.lst ] && sed "s/\$INQ_VERSION/$INQ_VERSION/g; s/\$DEB_TARGET/$DEB_TARGET/g" < live-additional/menu.lst > $WORKDIR/$LIVEDIR/config/binary_grub
 
 ################################################################################
 # User interface pretty outlook

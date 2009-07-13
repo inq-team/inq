@@ -2,13 +2,13 @@ default 0
 timeout 30
 splashimage /boot/grub/splash.xpm.gz
 
-title		Inquisitor 3.1 LiveCD i386
-kernel		/live/vmlinuz-2.6.26-1-686 boot=live noautologin nolocales hostname=inq union=aufs
-initrd		/live/initrd.img-2.6.26-1-686
+title		Inquisitor $INQ_VERSION LiveCD $DEB_TARGET
+kernel		/live/vmlinuz-$KERNEL_VERSION boot=live noautologin nolocales hostname=inq union=aufs
+initrd		/live/initrd.img-$KERNEL_VERSION
 
-title		Inquisitor 3.1 LiveCD i386 (fail-safe mode)
-kernel		/live/vmlinuz-2.6.26-1-686 boot=live noautologin nolocales hostname=inq union=aufs noapic noapm nodma nomce nolapic nosmp vga=normal
-initrd		/live/initrd.img-2.6.26-1-686
+title		Inquisitor $INQ_VERSION LiveCD $DEB_TARGET (fail-safe mode)
+kernel		/live/vmlinuz-$KERNEL_VERSION boot=live noautologin nolocales hostname=inq union=aufs noapic noapm nodma nomce nolapic nosmp vga=normal
+initrd		/live/initrd.img-$KERNEL_VERSION
 
 title		Other:
 root

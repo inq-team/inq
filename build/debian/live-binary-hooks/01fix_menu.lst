@@ -1,0 +1,6 @@
+#!/bin/sh
+
+MENU_PATH=`find binary -type f -name menu.lst`
+KERNEL_VERSION=`find chroot -type f -name 'vmlinuz-*' | sed -n 's/^.*\/vmlinuz-\(.*\)$/\1/p'`
+
+sed -i "s/\$KERNEL_VERSION/$KERNEL_VERSION/g" ${MENU_PATH}
