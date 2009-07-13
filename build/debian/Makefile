@@ -75,7 +75,7 @@ build-boot:
 build-live-configure:
 	mkdir -p $(WORKDIR)/$(LIVEDIR)
 	cd $(WORKDIR)/$(LIVEDIR) && lh_clean
-	rm -rf $(WORKDIR)/$(LIVEDIR)
+	rm -rf $(WORKDIR)/$(LIVEDIR)/*
 	# Run LiveCD LiveHelper configuration helper script
 	WORKDIR=$(WORKDIR) LIVEDIR=$(LIVEDIR) \
 		REPO=$(REPO) REPO_MULTIMEDIA=$(REPO_MULTIMEDIA) \
