@@ -6,6 +6,14 @@ ifeq ($(TARGET), x86_64)
 DEB_TARGET=amd64
 endif
 
+ifeq ($(FLAVOUR), enterprise)
+build-root: build-root-enterprise
+else
+ifeq ($(FLAVOUR), live)
+build-root: build-root-live
+endif
+endif
+
 PACKAGE_NAME=inquisitor-client
 PACKAGE_VERSION=1.0
 PACKAGE_RELEASE=1
@@ -35,7 +43,7 @@ build-package:
 $(WORKDIR)/build-package/$(PACKAGE_DEB):
 	$(rebuild_deb)
 
-build-root: $(WORKDIR)/build-package/$(PACKAGE_DEB)
+build-root-enterprise: $(WORKDIR)/build-package/$(PACKAGE_DEB)
 	@if [ "$(REPO)" = ftp://your.mirror.here/debian ]; then echo 'REPO not defined. Please edit Makefile.config to specify your Debian-compatible repository in REPO.'; exit 1; fi
 	# Cleanup from previous build
 	rm -rf $(WORKDIR)/$(ROOTDIR)
@@ -61,21 +69,30 @@ build-root: $(WORKDIR)/build-package/$(PACKAGE_DEB)
 		SERVER=$(shell sed -n 's/^SERVER=\(.*\)$$/\1/p' < $(PWD)/client/main/global.in) \
 		DEBUG_TTY=$(DEBUG_TTY) build/debian/run_scripts.sh
 
-build-live:
+build-boot:
+	echo "There is no real build-boot target. It is dummy."
+
+build-live-configure:
 	mkdir -p $(WORKDIR)/$(LIVEDIR)
-	# Cleanup from previous build
 	cd $(WORKDIR)/$(LIVEDIR) && lh_clean
 	rm -rf $(WORKDIR)/$(LIVEDIR)
-	mkdir -p $(WORKDIR)/$(LIVEDIR)
-	## Run LiveCD LiveHelper configuration helper script
+	# Run LiveCD LiveHelper configuration helper script
 	WORKDIR=$(WORKDIR) LIVEDIR=$(LIVEDIR) \
 		REPO=$(REPO) REPO_MULTIMEDIA=$(REPO_MULTIMEDIA) \
+		REPO_SECTIONS=$(REPO_SECTIONS) \
 		REPO_BRANCH=$(REPO_BRANCH) DEB_TARGET=$(DEB_TARGET) \
 		PACKAGE_DEB=$(PACKAGE_DEB) INQ_VERSION=$(INQ_VERSION) \
 		SHARE_DIR=$(SHARE_DIR) \
 		IMAGE_DIR=$(IMAGE_DIR) \
 		build/debian/live_lh_config.sh
-	cd $(WORKDIR)/$(LIVEDIR) && export MKSQUASHFS_OPTIONS="-e boot" && lh_build
+
+build-root-live: build-live-configure
+	cd $(WORKDIR)/$(LIVEDIR) && export MKSQUASHFS_OPTIONS="-e boot" && lh_bootstrap
+	cd $(WORKDIR)/$(LIVEDIR) && export MKSQUASHFS_OPTIONS="-e boot" && lh_chroot
+
+build-live:
+	cd $(WORKDIR)/$(LIVEDIR) && lh_clean --binary
+	cd $(WORKDIR)/$(LIVEDIR) && export MKSQUASHFS_OPTIONS="-e boot" && lh_binary
 
 update-package:
 	sudo cp $(WORKDIR)/build-package/$(PACKAGE_DEB) $(WORKDIR)/$(ROOTDIR)
