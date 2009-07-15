@@ -1,0 +1,5 @@
+#!/bin/sh
+
+echo "I: configuring correct permissions for screen"
+
+chmod 775 /var/run/screen

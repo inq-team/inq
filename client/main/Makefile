@@ -31,6 +31,7 @@ SHARE_NOEXEC_FILES=\
 	get_component_version.xslt \
 	add_component.xslt \
 	add_software_component.xslt \
+	inq-live-watchdog.scr \
 	profile2assurance.xslt \
 	profile2menu_item.xslt \
 	profile2test_script.xslt
@@ -43,7 +44,6 @@ SHARE_EXEC_FILES=\
 	inq-sensors-detect \
 	decode-dimms.pl \
 	hal-searcher \
-	inq-live-spinner \
 	mencoder_call
 INIT_FILES=init
 
