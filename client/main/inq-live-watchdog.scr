@@ -1,0 +1,6 @@
+hardstatus alwayslastline "%40= %{rk}%c:%s %{gk}Load: %l"
+split
+resize -9
+screen -t Watchdog inq-live-spinner
+focus
+screen -t Inquisitor inq-live
