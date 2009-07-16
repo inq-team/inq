@@ -2,7 +2,7 @@
 # NAME=Linux
 # DESCRIPTION=Detect Linux version.
 
-version=`uname -r`
+version=`cat /proc/version`
 
 case `uname -m` in
 	"i386")
