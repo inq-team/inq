@@ -2,7 +2,7 @@
 # NAME=p7zip
 # DESCRIPTION=Detect p7zip compressor version.
 
-version=`7zr | sed -n '2p' | sed 's/^7-Zip //'`
-arch=`executable_arch 7zr`
+version=`7z | sed -n 's/^7-Zip\s*\(.*\)\s*Copyright.*$/\1/p'`
+arch=$( executable_arch `find /usr -name 7z | xargs file | sed '/shell script/d; s/:/ /g' | awk '{print $1}'` )
 
 add_software_component p7zip "$arch" "$version"
