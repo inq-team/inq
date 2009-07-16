@@ -19,6 +19,9 @@
 [ ! -z "$ADAPTER" ] || ADAPTER=`einarc --list | sed -n '1p' | awk '{print $1}'`
 einarc_command="einarc -t $ADAPTER -a $ADAPTER_NUMBER"
 
+# Be sure that /proc/mdstat exists for software adapter
+[ "$ADAPTER" != "software" ] || need_kernel_module md
+
 # Replace all EINARC_DISK1/2/3/etc with real ones
 drives_quantity=`$einarc_command physical list | wc -l`
 for i in `seq 1 $drives_quantity`; do
