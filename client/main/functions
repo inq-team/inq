@@ -221,20 +221,34 @@ stop_background()
 	rm -f "$1"
 }
 
+# Helper function for timed_run()
+timed_run_success()
+{
+	# Print out real, user and sys times
+	awk '{print $NF}' < $time_output
+	rm -f "$time_output"
+}
+
+# Helper function for timed_run()
+timed_run_failure()
+{
+	rm -f "$time_output"
+	false
+}
+
 timed_run()
 {
 	# We do not need to use built-in "time" command, as it may
 	# have very different options and output format
-	time_cmd=`which time`
 	time_output=`mktemp`
+	time_cmd="`which time` -p -o $time_output"
 
-	if $time_cmd -p -o "$time_output" $@ >$DEBUG_TTY 2>&1; then
-		# Print out real, user and sys times
-		awk '{print $NF}' < $time_output
-		rm -f "$time_output"
+	# We can specify "to_dev_null" to redirect stdout to /dev/null
+	if echo "$@" | grep -q "to_dev_null"; then
+		shift
+		$time_cmd $@ >/dev/null 2>$DEBUG_TTY && timed_run_success || timed_run_failure
 	else
-		rm -f "$time_output"
-		false
+		$time_cmd $@ >$DEBUG_TTY 2>&1 && timed_run_success || timed_run_failure
 	fi
 }
 

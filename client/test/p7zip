@@ -17,7 +17,7 @@
 
 pushdq $SHARE_DIR
 benchmark_submit_float "Compression time" \
-		       "`timed_run_real 7z a dummy -mx=$COMPRESSION_LEVEL -mmt=$THREADS -tbzip2 -so $SOURCE`" \
+		       "`timed_run_real to_dev_null 7z a dummy -mx=$COMPRESSION_LEVEL -mmt=$THREADS -tbzip2 -so $SOURCE`" \
 		       "sec" || test_failed "7z failed"
 popdq
 test_succeeded
