@@ -1,0 +1,13 @@
+<tests name="Movie-transcode-LQ-HDD">
+ <description>Transcoding of Big Buck Bunny with low quality on HDD</description>
+ <warning>WARNING! This test would overwrite all the data on your hard drive!</warning>
+ <assurance>This is a test that will overwrite all the contents of your hard drives! Are you sure you want to run this test?</assurance>
+ <test id="benchmark-lqrip" type="mencoder_hdd">
+   <var name="SOURCE">bbb.ogg</var>
+   <var name="PRESET">lq</var>
+   <var name="TWOPASS">false</var>
+   <var name="SCALE">320x240</var>
+   <var name="BITRATE">333</var>
+   <var name="THREADS">0</var>
+ </test>
+</tests>

@@ -1,0 +1,12 @@
+<tests name="Movie-transcode-HQ-RAM">
+ <description>Transcoding of Big Buck Bunny with high quality in memory</description>
+ <warning>WARNING! This test uses more than 320 MiB of memory!</warning>
+ <test id="benchmark-hqrip" type="mencoder_memory">
+   <var name="SOURCE">bbb.ogg</var>
+   <var name="PRESET">vhq</var>
+   <var name="TWOPASS">true</var>
+   <var name="SCALE">720x480</var>
+   <var name="BITRATE">1500</var>
+   <var name="THREADS">0</var>
+ </test>
+</tests>

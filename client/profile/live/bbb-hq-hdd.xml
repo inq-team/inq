@@ -1,0 +1,13 @@
+<tests name="Movie-transcode-HQ-HDD">
+ <description>Transcoding of Big Buck Bunny with high quality on HDD</description>
+ <warning>WARNING! This test would overwrite all the data on your hard drive!</warning>
+ <assurance>This is a test that will overwrite all the contents of your hard drives! Are you sure you want to run this test?</assurance>
+ <test id="benchmark-hqrip" type="mencoder_hdd">
+   <var name="SOURCE">bbb.ogg</var>
+   <var name="PRESET">vhq</var>
+   <var name="TWOPASS">true</var>
+   <var name="SCALE">720x480</var>
+   <var name="BITRATE">1500</var>
+   <var name="THREADS">0</var>
+ </test>
+</tests>

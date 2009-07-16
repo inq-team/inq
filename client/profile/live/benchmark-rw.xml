@@ -29,4 +29,27 @@
   <var name="JOBS">16</var>
   <var name="SYNCTIME">8</var>
  </test>
+ <test id="bytemark" type="bytemark" />
+ <test id="unixbench" type="unixbench" />
+ <test id="vorbis-encode" type="vorbis-encode">
+  <var name="QUALITY">3</var>
+  <var name="SOURCE">audiosample.wav</var>
+ </test>
+ <test id="flac-encode" type="flac-encode">
+  <var name="COMPRESSION_LEVEL">8</var>
+  <var name="SOURCE">audiosample.wav</var>
+ </test>
+ <test id="speex-encode" type="speex-encode">
+  <var name="QUALITY">8</var>
+  <var name="COMPLEXITY">3</var>
+  <var name="SOURCE">audiosample.wav</var>
+  <var name="VBR">true</var>
+  <var name="DTX">true</var>
+ </test>
+ <test id="openssl-speed" type="openssl-speed" />
+ <test id="p7zip" type="p7zip">
+  <var name="SOURCE">linux-stress.tar.gz</var>
+  <var name="THREADS">0</var>
+  <var name="COMPRESSION_LEVEL">8</var>
+ </test>
 </tests>
