@@ -2,6 +2,6 @@
 # NAME=Linux command line
 # DESCRIPTION=Detect Linux'es boot command line.
 
-version=`dmesg | sed -n 's/^Command line: \(.*\)$/\1/p'`
+version=`dmesg | sed -n 's/^.*Command line: \(.*\)$/\1/p'`
 
 add_software_component linux_command_line noarch "$version"
