@@ -41,6 +41,14 @@
 	</component>
 </xsl:template>
 
+<xsl:template match="//node[description='Fibre Channel']">
+        <component>
+                <type>Fibre Channel</type>
+                <vendor><xsl:value-of select="vendor"/></vendor>
+                <model><xsl:value-of select="product"/></model>
+        </component>
+</xsl:template>
+
 <xsl:template match="text()"/>
 
 </xsl:stylesheet>

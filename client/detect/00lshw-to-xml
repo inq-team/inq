@@ -1,7 +1,7 @@
 #!/bin/sh
 # NAME=lshw to xml converter
 # DESCRIPTION=Convert lshw output to required XML document.
-# DEPENDS=Video,NIC,Fire Wire,InfiniBand
+# DEPENDS=Video,NIC,Fire Wire,InfiniBand,Fiber Channel
 
 lshw `cat $HOME/lshw_dmi_p` -xml |
 	sed 's/[[:cntrl:]]//g' |
