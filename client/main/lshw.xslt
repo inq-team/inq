@@ -27,7 +27,7 @@
 
 <xsl:template match="//node[description='FireWire (IEEE 1394)']">
 	<component>
-		<type>Fire Wire</type>
+		<type>FireWire (IEEE 1394)</type>
 		<vendor><xsl:value-of select="vendor"/></vendor>
 		<model><xsl:value-of select="product"/></model>
 	</component>
