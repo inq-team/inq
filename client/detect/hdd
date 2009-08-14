@@ -1,103 +1,75 @@
 #!/bin/sh
 # NAME=HDD detect
-# DESCRIPTION=Detect hard drives using einarc, smartctl and hal-device.
+# DESCRIPTION=Detect hard drives using Einarc
 # DEPENDS=HDD
 
-einarc_detect()
+model_vendor_pairs()
 {
-	einarc -l | cut -f1 | while read TYPE; do
-		einarc -t "$TYPE" physical list | while read L; do
-			HDD_VENDOR=`echo "$L" | cut -f2 | cut -f1 -d' '`
-			HDD_MODEL=`echo "$L" | cut -f2 | cut -f2 -d' '`
-			HDD_SERIAL=`echo "$L" | cut -f4`
-			HDD_VERSION=`echo "$L" | cut -f3`
-			echo HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" ' - einarc' >> $HOME/debug.log
-			add_component HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" "$HDD_VERSION"
-		done
-	done
+	# Here goes small tab-separated kind of database
+	# First column is used to find corresponding to specific model
+	# record.
+	# Second column is a vendor to set up.
+	# Third column is not necessary. If it is specified, then it
+	# will strip it's value from model.
+	cat <<__EOF__
+^ST.*	Seagate
+^D...-.*	IBM
+^IBM.*	IBM	IBM
+^HITACHI.*	Hitachi	Hitachi
+^IC.*	Hitachi	Hitachi
+^HTS.*	Hitachi	Hitachi
+^HDS.*	Hitachi	Hitachi
+^FUJITSU.*	Fujitsu	Fujitsu
+^MP.*	Fujitsu
+^TOSHIBA.*	Toshiba	Toshiba
+^MK.*	Toshiba
+^MAXTOR.*	Maxtor	Maxtor
+^Pioneer.*	Pioneer	Pioneer
+^PHILIPS.*	Philips	Philips
+^QUANTUM.*	Quantum	Quantum
+FIREBALL.*	Quantum
+^WDC.*	Western Digital	WDC
+WD.*	Western Digital
+__EOF__
 }
 
-hdd_detected()
+detect_vendor_by_model_itself()
 {
-	local udi="$1"
-	while [ -n "$udi" ]; do
-		if udi=`hal-get-property --udi "$udi" --key info.parent 2>$DEBUG_TTY`; then
-			PCI_VENDOR_ID=`hal-get-property --udi "$udi" --key pci.vendor_id --hex 2>$DEBUG_TTY`
-			PCI_PRODUCT_ID=`hal-get-property --udi "$udi" --key pci.product_id --hex 2>$DEBUG_TTY`
-			PCI_SUBVENDOR_ID=`hal-get-property --udi "$udi" --key pci.subsys_vendor_id --hex 2>$DEBUG_TTY`
-			PCI_SUBPRODUCT_ID=`hal-get-property --udi "$udi" --key pci.subsys_product_id --hex 2>$DEBUG_TTY`
-			ID="$PCI_VENDOR_ID:$PCI_PRODUCT_ID:$PCI_SUBVENDOR_ID:$PCI_SUBPRODUCT_ID"
-			if [ -n "`cat "$HOME/einarc_detects.log" | grep "$ID"`" ]; then
-				return 0
-				break
-			fi
-			if [ "`hal-get-property --udi "$udi" --key info.bus 2>$DEBUG_TTY`" = 'usb' ]; then
-				return 0;
-				break;
-			fi
+	local model="$1"
+	local vendor=""
+	model_vendor_pairs | while read pair; do
+		regexp=`echo "$pair" | cut -f1`
+		pair_vendor=`echo "$pair" | cut -f2`
+		possible_strip=`echo "$pair" | cut -f3`
+		if echo "$model" | grep -qi "$regexp"; then
+			vendor="$pair_vendor"
+			model=`echo "$model" | sed "s/^${possible_strip} \?//i"`
+			echo "${model}	${vendor}"
+			break
 		fi
 	done
-	return 1
+	echo "${model}	${vendor}"
 }
 
-strip_vendor()
+detect_vendor_by_model()
 {
-	if echo $HDD_MODEL | grep -qi "^$1"; then
-		HDD_VENDOR=$2
-		HDD_MODEL=`echo $HDD_MODEL | sed "s/^$1//i"`
-	fi
+	# We have to use such a dirty hack, because of unability to
+	# export variable from while-statement. We can simply ignore
+	# second echo and live without temporary files for example.
+	detect_vendor_by_model_itself "$1" | sed -n '1p'
 }
 
-detect_vendor()
-{
-	if echo $HDD_MODEL | grep -qi "$1"; then
-		HDD_VENDOR=$2
-	fi
-}
+einarc -l | while read adapter_entity; do
+	adapter_type=`echo "$adapter_entity" | cut -f1`
+	adapter_num=`echo "$adapter_entity" | cut -f2`
 
-hal_detect()
-{
-	for UDI in `hal-find-by-property --key storage.drive_type --string 'disk'`; do
-		if ! hdd_detected "$UDI"; then	
-			HDD_DEV=`hal-get-property --udi "$UDI" --key block.device`
-			HDD_MODEL=`hal-get-property --udi "$UDI" --key info.product`
-			[ -n "$HDD_MODEL" ] || HDD_MODEL=`hal-get-property --udi "$UDI" --key storage.model`
-			HDD_VENDOR=`hal-get-property --udi "$UDI" --key storage.vendor`
-			HDD_SERIAL=`smartctl -d ata -a $HDD_DEV |
-				    sed -ne '/^Serial Number:/ s/^Serial Number: *//p'`
-			if [ "$HDD_SERIAL" = '' ]; then
-				HDD_SERIAL=`hal-get-property --udi "$UDI" --key storage.serial`
-			fi
-			HDD_VERSION=""
+	einarc -a "$adapter_num" -t "$adapter_type" physical list | while read physical_entity; do
+		serial=`echo "$physical_entity" | cut -f4`
+		version=`echo "$physical_entity" | cut -f3`
+		vendor=`detect_vendor_by_model "$( echo "$physical_entity" | cut -f2 )" | cut -f2`
+		model=`detect_vendor_by_model "$( echo "$physical_entity" | cut -f2 )" | cut -f1`
+		[ -n "$vendor" ] || vendor=`echo "$physical_entity" | cut -f2 | cut -f1 -d" "`
 
-			detect_vendor '^ST.*' 'Seagate'
-			detect_vendor '^D...-.*' 'IBM'
-			detect_vendor '^IBM.*' 'IBM'
-			detect_vendor '^HITACHI.*' 'Hitachi'
-			detect_vendor '^IC.*' 'Hitachi'
-			detect_vendor '^HTS.*' 'Hitachi'
-			detect_vendor '^HDS.*' 'Hitachi'
-			detect_vendor '^FUJITSU.*' 'Fujitsu'
-			detect_vendor '^MP.*' 'Fujitsu'
-			detect_vendor '^TOSHIBA.*' 'Toshiba'
-			detect_vendor '^MK.*' 'Toshiba'
-			detect_vendor '^MAXTOR.*' 'Maxtor'
-			detect_vendor '^Pioneer.*' 'Pioneer'
-			detect_vendor '^PHILIPS.*' 'Philips'
-			detect_vendor '^QUANTUM.*' 'Quantum'
-			detect_vendor 'FIREBALL.*' 'Quantum'
-			detect_vendor '^WDC.*' 'Western Digital'
-			detect_vendor 'WD.*' 'Western Digital'
-
-			strip_vendor 'Maxtor ' 'Maxtor'
-			strip_vendor 'WDC ' 'Western Digital'
-			strip_vendor 'Hitachi ' 'Hitachi'
-		
-			echo HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" ' - hal' >> $HOME/debug.log
-			add_component HDD "$HDD_VENDOR" "$HDD_MODEL" "$HDD_SERIAL" "$HDD_VERSION"
-		fi	
+		add_component HDD "$vendor" "$model" "$serial" "$version"
 	done
-}
-
-einarc_detect
-hal_detect
+done

@@ -1,0 +1,8 @@
+#!/bin/sh
+# NAME=Software RAID
+# DESCRIPTION=Detects Einarc's software RAID version.
+
+version=`einarc -t software adapter info | sed -n 's/^mdadm Version\s*\(.*\)$/\1/p'`
+arch=`executable_arch mdadm`
+
+add_software_component mdadm "$arch" "$version"
