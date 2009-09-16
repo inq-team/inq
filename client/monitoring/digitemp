@@ -1,0 +1,20 @@
+#!/bin/sh -e
+# ID=10
+# NAME=DigiTemp 1-Wire thermosensors
+# DESCRIPTION=This monitoring gets all temperature measurements from 1-Wire network with Dallas thermometers
+# MEASUREMENT=temperature
+
+. _inq-config-global; . $SHARE_DIR/functions-monitoring
+[ -n "$PERIOD" ] || PERIOD=10
+
+SERIAL_PORT="/dev/ttyS0"
+[ -e $SERIAL_PORT ] || exit 0
+
+while true; do
+	sleep $PERIOD
+	digitemp_DS9097 -q -i -a -s $SERIAL_PORT -o"%s %.2C" | while read digitemp; do
+		data=`echo "$digitemp" | sed -n '/^[0-9]* [0-9\.]*$/p'`
+		[ -n "$data" ] || continue
+		monitoring_submit $data
+	done
+done
