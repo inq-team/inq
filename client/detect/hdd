@@ -15,7 +15,7 @@ model_vendor_pairs()
 ^ST.*	Seagate
 ^D...-.*	IBM
 ^IBM.*	IBM	IBM
-^HITACHI.*	Hitachi	Hitachi
+HITACHI.*	Hitachi	Hitachi
 ^IC.*	Hitachi	Hitachi
 ^HTS.*	Hitachi	Hitachi
 ^HDS.*	Hitachi	Hitachi

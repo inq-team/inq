@@ -314,9 +314,10 @@ get_nic_mac()
 
 get_hdds_list()
 {
-	for UDI in `hal-find-by-property --key=storage.drive_type --string disk`; do
-		[ `hal-get-property --udi "$UDI" --key storage.bus` = "usb" ] && continue
-		hal-get-property --udi "$UDI" --key block.device
+	einarc -l | while read adapter_entity; do
+		adapter_type=`echo "$adapter_entity" | cut -f1`
+		adapter_num=`echo "$adapter_entity" | cut -f2`
+		einarc -a "$adapter_num" -t "$adapter_type" logical list | cut -f5
 	done
 }
 
@@ -420,7 +421,7 @@ need_kernel_module()
 component_version()
 {
 	COMPONENT_GROUP=$1
-	xsltproc --stringparam group "$COMPONENT_GROUP" $SHARE_DIR/get_component_version.xslt $HOME/components.xml
+	xsltproc --stringparam group "$COMPONENT_GROUP" $SHARE_DIR/get_component_version.xslt $HOME/components.xml | sed 's/[[:cntrl:]]//g' |
 }
 
 cpu_quantity()

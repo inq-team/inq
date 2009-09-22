@@ -45,31 +45,15 @@ fi
 
 badblocks_test()
 {
-	raid-wizard-clear || echo "raid-wizard-clear failed" > "$ERROR_FILE"
-	sleep 10 # We have to use such dirty hack, because einarc's
-	         # operations are not waiting for real commands
-		 # completion. So, for example, we can get hard drives
-		 # appearing for kernel (in dmesg) during several
-		 # seconds.
-	if [ `get_hdds_list | wc -l` -eq 0 ]; then
-		true
-	else
-		$SHARE_DIR/hdd-badblocks.pl -m "$BADBLOCKS_MODE" \
-					    -b "$BADBLOCKS_BLOCKSIZE" \
-					    -p "$BADBLOCKS_PATTERN" \
-					    -o "$BADBLOCKS_BLOCKS_TESTED_AT_ONCE" \
-					    -i `get_hdds_list` 2>"$ERROR_FILE" || true
-	fi
-
-	local I=0
-	while raid-wizard-passthrough $DISK_GROUP_SIZE $I; do
+	local GROUP_NUMBER=0
+	while raid-wizard-passthrough $DISK_GROUP_SIZE $GROUP_NUMBER; do
 		sleep 10 # Dirty hack again
 		$SHARE_DIR/hdd-badblocks.pl -m "$BADBLOCKS_MODE" \
 					    -b "$BADBLOCKS_BLOCKSIZE" \
 					    -p "$BADBLOCKS_PATTERN" \
 					    -o "$BADBLOCKS_BLOCKS_TESTED_AT_ONCE" \
 					    -i `get_hdds_list` 2>"$ERROR_FILE" || true
-		I=$(( $I + 1 ))
+		GROUP_NUMBER=$(( $GROUP_NUMBER + 1 ))
 	done
 
 	current_time=`date "+%s"`
