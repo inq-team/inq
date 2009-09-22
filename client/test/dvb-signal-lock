@@ -18,37 +18,58 @@
 exit_handler()
 {
 	[ -e "$TMP" ] && rm -f $TMP
+	[ -e "$TMP_BENCHMARKS" ] && rm -f $TMP_BENCHMARKS
 }
 
 TMP=`mktemp`
-start_time=`date "+%s"`
+TMP_BENCHMARKS=`mktemp`
 
 case $POLARIZATION in
 "horizontal") POLARIZATION="H" ;;
 "vertical") POLARIZATION="V" ;;
 esac
 
-while true; do
-	current_time=`date "+%s"`
-	test_progress $(( $current_time - $start_time )) $LOCKTIME
-	if [ "$(( $current_time - $start_time ))" -gt "$LOCKTIME" ]; then
-		test_failed "Unable to tune"
-	else
-		echo
-		echo -n "Trying to tune..."
-		dvbtune -f $FREQUENCY -p $POLARIZATION -s $SYMBOL_RATE -cr $FEC >$TMP 2>&1 || true
-		if grep -q "^FE_STATUS:" $TMP; then
-			echo_success
-			break
+transponders_quantity=`echo $FREQUENCY | awk -F, '{print NF}'`
+
+for sequence_number in `seq 1 $transponders_quantity`; do
+	frequency=`echo $FREQUENCY | cut -d, -f$sequence_number`
+	symbol_rate=`echo $SYMBOL_RATE | cut -d, -f$sequence_number`
+	polarization=`echo $POLARIZATION | cut -d, -f$sequence_number`
+	fec=`echo $FEC | cut -d, -f$sequence_number`
+
+	start_time=`date "+%s"`
+	print_green_message "Working with transponder #$sequence_number"
+
+	while true; do
+		current_time=`date "+%s"`
+		test_progress $(( $current_time - $start_time )) $LOCKTIME
+		if [ "$(( $current_time - $start_time ))" -gt "$LOCKTIME" ]; then
+			test_failed "Unable to tune transponder #$sequence_number"
 		else
-			echo_failure
+			echo
+			echo -n "Trying to szap..."
+			echo SZAP:$frequency:$(echo $polarization | tr 'HV' 'hv'):0:$symbol_rate:0:0:0 | szap -c /dev/stdin -n 1 -x > $TMP
+			fgrep -q "FE_HAS_LOCK" < $TMP && echo_success || { echo_failure; continue; }
+			echo -n "Waiting for 5 seconds"
+			sleep 1; echo -n .; sleep 2; echo -n .; sleep 1; echo -n .; sleep 1
+			echo
+			echo -n "Trying to scan..."
+			echo S ${frequency}000 $polarization ${symbol_rate}000 AUTO | dvbscan /dev/stdin >> $TMP 2>&1
+			egrep -q "(Invalid argument|tuning failed)" < $TMP && echo_failure || echo_success && break
 		fi
-		sleep 5
-	fi
+	done
+
+	# Save benchmark results
+	sed -n 's,^>>> tune to: ,,p' < $TMP | tail -1 >> $TMP_BENCHMARKS
+	echo -n "$((`sed -n 's,^.*signal \([0-9a-f]\+\).*FE_HAS_LOCK,0x\1,p' < $TMP` * 100 / 65536)) / " >> $TMP_BENCHMARKS 2>/dev/null
+	echo $((`sed -n 's,^.*snr \([0-9a-f]\+\).*FE_HAS_LOCK,0x\1,p' < $TMP` * 100 / 65536)) >> $TMP_BENCHMARKS 2>/dev/null
+	sed -n 's,^dumping lists (\([^\)]\+\)),\1,p' < $TMP >> $TMP_BENCHMARKS
 done
 
-benchmark_submit_float "Bit error rate" `sed -n 's/^Bit error rate: \(.*\)$/\1/p' < $TMP` ""
-benchmark_submit_float "Signal strength" `echo $(( $(sed -n 's/^Signal strength: \(.*\)$/\1/p' < $TMP) * 100 / 65536 ))` ""
-benchmark_submit_float "Quality" `echo $(( $(sed -n 's/^SNR: \(.*\)$/\1/p' <$TMP) * 100 / 65536 ))` ""
+# Publish all benchmarks
+for sn in `seq 1 $transponders_quantity`; do
+	benchmark_submit_string "Transponder #$sn: Tuned as" "$(sed -n "$(( $sn * 3 - 2 ))p" < $TMP_BENCHMARKS) ($(sed -n "$(( $sn * 3 ))p" < $TMP_BENCHMARKS))" ""
+	benchmark_submit_string "Transponder #$sn: Signal / Strength" "$(sed -n "$(( $sn * 3 - 1 ))p" < $TMP_BENCHMARKS)%" ""
+done
 
 test_succeeded
