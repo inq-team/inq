@@ -57,6 +57,7 @@ sub start_badblocks {
 	my $str = "";
 
 	# Start badblocks program itself
+	sleep( int( rand( $#ARGV ) ) );
 	open IN, "$BADBLOCKS_COMMAND $harddrive 2>&1 |" or exit 1;
 	while(not eof IN){
 		$c = getc IN;
@@ -76,14 +77,14 @@ sub start_badblocks {
 			# Check if it is completed
 			if($str =~ /completed/){
 				$sd{$harddrive}{doned} = $sd{$harddrive}{total};
-				close IN && exit;
+				close IN and exit;
 			};
 
 			# Here we are deciding which parser to use,
 			# because of badblocks possible different
 			# output formats
 			if($str =~ / ([0-9.]+)% done, .* elapsed/){
-				$sd{$harddrive}{doned} = int($sd{$harddrive}{total} * $1 * 0.01);
+				$sd{$harddrive}{doned} = int( $sd{$harddrive}{total} * $1 * 0.01 );
 			} else {
 				next unless $str =~ /(\d+)\s*\/\s*\d+/;
 				$sd{$harddrive}{doned} = $1;
@@ -138,16 +139,16 @@ sub redraw_screen {
 		$str = sprintf "[%9s] [%3d%%] ", $key,
 				$sd{$key}{total} ? int($sd{$key}{doned}*100 / $sd{$key}{total}) : 0;
 
-		if(($sd{$key}{total} == 0) && !$threads{$key}->is_running()){
+		if(($sd{$key}{total} == 0) and !$threads{$key}->is_running()){
 			# Badblocks failed to startup
 			$str .= sprintf "[Failed  ]\n";
 			$bad++;
 		}
-		elsif(($sd{$key}{total} == 0) && $threads{$key}->is_running()){
+		elsif(($sd{$key}{total} == 0) and $threads{$key}->is_running()){
 			# Badblocks thread is running but currently we didn't recieve total blocks number
 			$str .= sprintf "[Waiting ]\n";
 		}
-		elsif(($sd{$key}{total} != $sd{$key}{doned}) && !$threads{$key}->is_running()){
+		elsif(($sd{$key}{total} != $sd{$key}{doned}) and !$threads{$key}->is_running()){
 			# Badblocks was working but died
 			$str .= sprintf "[Died    ] [BB %10d]\n", $sd{$key}{found};
 			$bad++;
@@ -197,7 +198,7 @@ sub redraw_screen {
 			$bad, 
 			sprintf "%2d:%2d", int($maxeta / 60), int($maxeta % 60);
 
-	if(!defined $options{t} && $drives < 23){
+	if(!defined $options{t} and $drives < 23){
 		print $str;
 	} elsif (defined $options{t}){
 		update_text_value($status_bar, $str);
