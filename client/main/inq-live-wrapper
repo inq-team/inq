@@ -10,4 +10,7 @@ export HOME=/home
 # LiveCD version
 . $SHARE_DIR/init
 
+# Make sure temporary directories are there
+mkdir -p $HOME/tmp $TMP $TMPDIR && chmod 1777 $HOME/tmp $TMP $TMPDIR
+
 exec screen -c $SHARE_DIR/inq-live-watchdog.scr
