@@ -1,4 +1,4 @@
-class OrdersController < ApplicationController
+CLASS oRDersController < ApplicationController
 	auto_complete_for :order, :manager
 	auto_complete_for :order, :customer
 	enable_sticker_printing
@@ -300,6 +300,7 @@ class OrdersController < ApplicationController
 		@number = params[:number].to_s if params[:number] and not params[:number].empty?
 		@manager = params[:order][:manager].to_s if params[:order] and params[:order][:manager] and not params[:order][:manager].empty?
 		@model_id = params[:model][:id].to_i if params[:model] and params[:model][:id] and params[:model][:id].to_i != 0
+		@component_model_id = params[:component_model][:id].to_i if params[:component_model] and params[:component_model][:id] and params[:component_model][:id].to_i != 0
 		begin
 			@start_date = parse_date((params[:date] || {})[:start], :format => :start_date)
 			@end_date = parse_date((params[:date] || {})[:end], :format => :end_date)
@@ -314,6 +315,8 @@ class OrdersController < ApplicationController
 		# Prepare selection lists
 		@models = Model.find(:all, :order => 'name').map { |x| [x.name, x.id] }
 		@models.unshift ['', 0]
+		@component_models = ComponentModel.find(:all, :order => 'vendor, name').select { |x| x.name.to_s.size > 0 }.map { |x| ["#{x.vendor} #{x.name.to_s[0..20]} (#{x.short_name})", x.id] }
+		@component_models.unshift ['', 0]
 
 		# Execute the search query, if available
 		cond_var = {
@@ -322,6 +325,7 @@ class OrdersController < ApplicationController
 			:order_number => @number,
 			:computer_serial => @computer_serial,
 			:model_id => @model_id,
+			:component_model_id => @component_model_id,
 			:start_date => @start_date,
 			:end_date => @end_date,
 		}
@@ -346,9 +350,17 @@ class OrdersController < ApplicationController
 			@computers = Computer.find(
 				:all,
 				:conditions => [cond.join(' AND '), cond_var],
-				:include => [{ :order => :order_stages}, :computer_stages ],
+				:include => [{ :order => :order_stages}, :computer_stages],
 				:order => 'computer_stages.start'
 			)
+
+			# Dirty searching by component model
+			if @component_model_id
+				computers = Computer.find_by_sql("SELECT computers.* FROM computers INNER JOIN testings ON testings.computer_id=computers.id JOIN components ON components.testing_id=testings.id JOIN component_models ON components.component_model_id=component_models.id WHERE component_models.id=#{@component_model_id}")
+				@orders.reject! { |o| computers.select{ |c| o.computers.include? c }.empty? }
+				@computers.select! { |c| computers.include? c }
+			end
+			
 			redirect_to :action => 'show', :id => @orders[0] if @orders.size == 1 and @computers.size == 0 and not params[:no_redirect]
 			redirect_to :controller => 'computers', :action => 'show', :id => @computers[0] if @orders.size == 0 and @computers.size == 1 and not params[:no_redirect]
 		end

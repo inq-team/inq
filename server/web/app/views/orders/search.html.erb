@@ -26,6 +26,12 @@
 				<td><label for="order_manager">Manager:</label></td>
 				<td><%= text_field_with_auto_complete 'order', 'manager', :style => 'width: 20em', :value => @manager.to_s %></td>
  			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td><label for="component_model_id">Component model:</label></td>
+				<td><%= select :component_model, :id, @component_models, { :selected => @component_model_id } %></td>
+			</tr>
 		</table>
 		<%= submit_tag 'Search', :style => 'margin: 1em' %>
 		</div>
