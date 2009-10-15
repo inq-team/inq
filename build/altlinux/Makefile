@@ -8,7 +8,10 @@ PACKAGE_RPM=$(PACKAGE_NAME)-$(PACKAGE_VERSION)-$(PACKAGE_RELEASE).$(TARGET).rpm
 endif
 
 # Local build paths
-RPM_BUILD_DIR := $(shell rpm --eval %_topdir)
+#RPM_BUILD_DIR := $(shell rpm --eval %_topdir)
+SOURCEDIR := $(shell rpm --eval %_sourcedir | sed "s/%name/$(PACKAGE_NAME)/")
+SPECDIR := $(shell rpm --eval %_specdir)
+RPMDIR := $(shell rpm --eval %_rpmdir)
 WORKDIR=$(PWD)/work
 REPO=$(PWD)/repo
 ROOTDIR=chroot
@@ -17,16 +20,16 @@ build-package:
 ifneq ($(FLAVOUR), standalone)
 	cp build/altlinux/profile.$(FLAVOUR)/init client/main
 endif
-	mkdir -p $(RPM_BUILD_DIR)/SOURCES $(RPM_BUILD_DIR)/SPECS
-	cp build/altlinux/$(PACKAGE_NAME)-$(FLAVOUR).spec $(RPM_BUILD_DIR)/SPECS/$(PACKAGE_NAME)-$(FLAVOUR).spec
-	rm -f $(RPM_BUILD_DIR)/SOURCES/$(PACKAGE_NAME).tar
-	tar -cf $(RPM_BUILD_DIR)/SOURCES/$(PACKAGE_NAME).tar client flavour Makefile.config
+	mkdir -p $(SOURCEDIR) $(SPECDIR)
+	cp build/altlinux/$(PACKAGE_NAME)-$(FLAVOUR).spec $(SPECDIR)/$(PACKAGE_NAME)-$(FLAVOUR).spec
+	rm -f $(SOURCEDIR)/$(PACKAGE_NAME).tar
+	tar -cf $(SOURCEDIR)/$(PACKAGE_NAME).tar client flavour Makefile.config
 ifeq ($(FLAVOUR), standalone)
-	rpmbuild -ba --target=$(TARGET) $(RPM_BUILD_DIR)/SPECS/$(PACKAGE_NAME)-$(FLAVOUR).spec
+	rpmbuild -ba --target=$(TARGET) $(SPECDIR)/$(PACKAGE_NAME)-$(FLAVOUR).spec
 else
-	rpmbuild -bb --target=$(TARGET) $(RPM_BUILD_DIR)/SPECS/$(PACKAGE_NAME)-$(FLAVOUR).spec
+	rpmbuild -bb --target=$(TARGET) $(SPECDIR)/$(PACKAGE_NAME)-$(FLAVOUR).spec
 	mkdir -p $(REPO)/$(TARGET)/RPMS.hasher
-	mv -f $(RPM_BUILD_DIR)/RPMS/$(TARGET)/$(PACKAGE_RPM) $(REPO)/$(TARGET)/RPMS.hasher/
+	mv -f $(RPMDIR)/$(TARGET)/$(PACKAGE_RPM) $(REPO)/$(TARGET)/RPMS.hasher/
 	genbasedir --create --topdir $(REPO) $(TARGET) hasher
 endif
 
