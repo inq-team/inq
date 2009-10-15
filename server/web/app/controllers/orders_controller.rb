@@ -1,4 +1,4 @@
-CLASS oRDersController < ApplicationController
+class OrdersController < ApplicationController
 	auto_complete_for :order, :manager
 	auto_complete_for :order, :customer
 	enable_sticker_printing
