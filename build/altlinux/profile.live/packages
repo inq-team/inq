@@ -76,7 +76,8 @@ mencoder
 time
 etcnet
 #design-bootsplash-compact
-design-bootloader-livecd-inquisitor
+#design-bootloader-livecd-inquisitor
+branding-altlinux-desktop-bootloader
 #tenebrae-sw
 #inquisitor-movie
 #ruby-jttui
@@ -99,9 +100,9 @@ mcelog
 stream-mem
 dhrystone
 whetstone
-unixbench
-bytemark
-memtester
+#unixbench
+#bytemark
+inquisitor-memtester
 partimage
 iozone
 p7zip
