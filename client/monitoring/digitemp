@@ -4,6 +4,8 @@
 # DESCRIPTION=This monitoring gets all temperature measurements from 1-Wire network with Dallas thermometers
 # MEASUREMENT=temperature
 
+which digitemp_DS9097 >&/dev/null || exit
+
 . _inq-config-global; . $SHARE_DIR/functions-monitoring
 [ -n "$PERIOD" ] || PERIOD=10
 
