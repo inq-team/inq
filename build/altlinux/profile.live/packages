@@ -17,6 +17,7 @@ net-tools
 pciutils
 #xdelta1
 udev
+openssl
 openssh-clients
 openssh-server
 #xorg-x11-drv-ati
@@ -41,6 +42,7 @@ dosfstools
 fdisk
 sfdisk
 #bootsplash
+mdadm
 hdparm
 bluez-utils
 #ImageMagick
