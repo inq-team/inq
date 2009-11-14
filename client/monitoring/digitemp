@@ -4,17 +4,19 @@
 # DESCRIPTION=This monitoring gets all temperature measurements from 1-Wire network with Dallas thermometers
 # MEASUREMENT=temperature
 
-which digitemp_DS9097 >&/dev/null || exit
-
-. _inq-config-global; . $SHARE_DIR/functions-monitoring
-[ -n "$PERIOD" ] || PERIOD=10
+BINARY="digitemp_DS9097"
+which $BINARY >&/dev/null || exit 0
 
 SERIAL_PORT="/dev/ttyS0"
 [ -e $SERIAL_PORT ] || exit 0
 
+. _inq-config-global; . $SHARE_DIR/functions-monitoring
+[ -n "$PERIOD" ] || PERIOD=10
+
 while true; do
 	sleep $PERIOD
-	digitemp_DS9097 -q -i -a -s $SERIAL_PORT -o"%s %.2C" | while read digitemp; do
+	$BINARY -q -i -a -s $SERIAL_PORT -o"%s %.2C" 2>/dev/null \
+	| while read digitemp; do
 		data=`echo "$digitemp" | sed -n '/^[0-9]* [0-9\.]*$/p'`
 		[ -n "$data" ] || continue
 		monitoring_submit $data
