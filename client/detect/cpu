@@ -25,10 +25,12 @@ fix_model() {
 
 while read key val; do
 	case "$key" in
-	"core id") core="$val";;
+	# single-cores don't have "core id"
+	"processor") core=0;;
+	"core id") core="${val# }";;
 	"vendor_id") vendor="$val";;
 	"model name") model="$val";;
-	"") [ "$core" = " 0" ] && \
+	"") [ "$core" = 0 ] && \
 	    add_component CPU \
 	    "`fix_vendor $vendor`" \
 	    "`fix_model $model`" \
