@@ -14,6 +14,7 @@ BIN_FILES=\
 	inq-detect \
 	inq-monitoring \
 	inq-self-id \
+	inq-ipmitool \
 	inq-software-detect \
 	get-macs \
 	inq-wrapper \

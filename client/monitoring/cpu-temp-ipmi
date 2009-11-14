@@ -8,7 +8,7 @@
 [ -n "$PERIOD" ] || PERIOD=30
 
 while true; do
-	ipmitool sdr type Temperature 2>$DEBUG_TTY |
+	inq-ipmitool sdr type Temperature |
 		grep -i cpu |
 		awk -F'|' '{print $NF}' |
 		sed -n 's/^ //g; s/^\([0-9\.]*\) .*$/\1/gp' |

@@ -8,7 +8,7 @@
 [ -n "$PERIOD" ] || PERIOD=60
 
 while true; do
-	ipmitool sdr type Voltage 2>$DEBUG_TTY |
+	inq-ipmitool sdr type Voltage |
 		grep -i core |
 		awk -F'|' '{print $NF}' |
 		sed -n 's/^ //g; s/^\([0-9\.]*\) .*$/\1/gp' |
