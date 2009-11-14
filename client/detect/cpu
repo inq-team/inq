@@ -3,48 +3,35 @@
 # DESCRIPTION=Detect CPUs using /proc/cpuinfo.
 # DEPENDS=CPU
 
-PROCESSORS=`ruby -e "text = File.read('/proc/cpuinfo')
-infos = text.split('processor')
-infos.shift
+IFS=":	"
 
-cores = infos.map do |inf|
-	ph = unless inf.grep(/physical id/).empty?
-		inf.grep(/physical id/)[0].to_s.gsub(/^physical id.*: /, '').chomp.to_i
-	else
-		inf.split(/\n/)[0].gsub(/^\t: /, '')
-	end
-	{
-		:vendor => inf.grep(/vendor_id/)[0].to_s.gsub(/^vendor_id.*: /, '').chomp,
-		:model => inf.grep(/model name/)[0].to_s.gsub(/^model name.*: /, '').chomp,
-		:core_id => inf.grep(/core id/)[0].to_s.gsub(/^core id.*: /, '').chomp.to_i,
-		:physical_id => ph
-	}
-end
+fix_vendor() {
+	echo "${@# }" | sed 's/Genuine//g; s/Authentic//g;'
+}
 
-physicals = cores.map { |c| c[:physical_id] }.uniq
+fix_model() {
+	echo $@ | sed \
+	-e 's/(R)//g' \
+	-e 's/(tm)//g' \
+	-e 's/processor//ig' \
+	-e 's/CPU//g' \
+	-e 's/Intel//g' \
+	-e 's/AMD//g' \
+	-e 's/Genuine/Core Solo/' \
+	-e 's/@ //' \
+	-e 's/  */ /g' \
+	-e 's/^ *//g'
+}
 
-physicals.each { |ph|
-	c = cores.select { |c| c[:physical_id] == ph }.first
-	puts \"CPU_VENDOR='#{c[:vendor]}'; CPU_MODEL='#{c[:model]}'\"
-}"`
-
-echo "$PROCESSORS" | while read I; do
-	eval "$I"
-	CPU_VENDOR=`echo "$CPU_VENDOR" |
-		    sed 's/^vendor: \([^;]*\);.*$/\1/' |
-		    sed 's/Genuine//g;
-		    	 s/Authentic//g;'`
-	CPU_MODEL=`echo "$CPU_MODEL" |
-		   sed 's/^.*model: \([^;]*\);.*$/\1/' |
-		   sed 's/(R)//g; \
-		   	s/(tm)//g; \
-			s/processor//ig; \
-			s/CPU//g; \
-			s/Intel//g; \
-			s/AMD//g; \
-			s/Genuine/Core Solo/; \
-			s/@ //; \
-			s/  */ /g; \
-			s/^ *//g;'`
-	add_component CPU "$CPU_VENDOR" "$CPU_MODEL" "" ""
-done
+while read key val; do
+	case "$key" in
+	"core id") core="$val";;
+	"vendor_id") vendor="$val";;
+	"model name") model="$val";;
+	"") [ "$core" = " 0" ] && \
+	    add_component CPU \
+	    "`fix_vendor $vendor`" \
+	    "`fix_model $model`" \
+	    "" "";;
+	esac
+done < /proc/cpuinfo
