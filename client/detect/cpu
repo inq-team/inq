@@ -1,14 +1,15 @@
-#!/bin/sh
+#!/bin/bash
 # NAME=CPU detect
 # DESCRIPTION=Detect CPUs using /proc/cpuinfo.
 # DEPENDS=CPU
 
+SAVE_IFS="$IFS"
 IFS=":	"
 
-fix_vendor() {
-	echo "${@# }" | sed 's/Genuine//g; s/Authentic//g;'
-}
-
+# "Geniune" spoils the chance to just stick a filter
+# between two while loops; script is also prone to
+# vendor string containing $IFS chars (in theory)
+fix_vendor() { echo $@ | sed 's/Genuine//g; s/Authentic//g'; }
 fix_model() {
 	echo $@ | sed \
 	-e 's/(R)//g' \
@@ -23,17 +24,23 @@ fix_model() {
 	-e 's/^ *//g'
 }
 
+unset processor phys_id vendor model
+# known dash bug: does *not* take consequent $IFS chars as a single delimiter
 while read key val; do
+	val="${val# }"
 	case "$key" in
-	# single-cores don't have "core id"
-	"processor") core=0;;
-	"core id") core="${val# }";;
+	# single-core CPUs don't get a "physical id" line, even SMP
+	"processor") processor="$val";;
+	"physical id") phys_id="$val";;
 	"vendor_id") vendor="$val";;
 	"model name") model="$val";;
-	"") [ "$core" = 0 ] && \
-	    add_component CPU \
-	    "`fix_vendor $vendor`" \
-	    "`fix_model $model`" \
-	    "" "";;
+	"") echo "${phys_id:-$processor}:$vendor:$model";;
 	esac
-done < /proc/cpuinfo
+done < /proc/cpuinfo \
+| sort -u \
+| while read id vendor model; do
+	add_component CPU "`fix_vendor $vendor`" "`fix_model $model`" "" ""
+done
+
+IFS="$SAVE_IFS"
+unset SAVE_IFS
