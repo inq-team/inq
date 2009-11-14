@@ -7,7 +7,7 @@
 need_kernel_module eeprom
 need_kernel_module ipmi_si
 need_kernel_module ipmi_devintf
-[ -d /proc/mdstat ] || need_kernel_module md
+[ -f /proc/mdstat ] || need_kernel_module md
 
 # Save detection logs
 dmidecode >$HOME/dmi.log
