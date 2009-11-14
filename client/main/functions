@@ -415,7 +415,7 @@ need_kernel_module()
 		else
 			echo_failure
 		fi
-	fi
+	fi 2>$DEBUG_TTY
 }
 
 component_version()
