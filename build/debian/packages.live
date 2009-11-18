@@ -60,7 +60,7 @@ digitemp
 stressapptest
 bonnie++
 # Non-free packages listed below
-#iozone
+#iozone3
 # Packages needed for non-free/incompatible Linpack benchmark
 #openmpi-bin
 #openmpi-common
