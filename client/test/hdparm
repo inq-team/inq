@@ -21,14 +21,14 @@ for BLOCK_DEV in `get_hdds_list`; do
 		sed -ne '/Timing/ { s/^.*= *//; s, MB/sec,,; s/\.//; p }'`
 		CACHED=`hdparm -T $BLOCK_DEV | \
 		sed -ne '/Timing/ { s/^.*= *//; s, MB/sec,,; s/\.//; p }'`
-		BUFFERED_SUM=$(($BUFFERED_SUM + $BUFFERED))
-		CACHED_SUM=$(($CACHED_SUM + $CACHED))
+		BUFFERED_SUM=$((0$BUFFERED_SUM + 0$BUFFERED))
+		CACHED_SUM=$((0$CACHED_SUM + 0$CACHED))
 		test_progress $i $AVG_SAMPLES
 	done
 
 	# Convert to KB/s, calculate average
-	BUFFERED_AVG=$(($BUFFERED_SUM * 10 / $AVG_SAMPLES))
-	CACHED_AVG=$(($CACHED_SUM * 10 / $AVG_SAMPLES))
+	BUFFERED_AVG=$((0$BUFFERED_SUM * 10 / 0$AVG_SAMPLES))
+	CACHED_AVG=$((0$CACHED_SUM * 10 / 0$AVG_SAMPLES))
 
 	# Report result
 	echo " $BUFFERED_AVG / $CACHED_AVG KB/s"
