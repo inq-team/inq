@@ -1,0 +1,10 @@
+#!/bin/sh
+
+KERNEL_VERSION=`find /boot -type f -name 'vmlinuz-*' | sed -n 's/^.*\/vmlinuz-\(.*\)$/\1/p'`
+
+if [ -e "/boot/initrd.img-${KERNEL_VERSION}" ]; then
+	true
+else
+	echo "I: creating initrd.img"
+	update-initramfs -k ${KERNEL_VERSION} -c
+fi

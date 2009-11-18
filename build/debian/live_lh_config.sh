@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/bash -x
 
 pushd build/debian
 
@@ -11,6 +11,12 @@ else
 	KERNEL_FLAVOUR="amd64"
 fi
 
+if [ -n "$CUSTOM_KERNEL" ]; then
+	CUSTOM_KERNEL_OPTION="--linux-packages none"
+else
+	CUSTOM_KERNEL_OPTION=""
+fi
+
 ################################################################################
 # Run LiveHelper configuration utility itself
 ################################################################################
@@ -20,10 +26,11 @@ lh_config --mirror-bootstrap $REPO --mirror-chroot $REPO \
           --architecture $DEB_TARGET \
           --distribution $REPO_BRANCH \
           --iso-application Inquisitor \
-          --iso-volume "Inquisitor $INQ_VERSION LiveCD $REPO_BRANCH" \
+          --iso-volume "Inquisitor $INQ_VERSION" \
           --iso-preparer "Sergey Matveev (stargrave@users.sourceforge.net)" \
           --iso-publisher "Sergey Matveev (stargrave@users.sourceforge.net)" \
           --bootappend-live "noautologin nolocales" \
+          ${CUSTOM_KERNEL_OPTION} \
           --hostname inq \
           --packages-lists inq \
           --binary-indices disabled \
@@ -63,6 +70,8 @@ cp $WORKDIR/build-package/$PACKAGE_DEB $WORKDIR/$LIVEDIR/config/chroot_local-inc
 for include in ../../$IMAGE_DIR/*.tar; do
 	tar xvfC "$include" $WORKDIR/$LIVEDIR/config/chroot_local-includes
 done
+
+[ -z "$CUSTOM_KERNEL" ] || cp ../../$IMAGE_DIR/${CUSTOM_KERNEL}.deb $WORKDIR/$LIVEDIR/config/chroot_local-packages
 
 ################################################################################
 # Hooks, splash image

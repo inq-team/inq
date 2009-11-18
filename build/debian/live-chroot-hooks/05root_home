@@ -2,4 +2,4 @@
 
 echo "I: setting up root home directory"
 
-usermod -d /home root
+usermod -d /home root || true
