@@ -39,7 +39,6 @@ wget
 util-linux
 ipmitool
 partimage
-#iozone
 cdrecord
 dvd+rw-tools
 mkisofs
@@ -55,3 +54,10 @@ flac
 speex
 digitemp
 stressapptest
+bonnie++
+# Non-free packages listed below
+#iozone
+# Packages needed for non-free/incompatible Linpack benchmark
+#openmpi-bin
+#openmpi-common
+#libopenmpi-dev
