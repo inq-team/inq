@@ -64,7 +64,7 @@ while true do
 		activated = select($scanners_dev, nil, nil, id_timeout)
 
 		if activated.nil? then
-			puts 'Timeout exceeded. Saving abort.'
+			puts 'Timeout, saving aborted.'
 			id_timeout = nil
 			next
 		end
@@ -98,9 +98,9 @@ while true do
 			end
 
 			if id_timeout.nil? then 
-				puts "Reseting scannerd by timeout or reset-barcode"
+				puts "Resetting scannerd by timeout or reset-barcode"
 				scanner.svals.clear
-				puts "Set timeout #{$TIMEOUT_LIMIT} sec for waiting paired ID"
+				puts "Set timeout #{$TIMEOUT_LIMIT} sec to wait for a paired ID"
 				id_timeout = $TIMEOUT_LIMIT
 				t = Time.now
 			end
