@@ -62,7 +62,7 @@ echo "deb $REPO_MULTIMEDIA $REPO_BRANCH main" > $WORKDIR/$LIVEDIR/config/chroot_
 ################################################################################
 cp packages.live $WORKDIR/$LIVEDIR/config/chroot_local-packageslists/inq
 cp preseed.live $WORKDIR/$LIVEDIR/config/chroot_local-preseed/inq
-cp $WORKDIR/build-package/$PACKAGE_DEB $WORKDIR/$LIVEDIR/config/chroot_local-includes
+cp $WORKDIR/build-package/$PACKAGE_DEB $WORKDIR/$LIVEDIR/config/chroot_local-packages
 
 ################################################################################
 # Needed to be included files (in Tars)
@@ -70,15 +70,13 @@ cp $WORKDIR/build-package/$PACKAGE_DEB $WORKDIR/$LIVEDIR/config/chroot_local-inc
 for include in ../../$IMAGE_DIR/*.tar; do
 	tar xvfC "$include" $WORKDIR/$LIVEDIR/config/chroot_local-includes
 done
-
-[ -z "$CUSTOM_KERNEL" ] || cp ../../$IMAGE_DIR/${CUSTOM_KERNEL}.deb $WORKDIR/$LIVEDIR/config/chroot_local-packages
+cp ../../$IMAGE_DIR/*.deb $WORKDIR/$LIVEDIR/config/chroot_local-packages
 
 ################################################################################
 # Hooks, splash image
 ################################################################################
 cp live-chroot-hooks/* $WORKDIR/$LIVEDIR/config/chroot_local-hooks/
 cp live-binary-hooks/* $WORKDIR/$LIVEDIR/config/binary_local-hooks/
-sed -i "s/\$INQ_PACKAGE/$PACKAGE_DEB/g" $WORKDIR/$LIVEDIR/config/chroot_local-hooks/01install_inq
 cp live-additional/splash.xpm.gz $WORKDIR/$LIVEDIR/config/binary_grub
 [ -s live-additional/menu.lst.in ] && sed "s/\$INQ_VERSION/$INQ_VERSION/g; s/\$DEB_TARGET/$DEB_TARGET/g" < live-additional/menu.lst.in > $WORKDIR/$LIVEDIR/config/binary_grub/menu.lst
 

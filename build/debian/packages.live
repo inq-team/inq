@@ -59,6 +59,7 @@ screen
 digitemp
 stressapptest
 bonnie++
+rsync
 # Non-free packages listed below
 #iozone3
 # Packages needed for non-free/incompatible Linpack benchmark
