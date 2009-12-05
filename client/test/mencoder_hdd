@@ -24,7 +24,7 @@ exit_handler()
 
 test_succeed_if_no hdds
 
-cd $SHARE_DIR
+cd $SHARE_DIR/data
 [ -s "$SOURCE" ] || test_failed "Source file does not exist"
 MOUNTPOINT=`mktemp -d`
 

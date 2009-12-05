@@ -2,7 +2,7 @@
  <description>Transcoding of Big Buck Bunny with high quality in memory</description>
  <warning>WARNING! This test uses more than 320 MiB of memory!</warning>
  <test id="benchmark-lqrip" type="mencoder_memory">
-   <var name="SOURCE">bbb.ogg</var>
+   <var name="SOURCE">big_buck_bunny_480p_stereo.ogg</var>
    <var name="PRESET">lq</var>
    <var name="TWOPASS">false</var>
    <var name="SCALE">320x240</var>

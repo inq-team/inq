@@ -14,6 +14,9 @@ client:
 server:
 	$(MAKE) -C server
 
+data:
+	$(MAKE) -C data
+
 ifeq ($(FLAVOUR), enterprise)
 all: build-package build-root rsync build-server rsync-server
 else

@@ -3,7 +3,7 @@
  <warning>WARNING! This test would overwrite all the data on your hard drive!</warning>
  <assurance>This is a test that will overwrite all the contents of your hard drives! Are you sure you want to run this test?</assurance>
  <test id="benchmark-lqrip" type="mencoder_hdd">
-   <var name="SOURCE">bbb.ogg</var>
+   <var name="SOURCE">big_buck_bunny_480p_stereo.ogg</var>
    <var name="PRESET">lq</var>
    <var name="TWOPASS">false</var>
    <var name="SCALE">320x240</var>
