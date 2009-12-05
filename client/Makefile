@@ -10,7 +10,16 @@ all:
 install:
 	$(MAKE) -C lib install
 	$(MAKE) -C main install
-	mkdir -p $(DESTDIR)$(SHARE_DIR)/{detect,software-detect,test,profile/live,monitoring,self-id,firmwares,data}
+	for I in \
+		detect \
+		software-detect \
+		test \
+		profile/live \
+		monitoring \
+		self-id \
+		firmwares \
+		data \
+	; do mkdir -p $(DESTDIR)$(SHARE_DIR)/$$I; done
 	find detect -type f -and ! -path '*.svn*' | xargs install -m755 -t $(DESTDIR)$(SHARE_DIR)/detect/
 	find software-detect -type f -and ! -path '*.svn*' | xargs install -m755 -t $(DESTDIR)$(SHARE_DIR)/software-detect/
 	find test -type f -and ! -path '*.svn*' -and ! -path '*legacy*' -and ! -path '*profile*' | xargs install -m755 -t $(DESTDIR)$(SHARE_DIR)/test/
