@@ -1,10 +1,10 @@
 #!/bin/sh
 
 pushd $CHROOT_PATH
-for image in img/*.tar; do
+for image in img/*.tar img/*.tar.gz img/*.tar.bz2; do
 	[ -r "$image" ] || continue
 	echo "Unpacking $image image..."
-	tar xvf "$image"
+	tar xf "$image"
 done
 rm -fr img
 popd
