@@ -6,25 +6,13 @@ cd /
 
 echo -n "Moving data dir... "
 rmdir $SHARE_DIR/data
-mv data $SHARE_DIR
+cp -r data $SHARE_DIR
 chown -R root:root $SHARE_DIR/data
 echo OK
 
-for I in img/*.tar; do
+for I in img/*.tar img/*.tar.gz img/*.tar.bz2; do
 	[ -r "$I" ] || break
 	echo -n "Unpacking $I... "
 	tar xf $I
-	echo OK
-done
-for I in img/*.tar.gz; do
-	[ -r "$I" ] || break
-	echo -n "Unpacking $I... "
-	tar xzf $I
-	echo OK
-done
-for I in img/*.tar.bz2; do
-	[ -r "$I" ] || break
-	echo -n "Unpacking $I... "
-	tar xjf $I
 	echo OK
 done
