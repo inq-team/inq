@@ -43,8 +43,7 @@ build-package:
 $(WORKDIR)/build-package/$(PACKAGE_DEB):
 	$(rebuild_deb)
 
-build-root-enterprise: $(WORKDIR)/build-package/$(PACKAGE_DEB)
-	@if [ "$(REPO)" = ftp://your.mirror.here/debian ]; then echo 'REPO not defined. Please edit Makefile.config to specify your Debian-compatible repository in REPO.'; exit 1; fi
+build-root-enterprise: check-repo-defined $(WORKDIR)/build-package/$(PACKAGE_DEB)
 	# Cleanup from previous build
 	rm -rf $(WORKDIR)/$(ROOTDIR)
 	mkdir -p $(WORKDIR)/$(ROOTDIR)
@@ -54,6 +53,7 @@ build-root-enterprise: $(WORKDIR)/build-package/$(PACKAGE_DEB)
 	if [ -d $(DEBS) ]; then cp $(DEBS)/* $(WORKDIR)/$(ROOTDIR); fi
 	# Copy images if present
 	if [ -d $(IMAGE_DIR) ]; then cp -r $(IMAGE_DIR) $(WORKDIR)/$(ROOTDIR)/img; fi
+	if [ -d data ]; then cp -r data $(WORKDIR)/$(ROOTDIR)/data; fi
 	# Copy Inquisitor client package
 	cp $(WORKDIR)/build-package/$(PACKAGE_DEB) $(WORKDIR)/$(ROOTDIR)
 	# Copy build-specific temporary files
@@ -67,6 +67,7 @@ build-root-enterprise: $(WORKDIR)/build-package/$(PACKAGE_DEB)
 		REPO_MULTIMEDIA=$(REPO_MULTIMEDIA) \
 		BRANCH=$(REPO_BRANCH) \
 		SERVER=$(shell sed -n 's/^SERVER=\(.*\)$$/\1/p' < $(PWD)/client/main/global.in) \
+		SHARE_DIR=$(SHARE_DIR) \
 		DEBUG_TTY=$(DEBUG_TTY) build/debian/run_scripts.sh
 
 build-boot:
@@ -86,8 +87,8 @@ build-live-configure:
 		IMAGE_DIR=$(IMAGE_DIR) \
 		build/debian/live_lh_config.sh
 
-build-root-live: build-live-configure
-	cd $(WORKDIR)/$(LIVEDIR) && export MKSQUASHFS_OPTIONS="-e boot" && lh_bootstrap
+build-root-live: check-repo-defined build-live-configure
+	cd $(WORKDIR)/$(LIVEDIR) && export MKSQUASHFS_OPTIONS="-e boot" && sudo lh_bootstrap
 	cd $(WORKDIR)/$(LIVEDIR) && export MKSQUASHFS_OPTIONS="-e boot" && lh_chroot
 
 build-live:
@@ -109,3 +110,6 @@ update-package-remote:
 
 repo-clean:
 	rm -f $(WORKDIR)/build-package/$(PACKAGE_DEB)
+
+check-repo-defined:
+	@if [ "$(REPO)" = ftp://your.mirror.here/debian ]; then echo 'REPO not defined. Please edit Makefile.config to specify your Debian-compatible repository in REPO.'; exit 1; fi
