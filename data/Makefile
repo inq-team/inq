@@ -7,7 +7,9 @@ DEST_DIR=out
 
 all: \
 	$(DEST_DIR)/linux-stress.tar.gz \
-	$(DEST_DIR)/big_buck_bunny_480p_stereo.ogg
+	$(DEST_DIR)/big_buck_bunny_480p_stereo.ogg \
+	$(DEST_DIR)/audiosample.wav \
+	$(DEST_DIR)/stress-small.tar.gz
 
 # ==============================================================================
 
@@ -23,9 +25,28 @@ LINUX_PKG=linux-2.6.32
 
 $(DEST_DIR)/linux-stress.tar.gz: $(LINUX_PKG).tar.bz2
 	tar -xf $(LINUX_PKG).tar.bz2
-	cd $(LINUX_PKG) && true | make config
-	tar -czf $@ $(LINUX_PKG)
+	mv $(LINUX_PKG) linux-stress
+	cd linux-stress && true | make config
+	tar -czf $@ linux-stress
 
 $(LINUX_PKG).tar.bz2:
 	wget -O $@ \
 		http://www.kernel.org/pub/linux/kernel/v2.6/$(LINUX_PKG).tar.bz2
+
+# ==============================================================================
+
+$(DEST_DIR)/audiosample.wav:
+	wget -O - http://www.gnu.org/music/free-software-song.ogg | oggdec -o $@ -
+
+# ==============================================================================
+
+SED_PKG=sed-4.2
+
+$(DEST_DIR)/stress-small.tar.gz: $(SED_PKG).tar.bz2
+	tar -xf $(SED_PKG).tar.bz2
+	mv $(SED_PKG) stress-small
+	cd stress-small && ./configure --disable-nls --disable-i18n --disable-acl
+	tar -czf $@ stress-small 
+
+$(SED_PKG).tar.bz2:
+	wget -O $@ http://ftp.gnu.org/gnu/sed/$(SED_PKG).tar.gz
