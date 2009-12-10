@@ -1,12 +1,17 @@
 #!/bin/sh
+
 . _inq-config-global
 
-die() { echo $* >&$DEBUG_TTY; exit 0; }
+die()
+{
+	echo $* 2>&1 >$DEBUG_TTY
+	exit 0
+}
 
 BINARY="ipmitool"
-which $BINARY >&/dev/null || die "$0: $BINARY not found, exiting"
+which $BINARY 2>&1 >/dev/null || die "$0: $BINARY not found, exiting"
 
 [ -c /dev/ipmi0 -o -c /dev/ipmi/0 -o -c /dev/ipmidev/0 ] \
 || die "$0: IPMI device file not found, exiting"
 
-ipmitool "$@" 2>$DEBUG_TTY
+$BINARY "$@" 2>$DEBUG_TTY
