@@ -1,5 +1,5 @@
 <tests name="Movie-transcode-LQ-RAM">
- <description>Transcoding of Big Buck Bunny with high quality in memory</description>
+ <description>Transcoding of Big Buck Bunny with low quality in memory</description>
  <warning>WARNING! This test uses more than 320 MiB of memory!</warning>
  <test id="benchmark-lqrip" type="mencoder_memory">
    <var name="SOURCE">big_buck_bunny_480p_stereo.ogg</var>
