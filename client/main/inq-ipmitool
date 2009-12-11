@@ -4,12 +4,12 @@
 
 die()
 {
-	echo $* 2>&1 >$DEBUG_TTY
+	echo $* >$DEBUG_TTY 2>&1
 	exit 0
 }
 
 BINARY="ipmitool"
-which $BINARY 2>&1 >/dev/null || die "$0: $BINARY not found, exiting"
+which $BINARY >/dev/null 2>&1 || die "$0: $BINARY not found, exiting"
 
 [ -c /dev/ipmi0 -o -c /dev/ipmi/0 -o -c /dev/ipmidev/0 ] \
 || die "$0: IPMI device file not found, exiting"
