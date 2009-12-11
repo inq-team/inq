@@ -22,13 +22,13 @@ create_benchmark_results()
 # Preset is taken from examples in MPlayerHQ encoding documentation
 case $PRESET in
 	"lq")
-		X264OPTS="subq=4:bframes=2:b_pyramid:weight_b"
+		X264OPTS="subq=4:bframes=2:b_pyramid=normal:weight_b"
 		;;
 	"hq")
-		X264OPTS="subq=5:8x8dct:frameref=2:bframes=3:b_pyramid:weight_b"
+		X264OPTS="subq=5:8x8dct:frameref=2:bframes=3:b_pyramid=normal:weight_b"
 		;;
 	"vhq")
-		X264OPTS="subq=6:partitions=all:8x8dct:me=umh:frameref=5:bframes=3:b_pyramid:weight_b"
+		X264OPTS="subq=6:partitions=all:8x8dct:me=umh:frameref=5:bframes=3:b_pyramid=normal:weight_b"
 		;;
 esac
 
