@@ -16,8 +16,8 @@
 
 exit_handler()
 {
-	kill `cat $TMP_DIR/xhpl.pid` 2>$DEBUG_TTY
-	kill `cat $TMP_DIR/mcechecker.pid` 2>$DEBUG_TTY
+	[ -s "$TMP_DIR/xhpl.pid" ] && kill `cat $TMP_DIR/xhpl.pid` 2>$DEBUG_TTY
+	[ -s "$TMP_DIR/mcechecker.pid" ] && kill `cat $TMP_DIR/mcechecker.pid` 2>$DEBUG_TTY
 	[ -d "$TMP_DIR" ] && rm -fr $TMP_DIR
 }
 
@@ -108,8 +108,11 @@ $QS        QS
 
 __EOF__
 
+assure_network_stack_exists
+
 echo -n "Running tests itself..."
 mpi_runner &
+echo $! > $TMP_DIR/xhpl.pid
 echo_success
 
 while ! [ -e $TMP_DIR/finished ]; do
