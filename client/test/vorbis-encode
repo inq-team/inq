@@ -12,7 +12,7 @@
 
 . _inq-config-global; . $SHARE_DIR/functions-test
 
-pushdq $SHARE_DIR
+pushdq $SHARE_DIR/data
 rate=`oggenc -q $QUALITY -o /dev/null $SOURCE 2>&1 | sed -n 's/,/\./g; s/^\s*Rate:\s*\(.*\)$/\1/p'`
 popdq
 

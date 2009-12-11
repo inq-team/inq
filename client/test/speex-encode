@@ -20,7 +20,7 @@ OPTIONS=""
 [ "$DTX" = "false" ] || OPTIONS="--dtx --vbr "
 [ "$VBR" = "false" ] || OPTIONS="${OPTIONS} --vbr "
 
-pushdq $SHARE_DIR
+pushdq $SHARE_DIR/data
 benchmark_submit_float "Encoding time" \
 		       "`timed_run_real speexenc --quality $QUALITY --comp $COMPLEXITY $OPTIONS $SOURCE /dev/null`" \
 		       "sec" || test_failed "speexenc failed"
