@@ -67,3 +67,4 @@ rsync
 #openmpi-common
 #libopenmpi-dev
 #gfortran
+#mcelog

@@ -62,3 +62,4 @@ bonnie++
 #openmpi-common
 #libopenmpi-dev
 #gfortran
+#mcelog
