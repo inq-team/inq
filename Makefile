@@ -18,10 +18,10 @@ data:
 	$(MAKE) -C data
 
 ifeq ($(FLAVOUR), enterprise)
-all: build-package build-root rsync build-server rsync-server
+all: build-package data build-root rsync build-server rsync-server
 else
 ifeq ($(FLAVOUR), live)
-all: build-package build-root build-boot build-live
+all: build-package data build-root build-boot build-live
 else
 ifeq ($(FLAVOUR), standalone)
 all: build-package
