@@ -3,6 +3,7 @@
 /sbin/chkconfig udevd on
 /sbin/chkconfig haldaemon on
 /sbin/chkconfig messagebus on
+/sbin/chkconfig sshd on || :
 /sbin/chkconfig ntpd on || :
 /sbin/chkconfig hotplug off || :
 /sbin/chkconfig syslog-ng off || :
