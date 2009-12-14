@@ -528,3 +528,11 @@ add_component()
 __EOF__
 	fi
 }
+
+# Returns "true" (zero exit status) if IPMI is available, or "false"
+# (non-zero exit status) if it's not. Meant to be used in various detects
+# and monitorings that use IPMI to bail out early.
+has_ipmi()
+{
+	[ -c /dev/ipmi0 -o -c /dev/ipmi/0 -o -c /dev/ipmidev/0 ]
+}
