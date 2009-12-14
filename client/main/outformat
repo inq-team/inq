@@ -20,6 +20,11 @@
 
 # Set a sane TERM required for tput
 [ -n "$TERM" ] || TERM=dumb
+
+# Harsh workaround to make "tput hpa" work on "screen". We'll pretend
+# that we're "xterm".
+[ "$TERM" = screen ] && TERM=xterm || :
+
 export TERM
 
 # Offset from right margin of the screen to start status labels at.
