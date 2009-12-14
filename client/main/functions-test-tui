@@ -163,11 +163,15 @@ __EOF__
 	# Set up parameter editor dialog: variable part
 	i=1
 
+	# Here we are dealing with unability to use long line input by
+	# dialog, limiting them without any kind of stretching
+	MAX_VALUE_LENGTH=60
+
 	sed -ne '/^# *VAR=/ s/^# *VAR=\(.*\):\(.*\):\(.*\):\(.*\)$/\1	\4/p' <$TEST_FILENAME | while read kv; do
 		k=`echo "$kv" | cut -f1`
 		help=`echo "$kv" | cut -f2`
 		value=`env | sed -ne "/^$k=/ s/^.*=//p;"`
-		echo "\"$k\" $i 1 \"$value\" $i 20 44 0 \"$help\" \\"
+		echo "\"$k\" $i 1 \"$value\" $i 20 $MAX_VALUE_LENGTH 0 \"$help\" \\"
 		i=$(($i+1))
 	done >>"$UI_TMP/dialog"
 
