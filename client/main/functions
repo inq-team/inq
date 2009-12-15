@@ -534,5 +534,14 @@ __EOF__
 # and monitorings that use IPMI to bail out early.
 has_ipmi()
 {
-	[ -c /dev/ipmi0 -o -c /dev/ipmi/0 -o -c /dev/ipmidev/0 ]
+	if [ -c /dev/ipmi0 -o -c /dev/ipmi/0 -o -c /dev/ipmidev/0 ]; then
+		if [ -r /dev/ipmi0 -o -r /dev/ipmi/0 -o -r /dev/ipmidev/0 ]; then
+			true
+		else
+			echo 'IPMI found, but no permissions to read it. You should run this as root.' >$DEBUG_TTY
+			false
+		fi
+	else
+		false
+	fi
 }
