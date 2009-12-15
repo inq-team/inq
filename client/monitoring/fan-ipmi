@@ -7,8 +7,11 @@
 . _inq-config-global; . $SHARE_DIR/functions-monitoring
 [ -n "$PERIOD" ] || PERIOD=30
 
+# Bail out early if we have no IPMI
+has_ipmi || exit 1
+
 while true; do
-	inq-ipmitool sdr type Fan |
+	ipmitool sdr type Fan |
 		awk -F'|' '{print $NF}' |
 		sed -n 's/^ //g; s/^\([0-9\.]*\) .*$/\1/gp' |
 		cat -n |

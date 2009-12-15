@@ -3,11 +3,13 @@
 # DESCRIPTION=Get BMC information through ipmitool.
 # DEPENDS=BMC
 
-manufacturer=`inq-ipmitool mc info | sed -n '/Manufacturer Name/s/^.*: \(.*\)$/\1/gp'` || true
+has_ipmi || return 0
+
+manufacturer=`ipmitool mc info | sed -n '/Manufacturer Name/s/^.*: \(.*\)$/\1/gp'` || true
 if [ -n "$manufacturer" ]; then
-	device=`inq-ipmitool mc info | sed -n '/Product ID/s/^.*: \(.*\)$/\1/gp'` || true
-	serial=`inq-ipmitool lan print | grep "MAC Address" | awk '{print $NF}'` || true
-	version="`inq-ipmitool mc info | grep "Firmware Revision" | awk '{print $NF}'`"
+	device=`ipmitool mc info | sed -n '/Product ID/s/^.*: \(.*\)$/\1/gp'` || true
+	serial=`ipmitool lan print | grep "MAC Address" | awk '{print $NF}'` || true
+	version="`ipmitool mc info | grep "Firmware Revision" | awk '{print $NF}'`"
 	add_component "BMC" "$manufacturer" "$device" "$serial" "$version"
 else
 	true
