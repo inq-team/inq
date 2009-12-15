@@ -18,7 +18,9 @@ grep -q "No SMBIOS nor DMI entry point found" $HOME/dmi.log &&
 
 $SHARE_DIR/decode-dimms.pl >$HOME/spd.log 2>$DEBUG_TTY
 
-inq-ipmitool fru >$HOME/fru.log ||:
+if has_ipmi; then
+	ipmitool fru >$HOME/fru.log ||:
+fi
 
 lspci >$HOME/lspci.log
 
