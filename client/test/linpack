@@ -36,7 +36,7 @@ mce_checker()
 mpi_runner()
 {
 	pushdq $TMP_DIR
-	mpirun -np `get_cpus_list | wc -l` $TMP_DIR/xhpl 2>&1 | tee $TMP_DIR/output
+	mpirun -np `get_cpus_list | wc -l` $BINARY_PATH 2>&1 | tee $TMP_DIR/output
 	touch $TMP_DIR/finished
 	popdq
 }
@@ -45,8 +45,6 @@ echo -n "Starting MCE checker up..."
 mce_checker &
 echo $! > $TMP_DIR/mcechecker.pid
 echo_success
-
-ln -s $BINARY_PATH $TMP_DIR/xhpl
 
 if [ "$PS" = "0" -a "$QS" = "0" ]; then
 	# Some default values
