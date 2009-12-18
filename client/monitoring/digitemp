@@ -5,7 +5,7 @@
 # MEASUREMENT=temperature
 
 BINARY="digitemp_DS9097"
-which $BINARY >&/dev/null || exit 0
+which $BINARY >/dev/null 2>&1 || exit 0
 
 SERIAL_PORT="/dev/ttyS0"
 [ -e $SERIAL_PORT ] || exit 0
