@@ -19,7 +19,7 @@
 [ "$NUMA_LOCAL" = "false" ] || NUMA_LOCAL_OPTION="--local_numa"
 [ "$NUMA_REMOTE" = "false" ] || NUMA_REMOTE_OPTION="--remote_numa"
 
-[ ! "$TESTTIME" -eq 0 ] || TESTTIME=$[`cpu_quantity`*600]
+[ ! "$TESTTIME" -eq 0 ] || TESTTIME=$(( `cpu_quantity`*600 ))
 
 test_promise_time $TESTTIME
 
