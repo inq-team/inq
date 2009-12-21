@@ -55,6 +55,7 @@ speex
 digitemp
 stressapptest
 bonnie++
+lsscsi
 # Non-free packages listed below
 #iozone3
 # Packages needed for non-free/incompatible Linpack benchmark
