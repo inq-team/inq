@@ -25,7 +25,6 @@ parted
 gpart
 hdparm
 barcode
-mc
 dhcp3-client
 time
 mplayer
@@ -55,7 +54,6 @@ speex
 digitemp
 stressapptest
 bonnie++
-lsscsi
 # Non-free packages listed below
 #iozone3
 # Packages needed for non-free/incompatible Linpack benchmark
@@ -64,3 +62,6 @@ lsscsi
 #libopenmpi-dev
 #gfortran
 #mcelog
+# Not required by Inquisitor, but included in LiveCD for diagnostic purposes
+mc
+lsscsi
