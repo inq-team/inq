@@ -1,13 +1,13 @@
 #!/bin/sh -e
 # NAME=Stressapptest
-# DESCRIPTION=Stressful Application Test (or stressapptest) tries to maximize randomized traffic to memory from processor, with the intent of creating a realistic high load situation in order to test the existing hardware devices in a computer.
+# DESCRIPTION=Stressful Application Test (or stressapptest) tries to maximize randomized traffic to memory from processor, with the intent of creating a realistic high load situation in order to test the existing hardware devices in a computer (See more information about benchmark itself at http://code.google.com/p/stressapptest/)
 # DESTROYS_HDD=false
 # IS_INTERACTIVE=false
 # POWEROFF_DURING_TEST=false
 # VERSION=0.1
 # TAGS=
 # DEPENDS=Memory,RAM,CPU
-# VAR=TESTTIME:int:1800:Total time of testing, sec
+# VAR=TESTTIME:int:0:Total time of testing, sec
 # VAR=MAX_ERRORS:int:0:Exit early after finding errors
 # VAR=NUMA_LOCAL:bool:false:Choose memory regions associated with each CPU to be tested by that CPU
 # VAR=NUMA_REMOTE:bool:false:Choose memory regions not associated with each CPU to be tested by that CPU
@@ -15,12 +15,15 @@
 . _inq-config-global; . $SHARE_DIR/functions-test
 
 [ "$MAX_ERRORS" = 0 ] || MAX_ERRORS_OPTION="--max_errors ${MAX_ERRORS}"
+
 [ "$NUMA_LOCAL" = "false" ] || NUMA_LOCAL_OPTION="--local_numa"
 [ "$NUMA_REMOTE" = "false" ] || NUMA_REMOTE_OPTION="--remote_numa"
 
+[ ! "$TESTTIME" -eq 0 ] || TESTTIME=$[`cpu_quantity`*600]
+
 test_promise_time $TESTTIME
 
-stressapptest -v 10 -W -A -s ${TESTTIME} \
+stressapptest -v 10 -A -s ${TESTTIME} \
 	${MAX_ERRORS_OPTION} \
 	${NUMA_LOCAL_OPTION} \
 	${NUMA_REMOTE_OPTION} || test_failed "Stressapptest failed"
