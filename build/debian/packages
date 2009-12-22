@@ -65,3 +65,4 @@ bonnie++
 # Not required by Inquisitor, but included in LiveCD for diagnostic purposes
 mc
 lsscsi
+strace
