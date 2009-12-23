@@ -17,7 +17,7 @@ else
 	for test_var in `sed -n 's/^# *VAR=\(.*\):.*:\(.*\):.*$/\1:\2/p' < $0 | sed "s/ /___/g"`; do
 		varname=`echo $test_var | awk -F: '{print $1}'`
 		varvalue=`echo $test_var | awk -F: '{print $2}' | sed "s/___/ /g"`
-		if set | grep "^{$varname}="; then
+		if set | grep "^${varname}="; then
 			# Variable is already set
 			true
 		else
