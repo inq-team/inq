@@ -2,6 +2,10 @@ require 'rexml/document'
 
 class ProfilesController < ApplicationController
 	def index
+		@profiles = Profile.find(:all).reject { |p| p.deleted? }
+	end
+
+	def index_all
 		@profiles = Profile.find(:all)
 	end
 
@@ -70,5 +74,14 @@ class ProfilesController < ApplicationController
 		@profile = Profile.find(params[:id])
 		@models = Model.find(:all, :order => :name).map { |x| [x.name, x.id] }.unshift(['', nil])
 		@default_model_id = @profile.model ? @profile.model.id : nil
+	end
+
+	def delete
+		profile = Profile.find(params[:id])
+		profile.is_deleted = true
+		if profile.save!
+			flash[:notice] = 'Profile was successfully marked as deleted.'
+		end
+		redirect_to :action => 'index'
 	end
 end

@@ -1,13 +1,16 @@
 
 <table class="panel" border="1">
-  <tr><th><h1>Listing profiles</h1></th></tr>
+  <tr>
+    <th><h1>Listing all profiles</h1></th>
+    <th>Deleted</th>
+  </tr>
 
 <% for profile in @profiles %>
   <tr>
     <td><%= profile.name %></td>
+    <td><%= profile.is_deleted %></td>
     <td><%= link_to 'Show', :action => 'show', :id => profile %></td>
     <td><%= link_to 'Edit', :action => 'edit', :id => profile %></td>
-    <td><%= link_to 'Mark as deleted', :action => 'delete', :id => profile %></td>
   </tr>
 <% end %>
 </table>

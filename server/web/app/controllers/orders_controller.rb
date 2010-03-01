@@ -28,7 +28,7 @@ class OrdersController < ApplicationController
 		@order = Order.find(params[:id])
 		@computers = Computer.find_all_by_order_id(@order.id, :include => [:model, :profile, :computer_stages], :order => 'computers.id, computer_stages.start')
 
-		@profiles = Profile.find(:all, :order => 'timestamp').map{ |p| [p.name, p.id] }.unshift(['--', 0])
+		@profiles = Profile.find(:all, :order => 'timestamp').reject { |p| p.deleted? }.map{ |p| [p.name, p.id] }.unshift(['--', 0])
 		@models = Model.find(:all, :order => :name).map { |x| [x.name, x.id] }
 
 		@qty = @computers.size

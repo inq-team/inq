@@ -11,7 +11,7 @@ class Profile < ActiveRecord::Base
 	def self.list_for_model(model_id)
 		r1 = find(
 			:all,
-			:conditions => ['model_id IS NULL OR model_id=?', model_id],
+			:conditions => ['model_id IS NULL OR model_id=? AND is_deleted=0', model_id],
 			:include => :model,
 			:order => 'model_id DESC, feature, timestamp DESC'
 		)
@@ -25,5 +25,9 @@ class Profile < ActiveRecord::Base
 			last_model_id = x.model_id
 		}
 		return r2
+	end
+
+	def deleted?
+		is_deleted
 	end
 end
