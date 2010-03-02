@@ -1,0 +1,171 @@
+#!/bin/sh
+
+export LC_ALL=C
+
+. _inq-config-global
+. $SHARE_DIR/functions
+. $SHARE_DIR/communication
+
+DETECT_DIR=$SHARE_DIR/detect
+
+get_devices_list()
+{
+	for udi in `hal-find-by-property --key storage.bus --string usb`; do
+		hal-get-property --udi "$udi" --key storage.drive_type |
+			grep -q "^disk$" || continue
+		block_dev=`hal-get-property --udi "$udi" --key block.device`
+		echo $block_dev
+	done
+}
+
+get_possible_flash_drive()
+{
+	block_device=`get_devices_list | sort | sed '/sda/d' | sed -n '$p'`
+	echo "${block_device}1"
+}
+
+# Redmine 135 issue workaround
+rm135_hack()
+{
+	# Look for proper ttyUSB device
+	for mdm in /dev/ttyUSB*; do
+		echo Trying to guess NL300 on $mdm
+		chat -t 5 -Vs ABORT ERROR '' SN A0 SI POST <$mdm>$mdm 2>$TMP_DIR/nl300
+		export COMPUTER_ID="$(sed -n 's/^[0]*\([0-9]\+\)$/\1/p' < $TMP_DIR/nl300)"
+		rm -f $TMP_DIR/nl300
+		[ -z "$COMPUTER_ID" ] || break
+	done
+}
+
+test_one()
+{
+	rm -f $HOME/components.xml
+	echo -n 'Detecting USB'
+	. $DETECT_DIR/usb
+	echo_success
+	cp -f $HOME/components.xml{,.n}
+
+	export COMPUTER_ID=`$XMLSTARLET sel -t -v "list/component[vendor='Tennex Systems Ltd.']/serial" <$HOME/components.xml | sed 's/^00*//';`
+	[ -z "$COMPUTER_ID" ] && 
+		export COMPUTER_ID=`$XMLSTARLET sel -t -v "list/component[vendor='Tennex Systems']/serial" <$HOME/components.xml | sed 's/^00*//';`
+	# WRND: temporary due to #RM:135
+	if [ -z "$COMPUTER_ID" ]; then
+		COMPUTER_ID=`$XMLSTARLET sel -t -v "list/component[vendor='Tennex']/serial" <$HOME/components.xml | sed 's/^00*//';`
+		[ -z "$COMPUTER_ID" ] || rm135_hack
+	fi
+	print_green_message "Computer ID is $COMPUTER_ID"
+
+	echo -n "Submitting components..."
+	submit_components $HOME/components.xml
+	rm -f $HOME/components.xml
+	echo_success
+
+	[ -f "$HOME/set_profile" ] && set_profile `cat $HOME/set_profile`
+
+	echo -n 'Planning...'
+	plan_test_script
+	sed -i 's/^PLANNER=1 /export PLANNER=1 /g; s/ run_test \(.*\)$/ \&\& run_test \1 || return 1/g;' $HOME/test_script 
+	#cp do.sh $HOME/test_script
+	echo_success
+
+. $HOME/test_script
+	testing_finished
+}
+
+		#'11' 'Full testing (Beeline)' '' \
+		#'12' 'gprs-modem-dialup (Beeline)' '' \
+		#'2' 'Fast testing' '' \
+		#'14' 'USB presence only' '' \
+		#'Run' 'Testing as per current profile' '' \
+while true; do
+	exec 3>&1
+	value=`dialog --item-help --nocancel --backtitle 'Inquisitor Standalone' \
+	        --title 'Choose an profile' --menu '' \
+	        13 60 7 \
+		'80' 'Full testing NL200S+, 13E' '' \
+		'Run' 'Testing as per current profile' '' \
+		'DBB' 'Database backup' '' \
+		'Quit' 'Quit' '' \
+	2>&1 1>&3`
+	retval=$?
+	exec 3>&-
+
+	clear
+
+	case $retval in
+	0)
+		;;
+	1)
+		exit 0
+		;;
+	255)
+		if test -n "$value" ; then
+			echo "$value"
+		else
+			continue # ESC pressed
+		fi
+		;;
+	esac
+
+	case "$value" in
+	DBB)
+		if [ `get_possible_flash_drive` = "1" ]; then
+			echo
+			echo "Please insert flash drive!"
+			echo
+			echo "Press ENTER when you will be ready"
+			read L
+		fi
+		echo "Prepare for backup process"
+		echo "9 sec..."
+		sleep 1
+		echo "8 sec..."
+		sleep 1
+		echo "7 sec..."
+		sleep 1
+		echo "6 sec..."
+		sleep 1
+		echo "5 sec..."
+		sleep 1
+		echo "4 sec..."
+		sleep 1
+		echo "3 sec..."
+		sleep 1
+		echo "2 sec..."
+		sleep 1
+		echo "1 sec..."
+		sleep 1
+		echo -n "Mounting `get_possible_flash_drive`..."
+		mount `get_possible_flash_drive` /mnt 2>/dev/null
+		echo "done"
+
+		echo -n "Dumping database..."
+		mysqldump -uinq -pinq inq --skip-extended-insert | gzip -9c > /mnt/tennex-inq-backup-`date "+%Y%m%d%H%M%S"`.sql.gz 2>/dev/null
+		echo "done"
+
+		echo -n "Unmounting..."
+		umount -f `get_possible_flash_drive`
+		echo "done"
+		echo
+		echo 'Press ENTER to return to main menu'
+		read L
+		;;
+	Run)
+		rm -f $HOME/set_profile
+		test_one
+		echo
+		echo 'Press ENTER to return to main menu'
+		read L
+		;;
+	Quit)
+		exit 0
+		;;
+	*)
+		echo $value >$HOME/set_profile
+		test_one
+		echo
+		echo 'Press ENTER to return to main menu'
+		read L
+		;;
+	esac
+done
