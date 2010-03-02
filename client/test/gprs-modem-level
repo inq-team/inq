@@ -9,8 +9,8 @@
 # DEPENDS=USB, GPRS Modem
 # VAR=DEV:string:/dev/ttyUSB0:Name of device to test
 # VAR=CHAT_TIMEOUT:int:5:Timeout for waiting for answer
-# VAR=LEVEL_REFERENCE:int:0:Reference signal level. If device has equal signal strength, then test is passed. 0 value means that there is no any reference. Ask user to end test manually.
-# VAR=LEVEL_REFERENCE_DELTA:int:5:Possible reference level variation.
+# VAR=LEVEL_LOWER_THRESHOLD:int:15:Lower threshold of signal level. If device has signal strength between lower and higher thresholds, then it will automatically pass test.
+# VAR=LEVEL_HIGHER_THRESHOLD:int:35:Higher threshold of signal level. If device has signal strength between lower and higher thresholds, then it will automatically pass test.
 
 . _inq-config-global; . $SHARE_DIR/functions-test
 
@@ -34,11 +34,11 @@ while true; do
 	echo -n "$level"
 	echo_success
 
-	if [ "$LEVEL_REFERENCE" -gt 0 ]; then
-		if [ $level -le $(( $LEVEL_REFERENCE + $LEVEL_REFERENCE_DELTA )) -a $level -ge $(( $LEVEL_REFERENCE - $LEVEL_REFERENCE_DELTA )) ]; then
-			break
+	if [ "$LEVEL_LOWER_THRESHOLD" -gt 0 -a "$LEVEL_HIGHER_THRESHOLD" -gt 0 ]; then
+		if [ $level -lt $LEVEL_LOWER_THRESHOLD -o $level -gt $LEVEL_HIGHER_THRESHOLD ]; then
+			test_failed "Signal level ($level) is out of acceptable strength's limit"
 		else
-			test_failed "Strong difference of signal level ($level) from reference one"
+			break
 		fi
 	else
 		echo -n 'Press ENTER to retry, enter "y" to complete the test: '
