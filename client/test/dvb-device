@@ -29,7 +29,7 @@ echo_success
 
 echo -n "Retrieving MAC address... "
 mac=`ifconfig $iface | sed -n 's/.*HWaddr \(.*\)$/\1/p'`
-if [ -z "$mac" -o "$mac" = "00:00:00:00:00:00" ]; then
+if [ -z "$mac" -o "$mac" = "00:00:00:00:00:00" -o "$mac" = "ff:ff:ff:ff:ff:ff" ]; then
 	test_failed "No MAC address found"
 else
 	echo -n "$mac"
