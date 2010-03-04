@@ -4,7 +4,7 @@
 # DESTROYS_HDD=false
 # IS_INTERACTIVE=true
 # POWEROFF_DURING_TEST=false
-# VERSION=0.1
+# VERSION=0.2
 # TAGS=usb,gprs,benchmark
 # DEPENDS=USB, GPRS Modem
 # VAR=DEV:string:/dev/ttyUSB0:Name of device to test
