@@ -1,4 +1,4 @@
 # Setup file to build demo version of Inquisitor, suitable for standalone installation
 
 COMMUNICATION=rest
-SELF_ID=netline
+SELF_ID=netline:scanner:manual
