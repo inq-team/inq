@@ -24,19 +24,6 @@ get_possible_flash_drive()
 	echo "${block_device}1"
 }
 
-# Redmine 135 issue workaround
-rm135_hack()
-{
-	# Look for proper ttyUSB device
-	for mdm in /dev/ttyUSB*; do
-		echo Trying to guess NL300 on $mdm
-		chat -t 5 -Vs ABORT ERROR '' SN A0 SI POST <$mdm>$mdm 2>$TMP_DIR/nl300
-		export COMPUTER_ID="$(sed -n 's/^[0]*\([0-9]\+\)$/\1/p' < $TMP_DIR/nl300)"
-		rm -f $TMP_DIR/nl300
-		[ -z "$COMPUTER_ID" ] || break
-	done
-}
-
 test_one()
 {
 	rm -f $HOME/components.xml
@@ -45,14 +32,10 @@ test_one()
 	echo_success
 	cp -f $HOME/components.xml{,.n}
 
-	export COMPUTER_ID=`$XMLSTARLET sel -t -v "list/component[vendor='Tennex Systems Ltd.']/serial" <$HOME/components.xml | sed 's/^00*//';`
-	[ -z "$COMPUTER_ID" ] && 
-		export COMPUTER_ID=`$XMLSTARLET sel -t -v "list/component[vendor='Tennex Systems']/serial" <$HOME/components.xml | sed 's/^00*//';`
-	# WRND: temporary due to #RM:135
-	if [ -z "$COMPUTER_ID" ]; then
-		COMPUTER_ID=`$XMLSTARLET sel -t -v "list/component[vendor='Tennex']/serial" <$HOME/components.xml | sed 's/^00*//';`
-		[ -z "$COMPUTER_ID" ] || rm135_hack
-	fi
+	print_red_message 'Starting self-identification'
+	COMPUTER_ID=`inq-self-id`
+	[ -n "$COMPUTER_ID" ] || fatal_failure 'Self-identification'
+	export COMPUTER_ID
 	print_green_message "Computer ID is $COMPUTER_ID"
 
 	echo -n "Submitting components..."
