@@ -6,8 +6,13 @@ BIN_FILES_FLAVOUR=\
 	inq-inventory \
 	inq-inventory-stop
 else
+ifeq ($(FLAVOUR), tennex)
+BIN_FILES_FLAVOUR=\
+	inq-tennex
+else
 BIN_FILES_FLAVOUR=\
 	inquisitor
+endif
 endif
 BIN_FILES=\
 	$(BIN_FILES_FLAVOUR) \
