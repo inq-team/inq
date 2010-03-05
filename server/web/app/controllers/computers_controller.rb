@@ -967,7 +967,7 @@ __EOF__
 					:result => 'planned',
 					:comment => 'planned',
 					:progress => 0
-				}
+				} if stage.is_a?(Planner::Task)
 			}
 		end
 		
