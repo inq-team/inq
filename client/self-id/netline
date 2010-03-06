@@ -14,11 +14,11 @@ rm135_hack()
 	[ -n "$COMPUTER_ID" ] || export COMPUTER_ID_TO_BE_FLASHED=1
 }
 
-COMPUTER_ID=`$XMLSTARLET sel -t -v "list/component[vendor='Tennex Systems Ltd.']/serial" <$HOME/components.xml | sed 's/^00*//';`
+COMPUTER_ID=`xmlstarlet sel -t -v "list/component[vendor='Tennex Systems Ltd.']/serial" <$HOME/components.xml | sed 's/^00*//';`
 [ -z "$COMPUTER_ID" ] && 
-	COMPUTER_ID=`$XMLSTARLET sel -t -v "list/component[vendor='Tennex Systems']/serial" <$HOME/components.xml | sed 's/^00*//';`
+	COMPUTER_ID=`xmlstarlet sel -t -v "list/component[vendor='Tennex Systems']/serial" <$HOME/components.xml | sed 's/^00*//';`
 # WRND: temporary due to #RM:135
 if [ -z "$COMPUTER_ID" ]; then
-	COMPUTER_ID=`$XMLSTARLET sel -t -v "list/component[vendor='Tennex']/serial" <$HOME/components.xml | sed 's/^00*//';`
+	COMPUTER_ID=`xmlstarlet sel -t -v "list/component[vendor='Tennex']/serial" <$HOME/components.xml | sed 's/^00*//';`
 	[ -z "$COMPUTER_ID" ] || rm135_hack
 fi
