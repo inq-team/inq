@@ -9,11 +9,11 @@ einarc_detect()
 		CTRL_TYPE=`echo "$L" | cut -f1`
 		CTRL_NUM=`echo "$L" | cut -f2`
 		CTRL_MODEL=`echo "$L" | cut -f3`
-		CTRL_INFO=`einarc -t $CTRL_TYPE -a $CTRL_NUM adapter info`
+		CTRL_INFO=`einarc -t "$CTRL_TYPE" -a "$CTRL_NUM" adapter info`
 		CTRL_SERIAL=`echo "$CTRL_INFO" | sed -n "s/Serial number\t//p" | sed 's/[^ -~]//g'`
 		CTRL_VERSION=`echo "$CTRL_INFO" | sed -n '/Firmware version/s/^Firmware version\s*\(.*\)$/\1/p'`
 			      
-		case $CTRL_TYPE in
+		case "$CTRL_TYPE" in
 			'amcc') CTRL_VENDOR='3Ware/AMCC';;
 			'areca') CTRL_VENDOR='Areca';;
 			'lsi_megarc') CTRL_VENDOR='LSI';;

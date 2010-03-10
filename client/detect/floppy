@@ -7,7 +7,8 @@ if [ `hal-find-by-property --key=storage.drive_type --string floppy | wc -l` -eq
 	true
 else
 	for UDI in `hal-find-by-property --key=storage.drive_type --string floppy`; do
-		if [ `hal-get-property --udi "$UDI" --key storage.bus` == "usb" ]; then
+		storage_bus=`hal-get-property --udi "$UDI" --key storage.bus`
+		if [ "$storage_bus" == "usb" ]; then
 			vendor=`hal-get-property --udi "$UDI" --key storage.vendor`
 			model=`hal-get-property --udi "$UDI" --key storage.model`
 			serial=`hal-get-property --udi "$UDI" --key storage.serial`
