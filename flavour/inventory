@@ -1,6 +1,6 @@
 # Setup file to build client/server flavour of Inquisitor
 
 COMMUNICATION=rest
-SELF_ID=dmi:mac:manual
+SELF_ID=mac:manual
 INIT=1
 WAIT_STRING_PORT=8372
