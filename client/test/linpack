@@ -58,6 +58,7 @@ if [ "$PS" = "0" -a "$QS" = "0" ]; then
 		"16") PS=4 ; QS=4 ;;
 		"24") PS=4 ; QS=6 ;;
 		"32") PS=4 ; QS=8 ;;
+		"48") PS=6 ; QS=8 ;;
 	esac
 else
 	true
