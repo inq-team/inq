@@ -1,10 +1,19 @@
 #!/bin/sh
 
 pushd $CHROOT_PATH
+
+echo -n "Moving data dir... "
+rmdir $CHROOT_PATH/$SHARE_DIR/data
+cp -r data $CHROOT_PATH/$SHARE_DIR
+chown -R root:root $CHROOT_PATH/$SHARE_DIR/data
+echo OK
+
 for image in img/*.tar img/*.tar.gz img/*.tar.bz2; do
 	[ -r "$image" ] || continue
-	echo "Unpacking $image image..."
+	echo -n "Unpacking $image image... "
 	tar xf "$image"
+	echo OK
 done
-rm -fr img
+
+rm -fr img data
 popd

@@ -21,8 +21,9 @@ fi
 # Run LiveHelper configuration utility itself
 ################################################################################
 pushd $WORKDIR/$LIVEDIR
-lh_config --mirror-bootstrap $REPO --mirror-chroot $REPO \
+lh config --mirror-bootstrap $REPO --mirror-chroot $REPO \
           --linux-flavours $KERNEL_FLAVOUR \
+          --linux-packages "linux-image-2.6-$KERNEL_FLAVOUR aufs-modules-2.6-$KERNEL_FLAVOUR" \
           --architecture $DEB_TARGET \
           --distribution $REPO_BRANCH \
           --iso-application Inquisitor \
@@ -45,7 +46,6 @@ lh_config --mirror-bootstrap $REPO --mirror-chroot $REPO \
           --cache disabled \
           --categories "$REPO_SECTIONS" \
           --chroot-filesystem squashfs \
-          --union-filesystem aufs \
           --memtest memtest86+ \
           --security disabled \
           --checksums disabled \
@@ -109,3 +109,4 @@ rm -fr $TMPDIR 2>/dev/null
 echo "${COLOR_NORMAL}" >> $WORKDIR/$LIVEDIR/config/chroot_local-includes/etc/motd
 
 popd
+
