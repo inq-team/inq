@@ -86,6 +86,11 @@ print_green_message 'Software detects finished'
 plan_test_script
 . $HOME/test_script
 
+# ===========================================================================
+# Stop all monitorings, to prevent database junking
+# ===========================================================================
+inq-monitoring-stop
+
 # We completed all tests
 print_green_message "================"
 print_green_message "TESTING FINISHED"

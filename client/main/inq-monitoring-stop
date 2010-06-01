@@ -1,0 +1,11 @@
+#!/bin/sh
+
+. _inq-config-global
+. $SHARE_DIR/functions
+
+for I in $SHARE_DIR/monitoring/*; do
+	monitoring=`basename $I`
+	echo -n "Stopping $monitoring"
+	monitoring_stop $monitoring
+	echo_success
+done
