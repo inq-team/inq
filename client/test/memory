@@ -34,6 +34,7 @@ MEMORY_LOG=`mktemp`
 total_memory=`grep "^MemTotal:" /proc/meminfo | awk '{print $2}'`
 #sysctl vm.overcommit_memory=2
 ratio=$(( $FREE_MEMORY * 100 / $total_memory ))
+echo "Ratio: $ratio"
 #sysctl vm.overcommit_ratio=$ratio
 
 memtester -q $(( $total_memory * $ratio / 102400 )) $TEST_LOOPS 2>&1 | tee $MEMORY_LOG >$DEBUG_TTY &
