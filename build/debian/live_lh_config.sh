@@ -23,7 +23,7 @@ fi
 pushd $WORKDIR/$LIVEDIR
 lh config --mirror-bootstrap $REPO --mirror-chroot $REPO \
           --linux-flavours $KERNEL_FLAVOUR \
-          --linux-packages "linux-image-2.6 aufs-modules-2.6" \
+          --linux-packages "linux-image-2.6" \
           --architecture $DEB_TARGET \
           --distribution $REPO_BRANCH \
           --iso-application Inquisitor \
@@ -33,19 +33,19 @@ lh config --mirror-bootstrap $REPO --mirror-chroot $REPO \
           --bootappend-live "noautologin nolocales" \
           ${CUSTOM_KERNEL_OPTION} \
           --hostname inq \
-          --binary-indices disabled \
-          --apt-recommends disabled \
-          --apt-secure disabled \
+          --binary-indices none \
+          --apt-recommends false \
+          --apt-secure false \
           --bootstrap-flavour minimal \
           --chroot-filesystem squashfs \
-          --source disabled \
+          --source false \
           --packages-list inq.list \
           --bootloader grub \
           --bootstrap debootstrap \
-          --cache disabled \
+          --cache false \
           --memtest memtest86+ \
-          --security disabled \
-          --checksums disabled \
+          --security false \
+          --checksums none \
           --net-tarball none \
           --apt-options='--allow-unauthenticated --yes'
 popd
