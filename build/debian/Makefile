@@ -74,6 +74,7 @@ build-boot:
 	echo "There is no real build-boot target. It is dummy."
 
 build-live-configure:
+	mkdir -p $(WORKDIR)/$(LIVEDIR)
 	cd $(WORKDIR)/$(LIVEDIR) && sudo lh clean
 	sudo rm -rf $(WORKDIR)/$(LIVEDIR)
 	mkdir -p $(WORKDIR)/$(LIVEDIR)
@@ -92,7 +93,7 @@ build-root-live: check-repo-defined build-live-configure
 	cd $(WORKDIR)/$(LIVEDIR) && export MKSQUASHFS_OPTIONS="-e boot" && sudo lh chroot
 
 build-live:
-	cd $(WORKDIR)/$(LIVEDIR) && lh_clean --binary
+	cd $(WORKDIR)/$(LIVEDIR) && lh clean --binary
 	cd $(WORKDIR)/$(LIVEDIR) && export MKSQUASHFS_OPTIONS="-e boot" && lh binary
 
 update-package:

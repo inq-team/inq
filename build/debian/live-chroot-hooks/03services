@@ -6,6 +6,7 @@ update-rc.d udev start 20 2 3 4 5 . stop 20 0 1 6 .
 update-rc.d dbus start 20 2 3 4 5 . stop 20 0 1 6 .
 update-rc.d hal start 20 2 3 4 5 . stop 20 0 1 6 .
 update-rc.d ntp start 20 2 3 4 5 . stop 20 0 1 6 .
+update-rc.d networking start 20 2 3 4 5 . stop 20 0 1 6 .
 
 update-rc.d -f syslog-ng remove
 update-rc.d -f smartmontools remove

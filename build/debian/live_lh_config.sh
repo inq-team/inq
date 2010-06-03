@@ -23,7 +23,7 @@ fi
 pushd $WORKDIR/$LIVEDIR
 lh config --mirror-bootstrap $REPO --mirror-chroot $REPO \
           --linux-flavours $KERNEL_FLAVOUR \
-          --linux-packages "linux-image-2.6-$KERNEL_FLAVOUR aufs-modules-2.6-$KERNEL_FLAVOUR" \
+          --linux-packages "linux-image-2.6 aufs-modules-2.6" \
           --architecture $DEB_TARGET \
           --distribution $REPO_BRANCH \
           --iso-application Inquisitor \
@@ -33,23 +33,21 @@ lh config --mirror-bootstrap $REPO --mirror-chroot $REPO \
           --bootappend-live "noautologin nolocales" \
           ${CUSTOM_KERNEL_OPTION} \
           --hostname inq \
-          --packages-lists inq \
           --binary-indices disabled \
           --apt-recommends disabled \
           --apt-secure disabled \
           --bootstrap-flavour minimal \
           --chroot-filesystem squashfs \
           --source disabled \
-          --union-filesystem aufs \
+          --packages-list inq.list \
           --bootloader grub \
           --bootstrap debootstrap \
           --cache disabled \
-          --categories "$REPO_SECTIONS" \
-          --chroot-filesystem squashfs \
           --memtest memtest86+ \
           --security disabled \
           --checksums disabled \
-          --net-tarball none
+          --net-tarball none \
+          --apt-options='--allow-unauthenticated --yes'
 popd
 
 ################################################################################
@@ -60,7 +58,7 @@ echo "deb $REPO_MULTIMEDIA $REPO_BRANCH main" > $WORKDIR/$LIVEDIR/config/chroot_
 ################################################################################
 # Packages list, pressed file, Inquisitor package
 ################################################################################
-cp packages.live $WORKDIR/$LIVEDIR/config/chroot_local-packageslists/inq
+cp packages.live $WORKDIR/$LIVEDIR/config/chroot_local-packageslists/inq.list
 cp preseed.live $WORKDIR/$LIVEDIR/config/chroot_local-preseed/inq
 cp $WORKDIR/build-package/$PACKAGE_DEB $WORKDIR/$LIVEDIR/config/chroot_local-packages
 
