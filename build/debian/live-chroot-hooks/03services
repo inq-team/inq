@@ -2,11 +2,11 @@
 
 echo "I: configuring services"
 
-update-rc.d udev start 20 2 3 4 5 . stop 20 0 1 6 .
-update-rc.d dbus start 20 2 3 4 5 . stop 20 0 1 6 .
-update-rc.d hal start 20 2 3 4 5 . stop 20 0 1 6 .
-update-rc.d ntp start 20 2 3 4 5 . stop 20 0 1 6 .
-update-rc.d networking start 20 2 3 4 5 . stop 20 0 1 6 .
+update-rc.d udev defaults
+update-rc.d dbus defaults
+update-rc.d hal defaults
+update-rc.d ntp defaults
+update-rc.d networking defaults
 
 update-rc.d -f syslog-ng remove
 update-rc.d -f smartmontools remove
