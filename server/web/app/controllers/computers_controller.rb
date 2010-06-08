@@ -917,7 +917,7 @@ __EOF__
 	def prepare_computer_tabs
 		prepare_computer_and_testing
 
-		@profiles = Profile.list_for_model(@computer.model_id).reject{ |p| p.deleted? }.map { |p| [p.name, p.id] }
+		@profiles = Profile.list_for_model(@computer.model_id).map { |p| [p.name, p.id] }
 
 		now = Time.new
 		@computer_stages = (@computer.computer_stages + (@computer.order ? @computer.order.order_stages.find_all { |stage| stage.stage != 'manufacturing' } : [])).inject([]) do |a, stage|

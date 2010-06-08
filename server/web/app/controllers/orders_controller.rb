@@ -63,7 +63,7 @@ class OrdersController < ApplicationController
                         @default_model = model_names[0][1] if (@default_model == nil) && (model_names.size > 0)
 
                         # Prepare profiles list
-                        @profiles = Profile.list_for_model(@default_model).reject { |p| p.deleted? }.map { |x| [x.name, x.id] }
+                        @profiles = Profile.list_for_model(@default_model).map { |x| [x.name, x.id] }
 		else
 			@models = @models.unshift(['--', 0])
                 end
@@ -259,7 +259,7 @@ class OrdersController < ApplicationController
 	end
 
 	def live_profile
-		@profiles = Profile.list_for_model(params[:model]).reject { |p| p.deleted? }.map { |x| [x.name, x.id] }
+		@profiles = Profile.list_for_model(params[:model]).map { |x| [x.name, x.id] }
                 render(:layout => false)
 	end
 	
