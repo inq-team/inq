@@ -11,6 +11,7 @@
 <tr><td>Code:</td><td><%= @order.code %></td></tr>
 <tr><td>Customer:</td><td><%= link_to @order.customer, :action => 'search', :order => { :customer => @order.customer }, :no_redirect => true %></td></tr>
 <tr><td>Manager:</td><td><%=h @order.manager %></td></tr>
+<tr><td>Comment:</td><td><%=h @order.comment %></td></tr>
 <tr><td>Buyer order #:</td><td><%=h @order.buyer_order_number %></td></tr>
 <tr><td>Mfg task #:</td><td><%=h @order.mfg_task_number %></td></tr>
 <tr><td>Mfg report #:</td><td><%=h @order.mfg_report_number %></td></tr>
