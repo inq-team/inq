@@ -57,6 +57,14 @@
         </component>
 </xsl:template>
 
+<xsl:template match="//node[description='Serial controller']">
+        <component>
+                <type>Serial Controller</type>
+                <vendor><xsl:value-of select="vendor"/></vendor>
+                <model><xsl:value-of select="product"/></model>
+        </component>
+</xsl:template>
+
 <xsl:template match="text()"/>
 
 </xsl:stylesheet>
