@@ -31,7 +31,7 @@ class Computer < ActiveRecord::Base
 	end
 
 	def self.find_by_hw_serials(serials)
-		self.find_by_sql(["SELECT * FROM computers c WHERE c.id IN (SELECT computer_id FROM (SELECT DISTINCT testings.computer_id, group_concat(serial ORDER BY serial SEPARATOR ',') AS serials FROM testings JOIN components ON components.testing_id = testings.id JOIN component_models ON components.component_model_id = component_models.id JOIN component_groups ON component_models.component_group_id = component_groups.id AND component_groups.name in ('LAN', 'NIC') GROUP BY testings.id HAVING serials = ?) t2)", serials.sort.join(',')])
+		self.find_by_sql(["SELECT * FROM computers c WHERE c.id IN (SELECT DISTINCT computer_id FROM (SELECT testings.computer_id, group_concat(serial ORDER BY serial SEPARATOR ',') AS serials FROM testings JOIN components ON components.testing_id = testings.id JOIN component_models ON components.component_model_id = component_models.id JOIN component_groups ON component_models.component_group_id = component_groups.id AND component_groups.name in ('LAN', 'NIC') GROUP BY testings.id HAVING serials = ?) t2)", serials.sort.join(',')])
 #		self.find_by_sql(["SELECT DISTINCT computers.*, group_concat(serial ORDER BY serial SEPARATOR ',') AS serials FROM `computers` JOIN `testings` on testings.computer_id = computers.id JOIN `components` ON components.testing_id = testings.id JOIN component_models ON components.component_model_id = component_models.id JOIN component_groups ON component_models.component_group_id = component_groups.id AND component_groups.name in ('LAN', 'NIC') GROUP BY testings.id HAVING serials = ?", param1.join(',')])
 	end
 
