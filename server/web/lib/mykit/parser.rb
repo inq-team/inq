@@ -45,7 +45,7 @@ class Parser
 #			props2.dup.delete_if { |[Mykit::Keywords::Propertiews::CAPACITY]
 #		end
 
-		comps = most_likely | (most_likely.collect { |comp_i| less_likely.find_all() { |l| Mykit::Keywords::EMBED[comp_i].include?(l) } }.inject([]) { |a, b| a | b })
+		comps = most_likely | (most_likely.collect { |comp_i| less_likely.find_all() { |l| (Mykit::Keywords::EMBED[comp_i] or []).include?(l) } }.inject([]) { |a, b| a | b })
 
 		comps = comps.collect do |comp_i|
 			props = props2.inject({}) { |h, a| Mykit::Keywords::PROPS[a.first][comp_i] == 0 ? h : h.merge({ a.first => a.last.dup.collect { |h| h.merge({ :computed => compute(a.first, h[:value], h[:unit]) }) }}) }
