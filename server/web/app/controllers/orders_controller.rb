@@ -205,7 +205,6 @@ class OrdersController < ApplicationController
 	# PUT /orders/1.xml
 	def update
 		@order = Order.find(params[:id])
-		p params[:order]
 		respond_to do |format|
 			if @order.update_order(params[:order])
 				flash[:notice] = 'Order was successfully updated.'
@@ -295,6 +294,7 @@ class OrdersController < ApplicationController
 	
 	def search
 		# Prepare and parse form parameters
+		@component_serial = params[:component_serial] if params[:component_serial] and not params[:component_serial].empty?
 		@computer_serial = params[:computer_serial] if params[:computer_serial] and not params[:computer_serial].empty?
 		@customer = params[:order][:customer].to_s if params[:order] and params[:order][:customer] and not params[:order][:customer].empty?
 		@number = params[:number].to_s if params[:number] and not params[:number].empty?
@@ -323,11 +323,12 @@ class OrdersController < ApplicationController
 			:manager => "%#{@manager}%",
 			:customer => "%#{@customer}%",
 			:order_number => @number,
-			:computer_serial => @computer_serial,
+			:computer_serial => @computer_serial.to_i,
 			:model_id => @model_id,
 			:component_model_id => @component_model_id,
 			:start_date => @start_date,
 			:end_date => @end_date,
+			:component_serial => "%#{@component_serial }%"
 		}
 
 		cond = []
@@ -338,30 +339,41 @@ class OrdersController < ApplicationController
 		cond << 'computers.model_id=:model_id' if @model_id
 		cond << '(order_stages.start >= :start_date OR computer_stages.start >= :start_date)' if @start_date
 		cond << '(order_stages.start <= :end_date OR computer_stages.start <= :end_date)' if @end_date
+		cond << 'components.serial LIKE :component_serial' if @component_serial
+
+		if @component_serial
+			@computers_by_component_serial = Computer.find(
+				:all,
+				:conditions => [ 'components.serial= :component_serial', cond_var ],
+				:include => [{ :order => :order_stages}, :computer_stages, { :testings => :components }],
+				:order => 'computer_stages.start'
+			)
+		end
 
 		if cond.size > 0
 			@orders = Order.find(
 				:all,
 				:conditions => [cond.join(' AND '), cond_var],
-				:include => [:order_stages, { :computers => :computer_stages }],
+				:include => [ :order_stages, { :computers => :computer_stages } ],
 				:order => 'order_stages.start'
 			)
+
 			cond << 'orders.id IS NULL'
 			@computers = Computer.find(
 				:all,
 				:conditions => [cond.join(' AND '), cond_var],
-				:include => [{ :order => :order_stages}, :computer_stages],
+				:include => [{ :order => :order_stages}, :computer_stages, { :testings => :components }],
 				:order => 'computer_stages.start'
 			)
 
-			# Dirty searching by component model
 			if @component_model_id
 				computers = Computer.find_by_sql("SELECT computers.* FROM computers INNER JOIN testings ON testings.computer_id=computers.id JOIN components ON components.testing_id=testings.id JOIN component_models ON components.component_model_id=component_models.id WHERE component_models.id=#{@component_model_id}")
+
 				@orders.reject! { |o| computers.select{ |c| o.computers.include? c }.empty? }
 				@computers.select! { |c| computers.include? c }
 			end
 			
-			redirect_to :action => 'show', :id => @orders[0] if @orders.size == 1 and @computers.size == 0 and not params[:no_redirect]
+			redirect_to :action => 'show', :id => @orders[0] if @orders.size == 1 and @computers.size == 0 and not params[:no_redirect] and not @component_serial
 			redirect_to :controller => 'computers', :action => 'show', :id => @computers[0] if @orders.size == 0 and @computers.size == 1 and not params[:no_redirect]
 		end
 	end

@@ -27,8 +27,8 @@
 				<td><%= text_field_with_auto_complete 'order', 'manager', :style => 'width: 20em', :value => @manager.to_s %></td>
  			</tr>
 			<tr>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
+				<td><label for="component_serial">Component #:</label></td>
+				<td><%= text_field_tag 'component_serial', nil, :style => 'width: 20em', :value => @component_serial.to_s %></td>
 				<td><label for="component_model_id">Component model:</label></td>
 				<td><%= select :component_model, :id, @component_models, { :selected => @component_model_id } %></td>
 			</tr>
@@ -52,7 +52,7 @@
 				</div>
 				<div class="title">
 					<a href="<%= url_for(:action => 'show', :controller => 'orders', :id => ord) %>">
-						<%=h ord.title.gsub(/\//, ' / ').gsub(/\\/, ' \ ') %>
+						<%=h ord.title.blank? ? '&nbsp;' : ord.title.gsub(/\//, ' / ').gsub(/\\/, ' \ ') %>
 					</a>
 				</div>
 				<% if ord.order_stages.first and ord.order_stages.first.start %>
@@ -81,6 +81,24 @@
 		<p>Computers without orders:</p>
 		<table>
 		<% @computers.each { |c| %>
+			<tr>
+			<td class="order_cell" width="30%">
+<% if c.computer_stages.first and c.computer_stages.first.start %>
+				<div class="date"><%= c.computer_stages.first.start.strftime('%Y-%m-%d') %></div>
+<% end %>
+				<%=h c.model.name %>
+			</td>		
+			<td class="computer_cell" width="70%">
+				<%= link_to c.serial_no, :controller => 'computers', :action => 'show', :id => c.id %>
+			</td>
+			</tr>
+		<% } %>
+		</table>
+	<% end %>
+	<% if @computers_by_component_serial and @computers_by_component_serial.size > 0 %>
+		<p>Computers with specified component serial number:</p>
+		<table>
+		<% @computers_by_component_serial.each { |c| %>
 			<tr>
 			<td class="order_cell" width="30%">
 <% if c.computer_stages.first and c.computer_stages.first.start %>
