@@ -431,6 +431,10 @@ set timefmt \"%s\""
 														:order => 'timestamp')
 						graphs.each{ |x| data_file.puts "#{x.timestamp.to_f + 14400}\t#{x.value}" }
 					end
+
+					data_files_hash[monitoring_id].each_pair{ |key, file|
+						data_files_hash[monitoring_id].delete( key ) if file.size <= 1
+					}
 					
 					data_files_hash[monitoring_id].each_pair{ |k, f| f.flush }
 
