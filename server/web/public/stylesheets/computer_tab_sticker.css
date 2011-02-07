@@ -91,6 +91,10 @@ tr.hidden_component {
 	background: no-repeat 0.5em 50% url('/images/printer.png');
 }
 
+.hint div table tr td {
+	vertical-align: middle ! important;
+}
+
 #count {
 	width: 2em;
 	text-align: right;
