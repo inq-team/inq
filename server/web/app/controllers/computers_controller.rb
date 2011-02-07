@@ -683,7 +683,7 @@ set timefmt \"%s\""
 
 	def test_promise_time
 		@computer = Computer.find(params[:id])
-		testing = @computer.testings.sort() { |a, b| a.test_start <=> b.test_start }.last
+		testing = @computer.testings.last
 		testing.progress_promised_time = params[:sec].to_f()
 		if testing.save
 			flash[:notice] = 'Set promised time'
