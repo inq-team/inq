@@ -19,17 +19,21 @@
 <table>
 <tr>
 	<th>Model</th>
+	<th>Total</th>
 	<th colspan="<%= @available_assemblers.length %>">Assemblers</th>
 </tr>
-<tr><th>&nbsp;</th>
-<% for assembler in @available_assemblers %>
-	<th><%= assembler %></th>
-<% end %>
+<tr>
+	<th>&nbsp;</th>
+	<th>&nbsp;</th>
+	<% for assembler in @available_assemblers %>
+		<th><%= assembler %></th>
+	<% end %>
 </tr>
 
 <% for model in @stats.keys.sort %>
 	<tr>
 		<th><%= model %></th>
+		<th><%= @model_stats[model] %></th>
 		<% for assembler in @available_assemblers %>
 			<td>
 			<% if @stats[model][assembler] %>
@@ -54,10 +58,12 @@
 	</tr>
 <% end %>
 
-<tr><td>Total</td>
-<% for assembler in @available_assemblers %>
-	<td><%= @total_stats[assembler] %></td>
-<% end %>
+<tr>
+	<th>Total</th>
+	<th><%= @total_computers %></th>
+	<% for assembler in @available_assemblers %>
+		<td><%= @total_stats[:computers][assembler] %> / <%= @total_stats[:complexity][assembler] %></td>
+	<% end %>
 </tr>
 
 </table>

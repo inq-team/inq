@@ -25,8 +25,10 @@ class StatisticsController < ApplicationController
 
 		available_assemblers = {}
 		@stats = {}
+		@model_stats = {}
 		@complexities = {}
-		@total_stats = {}
+		@total_stats = { :complexity => {},
+				 :computers => {} }
 		computers_seen = {}
 		ComputerStage.find_all_by_stage( "assembling", :conditions => ['end BETWEEN ? AND ?', from_date, to_date] ).each { |stage|
 			computer = Computer.find_by_id( stage.computer_id )
@@ -36,13 +38,18 @@ class StatisticsController < ApplicationController
 			next if not model
 			assembler = Person.find_by_id( stage.person_id )
 			next if not assembler
+			@model_stats[ model.name ] = @model_stats.has_key?( model.name ) ? @model_stats[ model.name ] + 1 : 1
 			available_assemblers[assembler.name] = ""
 			@stats[model.name] = {} if not @stats.has_key?(model.name)
 			@stats[model.name][assembler.name] = @stats[model.name][assembler.name] ? @stats[model.name][assembler.name] + 1 : 1
 			@complexities[model.name] = model.complexity ? model.complexity : 1
-			@total_stats[assembler.name] = @total_stats[assembler.name] ? @total_stats[assembler.name] + @complexities[model.name] : @complexities[model.name]
+			@total_stats[:complexity][assembler.name] = @total_stats[:complexity][assembler.name] ? @total_stats[:complexity][assembler.name] + @complexities[model.name] : @complexities[model.name]
+			@total_stats[:computers][assembler.name] = @total_stats[:computers][assembler.name] ? @total_stats[:computers][assembler.name] + 1 : 1
 		}
 		@available_assemblers = available_assemblers.keys.sort
+
+		@total_computers = 0
+		@model_stats.values.map{ |x| @total_computers += x }
 	end
 
 	def show
