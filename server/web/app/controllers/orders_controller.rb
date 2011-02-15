@@ -339,30 +339,24 @@ class OrdersController < ApplicationController
 		cond << 'computers.model_id=:model_id' if @model_id
 		cond << '(order_stages.start >= :start_date OR computer_stages.start >= :start_date)' if @start_date
 		cond << '(order_stages.start <= :end_date OR computer_stages.start <= :end_date)' if @end_date
-		cond << 'components.serial LIKE :component_serial' if @component_serial
 
 		if @component_serial
-			@computers_by_component_serial = Computer.find(
-				:all,
-				:conditions => [ 'components.serial= :component_serial', cond_var ],
-				:include => [{ :order => :order_stages}, :computer_stages, { :testings => :components }],
-				:order => 'computer_stages.start'
-			)
+			@computers_by_component_serial = Computer.find_by_sql("SELECT DISTINCT(computers.id) FROM computers INNER JOIN testings ON testings.computer_id=computers.id JOIN components ON components.testing_id=testings.id WHERE components.serial LIKE '%#{ @component_serial }'").collect{ |id| Computer.find_by_id( id ) }
 		end
 
 		if cond.size > 0
 			@orders = Order.find(
 				:all,
-				:conditions => [cond.join(' AND '), cond_var],
-				:include => [ :order_stages, { :computers => :computer_stages } ],
+				:conditions => [ cond.join(' AND '), cond_var ],
+				:include => [ :order_stages, { :computers => :computer_stages }  ],
 				:order => 'order_stages.start'
 			)
 
 			cond << 'orders.id IS NULL'
 			@computers = Computer.find(
 				:all,
-				:conditions => [cond.join(' AND '), cond_var],
-				:include => [{ :order => :order_stages}, :computer_stages, { :testings => :components }],
+				:conditions => [ cond.join(' AND '), cond_var ],
+				:include => [ { :order => :order_stages}, :computer_stages, { :testings => :components } ],
 				:order => 'computer_stages.start'
 			)
 
