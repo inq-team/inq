@@ -328,7 +328,6 @@ class OrdersController < ApplicationController
 			:component_model_id => @component_model_id,
 			:start_date => @start_date,
 			:end_date => @end_date,
-			:component_serial => "%#{@component_serial }%"
 		}
 
 		cond = []
