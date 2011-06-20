@@ -5,7 +5,7 @@
 
 CLASSES="bus video network"
 
-lshw `for class in $( echo $CLASSES ); do echo -class $class; done` \
+lshw `for class in $CLASSES; do echo -class $class; done` \
 	`cat $HOME/lshw_dmi_p` -xml |
 	sed 's/[[:cntrl:]]//g' |
 	sed 's/&[^;]*;//g' |
