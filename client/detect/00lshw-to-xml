@@ -3,7 +3,10 @@
 # DESCRIPTION=Convert lshw output to required XML document.
 # DEPENDS=Video,NIC,FireWire (IEEE 1394),InfiniBand,Fibre Channel,USB Controller
 
-lshw `cat $HOME/lshw_dmi_p` -xml |
+CLASSES="bus video network"
+
+lshw `for class in $( echo $CLASSES ); do echo -class $class; done` \
+	`cat $HOME/lshw_dmi_p` -xml |
 	sed 's/[[:cntrl:]]//g' |
 	sed 's/&[^;]*;//g' |
 	xsltproc $SHARE_DIR/lshw.xslt - > $HOME/components.xml
