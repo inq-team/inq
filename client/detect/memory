@@ -54,6 +54,8 @@ dmi_detect()
 			MEM_VENDOR=`echo "$MEM_INFO" | sed -n 's/^.*Manufacturer: //p' | sed 's/Manufacturer[0-9]*//;s/Not Specified//'`
 			MEM_SERIAL=`echo "$MEM_INFO" | sed -n 's/^.*Serial Number: //p'| sed 's/SerNum[0-9]*//;s/Not Specified//'`
 			echo Memory "$MEM_VENDOR" "$MEM_SIZE $MEM_TYPE $MEM_SPEED" "$MEM_SERIAL" ' - dmi' >> $HOME/debug.log 
+
+			echo "$MEM_TYPE" | grep -qi ".out of spec." && MEM_TYPE="DDR3" || true
 			add_component Memory "$MEM_VENDOR" "$MEM_SIZE $MEM_TYPE $MEM_SPEED" "$MEM_SERIAL" ""
 		fi
 	done	
