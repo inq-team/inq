@@ -21,8 +21,12 @@
 	<% end %>
 </table>
 
+<% if @computer_stages.find { |stage| stage[:stage] == 'checking' && stage[:status] == :finished } %>
+
+
 <% place_hint(flash[:notice] ? 'print' : flash[:error] ? 'error' : 'info') do %>
-<table><tr><td rowspan="2">
+<table>
+<tr><td rowspan="2">
 <% if flash[:notice] %>
 	<%= flash[:notice] %>
 <% elsif flash[:error] %>
@@ -31,6 +35,7 @@
 	To edit short names hover over the desired line and follow the link
 <% end %>
 </td>
+
 <td rowspan="2">
 	To <strong>print</strong> the sticker press the button below:
 	<% form_tag({ :action => 'print_sticker_profile', :id => @computer.id, :testing => @testing_number }, :method => 'post', :onsubmit => "return confirm('Are you sure you need ' + $('count').value + ' copies?');") do %>
@@ -49,6 +54,9 @@
 <tr><td style="vertical-align: middle ! important;">
 	<%= link_to 'Editor', :action => 'free_form', :id => @computer.id, :testing => @testing_number %>
 </tr></td>
+
+<% end %>
+
 </tr></table>
 <% end %>
 
