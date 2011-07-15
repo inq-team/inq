@@ -1,5 +1,4 @@
 #!/bin/sh -ef
 
 has_ipmi || exit 0
-possible_id=`sed -n 's/^ Board Serial *: *0*\([0-9]*\)$/\1/p' < $HOME/fru.log`
-[ -z "$possible_id" ] || COMPUTER_ID=$possible_id
+COMPUTER_ID=`sed -n 's/^ Board Serial *: *0*\([0-9]*\)$/\1/p' < $HOME/fru.log`
