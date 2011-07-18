@@ -21,7 +21,7 @@ fi
 # Run LiveHelper configuration utility itself
 ################################################################################
 pushd $WORKDIR/$LIVEDIR
-lh_config --mirror-bootstrap $REPO --mirror-chroot $REPO \
+LH_LINUX_PACKAGES=linux-image-2.6 lh_config --mirror-bootstrap $REPO --mirror-chroot $REPO \
           --linux-flavours $KERNEL_FLAVOUR \
           --architecture $DEB_TARGET \
           --distribution $REPO_BRANCH \

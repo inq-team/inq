@@ -43,9 +43,9 @@ wget
 util-linux
 ipmitool
 partimage
-cdrecord
+wodim
 dvd+rw-tools
-mkisofs
+genisoimage
 debian-multimedia-keyring
 mencoder
 syslog-ng
