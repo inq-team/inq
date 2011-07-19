@@ -75,7 +75,7 @@ build-boot:
 
 build-live-configure:
 	mkdir -p $(WORKDIR)/$(LIVEDIR)
-	cd $(WORKDIR)/$(LIVEDIR) && sudo lh_clean
+	cd $(WORKDIR)/$(LIVEDIR) && sudo lh clean
 	sudo rm -rf $(WORKDIR)/$(LIVEDIR)
 	mkdir -p $(WORKDIR)/$(LIVEDIR)
 	# Run LiveCD LiveHelper configuration helper script
@@ -89,12 +89,12 @@ build-live-configure:
 		build/debian/live_lh_config.sh
 
 build-root-live: check-repo-defined build-live-configure
-	cd $(WORKDIR)/$(LIVEDIR) && export MKSQUASHFS_OPTIONS="-e boot" && sudo lh_bootstrap
-	cd $(WORKDIR)/$(LIVEDIR) && export MKSQUASHFS_OPTIONS="-e boot" && sudo lh_chroot
+	cd $(WORKDIR)/$(LIVEDIR) && export MKSQUASHFS_OPTIONS="-e boot" && sudo lh bootstrap
+	cd $(WORKDIR)/$(LIVEDIR) && export MKSQUASHFS_OPTIONS="-e boot" && sudo lh chroot
 
 build-live:
-	cd $(WORKDIR)/$(LIVEDIR) && lh_clean --binary
-	cd $(WORKDIR)/$(LIVEDIR) && export MKSQUASHFS_OPTIONS="-e boot" && lh_binary
+	cd $(WORKDIR)/$(LIVEDIR) && lh clean --binary
+	cd $(WORKDIR)/$(LIVEDIR) && export MKSQUASHFS_OPTIONS="-e boot" && sudo lh binary
 
 update-package:
 	sudo cp $(WORKDIR)/build-package/$(PACKAGE_DEB) $(WORKDIR)/$(ROOTDIR)
