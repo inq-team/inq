@@ -3,7 +3,7 @@
 # DESCRIPTION=Convert lshw output to required XML document.
 # DEPENDS=Video,NIC,FireWire (IEEE 1394),InfiniBand,Fibre Channel,USB Controller
 
-CLASSES="bus video network"
+CLASSES="bus video network bridge"
 
 lshw `for class in $CLASSES; do echo -class $class; done` \
 	`cat $HOME/lshw_dmi_p` -xml |
