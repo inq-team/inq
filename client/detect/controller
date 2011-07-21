@@ -23,7 +23,7 @@ einarc_detect()
 			'software') CTRL_VENDOR='mdadm';;
 		esac
 		echo 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" "$CTRL_SERIAL" - einarc >> $HOME/debug.log
-		add_component 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" "$CTRL_SERIAL" "$CTRL_VERSION"
+		[ "$CTRL_VENDOR" = "mdadm" ] || add_component 'Disk Controller' "$CTRL_VENDOR" "$CTRL_MODEL" "$CTRL_SERIAL" "$CTRL_VERSION"
 	done
 }
 
