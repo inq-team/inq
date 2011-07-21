@@ -486,16 +486,41 @@ service_start()
 
 strip_surrounding_spaces()
 {
-	echo "$1" | sed 's/^\s*//g; s/\s*$//g'
+	sed 's/^\s*//g; s/\s*$//g'
+}
+
+strip_amp_symbols()
+{
+	sed 's/&[^;]*;//g'
+}
+
+strip_empty_xmlns()
+{
+	sed 's/ xmlns=""//g'
+}
+
+strip_non_printable()
+{
+	sed 's/[^[:print:]]//g'
+}
+
+strip_tag_symbols()
+{
+	sed 's/[<>]//g'
+}
+
+sanitize_string()
+{
+	echo "$1" | strip_surrounding_spaces | strip_non_printable | strip_tag_symbols
 }
 
 add_component()
 {
 	type=$1
-	vendor=`strip_surrounding_spaces "$2"`
-	model=`strip_surrounding_spaces "$3"`
-	serial=`strip_surrounding_spaces "$4"`
-	version=`strip_surrounding_spaces "$5"`
+	vendor=`sanitize_string "$2"`
+	model=`sanitize_string "$3"`
+	serial=`sanitize_string "$4"`
+	version=`sanitize_string "$5"`
 
 	if [ -s "$HOME/components.xml" ]; then
 		new_components=`mktemp`
@@ -510,7 +535,7 @@ add_component()
 			 # can break detects. Currently we do not do it in
 			 # XSLT itself, because it is not quite simple. Also
 			 # we are removing empty namespace declarations there.
-			 sed 's/&[^;]\+;//g ; s/ xmlns=""//g' > $new_components
+			 strip_amp_symbols | strip_empty_xmlns > $new_components
 
 		mv $new_components $HOME/components.xml
 	else
