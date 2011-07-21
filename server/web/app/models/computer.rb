@@ -60,32 +60,15 @@ class Computer < ActiveRecord::Base
 	end
 
 	def set_assembler(person_id)
-		set_stage_person('assembling', person_id)
+		set_stage_person('assembling', person_id, false)
 	end
 
 	def set_tester(person_id)
-		set_stage_person('testing', person_id)
+		set_stage_person('testing', person_id, false)
 	end
 
 	def set_checker(person_id)
-		stage_name = 'checking'
-		last_cs = last_computer_stage
-		if last_cs and last_cs.stage == stage_name
-			last_cs.person_id = person_id
-			last_cs.end = Time.new
-			last_cs.save!
-		else
-			if last_cs
-				last_cs.end = Time.new
-				last_cs.save!
-			end
-			computer_stages << ComputerStage.new(
-				:start => Time.new(),
-				:person_id => person_id,
-				:stage => stage_name
-			)
-			save!
-		end
+		set_stage_person('checking', person_id, true)
 	end
 
 	def manufacturing_date
@@ -122,25 +105,29 @@ class Computer < ActiveRecord::Base
 	##
 	# If computer_stage is now running, then just set a person for
 	# it. If it's not running, close last stage, start this stage and
-	# set a person for it.	
-	def set_stage_person(stage_name, person_id)
-		last_cs = last_computer_stage
-		if last_cs and last_cs.stage == stage_name
-			last_cs.person_id = person_id
-			last_cs.save!
-		else
-			if last_cs
-				last_cs.end = Time.new
-				p last_cs
+	# set a person for it.
+	def set_stage_person(stage_name, person_id, stage_complete = false)
+		Computer.transaction do 
+			#raise 'racoon mushrooms' if ComputerStage.find_by_computer_id_and_stage(id, stage_name, :conditions => 'end is not null')
+			return if ComputerStage.find_by_computer_id_and_stage(id, stage_name, :conditions => 'end is not null')
+			last_cs = last_computer_stage
+			if last_cs and last_cs.stage == stage_name
+				last_cs.person_id = person_id
+				last_cs.end = Time.new if stage_complete
 				last_cs.save!
-				sleep 1 # GREYFIX: a crude workaround for MySQL datetime 1 sec granularity to make sure that stages go in the right order
+			else
+				if last_cs
+					last_cs.end = Time.new
+					last_cs.save!
+					sleep 1 # GREYFIX: a crude workaround for MySQL datetime 1 sec granularity to make sure that stages go in the right order
+				end
+				computer_stages << ComputerStage.new(
+					:start => Time.new(),
+					:person_id => person_id,
+					:stage => stage_name
+				)
+				save!
 			end
-			computer_stages << ComputerStage.new(
-				:start => Time.new(),
-				:person_id => person_id,
-				:stage => stage_name
-			)
-			save!
 		end
 	end
 end
