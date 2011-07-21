@@ -49,9 +49,9 @@ class Computer < ActiveRecord::Base
 	def claim_ip(ip)
 		transaction do
 			Computer.update_all('shelf = NULL, ip = NULL', ['ip = ?', ip])
-			self.ip = ip		
+			self.ip = ip
 			save!
-		end	
+		end
 	end
 
 	def ip_addresses
@@ -83,31 +83,30 @@ class Computer < ActiveRecord::Base
 	def self.free_id
 		Computer.find_by_sql('SELECT MAX(id)+1 FROM computers')[0]['MAX(id)+1'].to_i
 	end
-	
+
 	def self.stage_in_process(order_id, stage)
 		Computer.find_by_sql(["SELECT computers.*
-		FROM computers INNER JOIN computer_stages 
+		FROM computers INNER JOIN computer_stages
 		ON computer_stages.computer_id=computers.id
 		WHERE computers.order_id=?
 		AND computer_stages.stage=?
 		AND computer_stages.end IS NULL", order_id, stage])
 	end
-		
+
 	def self.stage_done(order_id, stage)
 		Computer.find_by_sql(["SELECT computers.*
-		FROM computers INNER JOIN computer_stages 
+		FROM computers INNER JOIN computer_stages
 		ON computer_stages.computer_id=computers.id
 		WHERE computers.order_id=?
 		AND computer_stages.stage=?
 		AND computer_stages.end IS NOT NULL", order_id, stage])
 	end
-	
-	##
+
 	# If computer_stage is now running, then just set a person for
 	# it. If it's not running, close last stage, start this stage and
 	# set a person for it.
 	def set_stage_person(stage_name, person_id, stage_complete = false)
-		Computer.transaction do 
+		Computer.transaction do
 			#raise 'racoon mushrooms' if ComputerStage.find_by_computer_id_and_stage(id, stage_name, :conditions => 'end is not null')
 			return if ComputerStage.find_by_computer_id_and_stage(id, stage_name, :conditions => 'end is not null')
 			last_cs = last_computer_stage
