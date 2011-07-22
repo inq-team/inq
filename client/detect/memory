@@ -21,7 +21,7 @@ spd_detect()
 		MEM_SIZE=`echo "$MEM_INFO" | sed -n 's/^Size *//p' | head -n1 | sed 's/ *$//'`
 		MEM_SPEED=`echo "$MEM_INFO" | sed -n 's/^Maximum module speed *//p' | head -n1 | sed 's/DDR //' | sed 's/ *$//'`
 		MEM_TYPE=`echo "$MEM_INFO" | sed -n 's/^Fundamental Memory type *//p' | head -n1 | sed 's/ *$//'`
-		MEM_VENDOR=`echo "$MEM_INFO" | sed -n 's/^Manufacturer *//p' | head -n1 | sed 's/ *$//'`
+		MEM_VENDOR=`echo "$MEM_INFO" | sed -n 's/^Module Manufacturer *//p' | head -n1 | sed 's/ *$//'`
 		MEM_SERIAL=`echo "$MEM_INFO" | sed -n 's/^Assembly Serial Number *0x//p' | head -n1 | sed 's/ *$//'`
 		MEM_MODEL="$MEM_SIZE $MEM_SPEED $MEM_TYPE"
 		echo Memory "$MEM_VENDOR" "$MEM_MODEL" "$MEM_SERIAL" ' - decode-dimms.pl' >> $HOME/debug.log
