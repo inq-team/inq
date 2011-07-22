@@ -1,0 +1,8 @@
+#!/bin/sh
+
+echo "I: setting up motd symlink"
+
+rm -f /etc/motd
+
+# GREYFIX: parametrize it!
+ln -sf /usr/share/inquisitor/motd /etc/motd

@@ -21,35 +21,35 @@ fi
 # Run LiveHelper configuration utility itself
 ################################################################################
 pushd $WORKDIR/$LIVEDIR
-LH_LINUX_PACKAGES=linux-image-2.6 lh config --mirror-bootstrap $REPO --mirror-chroot $REPO \
-          --linux-flavours $KERNEL_FLAVOUR \
-          --architecture $DEB_TARGET \
-          --distribution $REPO_BRANCH \
-          --iso-application Inquisitor \
-          --iso-volume "Inquisitor $INQ_VERSION" \
-          --iso-preparer "Sergey Matveev (stargrave@users.sourceforge.net)" \
-          --iso-publisher "Sergey Matveev (stargrave@users.sourceforge.net)" \
-          --bootappend-live "noautologin nolocales" \
-          ${CUSTOM_KERNEL_OPTION} \
-          --hostname inq \
-          --packages-lists inq \
-          --binary-indices disabled \
-          --apt-recommends disabled \
-          --apt-secure disabled \
-          --bootstrap-flavour minimal \
-          --chroot-filesystem squashfs \
-          --source disabled \
-          --union-filesystem aufs \
-          --bootloader grub \
-          --bootstrap debootstrap \
-          --cache disabled \
-          --categories "$REPO_SECTIONS" \
-          --chroot-filesystem squashfs \
-          --union-filesystem aufs \
-          --memtest memtest86+ \
-          --security disabled \
-          --checksums disabled \
-          --net-tarball none
+lb config \
+	--mirror-bootstrap $REPO \
+	--mirror-chroot $REPO \
+	--linux-flavours $KERNEL_FLAVOUR \
+	--linux-packages "linux-image-2.6" \
+	--architecture $DEB_TARGET \
+	--distribution $REPO_BRANCH \
+	--iso-application Inquisitor \
+	--iso-volume "Inquisitor $INQ_VERSION" \
+	--iso-preparer "Sergey Matveev (stargrave@users.sourceforge.net)" \
+	--iso-publisher "Sergey Matveev (stargrave@users.sourceforge.net)" \
+	--bootappend-live "noautologin nolocales" \
+	${CUSTOM_KERNEL_OPTION} \
+	--apt-options='--allow-unauthenticated --yes' \
+	--hostname inq \
+	--binary-indices none \
+	--apt-recommends false \
+	--apt-secure false \
+	--chroot-filesystem squashfs \
+	--source false \
+	--packages-lists inq.list \
+	--bootloader syslinux \
+	--bootstrap debootstrap \
+	--cache false \
+	--memtest memtest86+ \
+	--security false \
+	--checksums none \
+	--net-tarball none \
+
 popd
 
 ################################################################################
@@ -60,17 +60,9 @@ echo "deb $REPO_MULTIMEDIA $REPO_BRANCH main" > $WORKDIR/$LIVEDIR/config/chroot_
 ################################################################################
 # Packages list, pressed file, Inquisitor package
 ################################################################################
-cp packages.live $WORKDIR/$LIVEDIR/config/chroot_local-packageslists/inq
+cp packages.live $WORKDIR/$LIVEDIR/config/chroot_local-packageslists/inq.list
 cp preseed.live $WORKDIR/$LIVEDIR/config/chroot_local-preseed/inq
 cp $WORKDIR/build-package/$PACKAGE_DEB $WORKDIR/$LIVEDIR/config/chroot_local-packages
-
-################################################################################
-# Needed to be included files (in Tars)
-################################################################################
-for include in ../../$IMAGE_DIR/*.tar; do
-	tar xvfC "$include" $WORKDIR/$LIVEDIR/config/chroot_local-includes
-done
-cp ../../$IMAGE_DIR/*.deb $WORKDIR/$LIVEDIR/config/chroot_local-packages
 
 ################################################################################
 # Hooks, splash image
@@ -83,29 +75,19 @@ cp live-additional/splash.xpm.gz $WORKDIR/$LIVEDIR/config/binary_grub
 ################################################################################
 # User interface pretty outlook
 ################################################################################
-mkdir $WORKDIR/$LIVEDIR/config/chroot_local-includes/etc
+mkdir -p $WORKDIR/$LIVEDIR/config/chroot_local-includes/etc
 cp live-additional/debian_version $WORKDIR/$LIVEDIR/config/chroot_local-includes/etc
 cp live-additional/issue $WORKDIR/$LIVEDIR/config/chroot_local-includes/etc
 
-################################################################################
-# Generate motd based on current tests in trunk
-################################################################################
-cat <<__EOF__ > $WORKDIR/$LIVEDIR/config/chroot_local-includes/etc/motd
-Welcome to command-line ${COLOR_YELLOW}Inquisitor${COLOR_NORMAL} interface
-
-You can use commands:
-
-${COLOR_GREEN}inquisitor${COLOR_NORMAL} - execute Inquisitor testing in whole (normal testing mode)
-${COLOR_GREEN}inq-detect${COLOR_NORMAL} - execute detects only
-${COLOR_GREEN}inq-software-detect${COLOR_NORMAL} - execute software detects only
-${COLOR_GREEN}${SHARE_DIR}/test/${COLOR_YELLOW}STAGE${COLOR_NORMAL} - execute particular test ${COLOR_YELLOW}STAGE${COLOR_NORMAL}, one of:
-${COLOR_BLUE}
-__EOF__
-
-TMPDIR=`mktemp -d`
-cp ../../client/test/* $TMPDIR 2>/dev/null
-ls --color -C $TMPDIR >> $WORKDIR/$LIVEDIR/config/chroot_local-includes/etc/motd
-rm -fr $TMPDIR 2>/dev/null
-echo "${COLOR_NORMAL}" >> $WORKDIR/$LIVEDIR/config/chroot_local-includes/etc/motd
-
 popd
+
+################################################################################
+# Needed to be included files (in Tars)
+################################################################################
+for I in $IMAGE_DIR/*.tar $IMAGE_DIR/*.tar.gz $IMAGE_DIR/*.tar.bz2; do
+	[ -r "$I" ] || break
+	echo -n "Unpacking $I... "
+	tar xf $I
+	echo OK
+done
+cp $IMAGE_DIR/*.deb $WORKDIR/$LIVEDIR/config/chroot_local-packages || :
