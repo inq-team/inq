@@ -1,5 +1,6 @@
 include Makefile.config
 .SILENT: default
+.PHONY: default client server data all
 
 #===============================================================================
 # Major targets
