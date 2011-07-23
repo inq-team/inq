@@ -6,10 +6,14 @@ include ../flavour/$(FLAVOUR)
 DEST_DIR=out
 
 all: \
+	$(DEST_DIR) \
 	$(DEST_DIR)/linux-stress.tar.gz \
 	$(DEST_DIR)/big_buck_bunny_480p_stereo.ogg \
 	$(DEST_DIR)/audiosample.wav \
 	$(DEST_DIR)/stress-small.tar.gz
+
+$(DEST_DIR):
+	mkdir -p $(DEST_DIR)
 
 # ==============================================================================
 
@@ -24,6 +28,7 @@ $(DEST_DIR)/big_buck_bunny_480p_stereo.ogg:
 LINUX_PKG=linux-2.6.32
 
 $(DEST_DIR)/linux-stress.tar.gz: $(LINUX_PKG).tar.bz2
+	rm -rf linux-stress
 	tar -xf $(LINUX_PKG).tar.bz2
 	mv $(LINUX_PKG) linux-stress
 	cd linux-stress && true | make config
