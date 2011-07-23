@@ -12,9 +12,10 @@
 
 . _inq-config-global; . $SHARE_DIR/functions-test
 
-pushdq $SHARE_DIR/data
-benchmark_submit_float "Encoding time" \
-		       "`timed_run_real flac -$COMPRESSION_LEVEL -f -o /dev/null $SOURCE`" \
-		       "sec" || test_failed "flac failed"
-popdq
+cd $SHARE_DIR/data
+benchmark_submit_float \
+	"Encoding time" \
+	"`timed_run_real flac -$COMPRESSION_LEVEL -f -o /dev/null $SOURCE`" \
+	"sec" ||
+	test_failed "flac failed"
 test_succeeded
