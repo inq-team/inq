@@ -67,3 +67,4 @@ mc
 lsscsi
 strace
 sg3-utils
+fio
