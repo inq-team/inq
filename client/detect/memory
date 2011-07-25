@@ -40,7 +40,7 @@ fru_detect()
 			echo Memory "$MEM_VENDOR" "$MEM_MODEL" "$MEM_SERIAL" ' - ipmi' >> $HOME/debug.log
 			add_component Memory "$MEM_VENDOR" "$MEM_MODEL" "$MEM_SERIAL" ""
 		fi
-	done	
+	done
 }
 
 dmi_detect()
@@ -59,7 +59,7 @@ dmi_detect()
 			echo "$MEM_TYPE" | grep -qi ".out of spec." && MEM_TYPE="DDR3" || true
 			add_component Memory "$MEM_VENDOR" "$MEM_SIZE $MEM_TYPE $MEM_SPEED" "$MEM_SERIAL" ""
 		fi
-	done	
+	done
 }
 
 detect_mem_quantity
