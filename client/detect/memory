@@ -64,7 +64,9 @@ dmi_detect()
 
 detect_mem_quantity
 DIMMS=`grep '^Decoding EEPROM: ' $HOME/spd.log 2>$DEBUG_TTY || true`
-if [ -n "$DIMMS" ] && [ "$SPD_MEM_COUNT" -ne 0 ] && [ "`i2cdetect 2>&1 | grep -c 'i2c-[0-9]'`" -ne 4 ]; then
+if [ -n "$DIMMS" ] &&
+   [ "$SPD_MEM_COUNT" -ne 0 ] &&
+   [ "`i2cdetect 2>&1 | grep -c 'i2c-[0-9]'`" -ne 4 ]; then
 	spd_detect "$DIMMS"
 else
 	DIMMS=`grep 'cpu[0-9]*.mem[0-9]*.vpd' $HOME/fru.log 2>$DEBUG_TTY || true`
