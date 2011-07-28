@@ -86,7 +86,7 @@ popd
 for I in $IMAGE_DIR/*.tar $IMAGE_DIR/*.tar.gz $IMAGE_DIR/*.tar.bz2; do
 	[ -r "$I" ] || continue
 	echo -n "Unpacking $I... "
-	tar xf $I
+	tar -C $WORKDIR/$LIVEDIR/config/chroot_local-includes -xf $I
 	echo OK
 done
 cp $IMAGE_DIR/*.deb $WORKDIR/$LIVEDIR/config/chroot_local-packages || :
