@@ -84,7 +84,7 @@ popd
 # Needed to be included files (in Tars)
 ################################################################################
 for I in $IMAGE_DIR/*.tar $IMAGE_DIR/*.tar.gz $IMAGE_DIR/*.tar.bz2; do
-	[ -r "$I" ] || break
+	[ -r "$I" ] || continue
 	echo -n "Unpacking $I... "
 	tar xf $I
 	echo OK
