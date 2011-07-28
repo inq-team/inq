@@ -1,0 +1,28 @@
+<style type="text/css">
+	th, td, table { border: 1px solid #666666 } td { text-align: center }
+</style>
+
+<h1>Statistics / RMA</h1>
+
+<center>
+<!--<form action="" method="get">
+</form>
+-->
+
+<table>
+<tr>
+	<th>Model</th>
+	<th>Total</th>
+	<th>Warranted</th>
+</tr>
+
+<% @rma_stat.each do |i|  %>
+	<tr>
+	<td><%= i.name %></td> 
+	<td><%= i.total %></td>
+	<td><%= i.checking %>/<%= i.testing %></td>
+	</tr>
+<% end %>
+
+</table>
+</center>

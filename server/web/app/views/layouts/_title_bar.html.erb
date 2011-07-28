@@ -5,6 +5,7 @@
 <%= link_to_unless_current '(Recent)', :controller => :orders, :action => :search, :date => { :start => (Date.today - (logged_in? ? current_person.recent_days : 3) + 1), :end => Date.today } %>
 <%= link_to_unless_current 'Computers', :controller => :computers %>
 <%= link_to_unless_current 'Statistics', :controller => :statistics %>
+<%= link_to_unless_current '/ RMA', :controller => :statistics, :action => :rma %>
 <% if logged_in? and current_person.admin? -%>
 |
 <%=	link_to_unless_current 'Profiles', :controller => :profiles %>
