@@ -69,6 +69,5 @@ class StatisticsController < ApplicationController
 
 	def rma
 		@rma_stat = Model.find_by_sql("Select m.*, count(c.id) total, count(s1.computer_id) checking, count(s2.computer_id) testing from models as m join computers as c on m.id = c.model_id left join ( Select computer_id from computer_stages where stage = \'checking\' group by computer_id having min( end) > now() - interval 3 year ) as s1 on c.id = s1.computer_id left join ( Select computer_id from computer_stages where stage = \'testing\' and computer_id not in ( Select computer_id from computer_stages where stage = \'checking\') group by computer_id having min( end) > now() - interval 3 year ) as s2 on c.id=s2.computer_id group by m.id order by m.name;")
-		
 	end
 end
