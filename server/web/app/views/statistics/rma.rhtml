@@ -14,6 +14,7 @@
 	<th>Model</th>
 	<th>Total</th>
 	<th>Warranted</th>
+	<th>Days left</th>
 </tr>
 
 <% @rma_stat.each do |i| %>
@@ -21,6 +22,7 @@
 	<td><%= i.name %></td>
 	<td><%= i.total %></td>
 	<td><%= i.checking %>/<%= i.testing %></td>
+	<td><%= i.cavg.blank? ? "-" : i.cavg.to_i %>/<%= i.tavg.blank? ? "-" : i.tavg.to_i %></td>
 	</tr>
 <% end %>
 

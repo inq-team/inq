@@ -68,6 +68,6 @@ class StatisticsController < ApplicationController
 	end
 
 	def rma
-		@rma_stat = Model.find_by_sql("SELECT m.*, count(c.id) total, count(s1.computer_id) checking, count(s2.computer_id) testing FROM models AS m JOIN computers AS c ON m.id = c.model_id LEFT JOIN ( SELECT computer_id FROM computer_stages WHERE stage = 'checking' GROUP BY computer_id HAVING MIN(end) > NOW() - INTERVAL 3 YEAR ) AS s1 ON c.id = s1.computer_id LEFT JOIN ( SELECT computer_id FROM computer_stages WHERE stage = 'testing' AND computer_id NOT IN ( SELECT computer_id FROM computer_stages WHERE stage = 'checking' ) GROUP BY computer_id HAVING MIN(end) > NOW() - INTERVAL 3 YEAR ) AS s2 ON c.id = s2.computer_id GROUP BY m.id ORDER BY m.name")
+		@rma_stat = Model.find_by_sql("Select m.*, count(c.id) total, count(s1.computer_id) checking, count(s2.computer_id) testing, avg(s1.d1) cavg, avg(s2.d2) tavg from models as m join computers as c on m.id = c.model_id left join ( Select computer_id, datediff(end, now() - interval 3 year) d1 from computer_stages where stage = \'checking\' group by computer_id having min( end) > now() - interval 3 year ) as s1 on c.id = s1.computer_id left join ( Select computer_id, datediff(end, now() - interval 3 year) d2 from computer_stages where stage = \'testing\' and computer_id not in ( Select computer_id from computer_stages where stage = \'checking\') group by computer_id having min( end) > now() - interval 3 year ) as s2 on c.id=s2.computer_id group by m.id order by m.name;")
 	end
 end
