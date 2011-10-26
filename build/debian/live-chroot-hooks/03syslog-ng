@@ -20,5 +20,5 @@ source inq { pipe("/dev/inqlog"); };
 destination ttyall { file("/dev/tty12"); };
 
 log { source(sys); destination(ttyall); };
-
+log { source(inq); destination(ttyall); };
 __EOF__
