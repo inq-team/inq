@@ -18,7 +18,7 @@
 need_kernel_module md
 
 # Get default adapter and create einarc_command to simplify script reading
-[ ! -z "$ADAPTER" ] || ADAPTER=`einarc --list | sed -n '1p' | awk '{print $1}'`
+[ ! -z "$ADAPTER" ] || ADAPTER=`einarc --list | sed -n '1p' | cut -f1`
 einarc_command="einarc -t $ADAPTER -a $ADAPTER_NUMBER"
 
 # Be sure that /proc/mdstat exists for software adapter
@@ -27,7 +27,7 @@ einarc_command="einarc -t $ADAPTER -a $ADAPTER_NUMBER"
 # Replace all EINARC_DISK1/2/3/etc with real ones
 drives_quantity=`$einarc_command physical list | wc -l`
 for i in `seq 1 $drives_quantity`; do
-	disk=`$einarc_command physical list | sort | awk '{print $1}' | sed -n "${i}p"`
+	disk=`$einarc_command physical list | sort | cut -f1 | sed -n "${i}p"`
 	CONFIGURATION=`echo $CONFIGURATION | sed "s/EINARC_DISK${i}/${disk}/g"`
 done
 
