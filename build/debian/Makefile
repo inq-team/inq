@@ -86,6 +86,7 @@ build-live-configure:
 		PACKAGE_DEB=$(PACKAGE_DEB) INQ_VERSION=$(INQ_VERSION) \
 		SHARE_DIR=$(SHARE_DIR) \
 		IMAGE_DIR=$(IMAGE_DIR) \
+		CUSTOM_KERNEL=$(CUSTOM_KERNEL) \
 		build/debian/live_lh_config.sh
 
 build-root-live: check-repo-defined build-live-configure
