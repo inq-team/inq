@@ -5,16 +5,18 @@ pushd build/debian
 ################################################################################
 # Decide which kernel flavour to use
 ################################################################################
+KERNEL_FLAVOUR="--linux-flavours"
 if [ "$DEB_TARGET" = "i386" ]; then
-	KERNEL_FLAVOUR="686"
+	KERNEL_FLAVOUR="$KERNEL_FLAVOUR 686"
 else
-	KERNEL_FLAVOUR="amd64"
+	KERNEL_FLAVOUR="$KERNEL_FLAVOUR amd64"
 fi
 
 if [ -n "$CUSTOM_KERNEL" ]; then
-	CUSTOM_KERNEL_OPTION="--linux-packages none"
+	LINUX_PACKAGES="none"
+	KERNEL_FLAVOUR=""
 else
-	CUSTOM_KERNEL_OPTION=""
+	LINUX_PACKAGES="linux-image-2.6"
 fi
 
 ################################################################################
@@ -24,8 +26,8 @@ pushd $WORKDIR/$LIVEDIR
 lb config \
 	--mirror-bootstrap $REPO \
 	--mirror-chroot $REPO \
-	--linux-flavours $KERNEL_FLAVOUR \
-	--linux-packages "linux-image-2.6" \
+	$KERNEL_FLAVOUR \
+	--linux-packages $LINUX_PACKAGES \
 	--architecture $DEB_TARGET \
 	--distribution $REPO_BRANCH \
 	--iso-application Inquisitor \
@@ -33,7 +35,6 @@ lb config \
 	--iso-preparer "Sergey Matveev (stargrave@users.sourceforge.net)" \
 	--iso-publisher "Sergey Matveev (stargrave@users.sourceforge.net)" \
 	--bootappend-live "noautologin nolocales" \
-	${CUSTOM_KERNEL_OPTION} \
 	--apt-options='--allow-unauthenticated --yes' \
 	--hostname inq \
 	--binary-indices none \
