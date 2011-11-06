@@ -1,0 +1,10 @@
+#!/bin/sh
+
+TARGET_DIR=binary/live
+TARGET=vmlinuz
+
+if ! -e $TARGET_DIR/$TARGET; then
+	for i in $TARGET_DIR/$TARGET-*; do
+		cp $i $TARGET_DIR/$TARGET
+	done
+fi

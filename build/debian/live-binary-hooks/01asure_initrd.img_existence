@@ -1,0 +1,10 @@
+#!/bin/sh
+
+TARGET_DIR=binary/live
+TARGET=initrd.img
+
+if ! -e $TARGET_DIR/$TARGET; then
+	for f in $TARGET_DIR/$TARGET-*; do
+		cp $f $TARGET_DIR/$TARGET
+	done
+fi
