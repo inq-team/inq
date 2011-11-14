@@ -1,0 +1,44 @@
+<style type="text/css">
+        th, td, table { border: 1px solid #666666 } td { text-align: center }
+</style>
+
+<h1>Assembly</h1>
+
+<center>
+<% form_tag :action => 'assembly' do %>
+<%= select_day(@from_day, :field_name => "from_day") %>
+<%= select_month(@from_month, :field_name => "from_month") %>
+<%= select_year(@from_year, :field_name => "from_year") %>
+--
+<%= select_day(@to_day, :field_name => "to_day") %>
+<%= select_month(@to_month, :field_name => "to_month") %>
+<%= select_year(@to_year, :field_name => "to_year") %>
+<input type="submit"/>
+<% end %>
+
+<table>
+<tr>
+	<th>Date</th>
+	<th>Computers</th>
+	<th>Hours</th>
+	<th>Assemblers</th>
+	<th>Utilization</th>
+</tr>
+
+
+<% @assembly_stat.each do |i| %>
+        <tr>
+        <td><%= i.ddmmyy  %></td>
+        <td><%= i.comp_count  %></td>
+        <td><%= i.hours %></td>
+        <td><%= i.asmbl_count %></td>
+	<td><%= i.coef %></td>
+        </tr>
+<% end %>
+<tr>
+	<td colspan = 4>Utilization coefficient sum</td>
+	<td style = "font-weight:bold"><%= @k %></td>
+</tr>
+</table>
+
+</center>
