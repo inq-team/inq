@@ -13,6 +13,7 @@
 # VAR=SKIP:int:0:Number of blocks to skip
 # VAR=COUNT:int:1024:Number of blocks to be written. If zero is specified then this parameter won't be used
 # VAR=COMPRESSION:string:none:What compression is used. gzip, bzip2 or lzma can be chosen
+# VAR=PROGRESS_REFRESH_TIME:int:0:How USR1 signal (progress report) should be send to dd command, sec. If zero is specified, then no progress will be shown
 
 . _inq-config-global; . $SHARE_DIR/functions-test
 
@@ -28,6 +29,22 @@ else
 	DECOMPRESSOR="$COMPRESSION -dc"
 fi
 
+# Ugly killall-ing of all available dd-commands
+progress_refresher()
+{
+	while true; do
+		sleep $PROGRESS_REFRESH_TIME
+		ps axe |
+			awk '{print $1,$NF}' |
+			sed -n 's/^\([0-9]*\).*bin.dd$/\1/p' |
+				xargs kill -s USR1 || true
+	done
+}
+if [ $PROGRESS_REFRESH_TIME -gt 0 ]; then
+	progress_refresher &
+	progress_refresher_pid=$!
+fi
+
 # Perform writing itself
 if echo $IF | grep -q "^http:\/\/"; then
 	curl "$IF" | $DECOMPRESSOR | dd of=/dev/"$OF" bs=$BLOCKSIZE $COUNT_ARG skip=$SKIP || test_failed 'DD failed'
@@ -35,6 +52,9 @@ else
 	[ -e "$IF" ] || test_failed 'Source file does not exist'
 	$DECOMPRESSOR $IF | dd of=/dev/"$OF" bs=$BLOCKSIZE $COUNT_ARG skip=$SKIP || test_failed 'DD failed'
 fi
+
+# Stop progress
+[ -z "$progress_refresher_pid" ] || kill "$progress_refresher_pid" || true
 
 # Call sfdisk to reread partition table if it was written,
 # otherwise it is not dangerous operation.
