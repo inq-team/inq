@@ -12,7 +12,7 @@
 # VAR=BLOCKSIZE:int:1024:Blocksize, KiB
 # VAR=SKIP:int:0:Number of blocks to skip
 # VAR=COUNT:int:1024:Number of blocks to be written. If zero is specified then this parameter won't be used
-# VAR=COMPRESSION:string:none:What compression is used. gzip, bzip2 or lzma can be chosen
+# VAR=COMPRESSION:string:none:What compression is used. gzip, bzip2, lzma, xz can be chosen
 # VAR=PROGRESS_REFRESH_TIME:int:0:How USR1 signal (progress report) should be send to dd command, sec. If zero is specified, then no progress will be shown
 
 . _inq-config-global; . $SHARE_DIR/functions-test
