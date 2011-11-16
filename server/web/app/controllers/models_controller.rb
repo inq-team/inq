@@ -11,6 +11,10 @@ class ModelsController < ApplicationController
 	       :redirect_to => { :action => :list }
 
 	def list
+		@models = Model.find_all_by_eol(false)
+	end
+
+	def long_list
 		@models = Model.find(:all)
 	end
 

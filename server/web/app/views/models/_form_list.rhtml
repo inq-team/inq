@@ -1,0 +1,25 @@
+<table>
+  <tr>
+  <% for column in Model.content_columns %>
+        <% next if ["stages", "eol"].include? column.name %>
+    <th><%= column.human_name %></th>
+  <% end %>
+  </tr>
+
+<% for model in @models %>
+  <tr>
+  <% for column in Model.content_columns %>
+        <% next if ["stages", "eol"].include? column.name %>
+    <td><%=h model.send(column.name) %></td>
+  <% end %>
+    <td><%= link_to 'Show', :action => 'show', :id => model %></td>
+    <td><%= link_to 'Edit', :action => 'edit', :id => model %></td>
+    <td><%= link_to 'Destroy', { :action => 'destroy', :id => model }, :confirm => 'Are you sure?', :method => :post %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New model', :action => 'new' %>
+

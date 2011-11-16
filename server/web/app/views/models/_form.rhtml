@@ -4,8 +4,8 @@
 <p><label for="model_name">Model name</label><br/>
 <%= text_field 'model', 'name' %></p>
 
-<p><label for="model_stages">Stages</label><br/>
-<%= text_field 'model', 'stages' %></p>
+<p><label for="model_description">Description</label><br/>
+<%= text_field 'model', 'description' %></p>
 
 <p><label for="model_dmi_name">Dmi name</label><br/>
 <%= text_field 'model', 'dmi_name' %></p>
@@ -13,9 +13,18 @@
 <p><label for="model_ismodel">Ismodel</label><br/>
 <%= text_field 'model', 'ismodel' %></p>
 
+<p><label for="model_eol">Eol</label><br/>
+<!--<%= text_field 'model', 'eol' %>-->
+<%= select :model, :eol, [ false, true ]  %>
+</p>
+
 <p><label for="model_mask">Mask</label><br/>
 <%= text_field 'model', 'mask' %></p>
 
 <p><label for="model_complexity">Complexity</label><br/>
 <%= text_field 'model', 'complexity' %></p>
+
+<p><label for="model_stages">Stages</label><br/>
+<%= text_field 'model', 'stages' %></p>
+
 <!--[eoform:model]-->
