@@ -9,7 +9,7 @@
 # DEPENDS=HDD,Disk Controller
 # VAR=IF:string:raw_disk_image:Either absolute or relative path to source raw disk image to be written, or URL to download
 # VAR=OF:string:sda:Target device name that will be overwritten
-# VAR=BLOCKSIZE:int:1024:Blocksize, KiB
+# VAR=BLOCKSIZE:int:1024:Blocksize, bytes
 # VAR=SKIP:int:0:Number of blocks to skip
 # VAR=COUNT:int:1024:Number of blocks to be written. If zero is specified then this parameter won't be used
 # VAR=COMPRESSION:string:none:What compression is used. gzip, bzip2, lzma, xz can be chosen
