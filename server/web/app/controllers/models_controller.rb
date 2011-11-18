@@ -11,11 +11,11 @@ class ModelsController < ApplicationController
 	       :redirect_to => { :action => :list }
 
 	def list
-		@models = Model.find_all_by_eol(false)
+		@models = Model.find_all_by_eol(false, :order => "name")
 	end
 
 	def long_list
-		@models = Model.find(:all)
+		@models = Model.find(:all, :order => "name")
 	end
 
 	def show
