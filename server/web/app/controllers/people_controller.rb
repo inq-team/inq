@@ -16,7 +16,7 @@ class PeopleController < ApplicationController
                :redirect_to => { :action => :list }
 
 	def list
-		@people = Person.find(:all)
+		@people = Person.find(:all, :order => 'display_name')
 	end
 
 	def show
