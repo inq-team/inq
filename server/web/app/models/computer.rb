@@ -77,7 +77,7 @@ class Computer < ActiveRecord::Base
 	end
 
 	def self.with_orders
-		find_by_sql("select distinct computers.* from computers left join testings on computers.id = testings.computer_id where computers.order_id is not null and testings.id is not null order by computers.order_id")
+		find_by_sql("SELECT distinct computers.* FROM computers LEFT JOIN testings ON computers.id = testings.computer_id WHERE computers.order_id IS NOT NULL AND testings.id IS NOT NULL ORDER BY computers.order_id")
 	end
 
 	def self.free_id
