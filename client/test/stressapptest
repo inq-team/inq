@@ -11,6 +11,7 @@
 # VAR=MAX_ERRORS:int:0:Exit early after finding errors
 # VAR=NUMA_LOCAL:bool:false:Choose memory regions associated with each CPU to be tested by that CPU
 # VAR=NUMA_REMOTE:bool:false:Choose memory regions not associated with each CPU to be tested by that CPU
+# VAR=MEMORY:int:0:Amount of memory to be tested, %. If zero is specified then automatically detect that value
 
 . _inq-config-global; . $SHARE_DIR/functions-test
 
@@ -20,10 +21,12 @@
 [ "$NUMA_REMOTE" = "false" ] || NUMA_REMOTE_OPTION="--remote_numa"
 
 [ "$TESTTIME" -ne 0 ] || TESTTIME=$(( `cpu_quantity`*600 ))
+[ "$MEMORY" -eq 0 ] && MEMORY_OPTION="" || MEMORY_OPTION="-M $(( $MEMORY * $( sed -n 's/^MemTotal: *\([0-9]*\).*$/\1/p' < /proc/meminfo ) / 102400 ))"
 
 test_promise_time $TESTTIME
 
 stressapptest -v 10 -A -s ${TESTTIME} \
+	${MEMORY_OPTION} \
 	${MAX_ERRORS_OPTION} \
 	${NUMA_LOCAL_OPTION} \
 	${NUMA_REMOTE_OPTION} || test_failed "Stressapptest failed"
