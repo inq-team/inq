@@ -15,8 +15,6 @@
 
 . _inq-config-global; . $SHARE_DIR/functions-test
 
-need_kernel_module md
-
 # Get default adapter and create einarc_command to simplify script reading
 [ ! -z "$ADAPTER" ] || ADAPTER=`einarc --list | sed -n '1p' | cut -f1`
 einarc_command="einarc -t $ADAPTER -a $ADAPTER_NUMBER"
