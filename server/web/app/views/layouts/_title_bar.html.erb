@@ -7,6 +7,7 @@
 <%= link_to_unless_current 'Statistics', :controller => :statistics %>
 <%= link_to_unless_current '/ RMA', :controller => :statistics, :action => :rma %>
 <%= link_to_unless_current '/ Assembly', :controller => :statistics, :action => :assembly %>
+<%= link_to_unless_current '/ Order-stages', :controller => :statistics, :action => :order_stages %>
 <% if logged_in? and current_person.admin? -%>
 |
 <%=	link_to_unless_current 'Profiles', :controller => :profiles %>

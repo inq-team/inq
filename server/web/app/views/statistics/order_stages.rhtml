@@ -1,0 +1,48 @@
+<style type="text/css">
+        th, td, table { border: 1px solid #666666 } td { text-align: center }
+</style>
+
+<h1>Order stages</h1>
+
+<center>
+<% form_tag :action => 'order_stages' do %>
+<%= select_day(@from_day, :field_name => "from_day") %>
+<%= select_month(@from_month, :field_name => "from_month") %>
+<%= select_year(@from_year, :field_name => "from_year") %>
+--
+<%= select_day(@to_day, :field_name => "to_day") %>
+<%= select_month(@to_month, :field_name => "to_month") %>
+<%= select_year(@to_year, :field_name => "to_year") %>
+<input type="submit"/>
+<% end %>
+
+<table>
+<tr>
+       <th># Order</th>
+       <th>Ordering</th>
+       <th>Warehouse</th>
+       <th>Acceptance</th>
+       <th>Assembling</th>
+       <th>Testing</th>
+       <th>Checking</th>
+
+</tr>
+
+
+<% @order_stat.each do |i| %>
+       <tr>
+       <td><%= link_to i.n, :controller => 'orders', :action => 'show', :id => i.id  %></td>
+       <td><%= i.ord_end.blank? || i.ord_start.blank? ? "" : distance_of_time_in_words(i.ord_start, i.ord_end)%></td>
+       <td><%= i.osw_end.blank? || i.osw_start.blank? ? "" : distance_of_time_in_words(i.osw_start, i.osw_end)%></td>
+       <td><%= i.osa_end.blank? || i.osa_start.blank? ? "" : distance_of_time_in_words(i.osa_start, i.osa_end)%></td>
+       <td><%= i.asm_end.blank? || i.asm_start.blank? ? "" : distance_of_time_in_words(i.asm_start, i.asm_end)%></td>
+       <td><%= i.test_end.blank? || i.test_start.blank? ? "" : distance_of_time_in_words(i.test_start, i.test_end)%></td>
+       <td><%= i.check_end.blank? || i.check_start.blank? ? "" : distance_of_time_in_words(i.check_start, i.check_end)%></td>
+       </tr>
+<% end %>
+
+
+</table>
+
+
+</center>
