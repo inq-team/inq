@@ -218,7 +218,7 @@ while true; do
 	About)
 		$DIALOG --backtitle 'Inquisitor Live: About' \
 			--title "Inquisitor Live v$INQ_VERSION" \
-			--msgbox "Copyright (C) 2004-2009 by Inquisitor team. \
+			--msgbox "Copyright (C) 2004-2012 by Inquisitor team. \
 This program is free software: you can redistribute it and/or modify \
 it under the terms of the GNU General Public License as published by \
 the Free Software Foundation, either version 3 of the License, or \
