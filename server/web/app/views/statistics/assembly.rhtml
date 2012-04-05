@@ -29,16 +29,25 @@
 <% @assembly_stat.each do |i| %>
         <tr>
         <td><%= i.ddmmyy  %></td>
-        <td><%= i.comp_count  %></td>
+        <td><%= link_to i.comp_count, 
+		:controller => "statistics", 
+		:action => "computer_list",
+		:ids => i.comp  %></td>
         <td><%= i.hours %></td>
         <td><%= i.asmbl_count %></td>
 	<td><%= i.coef %></td>
         </tr>
 <% end %>
 <tr>
-	<td colspan = 4>Utilization coefficient sum</td>
-	<td style = "font-weight:bold"><%= @k %></td>
+	<td style = "font-weight:bold" colspan = 2>Total: <%= @comps%></td>
+	<td style = "font-weight:bold" colspan = 3>Utilization coefficient sum: <%= @k %></td>
 </tr>
+<% @assemblers.each_pair do |k,v| %>
+	<tr>
+	<td colspan = 4><%= k%></td>
+	<td><%= v %></td>
+	</tr>
+<% end %>
 </table>
 
 </center>

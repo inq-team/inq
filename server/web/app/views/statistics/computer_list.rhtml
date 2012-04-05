@@ -1,0 +1,30 @@
+<style type="text/css">
+        th, td, table { border: 1px solid #666666 } td { text-align: center }
+</style>
+<h1>Computer contributors </h1>
+<center>
+
+<table>
+<tr>
+	<th>Model</th>
+	<th>Computer</th>
+	<th>Assembler</th>
+	<th>Tester</th>
+	<th>Checker</th>
+</tr>
+<% @co_co.each do |i| %>
+	<tr>
+	<td><%= i.model %></td>
+	<td><%= link_to i.comp_id,
+		:controller => "computers",
+		:action => "show",
+		:id => i.comp_id %></td>
+	<td><%= i.assembler %></td>
+	<td><%= i.tester %></td>
+	<td><%= i.checker %></td>
+	</tr>
+<% end %>
+
+</table>
+</center>
+

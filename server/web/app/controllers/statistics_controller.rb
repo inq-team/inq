@@ -76,13 +76,16 @@ class StatisticsController < ApplicationController
 
 	def assembly
 		get_dates
-		@assembly_stat = ComputerStage.find_by_sql("Select DATE(cs.end) ddmmyy, COUNT(cs.end) comp_count, SUM(m.complexity)/60.0 hours, COUNT(DISTINCT(csa.person_id)) asmbl_count, SUM(m.complexity)/(60.0*8*COUNT(DISTINCT(csa.person_id))) coef, GROUP_CONCAT(DISTINCT p.display_name) c, GROUP_CONCAT(DISTINCT pa.display_name) a, GROUP_CONCAT(DISTINCT pt.display_name) t from computer_stages AS cs JOIN computers AS c ON cs.computer_id=c.id JOIN models AS m on c.model_id=m.id JOIN computer_stages AS csa on cs.computer_id=csa.computer_id JOIN computer_stages AS cst on cs.computer_id=cst.computer_id JOIN people p ON cs.person_id=p.id JOIN people pa ON csa.person_id=pa.id JOIN people pt ON cst.person_id=pt.id where cs.stage=\"checking\" AND csa.stage=\"assembling\" AND cst.stage=\"testing\" AND cs.start > \'#{@from_date}\' AND cs.end < \'#{@to_date}\' GROUP BY DATE(cs.end);")
+		@assembly_stat = ComputerStage.find_by_sql("Select DATE(cs.end) ddmmyy, GROUP_CONCAT(DISTINCT c.id) comp, COUNT(cs.end) comp_count, SUM(m.complexity)/60.0 hours, COUNT(DISTINCT(csa.person_id)) asmbl_count, SUM(m.complexity)/(60.0*8*COUNT(DISTINCT(csa.person_id))) coef, GROUP_CONCAT(DISTINCT p.display_name) c, GROUP_CONCAT(DISTINCT pa.display_name) a, GROUP_CONCAT(DISTINCT pt.display_name) t from computer_stages AS cs JOIN computers AS c ON cs.computer_id=c.id JOIN models AS m on c.model_id=m.id LEFT JOIN computer_stages AS csa on cs.computer_id=csa.computer_id LEFT JOIN computer_stages AS cst on cs.computer_id=cst.computer_id JOIN people p ON cs.person_id=p.id JOIN people pa ON csa.person_id=pa.id JOIN people pt ON cst.person_id=pt.id where cs.stage=\"checking\" AND csa.stage=\"assembling\" AND cst.stage=\"testing\" AND cs.start > \'#{@from_date}\' AND cs.end < \'#{@to_date}\' GROUP BY DATE(cs.end);")
 		@k = 0
+		@comps = 0
 		@assemblers = {}
 		@assembly_stat.each do |i|
+			@comps += i.comp_count.to_i
 			if i.coef.to_f > 1
 				c = i.coef.to_f - 1
 				@k += (i.coef.to_f-1)
+				@comps += i.comp_count.to_i
 				asm = (i.c.split(',').concat(i.a.split(',')).concat(i.t.split(','))).uniq
 				asm.each { |a| @assemblers.has_key?(a) ? @assemblers[a] += c : @assemblers[a] = c } 
 
@@ -96,4 +99,8 @@ class StatisticsController < ApplicationController
 
 	end
 
+	def computer_list
+		@comp_ids = params[:ids].split(',')
+		@co_co = Model.find_by_sql("Select m.name model, c.id comp_id, ap.name assembler, tp.name tester, cp.name checker from computers c LEFT JOIN models m ON c.model_id=m.id JOIN (Select p.display_name name, cs.computer_id id from computer_stages cs JOIN people p ON cs.person_id=p.id where cs.stage='assembling') ap ON c.id=ap.id JOIN (Select p.display_name name, cs.computer_id id from computer_stages cs JOIN people p ON cs.person_id=p.id where cs.stage='testing') tp ON c.id=tp.id JOIN (Select p.display_name name, cs.computer_id id from computer_stages cs JOIN people p ON cs.person_id=p.id where cs.stage='checking') cp ON c.id=cp.id where c.id in (#{@comp_ids.join(",")}) order by model;")
+	end
 end
