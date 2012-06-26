@@ -86,6 +86,7 @@ sub start_badblocks {
 			if($str =~ / ([0-9.]+)% done, .* elapsed/){
 				$sd{$harddrive}{doned} = int( $sd{$harddrive}{total} * $1 * 0.01 );
 			} else {
+				next if $str =~ /errors/;
 				next unless $str =~ /(\d+)\s*\/\s*\d+/;
 				$sd{$harddrive}{doned} = $1;
 			};
