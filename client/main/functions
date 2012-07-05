@@ -461,16 +461,39 @@ executable_arch()
 	esac
 }
 
+# Pushes current working directory into a stack (implemented with
+# global variable $PREV_DIRS) and changes current directory to a new
+# directory, specified as an argument. Later it can be retrieved with
+# 'popdq' method.
+#
+# This behavior roughly emulates pushd/popd functionality for shells
+# that don't support it (i.e. pure POSIX shells, such as dash).
+#
+# Input:
+# $@ - new directory to go to
 pushdq()
 {
-	# It is "quiet" pushd
-	pushd $@ 2>&1 >$DEBUG_TTY
+	if [ -z "$PREV_DIRS" ]; then
+		PREV_DIRS="$(pwd)"
+	else
+		PREV_DIRS="$(pwd)
+$PREV_DIRS"
+	fi
+	cd "$@"
 }
 
+# Retrieves a previously current directory, stored in a temporary
+# stack (implemented with global variable $PREV_DIRS) and changes
+# current directory to that directory. Previous current directory
+# should be pushed beforahand into this stack using 'pushdq' method.
+#
+# This behavior roughly emulates pushd/popd functionality for shells
+# that don't support it (i.e. pure POSIX shells, such as dash).
 popdq()
 {
-	# It is "quiet" popd
-	popd 2>&1 >$DEBUG_TTY
+	local oldwd="$(echo "$PREV_DIRS" | head -n1)"
+	PREV_DIRS="$(echo "$PREV_DIRS" | sed -ne '2,$ p')"
+	cd "$oldwd"
 }
 
 service_start()
