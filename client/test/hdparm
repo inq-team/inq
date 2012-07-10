@@ -13,22 +13,31 @@
 test_succeed_if_no hdds
 
 for BLOCK_DEV in `get_hdds_list`; do
+	BUFFERED_SUM=0
+	CACHED_SUM=0
+
 	echo -n "HDD $BLOCK_DEV "
 
 	# Perform AVG_SAMPLES tests, calculate sum
 	for i in `seq 1 $AVG_SAMPLES`; do
+		# hdparm always outputs values like 123.45 (in MB/s), we strip
+		# "." from these to get values like 12345 (in tens of KB/s)
 		BUFFERED=`hdparm -t $BLOCK_DEV | \
 		sed -ne '/Timing/ { s/^.*= *//; s, MB/sec,,; s/\.//; p }'`
+		[ -n "$BUFFERED" ] || test_failed "Unable to get buffered speed for $BLOCK_DEV"
+
 		CACHED=`hdparm -T $BLOCK_DEV | \
 		sed -ne '/Timing/ { s/^.*= *//; s, MB/sec,,; s/\.//; p }'`
-		BUFFERED_SUM=$((0$BUFFERED_SUM + 0$BUFFERED))
-		CACHED_SUM=$((0$CACHED_SUM + 0$CACHED))
+		[ -n "$CACHED" ] || test_failed "Unable to get cached speed for $BLOCK_DEV"
+
+		BUFFERED_SUM=$(($BUFFERED_SUM + $BUFFERED))
+		CACHED_SUM=$(($CACHED_SUM + $CACHED))
 		test_progress $i $AVG_SAMPLES
 	done
 
 	# Convert to KB/s, calculate average
-	BUFFERED_AVG=$((0$BUFFERED_SUM * 10 / 0$AVG_SAMPLES))
-	CACHED_AVG=$((0$CACHED_SUM * 10 / 0$AVG_SAMPLES))
+	BUFFERED_AVG=$(($BUFFERED_SUM * 10 / $AVG_SAMPLES))
+	CACHED_AVG=$(($CACHED_SUM * 10 / $AVG_SAMPLES))
 
 	# Report result
 	echo " $BUFFERED_AVG / $CACHED_AVG KB/s"
