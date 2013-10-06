@@ -1,0 +1,3 @@
+[submodule "client/lib/einarc"]
+	path = client/lib/einarc
+	url = https://github.com/inq-team/einarc/
