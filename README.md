@@ -1,4 +1,4 @@
-== Inquisitor
+## Inquisitor
 
 Inquisitor is an open-source hardware testing and certification system,
 suitable for both enterprise and home use, customizable, modular and
