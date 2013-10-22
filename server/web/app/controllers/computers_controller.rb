@@ -1,5 +1,7 @@
 # coding: utf-8
 
+require 'shelves'
+
 require 'planner/planner'
 require 'tempfile'
 
@@ -12,7 +14,7 @@ class ComputersController < ApplicationController
 
 	enable_sticker_printing
 
-	@@default_config = Shelves::Config.new(DEFAULT_SHELVES_CONFIG)
+	@@default_config = Shelves::Config.new(Inquisitor::Application::DEFAULT_SHELVES_CONFIG)
 
 	def set_assembler
 		@computer = Computer.find(params[:id])

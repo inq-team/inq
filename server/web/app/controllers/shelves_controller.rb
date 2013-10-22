@@ -1,6 +1,6 @@
 class ShelvesController < ApplicationController
 
-@@default_config = Shelves::Config.new(DEFAULT_SHELVES_CONFIG)
+@@default_config = Shelves::Config.new(Inquisitor::Application::DEFAULT_SHELVES_CONFIG)
 
 def addresses
 	config = params[:config] ? Shelves::Config.new(params[config]) : @@default_config
