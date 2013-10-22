@@ -1,6 +1,6 @@
 class Order < ActiveRecord::Base
-	has_many :order_lines, :order => 'name'
-	has_many :order_stages, :order => 'start'
+	has_many :order_lines, -> { order('name') }
+	has_many :order_stages, -> { order('start') }
 	has_many :computers
 
 	def update_order(attr)
