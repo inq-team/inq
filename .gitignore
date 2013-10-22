@@ -1,0 +1,3 @@
+server/web/log/development.log
+server/web/log/production.log
+server/web/log/test.log
