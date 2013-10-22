@@ -19,5 +19,16 @@ module Inquisitor
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
+
+    # Bootstrap the Rails environment, frameworks, and default configuration
+    require File.join(File.dirname(__FILE__), 'boot')
+    load File.join(File.dirname(__FILE__), 'stickers-config.rb')
+    require File.join(File.dirname(__FILE__), 'mykit-config')
+
+    DEFAULT_SHELVES_CONFIG = 'config/shelves.xml'
+    WAITSTRING_CLIENT_PORT = 8372
+
+    config.autoload_paths << STICKER_PRINTERS_PATH if Object.const_defined?('STICKER_PRINTERS_PATH')
+    config.autoload_paths << MYKIT_KEYWORDS_PATH
   end
 end
