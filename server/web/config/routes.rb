@@ -1,14 +1,31 @@
 Inquisitor::Application.routes.draw do
 #  map.connect ':controller/service.wsdl', :action => 'wsdl'
 
-  get 'computer/:action/:id/:testing', :to => 'computer'
-
-#  resources :orders do
-#    collection do
-#      get :testings, :staging
-#    end
-#    singular 'order'
-#  end
-
   resources :computers
+  get 'computers/hw/:id', :to => 'computers#hw'
+
+  resources :shelves do
+    member do
+      get :active_addresses
+    end
+  end
+
+  resources :orders do
+    collection do
+      get :testings, :staging, :search
+    end
+  end
+
+  resources :profiles
+  resources :account do
+    collection do
+      get :login
+    end
+  end
+
+  resources :statistics do
+    collection do
+      get :rma, :assembly, :order_stages
+    end
+  end
 end
