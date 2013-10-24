@@ -64,7 +64,7 @@
 				<% end %>
 				<div class="customer" title="<%=h ord.customer %>">
 					<a href="<%= url_for(:action => 'show', :controller => 'orders', :id => ord) %>">
-						<%=h truncate(ord.customer, 50) %>
+						<%=h truncate(ord.customer, length: 50) %>
 					</a>
 				</div>
 			</td>

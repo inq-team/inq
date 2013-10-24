@@ -4,7 +4,7 @@
 		<td id="title_bar_serial"><%= @computer.serial_no ? @computer.serial_no : "&nbsp;" %></td>
 		<td id="title_bar_shelf"><%= @computer.shelf ? @computer.shelf : "&nbsp;" %></td>
 <% if @computer.order %>
-		<td id="title_bar_doc">Order: <%= link_to @computer.order.buyer_order_number, { :controller => :orders, :action => :show, :id => @computer.order } %> (<%= link_to @computer.order.customer ? truncate(@computer.order.customer, 40).gsub(/ /, '&nbsp;') : '', { :controller => :orders, :action => :search, :order => { :customer => @computer.order.customer } } %>)</td>
+		<td id="title_bar_doc">Order: <%= link_to @computer.order.buyer_order_number, { :controller => :orders, :action => :show, :id => @computer.order } %> (<%= link_to @computer.order.customer ? truncate(@computer.order.customer, length: 40).gsub(/ /, '&nbsp;') : '', { :controller => :orders, :action => :search, :order => { :customer => @computer.order.customer } } %>)</td>
 <% end %>
 		<td id="title_bar_profile_show">Profile: 
 <%= @computer.profile ? (link_to @computer.profile.name, { :controller => :profiles, :action => :show, :id => @computer.profile }) : ('[none]') %>
