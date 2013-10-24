@@ -70,24 +70,24 @@ class AccountController < ApplicationController
 
 		def authenticate(login, password)
 			db_user = Person.find_by_login(login)
-				email = login + "@" + @domain
-				connection = LDAP::Conn.new(@host, @port)
-				connection.set_option( LDAP::LDAP_OPT_PROTOCOL_VERSION, 3 )
-				connection.bind( email, password )
-				connection.search( @dn, LDAP::LDAP_SCOPE_SUBTREE, "sAMAccountName=#{login}") do |ad_user|
-					db_user = Person.new unless db_user
-					db_user.login = login
-					db_user.email = email
-					db_user.display_name = ad_user.vals("displayName").to_s
-					db_user.given_name = ad_user.vals("givenName").to_s
-					db_user.last_login_at = Time.new
-					db_user.is_assembler = 0
-					db_user.is_student = 0
-					db_user.save
-				end
-				
-				@connection = connection
-				db_user
+			email = login + "@" + @domain
+			connection = LDAP::Conn.new(@host, @port)
+			connection.set_option(LDAP::LDAP_OPT_PROTOCOL_VERSION, 3)
+			connection.bind(email, password)
+			connection.search(@dn, LDAP::LDAP_SCOPE_SUBTREE, "sAMAccountName=#{login}") do |ad_user|
+				db_user = Person.new unless db_user
+				db_user.login = login
+				db_user.email = email
+				db_user.display_name = ad_user.vals("displayName").to_s
+				db_user.given_name = ad_user.vals("givenName").to_s
+				db_user.last_login_at = Time.new
+				db_user.is_assembler = 0
+				db_user.is_student = 0
+				db_user.save
+			end
+
+			@connection = connection
+			db_user
 		end
 
 		def close
