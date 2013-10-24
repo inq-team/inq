@@ -23,6 +23,12 @@ Inquisitor::Application.routes.draw do
     end
   end
 
+  resources :models do
+    collection do
+      get :long_list, :list
+    end
+  end
+
   resources :profiles
   resources :account do
     collection do
