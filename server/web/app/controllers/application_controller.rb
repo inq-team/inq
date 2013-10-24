@@ -1,13 +1,12 @@
 # Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
 
+require 'authenticated_system'
+require 'sticker/proxy'
 
 class ApplicationController < ActionController::Base
 	include AuthenticatedSystem
 	before_filter :login_from_cookie
-
-	# Pick a unique cookie name to distinguish our session data from others'
-	session :session_key => '_admin_session_id'
 
 	def self.enable_sticker_printing
 		Sticker::Proxy.inject_into(self)
@@ -21,5 +20,5 @@ private
 	def instantiate_controller_and_action_names
 		@current_action = action_name
 		@current_controller = controller_name
-	end		
+	end
 end
