@@ -138,7 +138,7 @@ namespace :db do
 			(rand(3) + 1).times {
 				cust << random_element(CUSTOMER_WORDS).capitalize
 			}
-			cust << CUSTOMER_ENDINGS
+			cust << random_element(CUSTOMER_ENDINGS)
 			customers << cust.join(' ')
 		}
 
