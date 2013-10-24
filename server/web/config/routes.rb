@@ -33,9 +33,13 @@ Inquisitor::Application.routes.draw do
   end
 
   resources :profiles
+  resources :firmwares
+  resources :people
+
   resources :account do
     collection do
-      get :login
+      match :login, via: [:post, :get]
+      get :logout
     end
   end
 
