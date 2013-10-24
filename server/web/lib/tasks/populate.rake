@@ -177,6 +177,57 @@ namespace :db do
 		).save!
 	end
 
+	COMPONENTS = {
+		'CPU' => {
+			'Intel' => [
+				'Core i3',
+				'Core i5',
+				'Core i7',
+				'Xeon',
+			],
+			'AMD' => [
+				'FX',
+			]
+		},
+		'HDD' => {
+			'Seagate' => [
+				'RE',
+			],
+			'WD' => [
+				'Caviar',
+			],
+			'Toshiba' => [
+				'ZZ',
+			],
+		}
+	}
+
+	def random_components
+		cc = []
+
+		COMPONENTS.each_pair { |cname, chash|
+			vendor = random_element(chash.keys)
+			model = random_element(chash[vendor])
+			qty = 1
+
+			# Some black magic to make it look better
+			case cname
+			when 'CPU'
+				model += '-'
+				model += random_id(3, 4, DIGITS)
+				qty = rand < 0.3 ? 2 : 1
+			when 'HDD'
+				qty = rand(6) + 1
+			end
+
+			qty.times {
+				cc << Component.by_params(type: cname, vendor: vendor, model: model, version: '123ABC', serial: random_id(7, 10, DIGITS + UPPER))
+			}
+		}
+
+		cc
+	end
+
 	task :populate => :environment do
 		[Computer, Order, OrderStage, Person, Component, Model, Profile, ComponentGroup, ComputerStage, Testing].each(&:delete_all)
 
@@ -305,6 +356,7 @@ namespace :db do
 				t.computer_id = c.id
 				t.test_start = cs2.start
 				t.profile_id = c.profile_id
+				random_components.each { |c| t.components << c }
 				t.save!
 			end
 		}
