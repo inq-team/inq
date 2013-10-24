@@ -44,4 +44,13 @@ def person_tag(person)
 	content_tag('span', person && person.name || ('John Doe' ; '&nbsp;'), :class => person && person.name ? 'person' : 'bad_username')
 end
 
+def link_to_unbroken(name = nil, options = nil, html_options = nil)
+	n = name
+	if n and options[:truncate_len]
+		n = truncate(n, length: options[:truncate_len])
+	end
+	n = h(n).gsub(/ /, '&nbsp;')
+	link_to(raw(n), options, html_options)
+end
+
 end
