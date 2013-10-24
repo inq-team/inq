@@ -21,7 +21,7 @@ class AccountController < ApplicationController
 			flash[:notice] = "Logged in successfully"
 		end
 	end
-  
+
 	def logout
 		self.current_person.forget_me if logged_in?
 		cookies.delete :auth_token
@@ -61,15 +61,25 @@ class AccountController < ApplicationController
 		dn = nil
 
 		def initialization()
-			config = YAML::load(File.open("#{Rails.root}/config/active_directory.yml"))
-			@host = config["host"]
-			@port = config["port"]
-			@domain = config["domain"]
-			@dn = config["dn"]
+			begin
+				config = YAML::load(File.open("#{Rails.root}/config/active_directory.yml"))
+				@host = config["host"]
+				@port = config["port"]
+				@domain = config["domain"]
+				@dn = config["dn"]
+				@local_only = false
+			rescue Errno::ENOENT
+				@local_only = true
+			end
 		end
 
 		def authenticate(login, password)
 			db_user = Person.find_by_login(login)
+			if @local_only
+				return nil unless db_user
+				return (password == db_user.password) ? db_user : nil
+			end
+
 			email = login + "@" + @domain
 			connection = LDAP::Conn.new(@host, @port)
 			connection.set_option(LDAP::LDAP_OPT_PROTOCOL_VERSION, 3)
