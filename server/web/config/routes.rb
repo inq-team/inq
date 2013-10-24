@@ -13,6 +13,8 @@ Inquisitor::Application.routes.draw do
   resources :orders do
     collection do
       get :testings, :staging, :search
+      get :auto_complete_for_order_customer
+      get :auto_complete_for_order_manager
     end
   end
 
