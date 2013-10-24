@@ -247,6 +247,7 @@ namespace :db do
 						c = Computer.new
 						c.order_id = o.id
 						c.model_id = ol.sku.to_i
+						c.profile_id = 1
 						c.save!
 					}
 				}
