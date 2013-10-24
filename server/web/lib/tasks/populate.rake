@@ -96,6 +96,32 @@ namespace :db do
 		young
 	)
 	CUSTOMER_ENDINGS = ['ltd', 'a.s.', 's.r.o', 'S.A.', 'AG', 'plc', 'AB', 'AS', 'GmbH', 'N.V.', 'Oy', 'LLC', 'Corporation']
+	NAMES = %w(
+		Aiden
+		Amelia
+		Ava
+		Charlotte
+		Ella
+		Emily
+		Emma
+		Ethan
+		Isabella
+		Jack
+		Jackson
+		Jacob
+		Liam
+		Logan
+		Lucas
+		Mason
+		Mia
+		Noah
+		Olivia
+		Sophia
+	)
+
+	# Random distribution of order stages
+	ORDER_STAGES_DIST = [0] * 3 + [1] * 3 + [2] * 5 + [3] * 10
+	ORDER_STAGES = ['ordering', 'warehouse', 'acceptance']
 
 	def random_id(min_len, max_len, chars = UPPER_DIGITS)
 		len = rand(max_len - min_len) + min_len
@@ -126,12 +152,20 @@ namespace :db do
 		return r
 	end
 
+	def random_person_name
+		[random_element(NAMES), random_element(CUSTOMER_WORDS).capitalize].join(' ')
+	end
+
 	task :populate => :environment do
-		[Computer, Order, Component, Model].each(&:delete_all)
+		[Computer, Order, OrderStage, Person, Component, Model].each(&:delete_all)
 
 		# Seed the random generator
 		srand(42)
 
+		# Set time mark
+		now = Time.new
+
+		# Generate customers
 		customers = []
 		15.times {
 			cust = []
@@ -142,10 +176,19 @@ namespace :db do
 			customers << cust.join(' ')
 		}
 
+		# Generate models
 		5.times {
 			m = Model.new
 			m.name = random_id(3, 6, UPPER) + '-' + random_id(3, 6, DIGITS)
 			m.save!
+		}
+
+		# Generate people to work with the system
+		5.times {
+			p = Person.new
+			p.name = random_person_name
+			p.is_assembler = true
+			p.login = p.name.tr(' ', '_')
 		}
 
 		50.times {
@@ -175,6 +218,19 @@ namespace :db do
 					ol.sku = random_id(3, 6, UPPER + DIGITS)
 					ol.save!
 				}
+			end
+
+			# Choose max order stage for current order
+			stage = random_element(ORDER_STAGES_DIST)
+
+			# Create max order stage as unclosed, except for #3, which means we're already in computer stages
+			if stage < 3
+				os = OrderStage.new
+				os.order_id = o.id
+				os.stage = ORDER_STAGES[stage]
+				os.person = random_object(Person)
+				os.start = now - rand(3600)
+				os.save!
 			end
 		}
 
