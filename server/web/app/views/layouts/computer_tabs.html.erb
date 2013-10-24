@@ -22,7 +22,12 @@
 		<tr>
 		<td colspan="3" id="info_tabs"><table><tr>
 			<td id="info_tab_dummy">&nbsp;</td>
-			<%= content_tag(:td, (@computer.order && controller.action_name == 'hw' ? link_to('&nbsp;&nbsp;', {:action => 'audit', :id => @computer.id, :testing => @testing_number}, :title => 'Audit', :style => 'width: 16px ; background : url("/images/counterclockwise.png") 50% 50% no-repeat ; float: left ; cursor : pointer;') : '' ) + content_tag(:span, link_to("Hardware", {:action => 'hw', :id => @computer.id, :testing => @testing_number})) , :id => 'info_tab_hw') %>
+			<td id="info_tab_hw">
+				<% if @computer.order && controller.action_name == 'hw' %>
+					<%= link_to(raw('&nbsp;&nbsp;'), {:action => 'audit', :id => @computer.id, :testing => @testing_number}, :title => 'Audit', :style => 'width: 16px ; background : url("/images/counterclockwise.png") 50% 50% no-repeat ; float: left ; cursor : pointer;') %>
+				<% end %>
+				<span><%= link_to("Hardware", {:action => 'hw', :id => @computer.id, :testing => @testing_number}) %></span>
+			</td>
 			<%= content_tag(:td, link_to("Sticker", {:action => 'sticker', :id => @computer.id, :testing => @testing_number}), :id => 'info_tab_sticker') %>
 			<%= content_tag(:td, link_to("Logs", {:action => 'log', :id => @computer.id, :testing => @testing_number}), :id => 'info_tab_log') %>
 			<%= content_tag(:td, link_to("Marks", {:action => 'mark', :id => @computer.id, :testing => @testing_number}), :id => 'info_tab_mark') %>
