@@ -13,7 +13,7 @@
 <%= javascript_include_tag 'calendar' %>
 <%= javascript_include_tag 'scriptaculous' %>
 <% if @autorefresh %>
-<meta http-equiv="Refresh" content="60; URL=<%= request.request_uri %>"/>
+<meta http-equiv="Refresh" content="60; URL=<%= request.original_url %>"/>
 <% end %>
 </head>
 <body>
