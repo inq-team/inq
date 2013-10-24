@@ -10,6 +10,6 @@
 <%= @computer.profile ? (link_to @computer.profile.name, { :controller => :profiles, :action => :show, :id => @computer.profile }) : ('[none]') %>
 <%= link_to_function image_tag('edit.png'), "$('title_bar_profile_show').style.display = 'none'; $('title_bar_profile_edit').style.display = 'table-cell';" %>
 		</td>
-		<td id="title_bar_profile_edit"><% form_tag(:action => 'update_profile', :id => @computer.id, :testing => @testing_number) { %>Profile: <%= select :profile, :id, @profiles, :selected => @computer.profile_id %><%= submit_tag 'Apply' %><% } %></td>
+		<td id="title_bar_profile_edit"><%= form_tag(:action => 'update_profile', :id => @computer.id, :testing => @testing_number) { %>Profile: <%= select :profile, :id, @profiles, :selected => @computer.profile_id %><%= submit_tag 'Apply' %><% } %></td>
 	</tr></table>
 	</div>

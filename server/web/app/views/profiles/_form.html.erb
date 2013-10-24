@@ -1,6 +1,6 @@
 
 <div class="content">
-<% form_for :profile, @profile, :url => { :action => 'create', :id => @profile } do |f| %>
+<%= form_for :profile, @profile, :url => { :action => 'create', :id => @profile } do |f| %>
 	<p><label for="profile_xml">XML:</label></p>
 	<%= f.text_area :xml, :cols => 80, :rows => 20 %>
 	<p><label for="model_id">Model:</label></p>

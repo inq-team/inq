@@ -2,7 +2,7 @@
 
 <%= error_messages_for :order %>
 
-<% form_for(:order, :url => order_path(@order), :html => { :method => :put }) do |f| %>
+<%= form_for(:order, :url => order_path(@order), :html => { :method => :put }) do |f| %>
   <p>
     <b>Doc no</b><br />
     <%= f.text_field :doc_no %>

@@ -1,6 +1,6 @@
 <h1>Editing model</h1>
 
-<% form_tag :action => 'update', :id => @model do %>
+<%= form_tag :action => 'update', :id => @model do %>
   <%= render :partial => 'form' %>
   <%= submit_tag 'Edit' %>
 <% end %>

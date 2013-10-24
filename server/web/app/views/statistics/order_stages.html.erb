@@ -5,7 +5,7 @@
 <h1>Order stages</h1>
 
 <center>
-<% form_tag :action => 'order_stages' do %>
+<%= form_tag :action => 'order_stages' do %>
 <%= select_day(@from_day, :field_name => "from_day") %>
 <%= select_month(@from_month, :field_name => "from_month") %>
 <%= select_year(@from_year, :field_name => "from_year") %>

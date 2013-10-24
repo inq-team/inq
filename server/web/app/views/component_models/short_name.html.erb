@@ -1,4 +1,4 @@
-<% form_tag(:action => 'set_short_name', :id => @model.id) do %>
+<%= form_tag(:action => 'set_short_name', :id => @model.id) do %>
 
 <% if flash[:error] %>
 	<% place_hint('error') do %> <%= flash[:error] %> <% end %>
