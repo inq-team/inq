@@ -165,6 +165,18 @@ namespace :db do
 		[random_element(NAMES), random_element(CUSTOMER_WORDS).capitalize].join(' ')
 	end
 
+	def generate_account(login, is_admin, is_assembler, is_tester)
+		Person.new(
+			login: login,
+			name: "Demo #{login}",
+			display_name: "Demo #{login}",
+			password: 'inq',
+			is_admin: is_admin,
+			is_assembler: is_assembler,
+			is_tester: is_tester
+		).save!
+	end
+
 	task :populate => :environment do
 		[Computer, Order, OrderStage, Person, Component, Model, Profile, ComponentGroup, ComputerStage, Testing].each(&:delete_all)
 
@@ -201,6 +213,7 @@ namespace :db do
 		7.times {
 			p = Person.new
 			p.name = random_person_name
+			p.display_name = p.name
 			p.is_assembler = true
 			p.login = p.name.tr(' ', '_')
 			p.save!
@@ -297,8 +310,8 @@ namespace :db do
 		}
 
 		# Generate sample user accounts - we do it as a last step to prevent these users used by random attributions
-		Person.new(login: 'admin', name: 'Demo admin', password: 'inq', is_admin: true, is_assembler: true).save!
-		Person.new(login: 'assembler', name: 'Demo assembler', password: 'inq', is_assembler: true).save!
-		Person.new(login: 'tester', name: 'Demo tester', password: 'inq', is_assembler: false, is_tester: true).save!
+		generate_account('admin', true, true, true)
+		generate_account('assembler', false, true, false)
+		generate_account('tester', false, false, true)
 	end
 end
