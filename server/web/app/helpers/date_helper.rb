@@ -19,9 +19,7 @@ module DateHelper
   # <%= date_field('person', 'birthday', :value => @person.birthday) %>
   #
   def date_field(object_name, method, options={})
-    format = options.delete(:format) ||
-             ActiveSupport::CoreExtensions::Date::Conversions::DATE_FORMATS[:default] ||
-             '%Y-%m-%d'
+    format = options.delete(:format) || Date::DATE_FORMATS[:rfc822] || '%Y-%m-%d'
     if options[:value].is_a?(Date)
       options[:value] = options[:value].strftime(format)
     end
