@@ -25,7 +25,7 @@ function checkUncheckAll(theElement) {
 	<th>Stage</th>
 	<th>Shelf</th>
 </tr>
-<% shelves = Shelves::Config.new(DEFAULT_SHELVES_CONFIG); @computers.sort{ |a, b| a.id <=> b.id }.each { |c|
+<% shelves = Shelves::Config.new(Inquisitor::Application::DEFAULT_SHELVES_CONFIG); @computers.sort{ |a, b| a.id <=> b.id }.each { |c|
 	shl = shelves.by_ipnet(c.ip)
 %>
 <tr>

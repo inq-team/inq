@@ -55,7 +55,7 @@ class Computer < ActiveRecord::Base
 	end
 
 	def ip_addresses
-		config = Shelves::Config.new(DEFAULT_SHELVES_CONFIG)
+		config = Shelves::Config.new(Inquisitor::Application::DEFAULT_SHELVES_CONFIG)
 		return config.by_ipnet(ip).get_addresses.find_all { |a| s = `/sbin/arp -n | grep #{ a }` ; !s.empty? && s !~ /incomplete/ }
 	end
 
