@@ -143,13 +143,20 @@ namespace :db do
 
 	ORDER_LINE_COMMENTS = ['supercharged', 'really fast', 'extra PSU', 'barebone', '12U rack']
 
-	def random_order_line
-		r = random_object(Model).name
+	def random_order_line(order_id, qty)
+		ol = OrderLine.new
+		ol.order_id = order_id
+
+		model = random_object(Model)
+		ol.name = model.name
 		if rand < 0.2
-			r += ' / '
-			r += random_element(ORDER_LINE_COMMENTS)
+			ol.name += ' / '
+			ol.name += random_element(ORDER_LINE_COMMENTS)
 		end
-		return r
+
+		ol.sku = "#{model.id}M"
+				ol.qty = qty
+		ol.save
 	end
 
 	def random_person_name
@@ -184,11 +191,12 @@ namespace :db do
 		}
 
 		# Generate people to work with the system
-		5.times {
+		7.times {
 			p = Person.new
 			p.name = random_person_name
 			p.is_assembler = true
 			p.login = p.name.tr(' ', '_')
+			p.save!
 		}
 
 		50.times {
@@ -198,25 +206,16 @@ namespace :db do
 			o.mfg_report_number = 'MRN' + random_id(3, 6, DIGITS)
 			o.customer = random_element(customers)
 			o.title = random_id(3, 6, UPPER + DIGITS)
+			o.manager = random_object(Person).name
 			o.save!
 
 			if rand < 0.7
 				# Single computer type order
-				ol = OrderLine.new
-				ol.order_id = o.id
-				ol.name = random_order_line
-				ol.qty = rand(20) + 7
-				ol.sku = random_id(3, 6, UPPER + DIGITS)
-				ol.save!
+				random_order_line(o.id, rand(20) + 7)
 			else
 				# Many computer types order
 				(rand(5) + 2).times {
-					ol = OrderLine.new
-					ol.order_id = o.id
-					ol.name = random_order_line
-					ol.qty = rand(4) + 1
-					ol.sku = random_id(3, 6, UPPER + DIGITS)
-					ol.save!
+					random_order_line(o.id, rand(4) + 1)
 				}
 			end
 
@@ -236,6 +235,14 @@ namespace :db do
 				os.save!
 			else
 				# Time to generate computers!
+				o.order_lines.each { |ol|
+					ol.qty.times {
+						c = Computer.new
+						c.order_id = o.id
+						c.model_id = ol.sku.to_i
+						c.save!
+					}
+				}
 			end
 
 			# Create closed stages
@@ -251,12 +258,6 @@ namespace :db do
 					os.save!
 				}
 			end
-		}
-
-		200.times {
-			c = Computer.new
-			c.model_id = random_object(Model).id
-			c.save!
 		}
 	end
 end
