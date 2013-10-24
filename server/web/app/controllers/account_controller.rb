@@ -61,7 +61,7 @@ class AccountController < ApplicationController
 		dn = nil
 
 		def initialization()
-			config = YAML::load(File.open("#{RAILS_ROOT}/config/active_directory.yml"))
+			config = YAML::load(File.open("#{Rails.root}/config/active_directory.yml"))
 			@host = config["host"]
 			@port = config["port"]
 			@domain = config["domain"]
