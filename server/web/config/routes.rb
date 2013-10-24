@@ -4,7 +4,7 @@ Inquisitor::Application.routes.draw do
   resources :computers do
     member do
       post :update_profile
-      get :sticker, :log, :mark, :graph, :ssh
+      get :sticker, :log, :mark, :graph, :ssh, :comment_history, :audit
     end
   end
   get 'computers/hw/:id', :to => 'computers#hw'
