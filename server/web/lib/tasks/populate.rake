@@ -1,3 +1,5 @@
+require 'active_record/fixtures'
+
 namespace :db do
 	desc "Erase and fill database with fake data"
 
@@ -164,7 +166,7 @@ namespace :db do
 	end
 
 	task :populate => :environment do
-		[Computer, Order, OrderStage, Person, Component, Model].each(&:delete_all)
+		[Computer, Order, OrderStage, Person, Component, Model, Profile, ComponentGroup].each(&:delete_all)
 
 		# Seed the random generator
 		srand(42)
@@ -188,6 +190,11 @@ namespace :db do
 			m = Model.new
 			m.name = random_id(3, 6, UPPER) + '-' + random_id(3, 6, DIGITS)
 			m.save!
+		}
+
+		# Upload some data from fixture sets
+		['profiles', 'component_groups'].each { |f|
+			ActiveRecord::FixtureSet.create_fixtures('test/fixtures', f)
 		}
 
 		# Generate people to work with the system
