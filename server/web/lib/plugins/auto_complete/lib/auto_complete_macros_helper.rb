@@ -79,6 +79,10 @@ module AutoCompleteMacrosHelper
 
     javascript_tag(function)
   end
+
+  def options_for_javascript(options)
+    '{' + options.map {|k, v| "#{k}:#{v}"}.sort.join(', ') + '}'
+  end
   
   # Use this method in your view to generate a return for the AJAX autocomplete requests.
   #
