@@ -295,5 +295,10 @@ namespace :db do
 				t.save!
 			end
 		}
+
+		# Generate sample user accounts - we do it as a last step to prevent these users used by random attributions
+		Person.new(login: 'admin', name: 'Demo admin', password: 'inq', is_admin: true, is_assembler: true).save!
+		Person.new(login: 'assembler', name: 'Demo assembler', password: 'inq', is_assembler: true).save!
+		Person.new(login: 'tester', name: 'Demo tester', password: 'inq', is_assembler: false, is_tester: true).save!
 	end
 end
