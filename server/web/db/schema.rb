@@ -109,7 +109,7 @@ ActiveRecord::Schema.define(version: 30) do
 
   add_index "marks", ["testing_stage_id"], name: "testing_stage_id", using: :btree
 
-  create_table "models", force: true do |t|
+  create_table "models", force: true, options: "ENGINE=MyISAM" do |t|
     t.string  "name",        limit: 250
     t.string  "stages",      limit: 250, default: "mb_bios raid_bios test memtest stress server dmi"
     t.string  "dmi_name",    limit: 250, default: "",                                                 null: false
@@ -121,6 +121,7 @@ ActiveRecord::Schema.define(version: 30) do
   end
 
   add_index "models", ["name"], name: "name", using: :btree
+  add_index "models", ["name"], name: "name_ft", type: :fulltext
 
   create_table "order_lines", force: true do |t|
     t.integer "order_id",                          null: false
