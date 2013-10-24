@@ -166,7 +166,7 @@ namespace :db do
 	end
 
 	task :populate => :environment do
-		[Computer, Order, OrderStage, Person, Component, Model, Profile, ComponentGroup].each(&:delete_all)
+		[Computer, Order, OrderStage, Person, Component, Model, Profile, ComponentGroup, ComputerStage].each(&:delete_all)
 
 		# Seed the random generator
 		srand(42)
@@ -266,6 +266,16 @@ namespace :db do
 					os.save!
 				}
 			end
+		}
+
+		# Generate computer stages
+		Computer.all.each { |c|
+			cs = ComputerStage.new
+			cs.computer_id = c.id
+			cs.stage = 'assembling'
+			cs.start = c.order.order_stages.last.end
+			cs.person = random_object(Person)
+			cs.save!
 		}
 	end
 end
