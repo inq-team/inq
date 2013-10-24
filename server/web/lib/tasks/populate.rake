@@ -223,14 +223,33 @@ namespace :db do
 			# Choose max order stage for current order
 			stage = random_element(ORDER_STAGES_DIST)
 
+			last_time = now
+
 			# Create max order stage as unclosed, except for #3, which means we're already in computer stages
 			if stage < 3
 				os = OrderStage.new
 				os.order_id = o.id
 				os.stage = ORDER_STAGES[stage]
 				os.person = random_object(Person)
-				os.start = now - rand(3600)
+				last_time -= rand(3600)
+				os.start = last_time
 				os.save!
+			else
+				# Time to generate computers!
+			end
+
+			# Create closed stages
+			if stage > 0
+				ORDER_STAGES[0..(stage - 1)].reverse.each { |st|
+					os = OrderStage.new
+					os.order_id = o.id
+					os.stage = st
+					os.person = random_object(Person)
+					os.end = last_time
+					last_time -= rand(3600)
+					os.start = last_time
+					os.save!
+				}
 			end
 		}
 
