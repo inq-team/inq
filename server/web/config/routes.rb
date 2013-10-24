@@ -21,6 +21,9 @@ Inquisitor::Application.routes.draw do
       get :auto_complete_for_order_customer
       get :auto_complete_for_order_manager
     end
+    member do
+      post :handle_computers
+    end
   end
 
   resources :models do
