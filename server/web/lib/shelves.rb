@@ -29,10 +29,10 @@ class Config
 		doc = REXML::Document.new(File.new(filename))
 		root = doc.root
 		@name = root.attributes['name']
-		@shelves = {} 
+		@shelves = {}
 		@ipnets = {}
 		prefix = '';
-		@groups = root.get_elements('group').inject([]) { |a, e| 
+		@groups = root.get_elements('group').inject([]) { |a, e|
 			ea = e.attributes
 			gr = Group.new(ea['name'], prefix + (ea['name'] || ''), ea['prefix'])
 			pf1 = prefix + gr.prefix
@@ -58,7 +58,7 @@ class Config
 					c << rw
 				}
 				b << st
-			} 
+			}
 			a << gr
 		}
 	end
@@ -130,19 +130,19 @@ class Shelf
 		@full_name = full_name || ''
 		@prefix = prefix || ''
 		@colour = colour
-		@ipnet = ipnet || '' 
+		@ipnet = ipnet || ''
 		@kind = kind.to_sym()
 	end	
 
 	def get_addresses(fmt = nil)
 		fmt ||= "%1$d.%2$d.%3$d.%4$d"
-                if ipnet =~ /(\d+)\.(\d+)\.(\d+)\.(\d+)\/(\d+)/
-                        net = ($1.to_i() << 24) | ($2.to_i() << 16) | ($3.to_i() << 8) | ($4.to_i())
-                        (2..(1 << (32 - $5.to_i())) - 2).inject([]) { |a, i| a << (net | i) }.collect { |j| sprintf(fmt, j >> 24, (j >> 16) & 255, (j >> 8) & 255, j & 255) }
-                else
-                        raise("Malformed ip network address")
-                end
-        end
+		if ipnet =~ /(\d+)\.(\d+)\.(\d+)\.(\d+)\/(\d+)/
+			net = ($1.to_i() << 24) | ($2.to_i() << 16) | ($3.to_i() << 8) | ($4.to_i())
+			(2..(1 << (32 - $5.to_i())) - 2).inject([]) { |a, i| a << (net | i) }.collect { |j| sprintf(fmt, j >> 24, (j >> 16) & 255, (j >> 8) & 255, j & 255) }
+		else
+			raise("Malformed ip network address")
+		end
+	end
 
 end
 

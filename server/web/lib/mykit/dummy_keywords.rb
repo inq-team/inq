@@ -12,7 +12,7 @@ class Components
 	RAM		= 6
 	NET		= 7
 	PWR		= 8
-	CASE		= 9 
+	CASE		= 9
 	BBU		= 10
 	AMM		= 11
 	PLAT		= 12
@@ -86,7 +86,7 @@ WORDS ={'SCSI' 		=> [1,    0,    0,    0,    1,    1,    0,    0,    0,    1,   
 			    #HDD  #FDD  #ODD  #CPU  #CTRL #MB   #RAM  #NET  #PWR  #CASE #BBU  #AMM  #PLAT #ENC  #HID  #SOFT
 UNITS ={'Gb' 		=> [0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0],
 #	''		=> [0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0],
-} 
+}
 
 MEASURES={'Gb' 		=> [Properties::CAPACITY],
 }
@@ -101,7 +101,7 @@ SPAN_DISTANCE = 3
 COMP_MARGIN = 100.0 # think about margin later
 
 OMIT_FROM_COMPARISON = ['PWR', '...', 'ENC', 'CASE', 'WRN', 'SOFT']
-GROUP_TRANS = 
+GROUP_TRANS =
 {
 	'Memory'		=> 'RAM',
 }

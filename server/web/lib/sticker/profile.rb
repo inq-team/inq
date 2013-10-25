@@ -19,7 +19,7 @@ class Profile
 				Profile.new(REXML::Document.new(f))
 			end				
 		rescue REXML::ParseException
-			raise 
+			raise
 		rescue IOError	
 			nil
 		end

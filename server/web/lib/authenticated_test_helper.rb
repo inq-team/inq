@@ -32,7 +32,7 @@ module AuthenticatedTestHelper
   #      # ...
   #    end
   #  end
-  # 
+  #
   def assert_difference(object, method = nil, difference = 1)
     initial_value = object.send(method)
     yield
@@ -44,7 +44,7 @@ module AuthenticatedTestHelper
   end
 
   # Assert the block redirects to the login
-  # 
+  #
   #   assert_requires_login(:bob) { |c| c.get :edit, :id => 1 }
   #
   def assert_requires_login(login = nil)

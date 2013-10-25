@@ -32,7 +32,7 @@
 
 		<tr>
 	
-		<td id="testings_tabs"> 
+		<td id="testings_tabs">
 			<table>	
 
 			<%= javascript_tag("function select_testing_tab() { z = document.getElementById('testing_select'); y = (z.options[z.selectedIndex].value); y.match(/\\d+/) && window.location.assign('#{ url_for(:action => controller.action_name, :id => @computer.id, :testing => '__replace_me') }'.replace('__replace_me', y)); }") if @sorted_testings.size > 10 %>
@@ -50,7 +50,7 @@
 
 		<td id="content"><div class="testing_border">
 			<%= yield %>		
-		</div></td> 
+		</div></td>
 	</tr></table>
 
 </body>

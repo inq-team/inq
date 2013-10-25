@@ -6,27 +6,27 @@ require 'rexml/document'
     parent_node.elements.each do |node|
 
       buffer += ' ' * itab + "<#{node.name}#{get_att_list(node)}"
-  
+
       if node.to_a.length > 0
         buffer += ">"
         if node.text.nil?
           buffer += "\n"
-          buffer += pretty_print(node,itab+2) 
+          buffer += pretty_print(node,itab+2)
           buffer += ' ' * itab + "</#{node.name}>\n"
         else
           node_text = node.text.strip
           if node_text != ''
-            buffer += node_text 
-            buffer += "</#{node.name}>\n"        
+            buffer += node_text
+            buffer += "</#{node.name}>\n"
           else
-            buffer += "\n" + pretty_print(node,itab+2) 
-            buffer += ' ' * itab + "</#{node.name}>\n"        
+            buffer += "\n" + pretty_print(node,itab+2)
+            buffer += ' ' * itab + "</#{node.name}>\n"
           end
         end
       else
         buffer += "/>\n"
       end
-      
+
     end
     buffer
   end

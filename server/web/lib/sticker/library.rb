@@ -7,7 +7,7 @@ attr_accessor :profiles
 def initialize
 	path = STICKER_PROFILE_LIBRARY_PATH
 	files = Dir.glob("#{path}/*.xml")
-	@profiles = files.inject({}) do |h, f| 
+	@profiles = files.inject({}) do |h, f|
 		if p = Sticker::Profile.from_file(f)
 			puts("Ok!: Loaded #{ p.title } from #{ f }\n")
 			h.merge({ p.title => p })	

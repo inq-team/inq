@@ -1,4 +1,4 @@
-#require 'mykit/lexer' 
+#require 'mykit/lexer'
 
 module Mykit
 
@@ -19,7 +19,7 @@ class Parser
 			v *= 1000 * 1000 * 1000 if _U == 'GHZ' || _U == 'ГГЦ'
 			v
 		when Mykit::Keywords::Properties::SPEED
-			v *= 1000 if _U == 'K' 
+			v *= 1000 if _U == 'K'
 			v			
 		else
 			v
@@ -32,7 +32,7 @@ class Parser
 
 	def self.parse_item(itm)
 		i = (1..itm.components.size - 1).inject(0) { |i, j| (itm.components[i] < itm.components[j]) ? j : i }
-		if itm.components[i] > 0  
+		if itm.components[i] > 0
 			most_likely = (0..itm.components.size - 1).inject([]) { |a, j| (itm.components[j] == itm.components[i]) ? a + [j] : a }
 			less_likely = (0..itm.components.size - 1).inject([]) { |a, j| ((d = itm.components[i] - itm.components[j]) > 0 && d <= Mykit::Keywords::COMP_DISTANCE && itm.components[j] > 0) ? a + [j] : a }
 		else

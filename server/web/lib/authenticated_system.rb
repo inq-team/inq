@@ -5,18 +5,18 @@ module AuthenticatedSystem
     def logged_in?
       current_person != :false
     end
-    
+
     # Accesses the current person from the session.
     def current_person
       @current_person ||= (session[:person] && Person.find_by_id(session[:person])) || :false
     end
-    
+
     # Store the given person in the session.
     def current_person=(new_person)
       session[:person] = (new_person.nil? || new_person.is_a?(Symbol)) ? nil : new_person.id
       @current_person = new_person
     end
-    
+
     # Check if the person is authorized.
     #
     # Override this method in your controllers if you want to restrict access
@@ -52,7 +52,7 @@ module AuthenticatedSystem
       self.current_person ||= Person.authenticate(username, passwd) || :false if username && passwd
       logged_in? && authorized? ? true : access_denied
     end
-    
+
     # Redirect as appropriate when an access request fails.
     #
     # The default action is to redirect to the login screen.
@@ -74,8 +74,8 @@ module AuthenticatedSystem
         end
       end
       false
-    end  
-    
+    end
+
     # Store the URI of the current request in the session.
     #
     # We can return to this location by calling #redirect_back_or_default.
@@ -114,6 +114,6 @@ module AuthenticatedSystem
     def get_auth_data
       auth_key  = @@http_auth_headers.detect { |h| request.env.has_key?(h) }
       auth_data = request.env[auth_key].to_s.split unless auth_key.blank?
-      return auth_data && auth_data[0] == 'Basic' ? Base64.decode64(auth_data[1]).split(':')[0..1] : [nil, nil] 
+      return auth_data && auth_data[0] == 'Basic' ? Base64.decode64(auth_data[1]).split(':')[0..1] : [nil, nil]
     end
 end

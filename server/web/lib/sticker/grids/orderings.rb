@@ -4,7 +4,7 @@ module Grids
 
 module Orderings
 
-class PropertyOrdering 
+class PropertyOrdering
 
 	def initialize(elem)
 		@property = elem.attributes['property']	

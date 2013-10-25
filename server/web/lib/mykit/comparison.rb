@@ -39,7 +39,7 @@ def self.compare(db, detect)
 				if d_mean < Keywords::COMP_MARGIN
 					puts "#{db_dev[:line][:name]} <=> #{d[:vendor]} #{d[:name]} = #{d_mean}"
 					matr[db_dev][d] = { :data => d_data, :mean => d_mean }
-					relevant << d 
+					relevant << d
 				end
 			end
 		end
@@ -85,7 +85,7 @@ def self.compare(db, detect)
 				if d_mean < Keywords::COMP_MARGIN
                                         puts "#{d[:line][:name]} <=> #{dev[:vendor]} #{dev[:name]} = #{d_mean}"
 					matr[d][dev] = { :data => d_data, :mean => d_mean }
-					relevant << d 
+					relevant << d
 				end
 			end
 		end
@@ -113,7 +113,7 @@ end
 
 def self.post_process(pair)
 	#divide all tokens into good and bad ones
-	spans = [] 
+	spans = []
 	db_dev = pair[:db]
 	detect_dev = pair[:detect]
 	data = pair[:data]

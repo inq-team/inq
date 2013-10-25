@@ -27,12 +27,12 @@
 	}
 
 	fieldset {
-		border: 2px solid #A28A50; 
+		border: 2px solid #A28A50;
 		-moz-border-radius: 5px;
 	}	
 
 	legend {
-		border: 1px solid #A28A50; 
+		border: 1px solid #A28A50;
 		background-color: #A28A50;
 		padding: 3px;
 		color: white;
@@ -130,7 +130,7 @@ Login
 <% @sticker.find_all { |h| h[:kind] == :grid }.each do |grid| %>
 <table>
 <%= content_tag(:tr, grid[:head].collect { |s| content_tag(:td, s) }.join) if grid[:head] %>
-<%= grid[:body].collect { |r| content_tag(:tr, r.collect { |c| content_tag(:td, c) }.join) }.join %> 
+<%= grid[:body].collect { |r| content_tag(:tr, r.collect { |c| content_tag(:td, c) }.join) }.join %>
 </table>
 <% end %>
 <% elsif @sticker %>

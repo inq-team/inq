@@ -51,8 +51,8 @@ class PropertyFilter
 			when "collapse"
 				counter = df.attributes['counter-property']
 				concats = (df.attributes['concat-properties'] || '').split(',')
-				delimiter = df.attributes['concat-delimiter'] 
-				data = data.inject({}) do |h, d| 
+				delimiter = df.attributes['concat-delimiter']
+				data = data.inject({}) do |h, d|
 					if h[d[@property]]
 						h[d[@property]][:count] += 1						
 						concats.each { |c| (h[d[@property]][:data][c] ||= '') << "#{ delimiter }#{ d[c] }" }

@@ -42,7 +42,7 @@ BAR #{x+2*step},24,4,548\n"
 		@str << File.open('public/images/bg-bottom.bmp').read
 		
 		i = 1
-		@str << components.inject('') do |s, c| 
+		@str << components.inject('') do |s, c|
 			tx = x + textheight
 			s += "BAR #{x},24,2,548\n
 TEXT #{tx},34,\"2\",90,1,1,\"#{c.gsub('"',"'")}\"\n"

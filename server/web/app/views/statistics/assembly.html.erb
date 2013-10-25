@@ -29,8 +29,8 @@
 <% @assembly_stat.each do |i| %>
         <tr>
         <td><%= i.ddmmyy  %></td>
-        <td><%= link_to i.comp_count, 
-		:controller => "statistics", 
+        <td><%= link_to i.comp_count,
+		:controller => "statistics",
 		:action => "computer_list",
 		:ids => i.comp  %></td>
         <td><%= i.hours %></td>

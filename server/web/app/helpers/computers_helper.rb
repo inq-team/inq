@@ -1,7 +1,7 @@
 module ComputersHelper
 
 HOR = 3
-VER = 5 
+VER = 5
 
 # shelves A, C, D, E
 def shelf_type_A()
@@ -29,9 +29,9 @@ def shelf_type_G()
 end
 
 def shelf_content(computer)
-	testing = computer.last_testing 
+	testing = computer.last_testing
 	if not testing then return end
-	stage = testing.last_stage 
+	stage = testing.last_stage
 	state = :before
 	if testing.testing_stages.size > 0
 		if stage
@@ -47,17 +47,17 @@ def shelf_content(computer)
 end
 
 def def_shelf(name, layout, computers, bonus = {})
-	layout.collect do |a|  
-		border = a.size 
+	layout.collect do |a|
+		border = a.size
         	a.collect do |i|
-			border -= 1 
+			border -= 1
 			if i
 				content = (c = computers[ shelf = "#{ name }#{ i }" ]) ? shelf_content(c) : ""
 				content_tag(:td, content + content_tag(:p, shelf, { :class => 'shelf_title' }), { :id => "shelf_#{ name }-#{ i }", :class => "#{ c ? 'occupied' : 'free' }_shelf"}.merge(border == 0 ? bonus: {}) )
 			else
 				content_tag(:td, '', { :class => 'hole' }.merge(border == 0 ? bonus : {}))
 			end
-                end 
+                end
         end
 end
 

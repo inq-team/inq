@@ -22,7 +22,7 @@ class Mykit::Component
 		def initialize(*a)
 			if @vector = (a.size > 2)						
 				@props = []
-				i = 0 ; while i < a.size 
+				i = 0 ; while i < a.size
 					@props << Property.new(a[i], a[i + 1])
 					i += 2
 				end
@@ -41,7 +41,7 @@ class Mykit::Component
 				(!prop.vector && !self.vector? && @props.size == prop.props.size && [0..@props.size - 1].inject(true) { |b, i| @props[i] == prop.props[i] or break(nil) } ))
 		end
 
-		protected 
+		protected
 		def props
 			@props
 		end
@@ -51,9 +51,9 @@ class Mykit::Component
 	attr_accessor :vendors, :title, :group, :property_names, :onboard, :keywords, :item, :sku
 	
 	def self.create(itm)
-		Parser::parse_item(itm).collect do |i| 
-			cmp = Component.new 
-			i.each { |k, v| cmp.send("#{ k }=".to_sym, v) unless k == :properties } 
+		Parser::parse_item(itm).collect do |i|
+			cmp = Component.new
+			i.each { |k, v| cmp.send("#{ k }=".to_sym, v) unless k == :properties }
 			cmp.send(:create_props, i[:properties])
 			cmp.item = itm
 			cmp
