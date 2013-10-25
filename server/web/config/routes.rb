@@ -34,6 +34,12 @@ Inquisitor::Application.routes.draw do
     end
   end
 
+  resources :component_models do
+    member do
+      get :short_name
+    end
+  end
+
   resources :profiles
   resources :firmwares
   resources :people
