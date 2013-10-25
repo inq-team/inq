@@ -1,7 +1,8 @@
 <%
 count_done = 0
 changes_allowed = logged_in? and current_person.admin?
-form_tag :action => 'handle_computers', :id => @order do %>
+%>
+<%= form_tag :action => 'handle_computers', :id => @order do %>
 
 <%= javascript_tag ("
 function checkUncheckAll(theElement) {
