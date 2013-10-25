@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 # -*- coding: utf-8 -*-
 
+require 'shelves'
 require 'planner/planner'
 require 'active_record/fixtures'
 
@@ -295,6 +296,17 @@ namespace :db do
 		# Calculate testing plan
 		@plan = Planner.new(Profile.find(1).xml, [], [], nil, nil, false, nil, 1).plan
 
+		# Load shelves configuration
+		@shelves = []
+		Shelves::Config.new(Inquisitor::Application::DEFAULT_SHELVES_CONFIG).groups.each { |group|
+			group.stacks.each { |stack|
+				stack.rows.each { |row|
+					row.shelves.each { |shelf| @shelves << shelf.full_name }
+				}
+			}
+		}
+		@shelves.shuffle!
+
 		# Generate people to work with the system
 		7.times {
 			p = Person.new
@@ -386,6 +398,10 @@ namespace :db do
 				cs2.start = cs1.end
 				cs2.person = random_object(Person)
 				cs2.save!
+
+				# Place computer on a random shelf
+				c.shelf = @shelves.pop
+				c.save!
 
 				t = Testing.new
 				t.computer_id = c.id
