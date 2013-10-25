@@ -137,19 +137,34 @@ namespace :db do
 	ORDER_STAGES_DIST = [0] * 3 + [1] * 3 + [2] * 5 + [3] * 10
 	ORDER_STAGES = ['ordering', 'warehouse', 'acceptance']
 
-	def random_id(min_len, max_len, chars = UPPER_DIGITS)
-		len = rand(max_len - min_len) + min_len
-		res = ''
-		len.times {
-			res << chars[rand(chars.size)]
-		}
-		return res
+	# Generate uniformly distributed integer random number in range of [min; max] inclusive
+	# Can be invoked either:
+	# * with two numeric arguments: `random_num(3, 5)`
+	# * with one array argument: `random_num([3, 5])`
+	def random_num(min, max = nil)
+		if max.nil?
+			min, max = min
+		end
+		rand(max - min + 1) + min
 	end
 
+	# Picks a random element from an array
 	def random_element(arr)
 		arr[rand(arr.length)]
 	end
 
+	# Generates a random string that looks like ID, constructed from chars
+	# of random length in range of [min_len, max_len]
+	def random_id(min_len, max_len, chars = UPPER_DIGITS)
+		len = random_num(min_len, max_len)
+		res = ''
+		len.times {
+			res << random_element(chars)
+		}
+		return res
+	end
+
+	# Picks a random element from all of ActiveRecord-based objects of certain class
 	def random_object(record_type)
 		all_ids = record_type.ids
 		record_type.find_by_id(all_ids[rand(all_ids.length)])
