@@ -413,6 +413,11 @@ namespace :db do
 
 				completed_stages = rand(@plan.size + 1)
 				generate_testing_stages(t, completed_stages)
+				last_stage = t.testing_stages.last
+				if last_stage.result != TestingStage::RUNNING
+					t.test_end = last_stage.end
+				end
+
 				t.save!
 			end
 		}
