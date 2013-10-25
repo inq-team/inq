@@ -27,7 +27,15 @@ class Computer < ActiveRecord::Base
 
 	def short_title
 		z = model.name.split(' ')
-		z[2] =~ /G\d+/ ? z[1] + z[2] : z[1]
+		if z.size > 1
+			if z[2] =~ /G\d+/
+				return z[1] + z[2]
+			else
+				return z[1]
+			end
+		else
+			return z[0]
+		end
 	end
 
 	def self.find_by_hw_serials(serials)
