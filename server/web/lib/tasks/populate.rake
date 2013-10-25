@@ -301,7 +301,9 @@ namespace :db do
 		Shelves::Config.new(Inquisitor::Application::DEFAULT_SHELVES_CONFIG).groups.each { |group|
 			group.stacks.each { |stack|
 				stack.rows.each { |row|
-					row.shelves.each { |shelf| @shelves << shelf.full_name }
+					row.shelves.each { |shelf|
+						@shelves << shelf.full_name if shelf.kind == :testing
+					}
 				}
 			}
 		}
