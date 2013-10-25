@@ -34,36 +34,36 @@ class OrdersController < ApplicationController
 		@qty = @computers.size
 
 		if @qty == 0 then
-                        # Guess quantity of computers to create
-                        @default_qty = @order.order_lines.map { |x| x.qty }.min
-                        @default_qty = 1 if @default_qty.nil?
+			# Guess quantity of computers to create
+			@default_qty = @order.order_lines.map { |x| x.qty }.min
+			@default_qty = 1 if @default_qty.nil?
 
-                        # Start and end of ID range
-                        @start_id = Computer.free_id
-                        @end_id = @start_id + @default_qty - 1
+			# Start and end of ID range
+			@start_id = Computer.free_id
+			@end_id = @start_id + @default_qty - 1
 
-                        # Try to guess default creation model from order
-                        @order_title = @order.title.to_s.gsub(/(\d)(S(A|C))/){$1}.gsub(/(\d)(G(2|3))/){$1.to_s + ' ' + $2.to_s}
-                        model_names = Model.find_by_sql(['SELECT id, name FROM models WHERE MATCH(name) AGAINST(?) ORDER BY name;', @order_title]).map { |x| [x.name, x.id] }
-                        @default_model = nil
+			# Try to guess default creation model from order
+			@order_title = @order.title.to_s.gsub(/(\d)(S(A|C))/){$1}.gsub(/(\d)(G(2|3))/){$1.to_s + ' ' + $2.to_s}
+			model_names = Model.find_by_sql(['SELECT id, name FROM models WHERE MATCH(name) AGAINST(?) ORDER BY name;', @order_title]).map { |x| [x.name, x.id] }
+			@default_model = nil
 
-                        if model_names.size > 0
-                                [/G2/, /G3/].each { |g|
-                                        if @order_title =~ g
-                                                model_names.each { |m|
-                                                        if m[0] =~ g
-                                                                @default_model = m[1]
-                                                                break
-                                                        end
-                                                }
-                                        end
-                                }
-                        end
+			if model_names.size > 0
+				[/G2/, /G3/].each { |g|
+					if @order_title =~ g
+						model_names.each { |m|
+							if m[0] =~ g
+								@default_model = m[1]
+								break
+							end
+						}
+					end
+				}
+			end
 
-                        @default_model = model_names[0][1] if (@default_model == nil) && (model_names.size > 0)
+			@default_model = model_names[0][1] if (@default_model == nil) && (model_names.size > 0)
 
-                        # Prepare profiles list
-                        @profiles = Profile.list_for_model(@default_model).map { |x| [x.name, x.id] }
+			# Prepare profiles list
+			@profiles = Profile.list_for_model(@default_model).map { |x| [x.name, x.id] }
 		else
 			@models = @models.unshift(['--', 0])
                 end
@@ -73,17 +73,17 @@ class OrdersController < ApplicationController
 		# ==============================================================
 
 		# Existing order stages
-                now = Time.new
-                @order_stages = @order.order_stages.find_all { |s| s.stage != 'manufacturing' }.inject([]) do |a, stage|
+		now = Time.new
+		@order_stages = @order.order_stages.find_all { |s| s.stage != 'manufacturing' }.inject([]) do |a, stage|
 			aa = {
 				:stage => stage.stage, :person => stage.person,
-                                :start => stage.start,
-                                :end => stage.end, :elapsed => (stage.end || now) - (stage.start || now),
-                                :comment => stage.comment, :status => (stage.start.blank? || stage.start > now) ? :planned : stage.end ? :finished : :running
-                        }
+				:start => stage.start,
+				:end => stage.end, :elapsed => (stage.end || now) - (stage.start || now),
+				:comment => stage.comment, :status => (stage.start.blank? || stage.start > now) ? :planned : stage.end ? :finished : :running
+			}
 			aa[:overdue] = (stage.end || now) - (stage.start || now) > stage.default_timespan if stage.default_timespan
 			a << aa
-                end.sort { |a, b| (a[:start] ? a[:start].to_f : 0) <=> (b[:start] ? b[:start].to_f : 0) }
+		end.sort { |a, b| (a[:start] ? a[:start].to_f : 0) <=> (b[:start] ? b[:start].to_f : 0) }
 
 		# Planned order stages
 		['ordering', 'warehouse', 'acceptance'].each { |stage_name|
