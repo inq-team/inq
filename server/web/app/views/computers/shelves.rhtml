@@ -7,7 +7,7 @@
 	<table class="stack" <%= name %>><% st.rows.each do |rw| %>
 		<% name = !rw.full_name.blank? ? "id='row_#{ rw.full_name }'" : '' %>
 		<tr <%= name %>><% rw.shelves.each do |sh| %>
-			<% 
+			<%
 				computer = @byshelves[ sh.full_name ]
 				kind = "class='#{ computer ? :testing : sh.kind == :testing ? 'free' : sh.kind.to_s }'"
 				name = !sh.full_name.blank? ? "id='shelf_#{ sh.full_name }'" : ''
@@ -27,17 +27,17 @@
 
 </div>
 
-<%= javascript_tag(<<_EOF_      
+<%= javascript_tag(<<_EOF_
         Event.observe(window, 'load', function () {
                 $$('.progress .failed').each( function(c) {
                         c.up().up().up().style.backgroundColor = 'rgb(255, 119, 119)';
-                }); 
+                });
                 $$('.progress .before, .progress .attention').each( function(c) {
                         c.up().up().up().style.backgroundColor = 'rgb(243, 208, 121)';
-                }); 
+                });
                 $$('.progress .after').each( function(c) {
                         c.up().up().up().style.backgroundColor = 'rgb(170, 207, 190)';
-                }); 
+                });
         });
 _EOF_
 ) %>

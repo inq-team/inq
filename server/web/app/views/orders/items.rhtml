@@ -23,7 +23,7 @@
 <tr>
 	<%= content_tag(:td, item.string) + content_tag(:td, item.vendors.join(', ')) + content_tag(:td, item.sense.join(', ')) %>
 	<%= item.components.collect { |c| content_tag(:td, c.to_s, :style => "background: \##{'%02X' % (0xfe - 0xb * c) }f0f0") }.join %>
-	<% props = item.properties.collect { |k, v| v.collect { |h| [Mykit::Keywords::Properties[k], "#{h[:value]} #{h[:unit]}"] } }.inject([]) { |a, b| a + b } %> 
+	<% props = item.properties.collect { |k, v| v.collect { |h| [Mykit::Keywords::Properties[k], "#{h[:value]} #{h[:unit]}"] } }.inject([]) { |a, b| a + b } %>
 	<% unless props.blank? %>
 		<% pair = props.pop %>
 		<%= pair.collect { |s| content_tag(:td, s) }.join %>

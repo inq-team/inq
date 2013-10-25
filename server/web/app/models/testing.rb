@@ -13,7 +13,7 @@ class Testing < ActiveRecord::Base
 
 	# Closes obviously hanging testing that are still shown as
 	# running in database. Returns true if any changes to database
-	# were done. 
+	# were done.
 	def close_hanging
 		changed = false
 		testing_stages.each { |ts|

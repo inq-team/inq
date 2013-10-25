@@ -87,7 +87,7 @@ class StatisticsController < ApplicationController
 				@k += (i.coef.to_f-1)
 				@comps += i.comp_count.to_i
 				asm = (i.c.split(',').concat(i.a.split(',')).concat(i.t.split(','))).uniq
-				asm.each { |a| @assemblers.has_key?(a) ? @assemblers[a] += c : @assemblers[a] = c } 
+				asm.each { |a| @assemblers.has_key?(a) ? @assemblers[a] += c : @assemblers[a] = c }
 
 			end
 		end

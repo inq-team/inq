@@ -21,7 +21,7 @@ class AccountController < ApplicationController
 			flash[:notice] = "Logged in successfully"
 		end
 	end
-  
+
 	def logout
 		self.current_person.forget_me if logged_in?
 		cookies.delete :auth_token

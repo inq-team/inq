@@ -40,7 +40,7 @@ _EOF_
 			Effect.Fade($('spinner'), { duration : 0.3,  afterFinish : function() {					
 				$('components').update(transport.responseText);
 				$('components').hide();
-				Effect.Appear($('components'), { duration : 0.5 }); 
+				Effect.Appear($('components'), { duration : 0.5 });
 				$('submit_wrong').disabled = false;
 				$('submit_wrong').focus();
 				$('submit_ok').disabled = false;

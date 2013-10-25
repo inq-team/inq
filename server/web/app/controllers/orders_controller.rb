@@ -137,7 +137,7 @@ class OrdersController < ApplicationController
 #				@computer = comp
 #				print_sticker(DEFAULT_SERIAL_STICKER_PROFILE_FIXME, 2)
 #			end
-#			flash[:notice] = "Stickers sent to #{ Sticker::Library.new.profiles[DEFAULT_SERIAL_STICKER_PROFILE_FIXME].printers.first.class }" 
+#			flash[:notice] = "Stickers sent to #{ Sticker::Library.new.profiles[DEFAULT_SERIAL_STICKER_PROFILE_FIXME].printers.first.class }"
 #		else
 #			flash[:error] = "Misconfiguration issue"
 #		end
@@ -235,8 +235,8 @@ class OrdersController < ApplicationController
 		@next_id = @prev_id = nil
 		if @orders.include?(@order)
 	 		i = @orders.inject(0) { |i, o| break(i) if o == @order; i + 1 }
-			@next_id = @orders[i + 1].id if i + 1 < @orders.size 
-			@prev_id = @orders[i - 1].id if i > 0 
+			@next_id = @orders[i + 1].id if i + 1 < @orders.size
+			@prev_id = @orders[i - 1].id if i > 0
 		end
 		
 		lines = @order.order_lines
@@ -249,8 +249,8 @@ class OrdersController < ApplicationController
 		@next_id = @prev_id = nil
 		if @orders.include?(@order)
 	 		i = @orders.inject(0) { |i, o| break(i) if o == @order; i + 1 }
-			@next_id = @orders[i + 1].id if i + 1 < @orders.size 
-			@prev_id = @orders[i - 1].id if i > 0 
+			@next_id = @orders[i + 1].id if i + 1 < @orders.size
+			@prev_id = @orders[i - 1].id if i > 0
 		end
 		
 		lines = @order.order_lines
@@ -283,7 +283,7 @@ class OrdersController < ApplicationController
 					@computer = c
 					print_sticker(DEFAULT_SERIAL_STICKER_PROFILE_FIXME, quantity)
 				end
-				flash[:notice] = "Stickers sent to #{ Sticker::Library.new.profiles[DEFAULT_SERIAL_STICKER_PROFILE_FIXME].printers.first.class }" 
+				flash[:notice] = "Stickers sent to #{ Sticker::Library.new.profiles[DEFAULT_SERIAL_STICKER_PROFILE_FIXME].printers.first.class }"
 			else
 				flash[:error] = "Misconfiguration issue"
 			end			

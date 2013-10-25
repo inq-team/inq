@@ -82,7 +82,7 @@ class ComputersController < ApplicationController
 	def index
 		config = Shelves::Config.new(params[:config]) if params[:config]
 		@computers = Computer.find_testing()
-		@shelves = config || @@default_config 
+		@shelves = config || @@default_config
 		@byshelves = @computers.inject({}) { |h, c| sh = @shelves.by_ipnet(c.ip) ; h[!sh.blank? ? sh.full_name : c.shelf] = c ; h }
 		render(:layout => 'computer_shelves', :template => 'computers/shelves')
 	end
@@ -129,11 +129,11 @@ class ComputersController < ApplicationController
 		end
 
 		prepare_computer_and_testing
-		@confirmation = params[:confirmation].to_i 
+		@confirmation = params[:confirmation].to_i
 		@comment = params[:comment] || ''
 		@close = params[:close]
 		@audit = @testing.audit
-		if @audit.confirmation 
+		if @audit.confirmation
 			flash[:error] = "Testing confirmed already!" 		
 			render(:layout => 'popup', :action => 'audit_popup')
 			return
@@ -162,21 +162,21 @@ class ComputersController < ApplicationController
 		prepare_computer_and_testing
 		check = @testing && @testing.audit && @testing.audit.confirmation || !@computer.order
 		respond_to() do |format|
-			format.html { 
+			format.html {
 				if check
-					redirect_to(:action => @computer.order ? 'audit' : 'show', :id => @computer, :testing => @testing_number) 
+					redirect_to(:action => @computer.order ? 'audit' : 'show', :id => @computer, :testing => @testing_number)
 				else
 					head :status => 404
 				end
 			}
-			format.xml { 
+			format.xml {
 				if check
 					render(:xml => @testing.audit ? @testing.audit.to_xml() : "<thursday_hack />")
 				else
 					head :status => 404
 				end
 			}
-			format.js { 
+			format.js {
 				render :update do |page|
 					page << (check ? 'window.close();' : ';')
 				end
@@ -255,10 +255,10 @@ class ComputersController < ApplicationController
 		@components.each { |c| c.model.group.name = Mykit::Keywords::GROUP_TRANS[c.model.group.name] if c.model.group and Mykit::Keywords::GROUP_TRANS[c.model.group.name] }
 		lines = @computer.order.order_lines
 		unless lines.blank?
-			min = lines.inject(lines.first.qty) { |i, j| i > j.qty ? j.qty : i } 
+			min = lines.inject(lines.first.qty) { |i, j| i > j.qty ? j.qty : i }
 			lines.each { |l| l.qty /= min }	
 		end
-		@items = lines.inject({}) { |h, l| h.merge({ l => Mykit::Parser.parse(l.name, l.sku) }) } 
+		@items = lines.inject({}) { |h, l| h.merge({ l => Mykit::Parser.parse(l.name, l.sku) }) }
 		@comparison = Mykit::Comparison.compare(@items, @components)
 		@audit = Audit.new
 		@audit.comparison = dump_comparison(@comparison)
@@ -280,10 +280,10 @@ class ComputersController < ApplicationController
 		@components.each { |c| c.model.group.name = Mykit::Keywords::GROUP_TRANS[c.model.group.name] if c.model.group and Mykit::Keywords::GROUP_TRANS[c.model.group.name] }
 		lines = @computer.order.order_lines
 		unless lines.blank?
-			min = lines.inject(lines.first.qty) { |i, j| i > j.qty ? j.qty : i } 
+			min = lines.inject(lines.first.qty) { |i, j| i > j.qty ? j.qty : i }
 			lines.each { |l| l.qty /= min }	
 		end
-		@items = lines.inject({}) { |h, l| h.merge({ l => Mykit::Parser.parse(l.name, l.sku) }) } 
+		@items = lines.inject({}) { |h, l| h.merge({ l => Mykit::Parser.parse(l.name, l.sku) }) }
 		@comparison = Mykit::Comparison.compare(@items, @components)
 		@forced = 0
 		render(:action => 'audit_cached', :layout => 'computer_audit')
@@ -293,7 +293,7 @@ class ComputersController < ApplicationController
 		prepare_computer_tabs
 		@count = params[:count]
 		@components = {}
-		if @testing 
+		if @testing
 			@components = @testing.components.collect { |c| c.model }.inject({}) { |h, m| h[m] = h[m] ? h[m] + 1 : 1 ; h }.collect { |k, v| { :name => k.short_name.blank? ? k.name : k.short_name, :count => v, :model => k, :hidden => k.short_name.blank? } }.sort() { |q, w| a = q[:model] ; b = w[:model] ; (z = ((a.group ? a.group.name : '') <=> (b.group ? b.group.name : ''))) == 0 ? (q[:name] || 'NULL') <=> (w[:name] || 'NULL') : z }
 		end
 		render(:layout => 'computer_tabs')
@@ -324,7 +324,7 @@ class ComputersController < ApplicationController
 
 		if params[:commit] == 'Print'
 			if params[:raw]
-				@testing.custom_sticker = params[:raw] 
+				@testing.custom_sticker = params[:raw]
 				@testing.save!
 				options[:components] = @testing.custom_sticker.split("\n").collect() { |s| s.chomp }
 			else
@@ -349,7 +349,7 @@ class ComputersController < ApplicationController
 		@profile = @profiles[DEFAULT_STICKER_PROFILE_FIXME]
 		if @profile
 			prepare_computer_and_testing
-	                @copies = params[:count].to_i 
+	                @copies = params[:count].to_i
 			print_sticker(DEFAULT_STICKER_PROFILE_FIXME, @copies)
 			flash[:notice] = "Sent sticker to printer <strong class='printer'>#{@profile.printers.first.class}</strong>"
 		else
@@ -654,7 +654,7 @@ set timefmt \"%s\""
 		progress = params[:complete].to_f() || 0
 		total = params[:total].to_f()
 		testing.progress_complete = progress
-		testing.progress_total = total 
+		testing.progress_total = total
 		if testing.save
 			flash[:notice] = 'Progress of current stage set successfully to #{ progress }/#{ total }.'
 			respond_to() do |format|
@@ -956,7 +956,7 @@ __EOF__
 				:result => RESULT_MAPPING[stage.result] || 'unknown',
 				:comment => (RESULT_MAPPING[stage.result] || 'unknown') + (stage.comment ? ": #{stage.comment}" : ''),
 				:title => "#{stage.test_type} #{stage.test_version}",
-				:progress => (stage.result == TestingStage::RUNNING && 
+				:progress => (stage.result == TestingStage::RUNNING &&
 					      @testing.progress_complete &&
 					      @testing.progress_total) ? @testing.progress_complete * 100 / @testing.progress_total : 100
 			}
