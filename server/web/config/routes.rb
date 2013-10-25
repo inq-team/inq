@@ -25,6 +25,7 @@ Inquisitor::Application.routes.draw do
     end
     member do
       post :handle_computers
+      post :create_computers
     end
   end
 
