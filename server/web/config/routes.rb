@@ -37,6 +37,7 @@ Inquisitor::Application.routes.draw do
   resources :component_models do
     member do
       get :short_name
+      post :set_short_name
     end
   end
 
