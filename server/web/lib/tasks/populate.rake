@@ -13,7 +13,7 @@ namespace :db do
 	NUM_CUSTOMERS = 15
 	NUM_MODELS = 5
 	NUM_PEOPLE = 7
-	NUM_ORDERS = 50
+	NUM_ORDERS = 20
 
 	UPPER = ('A'..'Z').to_a
 	LOWER = ('a'..'z').to_a
