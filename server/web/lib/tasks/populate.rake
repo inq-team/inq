@@ -8,6 +8,13 @@ require 'active_record/fixtures'
 namespace :db do
 	desc "Erase and fill database with fake data"
 
+	# Some constants to tune configuration of generated content
+	RANDOM_SEED = 42
+	NUM_CUSTOMERS = 15
+	NUM_MODELS = 5
+	NUM_PEOPLE = 7
+	NUM_ORDERS = 50
+
 	UPPER = ('A'..'Z').to_a
 	LOWER = ('a'..'z').to_a
 	DIGITS = ('0'..'9').to_a
@@ -265,14 +272,14 @@ namespace :db do
 		[Computer, Order, OrderStage, Person, Component, Model, Profile, ComponentGroup, ComputerStage, Testing].each(&:delete_all)
 
 		# Seed the random generator
-		srand(42)
+		srand(RANDOM_SEED)
 
 		# Set time mark
 		now = Time.new
 
 		# Generate customers
 		customers = []
-		15.times {
+		NUM_CUSTOMERS.times {
 			cust = []
 			(rand(3) + 1).times {
 				cust << random_element(CUSTOMER_WORDS).capitalize
@@ -282,7 +289,7 @@ namespace :db do
 		}
 
 		# Generate models
-		5.times {
+		NUM_MODELS.times {
 			m = Model.new
 			m.name = random_id(3, 6, UPPER) + '-' + random_id(3, 6, DIGITS)
 			m.save!
@@ -310,7 +317,7 @@ namespace :db do
 		@shelves.shuffle!
 
 		# Generate people to work with the system
-		7.times {
+		NUM_PEOPLE.times {
 			p = Person.new
 			p.name = random_person_name
 			p.display_name = p.name
@@ -319,7 +326,7 @@ namespace :db do
 			p.save!
 		}
 
-		50.times {
+		NUM_ORDERS.times {
 			o = Order.new
 			o.buyer_order_number = 'BON' + random_id(3, 6, DIGITS)
 			o.mfg_task_number = 'MTN' + random_id(3, 6, DIGITS)
