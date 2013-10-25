@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 # -*- coding: utf-8 -*-
 
+require 'planner/planner'
 require 'active_record/fixtures'
 
 namespace :db do
@@ -160,7 +161,7 @@ namespace :db do
 		end
 
 		ol.sku = "#{model.id}M"
-				ol.qty = qty
+		ol.qty = qty
 		ol.save
 	end
 
@@ -231,6 +232,34 @@ namespace :db do
 		cc
 	end
 
+	def generate_testing_stage(step, result)
+		ts = TestingStage.new(
+			stage: step.id,
+			test_type: step.type,
+			start: @last_time,
+			comment: '',
+			test_version: 1,
+			result: result
+		)
+		if result != TestingStage::RUNNING
+			@last_time += 600 + rand(1800)
+			ts.end = @last_time
+		end
+		return ts
+	end
+
+	def generate_testing_stages(t, completed_stages)
+		@last_time = t.test_start
+		completed_stages.times { |i|
+			t.testing_stages << generate_testing_stage(@plan[i], TestingStage::FINISHED)
+		}
+
+		# Create last in-progress stage, if not all steps are completed
+		if completed_stages < @plan.size
+			t.testing_stages << generate_testing_stage(@plan[completed_stages], TestingStage::RUNNING)
+		end
+	end
+
 	task :populate => :environment do
 		[Computer, Order, OrderStage, Person, Component, Model, Profile, ComponentGroup, ComputerStage, Testing].each(&:delete_all)
 
@@ -262,6 +291,9 @@ namespace :db do
 		['profiles', 'component_groups'].each { |f|
 			ActiveRecord::FixtureSet.create_fixtures('test/fixtures', f)
 		}
+
+		# Calculate testing plan
+		@plan = Planner.new(Profile.find(1).xml, [], [], nil, nil, false, nil, 1).plan
 
 		# Generate people to work with the system
 		7.times {
@@ -360,6 +392,9 @@ namespace :db do
 				t.test_start = cs2.start
 				t.profile_id = c.profile_id
 				random_components.each { |c| t.components << c }
+
+				completed_stages = rand(@plan.size + 1)
+				generate_testing_stages(t, completed_stages)
 				t.save!
 			end
 		}
