@@ -170,8 +170,20 @@ namespace :db do
 		record_type.find_by_id(all_ids[rand(all_ids.length)])
 	end
 
-	ORDER_LINE_COMMENTS = ['supercharged', 'really fast', 'extra PSU', 'barebone', '12U rack']
+	def random_customer_name
+		cust = []
+		random_num(1, 3).times {
+			cust << random_element(CUSTOMER_WORDS).capitalize
+		}
+		cust << random_element(CUSTOMER_ENDINGS)
+		return cust.join(' ')
+	end
 
+	def random_model_name
+		random_id(3, 6, UPPER) + '-' + random_id(3, 6, DIGITS)
+	end
+
+	ORDER_LINE_COMMENTS = ['supercharged', 'really fast', 'extra PSU', 'barebone', '12U rack']
 	def random_order_line(order_id, qty)
 		ol = OrderLine.new
 		ol.order_id = order_id
@@ -265,7 +277,7 @@ namespace :db do
 			result: result
 		)
 		if result != TestingStage::RUNNING
-			@last_time += 600 + rand(1800)
+			@last_time += random_num(600, 2400)
 			ts.end = @last_time
 		end
 		return ts
@@ -283,8 +295,23 @@ namespace :db do
 		end
 	end
 
+
 	task :populate => :environment do
-		[Computer, Order, OrderStage, Person, Component, Model, Profile, ComponentGroup, ComputerStage, Testing].each(&:delete_all)
+		# A list of entities that would be completely deleted and regenerated
+		TO_CLEANUP = [
+			Computer,
+			Order,
+			OrderStage,
+			Person,
+			Component,
+			Model,
+			Profile,
+			ComponentGroup,
+			ComputerStage,
+			Testing,
+			TestingStage,
+		]
+		TO_CLEANUP.each(&:delete_all)
 
 		# Seed the random generator
 		srand(RANDOM_SEED)
@@ -295,19 +322,12 @@ namespace :db do
 		# Generate customers
 		customers = []
 		NUM_CUSTOMERS.times {
-			cust = []
-			(rand(3) + 1).times {
-				cust << random_element(CUSTOMER_WORDS).capitalize
-			}
-			cust << random_element(CUSTOMER_ENDINGS)
-			customers << cust.join(' ')
+			customers << random_customer_name
 		}
 
 		# Generate models
 		NUM_MODELS.times {
-			m = Model.new
-			m.name = random_id(3, 6, UPPER) + '-' + random_id(3, 6, DIGITS)
-			m.save!
+			Model.new(name: random_model_name).save!
 		}
 
 		# Upload some data from fixture sets
@@ -353,11 +373,11 @@ namespace :db do
 
 			if rand < 0.7
 				# Single computer type order
-				random_order_line(o.id, rand(20) + 7)
+				random_order_line(o.id, random_num(20, 26))
 			else
 				# Many computer types order
 				(rand(5) + 2).times {
-					random_order_line(o.id, rand(4) + 1)
+					random_order_line(o.id, random_num(1, 4))
 				}
 			end
 
