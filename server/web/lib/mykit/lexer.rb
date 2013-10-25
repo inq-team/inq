@@ -1,10 +1,10 @@
 module Mykit
 
 class Lexer
-	@@keywords = Mykit::Keywords::WORDS.inject({}) { |h, a| h.merge({ a.first.chars.upcase.to_str => a.last }) } 
+	@@keywords = Mykit::Keywords::WORDS.inject({}) { |h, a| h.merge({ a.first.chars.upcase.to_str => a.last }) }
 	@@vendors = Mykit::Vendors.find_all().inject({}) { |h, s| h.merge({ s.chars.upcase.to_str => s }) }
-	@@measures = Mykit::Keywords::MEASURES.inject({}) { |h, a| h.merge({ a.first.chars.upcase.to_str => a.last }) } 
-	@@units = Mykit::Keywords::UNITS.inject({}) { |h, a| h.merge({ a.first.chars.upcase.to_str => a.last }) } 
+	@@measures = Mykit::Keywords::MEASURES.inject({}) { |h, a| h.merge({ a.first.chars.upcase.to_str => a.last }) }
+	@@units = Mykit::Keywords::UNITS.inject({}) { |h, a| h.merge({ a.first.chars.upcase.to_str => a.last }) }
 
 	@@ts1 = 0
 	@@ts2 = 0
@@ -45,14 +45,14 @@ class Lexer
 				last = $3.chars.upcase.to_str
 				ms.each { |pr| properties[pr] = properties[pr].nil? ? [{ :value => first, :unit => $3 }] : properties[pr] + [{ :value => first, :unit => $3 }] } if ms = @@measures[last]
 				kw.each_index { |i| components[i] += kw[i] } if kw = @@units[last]
-				unless ms.blank? and kw.blank? 
+				unless ms.blank? and kw.blank?
 					chunks.delete(c)
 				end
 			end
 		end
 
 		pairs = chunks[0..-2].zip(chunks[1..-1])
-		pairs.collect do |p| 
+		pairs.collect do |p|
 			ms = kw = nil
 
 			if p.first =~ number2
@@ -60,7 +60,7 @@ class Lexer
 				last = p.last.chars.upcase.to_str
 				ms.each { |pr| properties[pr] = properties[pr].nil? ? [{ :value => first , :unit => p.last }] : properties[pr] + [{ :value => first , :unit => p.last }] } if ms = @@measures[last]
 				kw.each_index { |i| components[i] += kw[i] } if kw = @@units[last]
-				unless ms.blank? and kw.blank? 
+				unless ms.blank? and kw.blank?
 					chunks.delete(p.first)
 					chunks.delete(p.last)
 					remove << p
@@ -77,15 +77,15 @@ class Lexer
 		chunks3 = chunks | chunks2
 		sense = chunks3.inject({}) { |h, s| h.merge({ s => 0 }) }
 
-		pairs3.collect do |p| 
+		pairs3.collect do |p|
 			ms = kw = nil
 
-			if p.first =~ number2 
+			if p.first =~ number2
 				first = p.first
 				last = p.last.chars.upcase.to_str
 				ms.each { |pr| properties[pr] = properties[pr].nil? ? [{ :value => first , :unit => p.last }] : properties[pr] + [{ :value => first , :unit => p.last }] } if ms = @@measures[last]
 				kw.each_index { |i| components[i] += kw[i] } if kw = @@units[last]
-				unless ms.blank? and kw.blank? 
+				unless ms.blank? and kw.blank?
 					sense.delete(p.first)
 					sense.delete(p.last)
 				end

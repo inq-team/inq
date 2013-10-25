@@ -2,7 +2,7 @@ module Sticker
 
 class Proxy
 	
-	attr_accessor :context, :client 
+	attr_accessor :context, :client
 	
 	def create_context
 		@context = Context.new
@@ -49,7 +49,7 @@ class Proxy
 	end
 
 	def self.inject_into(klass)
-		klass.module_eval do 
+		klass.module_eval do
 			before_filter :create_sticker_printing_proxy			
 
 			def print_sticker(profile, count)

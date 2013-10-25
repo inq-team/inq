@@ -23,7 +23,7 @@ class AbstractSource
 
 	def data
 		@inner = fetch_data
-		@elem.elements.to_a('./apply-restrictions/apply-restriction').each do |r| 
+		@elem.elements.to_a('./apply-restrictions/apply-restriction').each do |r|
 			@inner = @context.restrictions[r.attributes['ref']].restrict(@inner)
 		end
 		@elem.elements.to_a('./apply-filters/apply-filter').each do |r|
@@ -115,7 +115,7 @@ class CustomParamsSource < AbstractSource
 		data = []
 		params = context.proxy.get_property('custom_sticker_params')
 		if params
-			if params.is_a? Hash 
+			if params.is_a? Hash
 				data << params
 			else
 				h = {}

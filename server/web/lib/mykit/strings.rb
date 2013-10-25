@@ -33,7 +33,7 @@ class Strings
 		# slice string into chunks
 		i = 0
 		chunks = []
-		while i < l1 
+		while i < l1
 			i1 = i
 			j = 0
 			while j < l2
@@ -57,7 +57,7 @@ class Strings
 		@@ts1 += Time.new - ts1
 
 		# print all chunks
-		if deb 
+		if deb
 			print chunks.collect {|a| "#{a[0]},#{a[1]}~#{a[2]}=\"#{s1[a[0]..(a[0] + a[2] - 1)]}\"" }.join("\n")		
 			print "\n" + chunks.inject("") { |s, a| s + s1[a[0]..(a[0] + a[2] - 1)] } + "\n"
 		end
@@ -70,10 +70,10 @@ class Strings
 			ch = chunks[i]
 			unless narr.include?(ch)
 				j = i + 1
-				while j < chunks.size 
+				while j < chunks.size
 					dh = chunks[j]
 					unless narr.include?(dh)
-						if ch[0] >= dh[0] && ch[1] >= dh[1] && 
+						if ch[0] >= dh[0] && ch[1] >= dh[1] &&
 						   ch[0] + ch[2] <= dh[0]+ dh[2] && ch[1] + ch[2] <= dh[1] + dh[2]
 							narr << ch
 							break							
@@ -103,7 +103,7 @@ class Strings
 		while i < chunks.size
 			ch = chunks[i]
 			j = i + 1
-			while j < chunks.size 
+			while j < chunks.size
 				dh = chunks[j]
 				if (ch[0] + ch[2] - 1 < dh[0] && ch[1] + ch[2] - 1 < dh[1]) ||
 				   (ch[0] > dh[0] + dh[2] - 1 && ch[1] > dh[1] + dh[2] - 1)
@@ -148,7 +148,7 @@ class Strings
 			break if new.empty?
 			while i = del.pop ; sep.delete_at(i) ; ava.delete_at(i) ; end
 			sep += new
-		end 
+		end
 		@@ts3 += Time.new - ts3
 
 		# compute close metrics and select the most appropriate one
@@ -158,7 +158,7 @@ class Strings
 		chunks  = sep.find_all { |s| met[s] == met[sor.last] }.inject(sor.last) { |a, b| len[a] > len[b] ? a : b } || []
 
 		# print selected chunks
-		if deb 
+		if deb
 			print chunks.collect {|a| "#{a[0]},#{a[1]}~#{a[2]}=\"#{s1[a[0]..(a[0] + a[2] - 1)]}\"" }.join("\n")		
 			print "\n" + chunks.inject("") { |s, a| s + s1[a[0]..(a[0] + a[2] - 1)] } + "\n"
 		end
@@ -175,7 +175,7 @@ class Strings
 		i = 0
 		co1 = 0.0
 		co2 = 0.0
-		dist = 0.0 
+		dist = 0.0
 		bl = 0.0
 		sz = chunks.size
 		chf = chunks[0]
@@ -229,12 +229,12 @@ class Strings
 		chf = chunks[0]
 		chl = chunks[sz - 1]
 		if chf[0] > 0
-			s1a << s1[0 .. chf[0] - 1] 
-		elsif chf[1] > 0 
+			s1a << s1[0 .. chf[0] - 1]
+		elsif chf[1] > 0
 			s1a << ''
 		end
 		if chf[1] > 0
-			s2a << s2[0 .. chf[1] - 1] 
+			s2a << s2[0 .. chf[1] - 1]
 		elsif chf[0] > 0
 			s2a << ''
 		end
@@ -250,13 +250,13 @@ class Strings
 			i = j
 		end
 		if chl[0] + chl[2] < s1.size
-			s1a << s1[(chl[0] + chl[2])..(s1.size - 1)] 
-		elsif chl[1] + chl[2] < s2.size 
+			s1a << s1[(chl[0] + chl[2])..(s1.size - 1)]
+		elsif chl[1] + chl[2] < s2.size
 			s1a << ''
 		end
 		if chl[1] + chl[2] < s2.size
-			s2a << s2[(chl[1] + chl[2])..(s2.size - 1)] 
-		elsif chl[0] + chl[2] < s1.size 
+			s2a << s2[(chl[1] + chl[2])..(s2.size - 1)]
+		elsif chl[0] + chl[2] < s1.size
 			s2a << ''
 		end
 		[s1a, s2a]
@@ -309,7 +309,7 @@ class Strings
 		chl = chunks[sz - 1]
 		if chf[1] > 0 || chf[0] > 0
 			s2_str = chf[1] > 0 ? s2[0 .. chf[1] - 1] : '...'
-			s2a << s2[0 .. chf[1] - 1] 
+			s2a << s2[0 .. chf[1] - 1]
 			g = yield(chf[0] > 0 ? s1[0 .. chf[0] - 1] : '', s2_str)
 			spans << { :string => s2_str, :good => g, :chunk => nil }
 		end
