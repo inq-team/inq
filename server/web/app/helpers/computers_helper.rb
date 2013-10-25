@@ -42,7 +42,7 @@ def shelf_content(computer)
 	end
 	percent = { :running => '50%', :mayhang => '50%', :failed => '50%', :before => '0%', :after => '100%', :attention => '50%' }[state]
 	memo = render(:partial => 'memo', :locals => { :computer => computer, :testing => testing, :stage => stage, :state => state })
-	progress = content_tag(:div, content_tag(:div, '&nbsp;', :class => state, :style => "width: #{ percent }"), :class => 'progress', :title => percent )
+	progress = content_tag(:div, content_tag(:div, raw('&nbsp;'), :class => state, :style => "width: #{ percent }"), :class => 'progress', :title => percent )
 	content_tag(:div, progress + link_to(computer.short_title, { :action => 'show', :id => computer.id}) + memo, :class => 'computer_on_shelf')
 end
 
