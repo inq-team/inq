@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class HelperTest < Test::Unit::TestCase
+class HelperTest < ActionController::TestCase
 
 	include ApplicationHelper
 

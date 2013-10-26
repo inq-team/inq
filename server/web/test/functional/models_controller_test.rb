@@ -4,7 +4,7 @@ require 'models_controller'
 # Re-raise errors caught by the controller.
 class ModelsController; def rescue_action(e) raise e end; end
 
-class ModelsControllerTest < Test::Unit::TestCase
+class ModelsControllerTest < ActionController::TestCase
   fixtures :models
 
   def setup

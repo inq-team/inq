@@ -5,7 +5,7 @@ require 'fileutils'
 # Re-raise errors caught by the controller.
 class ComputersController; def rescue_action(e) raise e end; end
 
-class ComputersControllerTest < Test::Unit::TestCase
+class ComputersControllerTest < ActionController::TestCase
 	fixtures :computers, :profiles, :models, :testings, :testing_stages, :components, :component_models, :component_groups, :graphs, :firmwares, :computer_stages
 
 	def setup
