@@ -164,7 +164,7 @@ ActiveRecord::Schema.define(version: 30) do
     t.string   "login",                     limit: 32
     t.string   "name",                      limit: 128
     t.boolean  "is_tester",                             default: false, null: false
-    t.boolean  "is_assembler",                                          null: false
+    t.boolean  "is_assembler",                          default: false, null: false
     t.string   "password",                  limit: 40
     t.string   "email"
     t.string   "display_name"
