@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class OrderTest < Test::Unit::TestCase
+class OrderTest < ActiveSupport::TestCase
 	fixtures :testings, :testing_stages
 
 	def test_close_hanging_1

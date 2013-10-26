@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class OrderLineTest < Test::Unit::TestCase
+class OrderLineTest < ActiveSupport::TestCase
   fixtures :order_lines
 
   # Replace this with your real tests.

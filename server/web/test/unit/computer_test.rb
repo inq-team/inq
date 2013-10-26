@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class ComputerTest < Test::Unit::TestCase
+class ComputerTest < ActiveSupport::TestCase
 	fixtures :computers
 
 	def test_free_id
