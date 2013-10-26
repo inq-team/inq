@@ -11,6 +11,16 @@ Inquisitor::Application.routes.draw do
   end
   get 'computers/hw/:id', :to => 'computers#hw'
 
+  # External API used by client for reporting
+  post 'computers/advance/:id', :to => 'computers#advance'
+  post 'computers/submit_components/:id', :to => 'computers#submit_components'
+  post 'computers/submit_additional_components/:id', :to => 'computers#submit_additional_components'
+  post 'computers/boot_from_image/:id', :to => 'computers#boot_from_image'
+  post 'computers/monitoring_submit/:id', :to => 'computers#monitoring_submit'
+  get 'computers/get_needed_firmwares_list/:id', :to => 'computers#get_needed_firmwares_list'
+  get 'computers/plan/:id', :to => 'computers#plan'
+  post 'computers/set_checker/:id', :to => 'computers#set_checker'
+
   resources :shelves do
     member do
       get :active_addresses
