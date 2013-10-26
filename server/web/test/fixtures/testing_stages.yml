@@ -3,7 +3,9 @@ one:
   testing_id: 2
   start: 2000-01-01 00:00
   stage: cpu
-  comment:
+  comment: ""
+  test_type: cpu
+  test_version: X
 
 two:
   id: 2
@@ -12,7 +14,9 @@ two:
   end: 2000-01-01 01:00
   stage: cpu
   result: 1
-  comment:
+  comment: ""
+  test_type: cpu
+  test_version: X
 
 two_testings_new_hdd_done_cpu0_stage:
   id: 3
@@ -21,7 +25,9 @@ two_testings_new_hdd_done_cpu0_stage:
   end: 2000-01-01 01:00
   stage: cpu
   result: 1
-  comment:
+  comment: ""
+  test_type: cpu
+  test_version: X
 
 switching_ts1:
   id: 4
@@ -30,7 +36,9 @@ switching_ts1:
   end: 2000-01-01 01:00
   stage: cpu
   result: 1
-  comment:
+  comment: ""
+  test_type: cpu
+  test_version: X
 
 switching_ts2:
   id: 5
@@ -39,7 +47,9 @@ switching_ts2:
   end: 2000-01-01 02:00
   stage: hdd-passthrough
   result: 1
-  comment:
+  comment: ""
+  test_type: hdd-passthrough
+  test_version: X
 
 running_ts1:
   id: 700
@@ -47,7 +57,9 @@ running_ts1:
   start: 2000-01-01 01:00
   stage: cpu
   result: 0
-  comment:
+  comment: ""
+  test_type: cpu
+  test_version: X
 
 changing_hdd1:
   id: 801
@@ -56,7 +68,9 @@ changing_hdd1:
   end: 2000-01-01 02:00
   stage: cpu
   result: 1
-  comment:
+  comment: ""
+  test_type: cpu
+  test_version: X
 
 changing_hdd2:
   id: 802
@@ -65,7 +79,9 @@ changing_hdd2:
   end: 2000-01-01 03:00
   stage: memory
   result: 1
-  comment:
+  comment: ""
+  test_type: memory
+  test_version: X
 
 changing_hdd3:
   id: 803
@@ -74,7 +90,9 @@ changing_hdd3:
   end: 2000-01-01 04:00
   stage: hdd-passthrough
   result: 1
-  comment:
+  comment: ""
+  test_type: hdd-passthrough
+  test_version: X
 
 changing_hdd4:
   id: 804
@@ -83,7 +101,9 @@ changing_hdd4:
   end: 2000-01-01 05:00
   stage: hdd-array
   result: 1
-  comment:
+  comment: ""
+  test_type: hdd-array
+  test_version: X
 
 changing_hdd5:
   id: 805
@@ -92,7 +112,9 @@ changing_hdd5:
   end: 2000-01-01 06:00
   stage: net
   result: 1
-  comment:
+  comment: ""
+  test_type: net
+  test_version: X
 
 changing_hdd6:
   id: 806
@@ -101,7 +123,9 @@ changing_hdd6:
   end: 2000-01-01 07:00
   stage: fdd
   result: 1
-  comment:
+  comment: ""
+  test_type: fdd
+  test_version: X
 
 changing_hdd7:
   id: 807
@@ -110,4 +134,6 @@ changing_hdd7:
   end: 2000-01-01 08:00
   stage: odd_read
   result: 1
-  comment:
+  comment: ""
+  test_type: odd_read
+  test_version: X
