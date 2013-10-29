@@ -276,9 +276,19 @@ namespace :db do
 			test_version: 1,
 			result: result
 		)
+
+		# Close testing stage if it's not running
 		if result != TestingStage::RUNNING
 			@last_time += random_num(600, 2400)
 			ts.end = @last_time
+
+			# Generate some benchmarks, if applicable
+			case step.type
+			when 'net'
+				2.times { |n|
+					ts.marks << Mark.new(key: "NIC eth#{n} download speed", value_float: random_num(4500000, 15000000))
+				}
+			end
 		end
 		return ts
 	end
@@ -294,7 +304,6 @@ namespace :db do
 			t.testing_stages << generate_testing_stage(@plan[completed_stages], TestingStage::RUNNING)
 		end
 	end
-
 
 	task :populate => :environment do
 		# A list of entities that would be completely deleted and regenerated
