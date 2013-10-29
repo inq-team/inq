@@ -3,7 +3,9 @@
 
 require 'shelves'
 require 'planner/planner'
+
 require 'active_record/fixtures'
+require 'csv'
 
 namespace :db do
 	desc "Erase and fill database with fake data"
@@ -225,6 +227,8 @@ namespace :db do
 
 		ComponentGroup.all.each { |cg|
 			model = ComponentModel.where(component_group_id: cg.id).order('RAND()').first
+			next unless model
+
 			qty = 1
 			serial = random_id(7, 10, DIGITS + UPPER)
 
@@ -296,6 +300,7 @@ namespace :db do
 			Model,
 			Profile,
 			ComponentGroup,
+			ComponentModel,
 			ComputerStage,
 			Testing,
 			TestingStage,
@@ -320,8 +325,12 @@ namespace :db do
 		}
 
 		# Upload some data from fixture sets
-		['profiles', 'component_groups', 'component_models'].each { |f|
-			ActiveRecord::FixtureSet.create_fixtures('lib/tasks/populate-fixtures', f)
+		FIXTURE_DATA_DIR = 'lib/tasks/populate-fixtures'
+		['profiles', 'component_groups'].each { |f|
+			ActiveRecord::FixtureSet.create_fixtures(FIXTURE_DATA_DIR, f)
+		}
+		CSV.foreach("#{FIXTURE_DATA_DIR}/component_models.csv", :headers => true) { |row|
+			ComponentModel.create!(row.to_hash)
 		}
 
 		# Calculate testing plan
