@@ -6,7 +6,10 @@ hdd:
   name: HDD
 memory:
   id: 3
-  name: RAM
+  name: Memory
 nic:
   id: 4
   name: NIC
+mb:
+  id: 5
+  name: Mainboard
