@@ -216,51 +216,31 @@ namespace :db do
 		).save!
 	end
 
-	COMPONENTS = {
-		'CPU' => {
-			'Intel' => [
-				'Core i3',
-				'Core i5',
-				'Core i7',
-				'Xeon',
-			],
-			'AMD' => [
-				'FX',
-			]
-		},
-		'HDD' => {
-			'Seagate' => [
-				'RE',
-			],
-			'WD' => [
-				'Caviar',
-			],
-			'Toshiba' => [
-				'ZZ',
-			],
-		}
-	}
+	def random_mac_number
+		Array.new(6) { sprintf('%02x', rand(256)) }.join(':')
+	end
 
 	def random_components
 		cc = []
 
-		COMPONENTS.each_pair { |cname, chash|
-			vendor = random_element(chash.keys)
-			model = random_element(chash[vendor])
+		ComponentGroup.all.each { |cg|
+			model = ComponentModel.where(component_group_id: cg.id).order('RAND()').first
 			qty = 1
+			serial = random_id(7, 10, DIGITS + UPPER)
 
 			# Some black magic to make it look better
-			case cname
+			case cg.name
 			when 'CPU'
-				model += '-'
-				model += random_id(3, 4, DIGITS)
 				qty = rand < 0.3 ? 2 : 1
 			when 'HDD'
 				qty = rand(6) + 1
+			when 'NIC'
+				qty = random_num(2, 4)
+				serial = random_mac_number
 			end
 
 			qty.times {
-				cc << Component.by_params(type: cname, vendor: vendor, model: model, version: '123ABC', serial: random_id(7, 10, DIGITS + UPPER))
+				cc << Component.new(component_model_id: model.id, hw_qty: qty, version: '123ABC', serial: serial)
 			}
 		}
 
@@ -340,8 +320,8 @@ namespace :db do
 		}
 
 		# Upload some data from fixture sets
-		['profiles', 'component_groups'].each { |f|
-			ActiveRecord::FixtureSet.create_fixtures('test/fixtures', f)
+		['profiles', 'component_groups', 'component_models'].each { |f|
+			ActiveRecord::FixtureSet.create_fixtures('lib/tasks/populate-fixtures', f)
 		}
 
 		# Calculate testing plan
