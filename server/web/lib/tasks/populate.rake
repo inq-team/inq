@@ -222,6 +222,18 @@ namespace :db do
 		Array.new(6) { sprintf('%02x', rand(256)) }.join(':')
 	end
 
+	def random_component_serial(group)
+		case group
+		when 'CPU'
+			# CPU serial number is normally undetectable by software
+			''
+		when 'NIC'
+			random_mac_number
+		else
+			random_id(7, 10, DIGITS + UPPER)
+		end
+	end
+
 	def random_components
 		cc = []
 
@@ -229,22 +241,22 @@ namespace :db do
 			model = ComponentModel.where(component_group_id: cg.id).order('RAND()').first
 			next unless model
 
-			qty = 1
-			serial = random_id(7, 10, DIGITS + UPPER)
-
 			# Some black magic to make it look better
-			case cg.name
+			qty = case cg.name
 			when 'CPU'
-				qty = rand < 0.3 ? 2 : 1
+				rand < 0.3 ? 2 : 1
+			when 'Memory'
+				2 ** random_num(0, 3)
 			when 'HDD'
-				qty = rand(6) + 1
+				rand(6) + 1
 			when 'NIC'
-				qty = random_num(2, 4)
-				serial = random_mac_number
+				random_num(2, 4)
+			else
+				1
 			end
 
 			qty.times {
-				cc << Component.new(component_model_id: model.id, hw_qty: qty, version: '123ABC', serial: serial)
+				cc << Component.new(component_model_id: model.id, hw_qty: qty, version: '123ABC', serial: random_component_serial(cg.name))
 			}
 		}
 
