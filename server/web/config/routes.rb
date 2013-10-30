@@ -4,7 +4,7 @@ Inquisitor::Application.routes.draw do
   resources :computers do
     member do
       post :update_profile
-      get :sticker, :log, :mark, :graph, :ssh, :comment_history, :audit
+      get :sw, :sticker, :log, :mark, :graph, :ssh, :comment_history, :audit
       get :comment_history, :comment_edit
       post :comment_update
     end
