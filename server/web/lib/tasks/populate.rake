@@ -373,7 +373,7 @@ namespace :db do
 
 		NUM_ORDERS.times {
 			o = Order.new
-			o.buyer_order_number = 'BON' + random_id(3, 6, DIGITS)
+			o.buyer_order_number = random_id(1, 4, DIGITS)
 			o.mfg_task_number = 'MTN' + random_id(3, 6, DIGITS)
 			o.mfg_report_number = 'MRN' + random_id(3, 6, DIGITS)
 			o.customer = random_element(customers)
