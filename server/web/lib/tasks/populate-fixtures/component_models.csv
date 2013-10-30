@@ -479,6 +479,78 @@ component_group_id,vendor,name
 3,Transcend,TS512MSK72V3N
 3,Transcend,TS64MLD64V6J
 3,Transcend,TS64MSD64V6J
+4,3Com,3c905C-TX/TX-M [Tornado]
+4,AMD,79c970 [PCnet32 LANCE]
+4,Attansic,L1 Gigabit Ethernet Adapter
+4,Broadcom,NetLink BCM5787M Gigabit Ethernet PCI Express
+4,Broadcom,NetXtreme BCM5703 Gigabit Ethernet
+4,Broadcom,NetXtreme BCM5703X Gigabit Ethernet
+4,Broadcom,NetXtreme BCM5704 Gigabit Ethernet
+4,Broadcom,NetXtreme BCM5705 Gigabit Ethernet
+4,Broadcom,NetXtreme BCM5705_2 Gigabit Ethernet
+4,Broadcom,NetXtreme BCM5715 Gigabit Ethernet
+4,Broadcom,NetXtreme BCM5715S Gigabit Ethernet
+4,Broadcom,NetXtreme BCM5721 Gigabit Ethernet PCI Express
+4,Broadcom,NetXtreme BCM5780 Gigabit Ethernet
+4,Broadcom,NetXtreme II BCM57711 10-Gigabit PCIe
+4,D-Link,DGE-560T PCI Express Gigabit Ethernet Adapter
+4,Intel,80003ES2LAN Gigabit Ethernet Controller (Copper)
+4,Intel,82540EM Gigabit Ethernet Controller
+4,Intel,82541GI Gigabit Ethernet Controller
+4,Intel,82545GM Gigabit Ethernet Controller
+4,Intel,82546EB Gigabit Ethernet Controller (Copper)
+4,Intel,82546GB Gigabit Ethernet Controller
+4,Intel,82546GB Gigabit Ethernet Controller (Copper)
+4,Intel,82547GI Gigabit Ethernet Controller
+4,Intel,82557/8/9 Ethernet Pro 100
+4,Intel,82557/8/9/0/1 Ethernet Pro 100
+4,Intel,8255xER/82551IT Fast Ethernet Controller
+4,Intel,82566DM-2 Gigabit Network Connection
+4,Intel,82567LM-2 Gigabit Network Connection
+4,Intel,82567LM-3 Gigabit Network Connection
+4,Intel,82571EB Gigabit Ethernet Controller
+4,Intel,82572EI Gigabit Ethernet Controller (Copper)
+4,Intel,82572EI Gigabit Ethernet Controller (Fiber)
+4,Intel,82573E Gigabit Ethernet Controller (Copper)
+4,Intel,82573L Gigabit Ethernet Controller
+4,Intel,82573V Gigabit Ethernet Controller (Copper)
+4,Intel,82574L Gigabit Network Connection
+4,Intel,82575EB Gigabit Network Connection
+4,Intel,82576 Gigabit Network Connection
+4,Intel,82576NS Gigabit Network Connection
+4,Intel,82578DM Gigabit Network Connection
+4,Intel,82579LM Gigabit Network Connection
+4,Intel,82579V Gigabit Network Connection
+4,Intel,82580 Gigabit Network Connection
+4,Intel,82583V Gigabit Network Connection
+4,Intel,82598EB 10-Gigabit AT CX4 Network Connection
+4,Intel,82598EB 10-Gigabit AT2 Server Adapter
+4,Intel,82599EB 10-Gigabit Network Connection
+4,Intel,82599EB 10-Gigabit SFI/SFP Network Connection
+4,Intel,82801EB/ER (ICH5/ICH5R) integrated LAN Controller
+4,Intel,E1G44HTBLK Gigabit Network Connection
+4,Intel,Ethernet Controller 10-Gigabit X540-AT2
+4,Intel,I350 Gigabit Backplane Connection
+4,Intel,I350 Gigabit Network Connection
+4,Marvell,88E8050 PCI-E ASF Gigabit Ethernet Controller
+4,Marvell,88E8052 PCI-E ASF Gigabit Ethernet Controller
+4,Mellanox,MT25448 [ConnectX EN 10GigE,PCIe 2.0 2.5GT/s]
+4,Mellanox,MT27500 Family [ConnectX-3]
+4,Realtek,RTL-8110SC/8169SC Gigabit Ethernet
+4,Realtek,RTL-8139/8139C/8139C
+4,Realtek,RTL-8169 Gigabit Ethernet
+4,Realtek,RTL8101E/RTL8102E PCI Express Fast Ethernet controller
+4,Realtek,RTL8111/8168B PCI Express Gigabit Ethernet controller
+4,SiS,SiS900 PCI Fast Ethernet
+4,SysKonnect,SK-9871 V2.0 Gigabit Ethernet 1000Base-ZX Adapter,PCI64,Fiber ZX/SC
+4,VIA,VT6102 [Rhine-II]
+4,VIA,VT6105/VT6106S [Rhine-III]
+4,VIA,VT6120/VT6121/VT6122 Gigabit Ethernet Adapter
+4,nVidia,CK804 Ethernet Controller
+4,nVidia,MCP51 Ethernet Controller
+4,nVidia,MCP55 Ethernet
+4,nVidia,MCP61 Ethernet
+4,nVidia,MCP65 Ethernet
 5,ASRock,775i65G
 5,ASRock,960GM-VGS3 FX
 5,ASRock,AD2550-ITX-ITX
