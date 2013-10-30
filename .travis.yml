@@ -1,0 +1,7 @@
+branches:
+  only:
+    - live_debian
+language: cpp
+compiler:
+  - gcc
+script: make all
