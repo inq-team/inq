@@ -534,7 +534,7 @@ component_group_id,vendor,name
 4,Intel,I350 Gigabit Network Connection
 4,Marvell,88E8050 PCI-E ASF Gigabit Ethernet Controller
 4,Marvell,88E8052 PCI-E ASF Gigabit Ethernet Controller
-4,Mellanox,MT25448 [ConnectX EN 10GigE,PCIe 2.0 2.5GT/s]
+4,Mellanox,"MT25448 [ConnectX EN 10GigE,PCIe 2.0 2.5GT/s]"
 4,Mellanox,MT27500 Family [ConnectX-3]
 4,Realtek,RTL-8110SC/8169SC Gigabit Ethernet
 4,Realtek,RTL-8139/8139C/8139C
@@ -542,7 +542,7 @@ component_group_id,vendor,name
 4,Realtek,RTL8101E/RTL8102E PCI Express Fast Ethernet controller
 4,Realtek,RTL8111/8168B PCI Express Gigabit Ethernet controller
 4,SiS,SiS900 PCI Fast Ethernet
-4,SysKonnect,SK-9871 V2.0 Gigabit Ethernet 1000Base-ZX Adapter,PCI64,Fiber ZX/SC
+4,SysKonnect,"SK-9871 V2.0 Gigabit Ethernet 1000Base-ZX Adapter,PCI64,Fiber ZX/SC"
 4,VIA,VT6102 [Rhine-II]
 4,VIA,VT6105/VT6106S [Rhine-III]
 4,VIA,VT6120/VT6121/VT6122 Gigabit Ethernet Adapter
