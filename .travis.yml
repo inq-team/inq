@@ -4,4 +4,6 @@ branches:
 language: cpp
 compiler:
   - gcc
+before_install: sudo apt-get update -qq
+install: sudo apt-get install -qq vorbis-tools live-build
 script: make all
